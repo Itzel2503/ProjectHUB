@@ -23,7 +23,10 @@ class CreateUsersTable extends Migration
             $table->string('curp');
             $table->string('rfc');
             $table->date('date_birthday');
-            // $table->date('id_area');
+
+            $table->integer('area_id')->unsigned();            
+            $table->foreign('area_id')->references('id')->on('areas');
+
             $table->rememberToken();
             $table->timestamps();
         });
