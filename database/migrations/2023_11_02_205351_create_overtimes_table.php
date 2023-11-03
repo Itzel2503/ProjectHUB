@@ -15,6 +15,8 @@ class CreateOvertimesTable extends Migration
     {
         Schema::create('overtimes', function (Blueprint $table) {
             $table->id();
+            $table->float('hours');
+            $table->date('date');
             $table->timestamps();
         });
     }

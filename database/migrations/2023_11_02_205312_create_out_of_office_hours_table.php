@@ -15,7 +15,11 @@ class CreateOutOfOfficeHoursTable extends Migration
     {
         Schema::create('out_of_office_hours', function (Blueprint $table) {
             $table->id();
-            $table->('');
+            // $table->('type');
+            $table->date('date');
+            $table->float('take_hours');
+            $table->integer('delegate_activities');
+            $table->string('document');
             $table->timestamps();
         });
     }

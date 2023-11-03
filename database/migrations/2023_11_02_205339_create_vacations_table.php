@@ -15,6 +15,10 @@ class CreateVacationsTable extends Migration
     {
         Schema::create('vacations', function (Blueprint $table) {
             $table->id();
+            $table->date('date_begin');
+            $table->date('date_end');
+            $table->integer('delegate_activities');
+            $table->string('document');
             $table->timestamps();
         });
     }

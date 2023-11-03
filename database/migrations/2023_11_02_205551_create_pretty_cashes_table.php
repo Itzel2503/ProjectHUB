@@ -15,6 +15,9 @@ class CreatePrettyCashesTable extends Migration
     {
         Schema::create('pretty_cashes', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->float('minim');
+            $table->float('total');
             $table->timestamps();
         });
     }

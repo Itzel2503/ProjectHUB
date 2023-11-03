@@ -15,6 +15,11 @@ class CreateLeaveAbsencesTable extends Migration
     {
         Schema::create('leave_absences', function (Blueprint $table) {
             $table->id();
+            $table->string('reason');
+            $table->date('date');
+            // $table->integer('salary');
+            $table->integer('delegate_activities');
+            $table->string('document');
             $table->timestamps();
         });
     }

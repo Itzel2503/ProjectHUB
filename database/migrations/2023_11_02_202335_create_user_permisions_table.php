@@ -21,6 +21,7 @@ class CreateUserPermisionsTable extends Migration
             
             $table->integer('type_id');
             $table->string('type'); // Aquí almacenarás el nombre del modelo
+            $table->boolean('approved');
             $table->timestamps();
         });
     }

@@ -15,6 +15,14 @@ class CreateMovementPrettyCashesTable extends Migration
     {
         Schema::create('movement_pretty_cashes', function (Blueprint $table) {
             $table->id();
+
+            $table->integer('pretty_cash_id')->unsigned();            
+            $table->foreign('pretty_cash_id')->references('id')->on('pretty_cashes');
+
+            $table->date('date');
+            $table->string('concept');
+            $table->float('entries');
+            $table->float('outputs');
             $table->timestamps();
         });
     }
