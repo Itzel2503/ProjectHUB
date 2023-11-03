@@ -39,4 +39,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Area::class);
     }
+
+    public function permisions()
+    {
+        return $this->hasMany(UserPermision::class);
+    }
 }

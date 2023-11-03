@@ -9,7 +9,7 @@ class PrettyCash extends Model
 {
     use HasFactory;
 
-    public function movementsPrettyCash()
+    public function movements()
     {
         return $this->hasMany(MovementPrettyCash::class);
     }
