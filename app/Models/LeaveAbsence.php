@@ -9,6 +9,9 @@ class LeaveAbsence extends Model
 {
     use HasFactory;
 
+    const WITH_PAY = 'Con goce de sueldo';
+    const WITHOUT_PAY = 'Sin goce de sueldo';
+
     public function userPermission()
     {
         return $this->morphOne(UserPermission::class, 'type');

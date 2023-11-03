@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\LeaveAbsence;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +18,10 @@ class CreateLeaveAbsencesTable extends Migration
             $table->id();
             $table->string('reason');
             $table->date('date');
-            // $table->integer('salary');
+            $table->enum('salary', [
+                LeaveAbsence::WITH_PAY,
+                LeaveAbsence::WITHOUT_PAY,
+            ]);
             $table->integer('delegate_activities');
             $table->string('document');
             $table->timestamps();
