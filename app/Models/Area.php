@@ -9,6 +9,10 @@ class Area extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+    ];
+
     public function area()
     {
         return $this->hasOne(User::class);
