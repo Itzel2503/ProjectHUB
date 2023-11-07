@@ -54,7 +54,6 @@
             border: #ccc;
         }
     </style>
-
 <body>
     <div class="flex h-screen bg-gray-50 " :class="{ 'overflow-hidden': isSideMenuOpen }">
         <!-- Desktop sidebar -->
@@ -67,7 +66,7 @@
                 </a>
                 @if (Auth::user())
                 <a href="">
-                    <img class="object-cover w-20 h-20 rounded-full mx-auto" src="" alt="" aria-hidden="true" />
+                    <img class="object-cover w-20 h-20 rounded-full mx-auto" aria-hidden="true" src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar">
                     <div class="pt-2 mb-10  w-full text-center  text-base text-white">{{ Auth::user()->name }}</div>
                 </a>
                 @endif
@@ -75,7 +74,7 @@
                 <ul class="mt-6">
                     <li class="relative px-6 py-3">
                         @yield('perfil')
-                        <a class="inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-gray-100  @yield('black1')" href="">
+                        <a class="inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-gray-100  @yield('black1')" href="{{ route('perfil.index' ) }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-circle" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
