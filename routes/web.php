@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\PerfilController;
-use App\Http\Controllers\user\Perfil;
-use App\Http\Controllers\user\PerfilController as UserPerfilController;
+use App\Http\Controllers\user\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +21,5 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [PerfilController::class, 'index'])->name('home');
-Route::resource('/perfil', UserPerfilController::class);
+Route::resource('/profile', ProfileController::class);
 

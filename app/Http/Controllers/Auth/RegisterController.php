@@ -65,15 +65,27 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'lastname' => $data['lastname'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'type_user' => 2,
-            'date_birthday' => $data['date_birthday'],
-            'area_id' => $data['area'],
-        ]);
+        if ($data['area'] == 1) {
+            return User::create([
+                'name' => $data['name'],
+                'lastname' => $data['lastname'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'type_user' => 1,
+                'date_birthday' => $data['date_birthday'],
+                'area_id' => $data['area'],
+            ]);
+        } else {
+            return User::create([
+                'name' => $data['name'],
+                'lastname' => $data['lastname'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'type_user' => 2,
+                'date_birthday' => $data['date_birthday'],
+                'area_id' => $data['area'],
+            ]);
+        }
     }
 
     public function showRegistrationForm()

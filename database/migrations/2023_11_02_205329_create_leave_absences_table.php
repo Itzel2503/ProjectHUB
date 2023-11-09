@@ -23,7 +23,6 @@ class CreateLeaveAbsencesTable extends Migration
                 LeaveAbsence::WITHOUT_PAY,
             ]);
             $table->integer('delegate_activities');
-            $table->string('document');
             $table->timestamps();
         });
     }

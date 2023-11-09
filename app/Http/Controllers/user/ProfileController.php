@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class PerfilController extends Controller
+class ProfileController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -23,8 +26,8 @@ class PerfilController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        return view('user/perfil');
+    {   
+        return view('user/profile');
     }
 
     /**

@@ -24,11 +24,13 @@ class CreateUsersTable extends Migration
             $table->string('curp')->nullable();
             $table->string('rfc')->nullable();
             $table->date('date_birthday');
+            $table->date('phone')->nullable();
 
             $table->integer('area_id')->unsigned();            
             $table->foreign('area_id')->references('id')->on('areas');
 
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

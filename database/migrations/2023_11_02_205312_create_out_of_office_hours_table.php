@@ -24,7 +24,6 @@ class CreateOutOfOfficeHoursTable extends Migration
             $table->date('date');
             $table->float('take_hours');
             $table->integer('delegate_activities');
-            $table->string('document');
             $table->timestamps();
         });
     }
