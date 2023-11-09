@@ -17,7 +17,7 @@ class Profile extends Component
         $areas = Area::all();
         $user = Auth::user();
         $areaUser = $areas->find($user->area_id);
-        dd($user);
+       
 
         foreach ($areas as $key => $oneArea) {
             if ($oneArea->name === $areaUser->name) {
@@ -43,6 +43,6 @@ class Profile extends Component
 
     public function update($id)
     {
-        dd($id,$this->name);
+        dd($id,$this);
     }
 }
