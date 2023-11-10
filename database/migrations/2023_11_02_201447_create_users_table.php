@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('curp')->nullable();
             $table->string('rfc')->nullable();
             $table->date('date_birthday');
-            $table->date('phone')->nullable();
+            $table->bigInteger('phone')->nullable();
 
             $table->integer('area_id')->unsigned();            
             $table->foreign('area_id')->references('id')->on('areas');

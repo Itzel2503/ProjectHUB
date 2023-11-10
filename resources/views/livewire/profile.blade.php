@@ -17,11 +17,11 @@
                         @if($editing)
                         <div class="col-span-6 sm:col-span-3 mt-4">
                             <h5 class="mb-2 w-3/4 mx-auto">Nombre:</h5>
-                            <input wire:model='name' require value="{{ $user->name }}" type="text" name="name" id="name" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
+                            <input wire:model='name' required type="text" placeholder="{{ $user->name }}" name="name" id="name" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
                         </div>
                         <div class="col-span-6 sm:col-span-3 mt-4">
                             <h5 class="mb-2 w-3/4 mx-auto">Apellido:</h5>
-                            <input wire:model='lastname' require value="{{ $user->lastname }}" type="text" name="lastname" id="lastname" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
+                            <input wire:model='lastname' require type="text" placeholder="{{ $user->lastname }}" name="lastname" id="lastname" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
                         </div>
                         @endif
                         <div class="col-span-6 sm:col-span-3 mt-4">
@@ -29,7 +29,7 @@
                             @if(!$editing)
                             <p class="mb-2 w-3/4 mx-auto">{{ ($user->phone) ? "$user->phone" : 'Sin registro' }}</p>
                             @else
-                            <input wire:model='phone' require value="{{ $user->phone }}" type="text" name="phone" id="phone" pattern="[0-9]+" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
+                            <input wire:model='phone' require type="text" placeholder="{{ $user->phone }}" name="phone" id="phone" pattern="[0-9]+" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
                             @endif
                         </div>
                         <div class="col-span-6 sm:col-span-3 mt-4">
@@ -37,7 +37,7 @@
                             @if(!$editing)
                             <p class="mb-2 w-3/4 mx-auto">{{ ($user->curp) ? "$user->curp" : 'Sin registro' }}</p>
                             @else
-                            <input wire:model='curp' require maxlength="18" value="{{ $user->curp }}" type="text" name="curp" id="curp" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
+                            <input wire:model='curp' require maxlength="18" placeholder="{{ $user->curp }}" type="text" name="curp" id="curp" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
                             @endif
                         </div>
                         <div class="col-span-6 sm:col-span-3 mt-4">
@@ -45,7 +45,7 @@
                             @if(!$editing)
                             <p class="mb-2 w-3/4 mx-auto">{{ ($user->rfc) ? "$user->rfc" : 'Sin registro' }}</p>
                             @else
-                            <input wire:model='rfc' require maxlength="13" value="{{ $user->rfc }}" type="text" name="rfc" id="rfc" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
+                            <input wire:model='rfc' require maxlength="13" placeholder="{{ $user->rfc }}" type="text" name="rfc" id="rfc" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
                             @endif
                         </div>
                         <div class="col-span-6 sm:col-span-3 mt-4">
@@ -53,7 +53,7 @@
                             @if(!$editing)
                             <p class="mb-2 w-3/4 mx-auto">{{ ($user->date_birthday) ? "$user->date_birthday" : 'Sin registro' }}</p>
                             @else
-                            <input wire:model='date_birthday' require value="{{ $user->date_birthday }}" type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto" />
+                            <input wire:model='date_birthday' require placeholder="{{ $user->date_birthday }}" type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto" />
                             @endif
                         </div>
                         <div class="col-span-6 sm:col-span-3 mt-4">
@@ -61,10 +61,10 @@
                             @if(!$editing)
                             <p class="mb-2 w-3/4 mx-auto">{{ ($areaUser->name) ? "$areaUser->name" : 'Sin registro' }}</p>
                             @else
-                            <select name="area" id="area" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
+                            <select wire:model='area' name="area" id="area" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
                                 <option selected value="{{ $areaUser->name }}">{{ $areaUser->name }}</option>
                                 @foreach ($areas as $area)
-                                <option wire:model='area' value="{{ $area->id }}">{{ $area->name }}</option>
+                                <option value="{{ $area->id }}">{{ $area->name }}</option>
                                 @endforeach
                             </select>
                             @endif
@@ -74,13 +74,14 @@
                             @if(!$editing)
                             <p class="mb-2 w-3/4 mx-auto">{{ ($user->email) ? "$user->email" : 'Sin registro' }}</p>
                             @else
-                            <input wire:model='email' require value="{{ $user->email }}" type="text" name="email" id="email" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
+                            <input wire:model.defer='email' require placeholder="Correo electrónico." type="email" autofocus="autofocus" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
+                            <!-- <input wire:model.defer="email" type="email"  required="required" autofocus="autofocus" placeholder="Correo electrónico." class="my-2 border-gray-300 focus:border-eticomblue focus:ring focus:ring-eticomblue focus:ring-opacity-50 rounded-md  shadow-xs appearance-none border rounded w-full py-2 px-3 text-grey-darker"> -->
                             @endif
                         </div>
                         @if($editing)
                         <div class="col-span-6 sm:col-span-3 mt-4">
                             <h5 class="mb-2 w-3/4 mx-auto">Cambiar contraseña:</h5>
-                            <input wire:model='password' value="{{ $user->phone }}" name="password" id="password" type="text" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
+                            <input wire:model.def='password' name="password" id="password" type="text" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 rounded mx-auto">
                         </div>
                         @endif
                         @if(!$editing)
@@ -89,7 +90,8 @@
                         </div>
                         @else
                         <div class="flex justify-between px-4 py-3 text-center sm:px-6">
-                            <button wire:click="update({{$user->id}})" id="save" type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-main  hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-lg">Guardar</button>
+                            <button wire:click="update({{$user->id}})" wire:loading.attr="disabled" wire:target="update({{ $user->id }})" id="save" type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-main  hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-lg">Guardar</button>
+                            <span wire:loading wire:target="update({{ $user->id }})">Loading...</span>
                             <button wire:click="edit" id="cancel" type="button" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-main  hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-lg">Cancelar</button>
                         </div>
                         @endif

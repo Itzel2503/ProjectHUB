@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\user\ProfileController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserCatalog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,5 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::resource('/profile', ProfileController::class);
+Route::resource('/userCatalog', UserCatalog::class);
 
