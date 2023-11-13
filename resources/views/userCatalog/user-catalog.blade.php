@@ -2,128 +2,6 @@
 
 @livewireStyles
 
-<style>
-    .loader {
-        border-top-color: #3088D9;
-        -webkit-animation: spinner 1.5s linear infinite;
-        animation: spinner 1.5s linear infinite;
-    }
-
-    @-webkit-keyframes spinner {
-        0% {
-            -webkit-transform: rotate(0deg);
-        }
-
-        100% {
-            -webkit-transform: rotate(360deg);
-        }
-    }
-
-    @keyframes spinner {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    .checkmark__circle {
-        stroke-dasharray: 166;
-        stroke-dashoffset: 166;
-        stroke-width: 2;
-        stroke-miterlimit: 10;
-        stroke: #7ac142;
-        fill: none;
-        animation: showSuccess 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-    }
-
-    .checkmark {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        display: block;
-        stroke-width: 2;
-        stroke: #fff;
-        stroke-miterlimit: 10;
-        margin: 10% auto;
-        box-shadow: inset 0px 0px 0px #7ac142;
-        animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
-    }
-
-    .checkmark__check {
-        transform-origin: 50% 50%;
-        stroke-dasharray: 48;
-        stroke-dashoffset: 48;
-        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-    }
-
-    @keyframes stroke {
-        100% {
-            stroke-dashoffset: 0;
-        }
-    }
-
-    @keyframes scale {
-
-        0%,
-        100% {
-            transform: none;
-        }
-
-        50% {
-            transform: scale3d(1.1, 1.1, 1);
-        }
-    }
-
-    @keyframes fill {
-        100% {
-            box-shadow: inset 0px 0px 0px 30px #7ac142;
-        }
-    }
-
-    .vibrate {
-        -webkit-animation: vibrate 0.2s ease-in-out infinite alternate both;
-        animation: vibrate 0.2s ease-in-out infinite alternate both;
-    }
-
-    @-webkit-keyframes vibrate {
-        0% {
-            -webkit-transform: rotate(-0.2deg) scale(1);
-            transform: rotate(-0.2deg) scale(1);
-        }
-
-        100% {
-            -webkit-transform: rotate(0.2deg) scale(1.01);
-            transform: rotate(0.2deg) scale(1.01);
-        }
-    }
-
-    @keyframes vibrate {
-        0% {
-            -webkit-transform: rotate(-0.2deg) scale(1);
-            transform: rotate(-0.2deg) scale(1);
-        }
-
-        100% {
-            -webkit-transform: rotate(0.2deg) scale(1.01);
-            transform: rotate(0.2deg) scale(1.01);
-        }
-    }
-
-    .accordion {
-        transition: 0.4s;
-    }
-
-    .panel {
-        padding: 0 18px;
-        display: none;
-        background-color: white;
-        overflow: hidden;
-    }
-</style>
-
 @section('userCatalog')
 <span class="absolute inset-y-0 left-0 w-1 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
 @endsection
@@ -133,13 +11,26 @@ text-yellow
 @endsection
 
 @section('content')
-<div>
-    <livewire:user-catalog />
+<div class="mt-8">
+        <div class=" w-full mx-auto">
+            <div class="mt-5 md:mt-0 md:col-span-1">
+                <div class="px-4 py-5 space-y-6 sm:p-6 w-full bg-main-fund">
+                    <h1 class="inline-flex w-full text-base font-semibold text-2xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                            <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path>
+                            <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                            <path d="M17 10h2a2 2 0 0 1 2 2v1"></path>
+                            <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                            <path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path>
+                        </svg>
+                        <span class="ml-4">Usuarios</span>
+                    </h1>
+                </div>
+                <livewire:user-catalog.user-catalog />
+            </div>
+        </div>
+    </div>
 </div>
-@livewireScripts
-
-@stack('js')
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script src="{{ asset('vendor/livewire-alert/livewire-alert.js') }}"></script>
 @endsection
