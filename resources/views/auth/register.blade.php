@@ -18,11 +18,11 @@
             <form method="POST" action="{{ route('register') }}">
                 @csrf
                 <div class="relative z-0 w-full mb-6 group">
-                    <input id="name" type="text" name="name" :value="old('name')" class="block py-2.5 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus autocomplete="name" />
+                    <input id="name" type="text" name="name" :value="old('name')" class="block py-3 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus autocomplete="name" />
                     <label for="name" value="{{ __('Name') }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-500 peer-focus:dark:text-gray-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre</label>
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
-                    <input id="lastname" type="text" name="lastname" :value="old('lastname')" class="block py-2.5 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus autocomplete="lastname" />
+                    <input id="lastname" type="text" name="lastname" :value="old('lastname')" class="block py-3 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus autocomplete="lastname" />
                     <label for="lastname" value="{{ __('Lastname') }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-500 peer-focus:dark:text-gray-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Apellidos</label>
                 </div>
                 <div class="relative z-0 w-full group">
@@ -34,10 +34,10 @@
                 </div>
                 <div class="relative z-0 w-full mb-6 group flex justify-between items-center">
                     <label for="date_birthday" class="text-sm text-gray-500">Fecha de nacimiento:</label>
-                    <input id="date_birthday" value="{{ __('Date_birthday') }}" type="date" name="date_birthday" class="py-2.5 px-0 text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus />
+                    <input id="date_birthday" value="{{ __('Date_birthday') }}" type="date" name="date_birthday" class="py-3 px-0 text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus />
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
-                    <select id="area" name="area" class="block py-2.5 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus>
+                    <select id="area" name="area" class="block py-3 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus>
                         <option selected disabled>Área</option>
                         @foreach ($areas as $area)
                         <option value="{{ $area->id }}">{{ $area->name }}</option>
@@ -45,7 +45,7 @@
                     </select>
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
-                    <input id="email" type="email" name="email" :value="old('email')" class="block py-2.5 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus autocomplete="email" />
+                    <input id="email" type="email" name="email" :value="old('email')" class="block py-3 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus autocomplete="email" />
                     <label for="email" value="{{ __('Email') }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-500 peer-focus:dark:text-gray-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Correo electrónico</label>
                 </div>
                 <div class="relative z-0 w-full group">
@@ -56,7 +56,7 @@
                     @enderror
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
-                    <input id="password" type="password" name="password" class="block py-2.5 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus autocomplete="new-password" />
+                    <input id="password" type="password" name="password" class="block py-3 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus autocomplete="new-password" />
                     <label for="password" value="{{ __('Password') }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-500 peer-focus:dark:text-gray-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Contraseña</label>
                     <div id="no_view_password" class="hidden absolute inset-y-0 right-0 flex items-center text-sm leading-5 cursor-pointer" style="color: #f6c03e; padding-right: .25vw">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-off" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -75,7 +75,7 @@
                     </div>
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
-                    <input id="password_confirmation" type="password" name="password_confirmation" class="block py-2.5 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus autocomplete="new-password" />
+                    <input id="password_confirmation" type="password" name="password_confirmation" class="block py-3 px-0 w-full text-sm text-black bg-transparent border-0 border-b-2 border-yellow appearance-none dark:text-black dark:border-yellow dark:focus:border-yellow focus:outline-none focus:ring-0 focus:border-yellow peer" placeholder=" " required autofocus autocomplete="new-password" />
                     <label for="password_confirmation" value="{{ __('Confirm Password') }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-500 peer-focus:dark:text-gray-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Confirma tu contraseña</label>
                     <div id="no_view_password_confirmation" class="hidden absolute inset-y-0 right-0 flex items-center text-sm leading-5 cursor-pointer" style="color: #f6c03e; padding-right: .25vw">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-off" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

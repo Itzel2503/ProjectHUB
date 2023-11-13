@@ -63,7 +63,9 @@
                     </div>
                 </a>
                 @if (Auth::user())
-                <img class="object-cover w-20 h-20 rounded-full mx-auto" aria-hidden="true" src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar">
+                <div class="flex justify-center justify-items-center">
+                    <img class="h-20 w-20 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar" />
+                </div>
                 <div class="pt-2 mb-10 w-full text-center text-base text-white">{{ Auth::user()->name }}</div>
                 @endif
                 <ul class="mt-6">
