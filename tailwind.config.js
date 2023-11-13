@@ -23,12 +23,22 @@ module.exports = {
       'red': '#dd4231',
       'gray-500': '#6b7280',
     },
+    spacing: {
+      '1': '8px',
+      '2': '12px',
+      '3': '16px',
+      '4': '24px',
+      '5': '32px',
+      '6': '48px',
+    }
     /*fontFamily: {
       sans: ['Graphik', 'sans-serif'],
       serif: ['Merriweather', 'serif'],
     }, */
     extend: {
       spacing: {
+        '13': '3.25rem',
+        '15': '3.75rem',
         '128': '32rem',
         '144': '36rem',
       },
@@ -37,6 +47,11 @@ module.exports = {
       }
     }
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/container-queries'),
+  ],
 }
 
