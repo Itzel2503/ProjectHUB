@@ -4,6 +4,7 @@ module.exports = {
     "./resources/**/*.blade.php",
     "./resources/**/*.js",
     "./resources/**/*.vue",
+    './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
   ],
   theme: {
     screens: {
@@ -30,7 +31,7 @@ module.exports = {
       '4': '24px',
       '5': '32px',
       '6': '48px',
-    }
+    },
     /*fontFamily: {
       sans: ['Graphik', 'sans-serif'],
       serif: ['Merriweather', 'serif'],

@@ -20,14 +20,16 @@
             <!-- COUNT -->
             <div class="inline-flex w-1/4 h-12 mx-3 bg-transparent mb-2">
                 <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
-                    <option value="25"> 25 por Página</option>
+                    <option value="5"> 25 por Página</option>
                     <option value="50"> 50 por Página</option>
                     <option value="100"> 100 por Página</option>
                 </select>
             </div>
             <!-- BTN NEW -->
             <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
-                <button wire:click="modalCreateEdit()" class="px-2 py-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">Nuevo</button>
+                <button wire:click="modalCreateEdit()" class="px-2 py-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
+                    Nuevo Usuario
+                </button>
             </div>
         </div>
         {{-- END NAVEGADOR --}}
@@ -54,7 +56,16 @@
                         <td class="px-4 py-2">{{$user->area_name}}</td>
                         <td class="px-4 py-2">{{($user->type_user == 1 ) ? 'Administrador' : 'Usuario'}}</td>
                         <td class="px-4 py-2 justify-between">
-                            <button wire:click="edit({{$user->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
+                            @if($user->deleted_at != null)
+                            <button wire:click="showRestore({{$user->id}})" class="bg-secondary-fund text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-reload" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747"></path>
+                                    <path d="M20 4v5h-5"></path>
+                                </svg>
+                            </button>
+                            @else
+                            <button wire:click="showUpdate({{$user->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
@@ -62,7 +73,7 @@
                                     <path d="M16 5l3 3"></path>
                                 </svg>
                             </button>
-                            <button wire:click="show({{$user->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
+                            <button wire:click="showDelete({{$user->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <path d="M4 7l16 0"></path>
@@ -72,14 +83,14 @@
                                     <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                                 </svg>
                             </button>
+                            @endif
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-        {{--Links--}}
-        <div class="my-1">
+        <div class="py-5">
             {{ $users->links()}}
         </div>
     </div>
@@ -91,7 +102,7 @@
         <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full h-full fixed">
             <div class="flex flex-col w-2/4 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
-                    @if($update)
+                    @if($showUpdate)
                     <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Editar usuario</h2>
                     @else
                     <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Crear usuario</h2>
@@ -107,9 +118,9 @@
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Nombre @if(!$update)<p class="text-red">*</p>@endif
+                                    Nombre @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='name' @if(!$update) required @endif type="text" placeholder="{{ ($update) ? $userEdit->name : 'Nombre/s' }}" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='name' @if(!$showUpdate) required @endif type="text" placeholder="{{ ($showUpdate) ? $userEdit->name : 'Nombre/s' }}" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('name')
@@ -122,9 +133,9 @@
                             </div>
                             <div class="md:w-1/2 flex flex-col px-3 ">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Apellidos @if(!$update)<p class="text-red">*</p>@endif
+                                    Apellidos @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='lastname' @if(!$update) required @endif type="text" placeholder="{{ ($update) ? $userEdit->lastname : 'Apellido materno y apellido paterno' }}" name="lastname" id="lastname" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='lastname' @if(!$showUpdate) required @endif type="text" placeholder="{{ ($showUpdate) ? $userEdit->lastname : 'Apellido materno y apellido paterno' }}" name="lastname" id="lastname" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('lastname')
@@ -139,9 +150,9 @@
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Fecha de nacimiento @if(!$update)<p class="text-red">*</p>@endif
+                                    Fecha de nacimiento @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                @if($update)
+                                @if($showUpdate)
                                 <div class="relative z-0 w-full group flex justify-between items-center">
                                     <label class="text-sm inline-flex font-semibold w-1/4">{{ $userEdit->date_birthday }}</label>
                                     <input wire:model='date_birthday' type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
@@ -163,7 +174,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     CURP
                                 </h5>
-                                <input wire:model='curp' type="text" maxlength="18" placeholder="{{ ($update) ? $userEdit->curp : 'CURP' }}" name="curp" id="curp" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='curp' type="text" maxlength="18" placeholder="{{ ($showUpdate) ? $userEdit->curp : 'CURP' }}" name="curp" id="curp" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('curp')
@@ -180,7 +191,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     RFC
                                 </h5>
-                                <input wire:model='rfc' type="text" maxlength="13" placeholder="{{ ($update) ? $userEdit->rfc : 'RFC' }}" name="rfc" id="rfc" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='rfc' type="text" maxlength="13" placeholder="{{ ($showUpdate) ? $userEdit->rfc : 'RFC' }}" name="rfc" id="rfc" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('rfc')
@@ -193,9 +204,9 @@
                             </div>
                             <div class="md:w-1/2 flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Número de teléfono @if(!$update)<p class="text-red">*</p>@endif
+                                    Número de teléfono @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='phone' @if(!$update) required @endif type="text" placeholder="{{ ($update) ? $userEdit->phone : 'Número de teléfono' }}" name="phone" id="phone" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='phone' @if(!$showUpdate) required @endif type="text" placeholder="{{ ($showUpdate) ? $userEdit->phone : 'Número de teléfono' }}" name="phone" id="phone" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('phone')
@@ -210,9 +221,9 @@
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Área @if(!$update)<p class="text-red">*</p>@endif
+                                    Área @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                @if($update)
+                                @if($showUpdate)
                                 <select wire:model='area' name="area" id="area" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                     <option selected value="{{ $areaUser->id }}">{{ $areaUser->name }}</option>
                                     @foreach ($allAreas as $allArea)
@@ -239,9 +250,9 @@
                             </div>
                             <div class="md:w-1/2 flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Correo electrónico: @if(!$update)<p class="text-red">*</p>@endif
+                                    Correo electrónico: @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='email' @if(!$update) required @endif type="text" placeholder="{{ ($update) ? $userEdit->email : 'Correo electrónico' }}" name="email" id="email" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='email' @if(!$showUpdate) required @endif type="text" placeholder="{{ ($showUpdate) ? $userEdit->email : 'Correo electrónico' }}" name="email" id="email" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('email')
@@ -256,9 +267,9 @@
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-1/2 flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Contraseña @if(!$update)<p class="text-red">*</p>@endif
+                                    Contraseña @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='password' @if(!$update) required @endif type="text" placeholder="Contraseña" name="password" id="password" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='password' @if(!$showUpdate) required @endif type="text" placeholder="Contraseña" name="password" id="password" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('password')
@@ -273,7 +284,7 @@
                     </div>
                 </div>
                 <div class="flex justify-center items-center py-6 bg-main-fund">
-                    @if($update)
+                    @if($showUpdate)
                     <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="update({{$userEdit->id}})" wire:loading.remove wire:target="update({{$userEdit->id}})"> Guardar </button>
                     @else
                     <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="create" wire:loading.remove wire:target="create"> Guardar </button>
@@ -295,7 +306,7 @@
                         <path d="M6 6l12 12"></path>
                     </svg>
                 </div>
-                @if($show)
+                @if($showDelete)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
                     <div class="w-full sm:w-3/5 md-3/4 mb-5 mt-5 flex flex-col">
                         <div class="text-lg md:flex mb-6 text-center">
@@ -306,6 +317,35 @@
                 <div class="flex justify-between items-center py-6 px-10 bg-main-fund">
                     <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="modalDelete()" wire:loading.remove wire:target="modalDelete()">Cancelar</button>
                     <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-red rounded cursor-pointer" wire:click="destroy({{$userDelete->id}})" wire:loading.remove wire:target="destroy({{$userDelete->id}})">Eliminar</button>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL DELETE --}}
+    {{-- MODAL RESTORE --}}
+    <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalRestore) block  @else hidden @endif">
+        <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full h-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
+        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full h-full fixed">
+            <div class="flex flex-col w-2/6 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+                <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
+                    <svg wire:click="modalRestore" wire:loading.remove wire:target="modalRestore" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                @if($showRestore)
+                <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
+                    <div class="w-full sm:w-3/5 md-3/4 mb-5 mt-5 flex flex-col">
+                        <div class="text-lg md:flex mb-6 text-center">
+                            <h2 class="font-semibold">¿Quieres restaurar a {{$userRestore->name}} {{$userRestore->lastname}}?</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center py-6 px-10 bg-main-fund">
+                    <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="modalRestore()" wire:loading.remove wire:target="modalRestore()">Cancelar</button>
+                    <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="restore({{$userRestore->id}})" wire:loading.remove wire:target="restore({{$userRestore->id}})">Restaurar</button>
                 </div>
                 @endif
             </div>

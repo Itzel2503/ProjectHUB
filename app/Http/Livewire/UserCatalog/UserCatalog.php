@@ -11,8 +11,9 @@ use Livewire\Component;
 class UserCatalog extends Component
 {
     public $listeners = ['reloadPage' => 'reloadPage'];
-    public $modalCreateEdit = false, $modalDelete = false, $update = false, $show = false;
-    public $search, $userEdit, $areaUser, $userDelete;
+    public $modalCreateEdit = false, $modalDelete = false, $modalRestore = false;
+    public $showUpdate = false, $showDelete = false, $showRestore = false;
+    public $search, $userEdit, $areaUser, $userDelete, $userRestore;
     public $perPage = '25';
     public $rules = [], $allAreas = [];
     public $name, $lastname, $date_birthday, $curp, $rfc, $phone, $area, $email, $password, $password_confirmation;
@@ -22,14 +23,17 @@ class UserCatalog extends Component
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
 
         $areas = Area::all();
-        $users = User::query()
+        
+
+        $users = User::onlyTrashed()
             ->select('users.*', 'areas.name as area_name') // Selecciona todos los campos de users y el campo name de areas
             ->leftJoin('areas', 'users.area_id', '=', 'areas.id') // Realiza una left join con la tabla "areas"
-            ->where('users.name', 'ilike', '%' . $this->search . '%')
+            ->where('users.type_user', 'ilike', '%' . $this->search . '%')
+            ->orwhere('users.name', 'ilike', '%' . $this->search . '%')
             ->orWhere('users.lastname', 'ilike', '%' . $this->search . '%')
             ->orWhere('users.email', 'ilike', '%' . $this->search . '%')
-            ->orWhere('areas.name', 'ilike', '%' . $this->search . '%') // Agrega esta condición para el nombre del área
-            ->paginate($this->perPage);
+            ->orWhere('areas.name', 'ilike', '%' . $this->search . '%') 
+            ->paginate($this->perPage);;
 
         return view('livewire.user-catalog.user-catalog', [
             'users' => $users,
@@ -77,40 +81,6 @@ class UserCatalog extends Component
         $this->emit('reloadPage');
     }
 
-    public function show($id)
-    {
-        $this->show = true;
-
-        if ($this->modalDelete == true) {
-            $this->modalDelete = false;
-        } else {
-            $this->modalDelete = true;
-        }
-
-        $this->userDelete = User::find($id);
-    }
-
-    public function edit($id)
-    {
-        $this->update = true;
-
-        if ($this->modalCreateEdit == true) {
-            $this->modalCreateEdit = false;
-        } else {
-            $this->modalCreateEdit = true;
-        }
-
-        $this->userEdit = User::find($id);
-        $this->allAreas = Area::all();
-        $this->areaUser = $this->allAreas->find($this->userEdit->area_id);
-
-        foreach ($this->allAreas as $key => $oneArea) {
-            if ($oneArea->name === $this->areaUser->name) {
-                unset($this->allAreas[$key]);
-            }
-        }
-    }
-
     public function update($id)
     {
         $this->rules = [
@@ -135,8 +105,10 @@ class UserCatalog extends Component
         $user->email = $this->email ?? $user->email;
         $user->area_id = $this->area ?? $user->area_id;
 
-        if ($this->area == 1) {
+        if ($this->area == 1) {        
             $user->type_user = 1;
+        } else if ($this->area == null) {
+            $user->type_user = $user->type_user;
         } else {
             $user->type_user = 2;
         }
@@ -151,23 +123,79 @@ class UserCatalog extends Component
     }
 
     public function destroy($id)
-    {   
+    {
         $user = User::find($id);
 
         if ($user) {
             $user->delete();
-            session()->flash('message', 'Usuario eliminado correctamente.');
-        } else {
-            session()->flash('error', 'Usuario no encontrado.');
-        }
+        } 
 
         $this->modalDelete = false;
         $this->emit('reloadPage');
     }
 
+    public function restore($id)
+    {
+        $user = User::withTrashed()->find($id);
+
+        if ($user) {
+            $user->restore();
+        } 
+
+        $this->modalRestore = false;
+        $this->emit('reloadPage');
+    }
+
+    public function showDelete($id)
+    {
+        $this->showDelete = true;
+
+        if ($this->modalDelete == true) {
+            $this->modalDelete = false;
+        } else {
+            $this->modalDelete = true;
+        }
+
+        $this->userDelete = User::find($id);
+    }
+
+    public function showRestore($id)
+    {
+        $this->showRestore = true;
+
+        if ($this->modalRestore == true) {
+            $this->modalRestore = false;
+        } else {
+            $this->modalRestore = true;
+        }
+
+        $this->userRestore = User::withTrashed()->find($id);
+    }
+
+    public function showUpdate($id)
+    {
+        $this->showUpdate = true;
+
+        if ($this->modalCreateEdit == true) {
+            $this->modalCreateEdit = false;
+        } else {
+            $this->modalCreateEdit = true;
+        }
+
+        $this->userEdit = User::find($id);
+        $this->allAreas = Area::all();
+        $this->areaUser = $this->allAreas->find($this->userEdit->area_id);
+
+        foreach ($this->allAreas as $key => $oneArea) {
+            if ($oneArea->name === $this->areaUser->name) {
+                unset($this->allAreas[$key]);
+            }
+        }
+    }
+
     public function modalCreateEdit()
     {
-        $this->update = false;
+        $this->showUpdate = false;
 
         if ($this->modalCreateEdit == true) {
             $this->modalCreateEdit = false;
@@ -182,6 +210,15 @@ class UserCatalog extends Component
             $this->modalDelete = false;
         } else {
             $this->modalDelete = true;
+        }
+    }
+
+    public function modalRestore()
+    {
+        if ($this->modalRestore == true) {
+            $this->modalRestore = false;
+        } else {
+            $this->modalRestore = true;
         }
     }
 
