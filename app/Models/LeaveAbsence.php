@@ -12,8 +12,8 @@ class LeaveAbsence extends Model
     const WITH_PAY = 'Con goce de sueldo';
     const WITHOUT_PAY = 'Sin goce de sueldo';
 
-    public function userPermission()
+    public function permits()
     {
-        return $this->morphOne(UserPermission::class, 'type');
+        return $this->belongsTo(Permits::class);
     }
 }

@@ -9,8 +9,8 @@ class HomeOffice extends Model
 {
     use HasFactory;
 
-    public function userPermission()
+    public function permits()
     {
-        return $this->morphOne(UserPermission::class, 'type');
+        return $this->belongsTo(Permits::class);
     }
 }

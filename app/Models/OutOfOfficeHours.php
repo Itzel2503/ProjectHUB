@@ -13,8 +13,8 @@ class OutOfOfficeHours extends Model
     const EARLY_DEPARTURE = 'Salida temprano';
     const HOURS_BETWEEN_SHIFTS = 'Horas entre turno';
 
-    public function userPermission()
+    public function permits()
     {
-        return $this->morphOne(UserPermission::class, 'type');
+        return $this->belongsTo(Permits::class);
     }
 }
