@@ -54,12 +54,14 @@ class Profile extends Component
         $user->email = $this->email ?? $user->email;
         $user->area_id = $this->area ?? $user->area_id;
 
-        if ($this->area == 1 || $this->area == "Administrador") {        
+        if ($this->area == 1) {        
             $user->type_user = 1;
+        } else if ($this->area == null) {
+            $user->type_user = $user->type_user;
         } else {
             $user->type_user = 2;
         }
-
+        
         if ($this->password) {
             $user->password = Hash::make($this->password);
         }

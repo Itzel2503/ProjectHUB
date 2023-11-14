@@ -22,7 +22,7 @@ class ModalNew extends Component
 
     public function closeModal()
     {
-        $this->modal = true;
+        $this->modal = false;
     }
 
     public function create() {

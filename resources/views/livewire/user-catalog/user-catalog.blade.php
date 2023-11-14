@@ -25,13 +25,14 @@
                     <option value="100"> 100 por Página</option>
                 </select>
             </div>
+            <!-- BTN NEW -->
             <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
-                <button wire:click="openModal()" class="px-2 py-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">Nuevo</button>
+                <button wire:click="modalCreateEdit()" class="px-2 py-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">Nuevo</button>
             </div>
         </div>
         {{-- END NAVEGADOR --}}
 
-        {{--table--}}
+        {{-- TABLE --}}
         <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs mt-4">
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 bg-secondary-fund">
@@ -61,7 +62,7 @@
                                     <path d="M16 5l3 3"></path>
                                 </svg>
                             </button>
-                            <button wire:click="$emit('deleteItem',{{$user->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
+                            <button wire:click="show({{$user->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <path d="M4 7l16 0"></path>
@@ -82,8 +83,233 @@
             {{ $users->links()}}
         </div>
     </div>
-    {{--end table--}}
-    <div class="@if($modal) block @else hidden @endif">
-        <livewire:user-catalog.modal-new/>
+    {{-- END TABLE --}}
+
+    {{-- MODAL EDIT / CREATE --}}
+    <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalCreateEdit) block  @else hidden @endif">
+        <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full h-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
+        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full h-full fixed">
+            <div class="flex flex-col w-2/4 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+                <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
+                    @if($update)
+                    <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Editar usuario</h2>
+                    @else
+                    <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Crear usuario</h2>
+                    @endif
+                    <svg wire:click="modalCreateEdit" wire:loading.remove wire:target="modalCreateEdit" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
+                    <div class="w-full sm:w-3/5 md-3/4 mb-5 mt-5 flex flex-col">
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Nombre @if(!$update)<p class="text-red">*</p>@endif
+                                </h5>
+                                <input wire:model='name' @if(!$update) required @endif type="text" placeholder="{{ ($update) ? $userEdit->name : 'Nombre/s' }}" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('name')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="md:w-1/2 flex flex-col px-3 ">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Apellidos @if(!$update)<p class="text-red">*</p>@endif
+                                </h5>
+                                <input wire:model='lastname' @if(!$update) required @endif type="text" placeholder="{{ ($update) ? $userEdit->lastname : 'Apellido materno y apellido paterno' }}" name="lastname" id="lastname" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('lastname')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Fecha de nacimiento @if(!$update)<p class="text-red">*</p>@endif
+                                </h5>
+                                @if($update)
+                                <div class="relative z-0 w-full group flex justify-between items-center">
+                                    <label class="text-sm inline-flex font-semibold w-1/4">{{ $userEdit->date_birthday }}</label>
+                                    <input wire:model='date_birthday' type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                </div>
+                                @else
+                                <input wire:model='date_birthday' required type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                @endif
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('date_birthday')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="md:w-1/2 flex flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    CURP
+                                </h5>
+                                <input wire:model='curp' type="text" maxlength="18" placeholder="{{ ($update) ? $userEdit->curp : 'CURP' }}" name="curp" id="curp" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('curp')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    RFC
+                                </h5>
+                                <input wire:model='rfc' type="text" maxlength="13" placeholder="{{ ($update) ? $userEdit->rfc : 'RFC' }}" name="rfc" id="rfc" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('rfc')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="md:w-1/2 flex flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Número de teléfono @if(!$update)<p class="text-red">*</p>@endif
+                                </h5>
+                                <input wire:model='phone' @if(!$update) required @endif type="text" placeholder="{{ ($update) ? $userEdit->phone : 'Número de teléfono' }}" name="phone" id="phone" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('phone')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Área @if(!$update)<p class="text-red">*</p>@endif
+                                </h5>
+                                @if($update)
+                                <select wire:model='area' name="area" id="area" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <option selected value="{{ $areaUser->id }}">{{ $areaUser->name }}</option>
+                                    @foreach ($allAreas as $allArea)
+                                    <option value="{{ $allArea->id }}">{{ $allArea->name }}</option>
+                                    @endforeach
+                                </select>
+                                @else
+                                <select wire:model='area' required name="area" id="area" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <option selected>Selecciona...</option>
+                                    @foreach ($areas as $area)
+                                    <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                    @endforeach
+                                </select>
+                                @endif
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('area')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="md:w-1/2 flex flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Correo electrónico: @if(!$update)<p class="text-red">*</p>@endif
+                                </h5>
+                                <input wire:model='email' @if(!$update) required @endif type="text" placeholder="{{ ($update) ? $userEdit->email : 'Correo electrónico' }}" name="email" id="email" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('email')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-1/2 flex flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Contraseña @if(!$update)<p class="text-red">*</p>@endif
+                                </h5>
+                                <input wire:model='password' @if(!$update) required @endif type="text" placeholder="Contraseña" name="password" id="password" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('password')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center items-center py-6 bg-main-fund">
+                    @if($update)
+                    <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="update({{$userEdit->id}})" wire:loading.remove wire:target="update({{$userEdit->id}})"> Guardar </button>
+                    @else
+                    <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="create" wire:loading.remove wire:target="create"> Guardar </button>
+                    @endif
+                </div>
+            </div>
+        </div>
     </div>
+    {{-- END MODAL EDIT / CREATE --}}
+    {{-- MODAL DELETE --}}
+    <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalDelete) block  @else hidden @endif">
+        <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full h-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
+        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full h-full fixed">
+            <div class="flex flex-col w-2/6 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+                <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
+                    <svg wire:click="modalDelete" wire:loading.remove wire:target="modalDelete" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                @if($show)
+                <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
+                    <div class="w-full sm:w-3/5 md-3/4 mb-5 mt-5 flex flex-col">
+                        <div class="text-lg md:flex mb-6 text-center">
+                            <h2 class="text-red font-semibold">¿Esta seguro de eliminar a {{$userDelete->name}} {{$userDelete->lastname}}?</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center py-6 px-10 bg-main-fund">
+                    <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="modalDelete()" wire:loading.remove wire:target="modalDelete()">Cancelar</button>
+                    <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-red rounded cursor-pointer" wire:click="destroy({{$userDelete->id}})" wire:loading.remove wire:target="destroy({{$userDelete->id}})">Eliminar</button>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL DELETE --}}
 </div>
