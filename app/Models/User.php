@@ -42,6 +42,6 @@ class User extends Authenticatable
 
     public function permits()
     {
-        return $this->belongsToMany(Permits::class);
+        return $this->belongsToMany(Permit::class)->withPivot(['approved', 'created_at']);
     }
 }

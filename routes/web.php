@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Permit;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserCatalog;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::resource('/profile', ProfileController::class);
-Route::resource('/userCatalog', UserCatalog::class);
+Route::resource('/profile', ProfileController::class)->only(['index']);
+Route::resource('/permits', Permit::class);
+Route::resource('/userCatalog', UserCatalog::class)->only(['index']);
+
+
 
