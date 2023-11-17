@@ -2645,10 +2645,30 @@ video {
   -webkit-box-orient: horizontal;
   -webkit-line-clamp: none;
 }
-/* Line Height */
-/* List Style Image */
-/* List Style Position */
-/* List Style Type */
+/* Line Height: Utilities for controlling the leading (line height) of an element. */
+.leading-3	{line-height: .75rem; /* 12px */}
+.leading-4	{line-height: 1rem; /* 16px */}
+.leading-5	{line-height: 1.25rem; /* 20px */}
+.leading-6	{line-height: 1.5rem; /* 24px */}
+.leading-7	{line-height: 1.75rem; /* 28px */}
+.leading-8	{line-height: 2rem; /* 32px */}
+.leading-9	{line-height: 2.25rem; /* 36px */}
+.leading-10	{line-height: 2.5rem; /* 40px */}
+.leading-none	{line-height: 1;}
+.leading-tight	{line-height: 1.25;}
+.leading-snug	{line-height: 1.375;}
+.leading-normal	{line-height: 1.5;}
+.leading-relaxed	{line-height: 1.625;}
+.leading-loose	{line-height: 2;}
+/* List Style Image: Utilities for controlling the marker images for list items. */
+.list-image-none	{list-style-image: none;}
+/* List Style Position: Utilities for controlling the position of bullets/numbers in lists. */
+.list-inside	{list-style-position: inside;}
+.list-outside	{list-style-position: outside;}
+/* List Style Type: Utilities for controlling the bullet/number style of a list. */
+.list-none	{list-style-type: none;}
+.list-disc	{list-style-type: disc;}
+.list-decimal	{list-style-type: decimal;}
 /* Text Align */
 /* Text Color */
 /* Text Decoration */
