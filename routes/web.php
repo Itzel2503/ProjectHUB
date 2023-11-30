@@ -21,11 +21,13 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+// Grupo de rutas protegidas por autenticación
+Route::middleware(['auth'])->group(function () {
+    Route::resource('/permits', Permit::class);
+    Route::resource('/profile', ProfileController::class)->only(['index']);
+    Route::resource('/permits', Permit::class);
+    Route::resource('/userCatalog', UserCatalog::class)->only(['index']);
+});
+
+// Rutas de autenticación generadas por Auth::routes();
 Auth::routes();
-
-Route::resource('/profile', ProfileController::class)->only(['index']);
-Route::resource('/permits', Permit::class);
-Route::resource('/userCatalog', UserCatalog::class)->only(['index']);
-
-
-

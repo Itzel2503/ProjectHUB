@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Permit extends Controller
 {
@@ -13,7 +14,11 @@ class Permit extends Controller
      */
     public function index()
     {
-        return view('activitycontrol/permits/calendar');
+        if (Auth::check()) {
+            return view('activitycontrol/permits/calendar');
+        } else {
+            return redirect('/login');
+        }
     }
 
     /**

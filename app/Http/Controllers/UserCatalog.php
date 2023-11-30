@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserCatalog extends Controller
 {
@@ -13,7 +14,11 @@ class UserCatalog extends Controller
      */
     public function index()
     {
-        return view('userCatalog/user-catalog');
+        if (Auth::check()) {
+            return view('userCatalog/user-catalog');
+        } else {
+            return redirect('/login');
+        }
     }
 
     /**

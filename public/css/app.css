@@ -2669,22 +2669,305 @@ video {
 .list-none	{list-style-type: none;}
 .list-disc	{list-style-type: disc;}
 .list-decimal	{list-style-type: decimal;}
-/* Text Align */
-/* Text Color */
-/* Text Decoration */
-/* Text Decoration Color */
-/* Text Decoration Style */
-/* Text Decoration Thickness */
-/* Text Underline Offset */
-/* Text Transform */
-/* Text Overflow */
-/* Text Indent */
-/* Vertical Align */
-/* Whitespace */
-/* Word Break */
-/* Hyphens */
-/* Content */
+/* Text Align: Utilities for controlling the alignment of text. */
+.text-left	{text-align: left;}
+.text-center	{text-align: center;}
+.text-right	{text-align: right;}
+.text-justify	{text-align: justify;}
+.text-start	{text-align: start;}
+.text-end	{text-align: end;}
+/* Text Color: Utilities for controlling the text color of an element. */
+.text-inherit	{color: inherit;}
+.text-current	{color: currentColor;}
+.text-transparent	{color: transparent;}
+.text-black {
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+.text-white {
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.text-main {
+  --tw-text-opacity: 1;
+  color: rgb(79 174 173 / var(--tw-text-opacity));
+}
+.text-main-fund {
+  --tw-text-opacity: 1;
+  color: rgb(223 241 242 / var(--tw-text-opacity));
+}
+.text-secondary {
+  --tw-text-opacity: 1;
+  color: rgb(0 98 204 / var(--tw-text-opacity));
+}
+.text-secondary-fund {
+  --tw-text-opacity: 1;
+  color: rgb(50 77 87 / var(--tw-text-opacity));
+}
+.text-yellow {
+  --tw-text-opacity: 1;
+  color: rgb(246 192 62 / var(--tw-text-opacity));
+}
+.text-red {
+  --tw-text-opacity: 1;
+  color: rgb(221 66 49 / var(--tw-text-opacity));
+}
+.text-gray-500 {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+/* Text Decoration: Utilities for controlling the decoration of text. */
+.underline	{text-decoration-line: underline;}
+.overline	{text-decoration-line: overline;}
+.line-through	{text-decoration-line: line-through;}
+.no-underline	{text-decoration-line: none;}
+/* Text Decoration Color: Utilities for controlling the color of text decorations. */
+.decoration-inherit	{text-decoration-color: inherit;}
+.decoration-current	{text-decoration-color: currentColor;}
+.decoration-transparent	{text-decoration-color: transparent;}
+.decoration-black	{text-decoration-color: #000;}
+.decoration-white	{text-decoration-color: #fff;}
+.decoration-main	{text-decoration-color: #4faead;}
+.decoration-main-fund	{text-decoration-color: #dff1f2;}
+.decoration-secondary	{text-decoration-color: #0062cc;}
+.decoration-secondary-fund	{text-decoration-color: #324d57;}
+.decoration-yellow	{text-decoration-color: #f6c03e;}
+.decoration-red	{text-decoration-color: #dd4231;}
+.decoration-gray-500	{text-decoration-color: #6b7280;}
+/* Text Decoration Style: Utilities for controlling the style of text decorations. */
+.decoration-solid	{text-decoration-style: solid;}
+.decoration-double	{text-decoration-style: double;}
+.decoration-dotted	{text-decoration-style: dotted;}
+.decoration-dashed	{text-decoration-style: dashed;}
+.decoration-wavy	{text-decoration-style: wavy;}
+/* Text Decoration Thickness: Utilities for controlling the thickness of text decorations. */
+.decoration-auto	{text-decoration-thickness: auto;}
+.decoration-from-font	{text-decoration-thickness: from-font;}
+.decoration-0	{text-decoration-thickness: 0px;}
+.decoration-1	{text-decoration-thickness: 1px;}
+.decoration-2	{text-decoration-thickness: 2px;}
+.decoration-4	{text-decoration-thickness: 4px;}
+.decoration-8	{text-decoration-thickness: 8px;}
+/* Text Underline Offset: Utilities for controlling the offset of a text underline. */
+.underline-offset-auto	{text-underline-offset: auto;}
+.underline-offset-0	{text-underline-offset: 0px;}
+.underline-offset-1	{text-underline-offset: 1px;}
+.underline-offset-2	{text-underline-offset: 2px;}
+.underline-offset-4	{text-underline-offset: 4px;}
+.underline-offset-8	{text-underline-offset: 8px;}
+/* Text Transform: Utilities for controlling the transformation of text. */
+.uppercase	{text-transform: uppercase;}
+.lowercase	{text-transform: lowercase;}
+.capitalize	{text-transform: capitalize;}
+.normal-case	{text-transform: none;}
+/* Text Overflow: Utilities for controlling text overflow in an element. */
+.truncate	{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.text-ellipsis	{text-overflow: ellipsis;}
+.text-clip	{text-overflow: clip;}
+/* Text Indent: Utilities for controlling the amount of empty space shown before text in a block. */
+.indent-0	{text-indent: 0px;}
+.indent-px	{text-indent: 1px;}
+.indent-1	{text-indent: 0.25rem;} /* 4px */
+.indent-2	{text-indent: 0.5rem;} /* 8px */
+.indent-3	{text-indent: 0.75rem;} /* 12px */
+.indent-4	{text-indent: 1rem;} /* 16px */
+.indent-5	{text-indent: 1.25rem;} /* 20px */
+.indent-6	{text-indent: 1.5rem;} /* 24px */
+.indent-7	{text-indent: 1.75rem;} /* 28px */
+.indent-8	{text-indent: 2rem;} /* 32px */
+.indent-9	{text-indent: 2.25rem;} /* 36px */
+.indent-10	{text-indent: 2.5rem;} /* 40px */
+.indent-11	{text-indent: 2.75rem;} /* 44px */
+.indent-12	{text-indent: 3rem;} /* 48px */
+.indent-14	{text-indent: 3.5rem;} /* 56px */
+.indent-16	{text-indent: 4rem;} /* 64px */
+.indent-20	{text-indent: 5rem;} /* 80px */
+.indent-24	{text-indent: 6rem;} /* 96px */
+.indent-28	{text-indent: 7rem;} /* 112px */
+.indent-32	{text-indent: 8rem;} /* 128px */
+.indent-36	{text-indent: 9rem;} /* 144px */
+.indent-40	{text-indent: 10rem;} /* 160px */
+.indent-44	{text-indent: 11rem;} /* 176px */
+.indent-48	{text-indent: 12rem;} /* 192px */
+.indent-56	{text-indent: 14rem;} /* 224px */
+.indent-52	{text-indent: 13rem;} /* 208px */
+.indent-60	{text-indent: 15rem;} /* 240px */
+.indent-64	{text-indent: 16rem;} /* 256px */
+.indent-72	{text-indent: 18rem;} /* 288px */
+.indent-80	{text-indent: 20rem;} /* 320px */
+.indent-96	{text-indent: 24rem;} /* 384px */
+/* Vertical Align: Utilities for controlling the vertical alignment of an inline or table-cell box. */
+.align-baseline	{vertical-align: baseline;}
+.align-top	{vertical-align: top;}
+.align-middle	{vertical-align: middle;}
+.align-bottom	{vertical-align: bottom;}
+.align-text-top	{vertical-align: text-top;}
+.align-text-bottom	{vertical-align: text-bottom;}
+.align-sub	{vertical-align: sub;}
+.align-super	{vertical-align: super;}
+/* Whitespace: Utilities for controlling an element's white-space property. */
+.whitespace-normal	{white-space: normal;}
+.whitespace-nowrap	{white-space: nowrap;}
+.whitespace-pre	{white-space: pre;}
+.whitespace-pre-line	{white-space: pre-line;}
+.whitespace-pre-wrap	{white-space: pre-wrap;}
+.whitespace-break-spaces	{white-space: break-spaces;}
+/* Word Break: Utilities for controlling word breaks in an element. */
+.break-normal	{
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.break-words	{overflow-wrap: break-word;}
+.break-all	{word-break: break-all;}
+.break-keep	{word-break: keep-all;}
+/* Hyphens: Utilities for controlling how words should be hyphenated. */
+.hyphens-none	{hyphens: none;}
+.hyphens-manual	{hyphens: manual;}
+.hyphens-auto	{hyphens: auto;}
+/* Content: Utilities for controlling the content of the before and after pseudo-elements. */
+.content-none	{content: none;}
 /*-------------------- BACKGROUNDS --------------------*/
+/* Background Attachment: Utilities for controlling how a background image behaves when scrolling. */
+.bg-fixed	{background-attachment: fixed;}
+.bg-local	{background-attachment: local;}
+.bg-scroll	{background-attachment: scroll;}
+/* Background Clip: Utilities for controlling the bounding box of an element's background. */
+.bg-clip-border	{background-clip: border-box;}
+.bg-clip-padding	{background-clip: padding-box;}
+.bg-clip-content	{background-clip: content-box;}
+.bg-clip-text	{background-clip: text;}
+/* Background Color: Utilities for controlling an element's background color. */
+.bg-inherit	{background-color: inherit;}
+.bg-current	{background-color: currentColor;}
+.bg-transparent	{background-color: transparent;}
+.bg-black	{background-color: rgb(0 0 0);}
+.bg-white	{background-color: rgb(255 255 255);}
+.bg-main {
+  --tw-bg-opacity: 1;
+  background-color: rgb(79 174 173 / var(--tw-bg-opacity));
+}
+.bg-main-fund {
+  --tw-bg-opacity: 1;
+  background-color: rgb(223 241 242 / var(--tw-bg-opacity));
+}
+.bg-secondary {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 98 204 / var(--tw-bg-opacity));
+}
+.bg-secondary-fund {
+  --tw-bg-opacity: 1;
+  background-color: rgb(50 77 87 / var(--tw-bg-opacity));
+}
+.bg-yellow {
+  --tw-bg-opacity: 1;
+  background-color: rgb(246 192 62 / var(--tw-bg-opacity));
+}
+.bg-red {
+  --tw-bg-opacity: 1;
+  background-color: rgb(221 66 49 / var(--tw-bg-opacity));
+}
+.bg-gray-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
+}
+/* Background Origin: Utilities for controlling how an element's background is positioned relative to borders, padding, and content. */
+.bg-origin-border	{background-origin: border-box;}
+.bg-origin-padding	{background-origin: padding-box;}
+.bg-origin-content	{background-origin: content-box;}
+/* Background Position: Utilities for controlling the position of an element's background image. */
+.bg-bottom	{background-position: bottom;}
+.bg-center	{background-position: center;}
+.bg-left	{background-position: left;}
+.bg-left-bottom	{background-position: left bottom;}
+.bg-left-top	{background-position: left top;}
+.bg-right	{background-position: right;}
+.bg-right-bottom	{background-position: right bottom;}
+.bg-right-top	{background-position: right top;}
+.bg-top	{background-position: top;}
+/* Background Repeat: Utilities for controlling the repetition of an element's background image. */
+.bg-repeat	{background-repeat: repeat;}
+.bg-no-repeat	{background-repeat: no-repeat;}
+.bg-repeat-x	{background-repeat: repeat-x;}
+.bg-repeat-y	{background-repeat: repeat-y;}
+.bg-repeat-round	{background-repeat: round;}
+.bg-repeat-space	{background-repeat: space;}
+/* Background Size: Utilities for controlling the background size of an element's background image. */
+.bg-auto	{background-size: auto;}
+.bg-cover	{background-size: cover;}
+.bg-contain	{background-size: contain;}
+/* Background Image: Utilities for controlling an element's background image. */
+.bg-none	{background-image: none;}
+.bg-gradient-to-t	{background-image: linear-gradient(to top, var(--tw-gradient-stops));}
+.bg-gradient-to-tr	{background-image: linear-gradient(to top right, var(--tw-gradient-stops));}
+.bg-gradient-to-r	{background-image: linear-gradient(to right, var(--tw-gradient-stops));}
+.bg-gradient-to-br	{background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));}
+.bg-gradient-to-b	{background-image: linear-gradient(to bottom, var(--tw-gradient-stops));}
+.bg-gradient-to-bl	{background-image: linear-gradient(to bottom left, var(--tw-gradient-stops));}
+.bg-gradient-to-l	{background-image: linear-gradient(to left, var(--tw-gradient-stops));}
+.bg-gradient-to-tl	{background-image: linear-gradient(to top left, var(--tw-gradient-stops));}
+/* Background Color Stops: Utilities for controlling the color stops in background gradients. */
+.from-inherit	{
+  --tw-gradient-from: inherit var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-current	{
+  --tw-gradient-from: currentColor var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-transparent	{
+  --tw-gradient-from: transparent var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-black {	
+  --tw-gradient-from: #000 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-white	{
+  --tw-gradient-from: #fff var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-main	{
+  --tw-gradient-from: #4faead var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(79 174 173 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-main-fund	{
+  --tw-gradient-from: #dff1f2 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(223 241 242 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-secondary	{
+  --tw-gradient-from: #0062cc var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(0 98 204 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-secondary-fund	{
+  --tw-gradient-from: #324d57 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(50 77 87 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-yellow	{
+  --tw-gradient-from: #f6c03e var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(246 192 62 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-red	{
+  --tw-gradient-from: #dd4231 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(221 66 49 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-gray-500	{
+  --tw-gradient-from: #6b7280 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(107 114 128 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
 /*-------------------- BORDERS --------------------*/
 /*-------------------- EFFECTS --------------------*/
 /*-------------------- FILTERS --------------------*/
@@ -2694,6 +2977,10 @@ video {
 /*-------------------- INTERACTIVITY --------------------*/
 /*-------------------- SVG --------------------*/
 /*-------------------- ACCESSIBILITY --------------------*/
+.bg-opacity-50 {
+  --tw-bg-opacity: 0.5;
+}
+
 .origin-\[0\] {
   transform-origin: 0;
 }
@@ -2803,54 +3090,6 @@ video {
 .border-transparent {
   border-color: transparent;
 }
-.bg-white {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-.bg-black {
-  --tw-bg-opacity: 1;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
-}
-.bg-main {
-  --tw-bg-opacity: 1;
-  background-color: rgb(79 174 173 / var(--tw-bg-opacity));
-}
-.bg-main-fund {
-  --tw-bg-opacity: 1;
-  background-color: rgb(223 241 242 / var(--tw-bg-opacity));
-}
-.bg-secondary {
-  --tw-bg-opacity: 1;
-  background-color: rgb(0 98 204 / var(--tw-bg-opacity));
-}
-.bg-secondary-fund {
-  --tw-bg-opacity: 1;
-  background-color: rgb(50 77 87 / var(--tw-bg-opacity));
-}
-.bg-yellow {
-  --tw-bg-opacity: 1;
-  background-color: rgb(246 192 62 / var(--tw-bg-opacity));
-}
-.bg-red {
-  --tw-bg-opacity: 1;
-  background-color: rgb(221 66 49 / var(--tw-bg-opacity));
-}
-.bg-gray-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
-}
-.bg-transparent {
-  background-color: transparent;
-}
-.bg-opacity-50 {
-  --tw-bg-opacity: 0.5;
-}
-.bg-cover {
-  background-size: cover;
-}
-.bg-no-repeat {
-  background-repeat: no-repeat;
-}
 .text-center {
   text-align: center;
 }
@@ -2865,42 +3104,6 @@ video {
 }
 .leading-snug {
   line-height: 1.375;
-}
-.text-white {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-.text-black {
-  --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity));
-}
-.text-main {
-  --tw-text-opacity: 1;
-  color: rgb(79 174 173 / var(--tw-text-opacity));
-}
-.text-main-fund {
-  --tw-text-opacity: 1;
-  color: rgb(223 241 242 / var(--tw-text-opacity));
-}
-.text-secondary {
-  --tw-text-opacity: 1;
-  color: rgb(0 98 204 / var(--tw-text-opacity));
-}
-.text-secondary-fund {
-  --tw-text-opacity: 1;
-  color: rgb(50 77 87 / var(--tw-text-opacity));
-}
-.text-yellow {
-  --tw-text-opacity: 1;
-  color: rgb(246 192 62 / var(--tw-text-opacity));
-}
-.text-red {
-  --tw-text-opacity: 1;
-  color: rgb(221 66 49 / var(--tw-text-opacity));
-}
-.text-gray-500 {
-  --tw-text-opacity: 1;
-  color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 .underline {
   text-decoration-line: underline;
