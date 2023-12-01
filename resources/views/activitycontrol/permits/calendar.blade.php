@@ -29,16 +29,31 @@ text-yellow
     </div>
 </div>
 
+{{-- MODAL EDIT / CREATE --}}
+@include('/activitycontrol/permits/modal/create')
+
+<script src='fullcalendar/core/index.global.js'></script>
+<script src='fullcalendar/core/locales/es.global.js'></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
+            locale: 'es',
             timeZone: 'UTC',
             initialView: 'dayGridMonth',
             events: '/api/demo-feeds/events.json',
+
             editable: true,
             selectable: true,
+
+            eventTimeFormat: { // like '14:30:00'
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false
+            },
+
             headerToolbar: {
                 start: 'dayGridMonth,timeGridWeek,timeGridDay',
                 center: 'title',
@@ -49,6 +64,92 @@ text-yellow
                 center: '',
                 end: 'prev,next'
             },
+
+            eventClick: function(info) {
+                var eventObj = info.event;
+
+                if (eventObj.url) {
+                    alert(
+                    'Clicked ' + eventObj.title + '.\n' +
+                    'Will open ' + eventObj.url + ' in a new tab'
+                    );
+
+                    window.open(eventObj.url);
+
+                    info.jsEvent.preventDefault(); // prevents browser from following link in current tab.
+                } else {
+                    alert('Clicked ' + eventObj.title);
+                }
+            },
+
+            dateClick: function(info) {
+                let modalCreateEdit = document.getElementById('modal_create_edit');
+                modalCreateEdit.classList.remove('hidden');
+                modalCreateEdit.classList.add('block');
+                console.log(info);
+
+                // var dateStr = prompt('Seleccionaste' + info.startStr + 'a' + info.endStr);
+                // var date = new Date(dateStr + 'T00:00:00'); // will be in local time
+
+                /* if (!isNaN(date.valueOf())) { // valid?
+                    calendar.addEvent({
+                    title: 'dynamic event',
+                    start: date,
+                    allDay: true
+                    });
+                    alert('Great. Now, update your database...');
+                } else {
+                    alert('Invalid date.');
+                } */
+            },
+            
+            events: [
+                {
+                    title: 'All Day Event',
+                    start: '2023-12-01'
+                },
+                {
+                    title: 'Long Event',
+                    start: '2023-12-07',
+                    end: '2023-12-10',
+                    color: 'purple' // override!
+                },
+                {
+                    title: 'Conference',
+                    start: '2023-12-07',
+                    end: '2023-12-10',
+                    color: 'yellow' // override!
+                },
+                {
+                    groupId: '999',
+                    title: 'Repeating Event',
+                    start: '2023-12-09T16:00:00'
+                },
+                {
+                    groupId: '999',
+                    title: 'Repeating Event',
+                    start: '2023-12-16T16:00:00'
+                },
+                {
+                    title: 'Meeting',
+                    start: '2023-12-12T10:30:00',
+                    end: '2023-12-12T12:30:00'
+                },
+                {
+                    title: 'Lunch',
+                    start: '2023-12-12T12:00:00'
+                },
+                {
+                    title: 'Meeting',
+                    start: '2023-12-12T14:30:00',
+                    color: 'purple' // override!
+                },
+                {
+                    title: 'Click for Google',
+                    url: 'https://google.com/',
+                    start: '2023-12-28'
+                }
+            ]
         });
 
         calendar.render();

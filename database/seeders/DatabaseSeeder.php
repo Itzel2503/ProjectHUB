@@ -4,7 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\Area;
 use App\Models\Permit;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -45,6 +48,15 @@ class DatabaseSeeder extends Seeder
         ]);
         Permit::create([
             'name' => 'Tiempo extra'
+        ]);
+        User::create([
+            'name' => 'Kircof',
+            'lastname' => 'admin',
+            'email' => 'admin@kircof.com',
+            'password' => Hash::make('Arten.123!'),
+            'type_user' => '1',
+            'date_birthday' => Carbon::now(),
+            'area_id' => '1',
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permit as Permits;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +16,9 @@ class Permit extends Controller
     public function index()
     {
         if (Auth::check()) {
-            return view('activitycontrol/permits/calendar');
+            $permits = Permits::all();
+            
+            return view('activitycontrol/permits/calendar')->with('permits', $permits);
         } else {
             return redirect('/login');
         }
