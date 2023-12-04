@@ -13,7 +13,7 @@
             <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
                 <div class="w-full sm:w-3/5 md-3/4 mb-5 mt-5 flex flex-col">
                     <div class="-mx-3 md:flex mb-6">
-                        <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                        <div class="md:w-1/2 flex flex-col px-3">
                             <h5 class="inline-flex font-semibold mb-3" for="name">
                                 Tipo de permiso a solicitar:
                             </h5>
@@ -25,31 +25,32 @@
                             </select>                                
                         </div>
                     </div>
+
+                    {{-- LIVEWIRE PERMITS --}}
+                    <div id="permit1" style="display:none;">
+                        @include('/activitycontrol/permits/modal/permit1')
+                    </div>
+
+                    <div id="permit2" style="display:none;">
+                        <h1>Horas fuera de oficina</h1>
+                    </div>
+
+                    <div id="permit3" style="display:none;">
+                        <h1>Permiso de ausencia</h1>
+                    </div>
+
+                    <div id="permit4" style="display:none;">
+                        <h1>Vacaciones</h1>
+                    </div>
+
+                    <div id="permit5" style="display:none;">
+                        <h1>Tiempo extra</h1>
+                    </div>
+
+                    <div class="flex justify-center items-center py-6 bg-main-fund">
+                        <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer"> Guardar </button>
+                    </div>
                 </div>
-            </div>
-
-            <div id="permit1" style="display:none;">
-                <h1>Home Office</h1>
-            </div>
-
-            <div id="permit2" style="display:none;">
-                <h1>Horas fuera de oficina</h1>
-            </div>
-
-            <div id="permit3" style="display:none;">
-                <h1>Permiso de ausencia</h1>
-            </div>
-
-            <div id="permit4" style="display:none;">
-                <h1>Vacaciones</h1>
-            </div>
-
-            <div id="permit5" style="display:none;">
-                <h1>Tiempo extra</h1>
-            </div>
-
-            <div class="flex justify-center items-center py-6 bg-main-fund">
-                <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer"> Guardar </button>
             </div>
         </div>
     </div>

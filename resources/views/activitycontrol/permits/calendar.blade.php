@@ -29,7 +29,7 @@ text-yellow
     </div>
 </div>
 
-{{-- MODAL EDIT / CREATE --}}
+{{-- MODAL CREATE --}}
 @include('/activitycontrol/permits/modal/create')
 
 <script src='fullcalendar/core/index.global.js'></script>
@@ -44,6 +44,9 @@ text-yellow
             timeZone: 'UTC',
             initialView: 'dayGridMonth',
             events: '/api/demo-feeds/events.json',
+
+            eventColor: "#4faead",
+            eventTextColor: '#000000',
 
             editable: true,
             selectable: true,
@@ -87,6 +90,7 @@ text-yellow
                 modalCreateEdit.classList.remove('hidden');
                 modalCreateEdit.classList.add('block');
                 console.log(info);
+                let date = document.getElementById('date').innerText = info.dateStr;
 
                 // var dateStr = prompt('Seleccionaste' + info.startStr + 'a' + info.endStr);
                 // var date = new Date(dateStr + 'T00:00:00'); // will be in local time
