@@ -9,6 +9,13 @@ class HomeOffice extends Model
 {
     use HasFactory;
 
+    const FAMILY = 'FAMILY';
+    const PERSONAL = 'PERSONAL';
+    const DISEASE = 'DISEASE';
+    const MEDICAL = 'MEDICAL';
+    const LEGAL = 'LEGAL';
+    const OTHER = 'OTHER';
+
     public function permits()
     {
         return $this->belongsTo(Permits::class);

@@ -17,9 +17,17 @@ class CreateOutOfOfficeHoursTable extends Migration
         Schema::create('out_of_office_hours', function (Blueprint $table) {
             $table->id();
             $table->enum('type', [
-                OutOfOfficeHours::LATE_ARRIVAL,
-                OutOfOfficeHours::EARLY_DEPARTURE,
-                OutOfOfficeHours::HOURS_BETWEEN_SHIFTS,
+                OutOfOfficeHours::LATE,
+                OutOfOfficeHours::EARLY,
+                OutOfOfficeHours::BETWEEN,
+            ]);
+            $table->enum('reason', [
+                OutOfOfficeHours::FAMILY,
+                OutOfOfficeHours::PERSONAL,
+                OutOfOfficeHours::DISEASE,
+                OutOfOfficeHours::MEDICAL,
+                OutOfOfficeHours::LEGAL,
+                OutOfOfficeHours::OTHER,
             ]);
             $table->date('date');
             $table->float('take_hours');

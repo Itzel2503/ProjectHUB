@@ -3099,12 +3099,6 @@ video {
 .align-baseline {
   vertical-align: baseline;
 }
-.leading-5 {
-  line-height: 1.25rem;
-}
-.leading-snug {
-  line-height: 1.375;
-}
 .underline {
   text-decoration-line: underline;
 }

@@ -9,9 +9,15 @@ class OutOfOfficeHours extends Model
 {
     use HasFactory;
 
-    const LATE_ARRIVAL = 'Llegada tarde';
-    const EARLY_DEPARTURE = 'Salida temprano';
-    const HOURS_BETWEEN_SHIFTS = 'Horas entre turno';
+    const LATE = 'LATE';
+    const EARLY = 'EARLY';
+    const BETWEEN = 'BETWEEN';
+    const FAMILY = 'FAMILY';
+    const PERSONAL = 'PERSONAL';
+    const DISEASE = 'DISEASE';
+    const MEDICAL = 'MEDICAL';
+    const LEGAL = 'LEGAL';
+    const OTHER = 'OTHER';
 
     public function permits()
     {

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HomeOffice;
+use App\Models\OutOfOfficeHours;
 use App\Models\Permit as Permits;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,9 +19,42 @@ class Permit extends Controller
     public function index()
     {
         if (Auth::check()) {
+            // MODAL CREATE
             $permits = Permits::all();
             
-            return view('activitycontrol/permits/calendar')->with('permits', $permits);
+            //MODAL PERMIT1 Y PERMIT2
+            $motiveOptions = [
+                HomeOffice::FAMILY => 'Situación familiar',
+                HomeOffice::PERSONAL => 'Situación personal',
+                HomeOffice::DISEASE => 'Enfermedad',
+                HomeOffice::MEDICAL => 'Trámites médicos',
+                HomeOffice::LEGAL => 'Trámites legales',
+                HomeOffice::OTHER => 'Otro',
+            ];
+
+            //MODAL PERMIT2
+            $typeHours = [
+                OutOfOfficeHours::LATE => 'Llegada tarde',
+                OutOfOfficeHours::EARLY => 'Salida tamprano',
+                OutOfOfficeHours::BETWEEN => 'Horas entre turno',
+            ];
+            
+            $users = User::all();
+            foreach ($users as $key => $user) {
+                if ($user->id === Auth::user()->id) {
+                    unset($users[$key]);
+                }
+            }
+
+            $takeHours = [];
+            for ($i=0; $i < 7; $i++) { 
+                $takeHours[$i] = $i + 1;
+            }
+            //MODAL PERMIT3
+            //MODAL PERMIT4
+            //MODAL PERMIT5
+
+            return view('activitycontrol.permits.calendar', compact('permits', 'motiveOptions', 'users', 'typeHours','takeHours'));
         } else {
             return redirect('/login');
         }

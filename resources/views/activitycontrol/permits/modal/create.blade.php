@@ -32,23 +32,23 @@
                     </div>
 
                     <div id="permit2" style="display:none;">
-                        <h1>Horas fuera de oficina</h1>
+                        @include('/activitycontrol/permits/modal/permit2')
                     </div>
 
                     <div id="permit3" style="display:none;">
-                        <h1>Permiso de ausencia</h1>
+                        @include('/activitycontrol/permits/modal/permit3')
                     </div>
 
                     <div id="permit4" style="display:none;">
-                        <h1>Vacaciones</h1>
+                        @include('/activitycontrol/permits/modal/permit4')
                     </div>
 
                     <div id="permit5" style="display:none;">
-                        <h1>Tiempo extra</h1>
+                        @include('/activitycontrol/permits/modal/permit5')
                     </div>
 
                     <div class="flex justify-center items-center py-6 bg-main-fund">
-                        <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer"> Guardar </button>
+                        <button id="btn_save" class="hidden px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer"> Guardar </button>
                     </div>
                 </div>
             </div>
@@ -59,10 +59,12 @@
 <script>
     let closeModal = document.getElementById('close_modal');
     let modalCreateEdit = document.getElementById('modal_create_edit');
+    let btnSave = document.getElementById('btn_save');
 
     closeModal.addEventListener('click', function() {
         modalCreateEdit.classList.add('hidden');
         modalCreateEdit.classList.remove('block');
+        
     });
 </script>
 
@@ -74,18 +76,23 @@
         switch (selectValue) {
             case 1:
                 mostrarVista('permit1');
+                btnSave.classList.remove('hidden');
                 break;
             case 2:
                 mostrarVista('permit2');
+                btnSave.classList.remove('hidden');
                 break;
             case 3:
                 mostrarVista('permit3');
+                btnSave.classList.remove('hidden');
                 break;
             case 4:
                 mostrarVista('permit4');
+                btnSave.classList.remove('hidden');
                 break;
             case 5:
                 mostrarVista('permit5');
+                btnSave.classList.remove('hidden');
                 break;
             default:
                 console.error('Valor no reconocido:', selectValue);
