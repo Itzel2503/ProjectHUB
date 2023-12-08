@@ -16,7 +16,14 @@ class CreateLeaveAbsencesTable extends Migration
     {
         Schema::create('leave_absences', function (Blueprint $table) {
             $table->id();
-            $table->string('reason');
+            $table->enum('reason', [
+                LeaveAbsence::FAMILY,
+                LeaveAbsence::PERSONAL,
+                LeaveAbsence::DISEASE,
+                LeaveAbsence::MEDICAL,
+                LeaveAbsence::LEGAL,
+                LeaveAbsence::OTHER,
+            ]);
             $table->date('date');
             $table->enum('salary', [
                 LeaveAbsence::WITH_PAY,

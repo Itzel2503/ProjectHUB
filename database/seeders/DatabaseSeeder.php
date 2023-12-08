@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Permiso de ausencia'
         ]);
         Permit::create([
-            'name' => 'Vacaiones'
+            'name' => 'Vacaciones'
         ]);
         Permit::create([
             'name' => 'Tiempo extra'

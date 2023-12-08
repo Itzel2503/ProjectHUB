@@ -9,8 +9,15 @@ class LeaveAbsence extends Model
 {
     use HasFactory;
 
-    const WITH_PAY = 'Con goce de sueldo';
-    const WITHOUT_PAY = 'Sin goce de sueldo';
+    const FAMILY = 'FAMILY';
+    const PERSONAL = 'PERSONAL';
+    const DISEASE = 'DISEASE';
+    const MEDICAL = 'MEDICAL';
+    const LEGAL = 'LEGAL';
+    const OTHER = 'OTHER';
+
+    const WITH_PAY = 'WITH_PAY';
+    const WITHOUT_PAY = 'WITHOUT_PAY';
 
     public function permits()
     {

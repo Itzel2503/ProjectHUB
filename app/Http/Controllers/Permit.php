@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\HomeOffice;
+use App\Models\LeaveAbsence;
 use App\Models\OutOfOfficeHours;
 use App\Models\Permit as Permits;
 use App\Models\User;
@@ -38,6 +39,12 @@ class Permit extends Controller
                 OutOfOfficeHours::EARLY => 'Salida tamprano',
                 OutOfOfficeHours::BETWEEN => 'Horas entre turno',
             ];
+
+            //MODAL PERMIT3
+            $salaryPermits = [
+                LeaveAbsence::WITH_PAY => 'Con goce de sueldo (Se descuenta un día de vacaciones o días autorizados)',
+                LeaveAbsence::WITHOUT_PAY => 'Sin goce de sueldo',
+            ];
             
             $users = User::all();
             foreach ($users as $key => $user) {
@@ -54,7 +61,7 @@ class Permit extends Controller
             //MODAL PERMIT4
             //MODAL PERMIT5
 
-            return view('activitycontrol.permits.calendar', compact('permits', 'motiveOptions', 'users', 'typeHours','takeHours'));
+            return view('activitycontrol.permits.calendar', compact('permits', 'motiveOptions', 'users', 'typeHours','takeHours', 'salaryPermits'));
         } else {
             return redirect('/login');
         }

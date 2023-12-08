@@ -90,7 +90,10 @@ text-yellow
                 modalCreateEdit.classList.remove('hidden');
                 modalCreateEdit.classList.add('block');
                 console.log(info);
-                let date = document.querySelectorAll('.date').innerText = info.dateStr;
+                let dateElements = document.querySelectorAll('.date');
+                dateElements.forEach(function(element) {
+                    element.innerText = info.dateStr;
+                });
 
                 // var dateStr = prompt('Seleccionaste' + info.startStr + 'a' + info.endStr);
                 // var date = new Date(dateStr + 'T00:00:00'); // will be in local time

@@ -73,24 +73,41 @@
         var selectPermit = document.getElementById('permits');
         var selectValue = parseInt(selectPermit.value, 10);
 
+        function resetOtherInputFields(selectedInputId) {
+            var inputs = document.querySelectorAll('input:not(#' + selectedInputId + ')');
+            inputs.forEach(function(input) {
+                input.value = '';
+            });
+
+            var selects = document.querySelectorAll('select:not(#' + selectedSelectId + ')');
+            selects.forEach(function(select) {
+                select.selectedIndex = 0; // Set the index to 0 for the default value
+            });
+        }
+
         switch (selectValue) {
             case 1:
+                resetOtherInputFields('permit1');
                 mostrarVista('permit1');
                 btnSave.classList.remove('hidden');
                 break;
             case 2:
+                resetOtherInputFields('permit2');
                 mostrarVista('permit2');
                 btnSave.classList.remove('hidden');
                 break;
             case 3:
+                resetOtherInputFields('permit3');
                 mostrarVista('permit3');
                 btnSave.classList.remove('hidden');
                 break;
             case 4:
+                resetOtherInputFields('permit4');
                 mostrarVista('permit4');
                 btnSave.classList.remove('hidden');
                 break;
             case 5:
+                resetOtherInputFields('permit5');
                 mostrarVista('permit5');
                 btnSave.classList.remove('hidden');
                 break;
@@ -108,5 +125,17 @@
         });
         
         document.getElementById(idVista).style.display = 'block';
+    }
+</script>
+
+<script>
+    function validateNumberInput(input) {
+        input.value = input.value.replace(/[^0-9.]/g, '');
+
+        // If there are more than one decimal points, remove the extra ones
+        let decimalCount = (input.value.match(/\./g) || []).length;
+        if (decimalCount > 1) {
+            input.value = input.value.replace(/\.+$/, '');
+        }
     }
 </script>
