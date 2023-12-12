@@ -3348,7 +3348,1040 @@ video {
   }
 }
 @media (min-width: 640px) {
+  /*-------------------- SPACING --------------------*/
+  /* Padding: Utilities for controlling an element's padding. */
+  .sm\:p-0 {padding: 0px;}
+  .sm\:px-0 {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .sm\:py-0 {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .sm\:ps-0 {padding-inline-start: 0px;}
+  .sm\:pe-0 {padding-inline-end: 0px;}
+  .sm\:pt-0 {padding-top: 0px;}
+  .sm\:pr-0 {padding-right: 0px;}
+  .sm\:pb-0 {padding-bottom: 0px;}
+  .sm\:pl-0 {padding-left: 0px;}
+  .sm\:p1 {padding: 0.25rem;}
+  .sm\:px-1 {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem; /* 4px */
+  }
+  .sm\:py-1 {
+    padding-top: 0.25rem; /* 4px */
+    padding-bottom: 0.25rem; /* 4px */
+  }
+  .sm\:ps-1 {padding-inline-start: 0.25rem; /* 4px */}
+  .sm\:pe-1	{padding-inline-end: 0.25rem; /* 4px */}
+  .sm\:pt-1 {padding-top: 0.25rem; /* 4px */}
+  .sm\:pr-1	{padding-right: 0.25rem; /* 4px */}
+  .sm\:pb-1 {padding-bottom: 0.25rem; /* 4px */}
+  .sm\:pl-1 {padding-left: 0.25rem; /* 4px */}
+  .sm\:p-2	{padding: 0.5rem; /* 8px */}
+  .sm\:px-2	{
+    padding-left: 0.5rem; /* 8px */
+    padding-right: 0.5rem; /* 8px */
+  }
+  .sm\:py-2	{
+    padding-top: 0.5rem; /* 8px */
+    padding-bottom: 0.5rem; /* 8px */
+  }
+  .sm\:ps-2	{padding-inline-start: 0.5rem; /* 8px */}
+  .sm\:pe-2	{padding-inline-end: 0.5rem; /* 8px */}
+  .sm\:pt-2	{padding-top: 0.5rem; /* 8px */}
+  .sm\:pr-2	{padding-right: 0.5rem; /* 8px */}
+  .sm\:pb-2	{padding-bottom: 0.5rem; /* 8px */}
+  .sm\:pl-2	{padding-left: 0.5rem; /* 8px */}
+  .sm\:p-3	{padding: 0.75rem; /* 12px */}
+  .sm\:px-3	{
+    padding-left: 0.75rem; /* 12px */
+    padding-right: 0.75rem; /* 12px */
+  }
+  .sm\:py-3 {
+    padding-top: 0.75rem; /* 12px */
+    padding-bottom: 0.75rem; /* 12px */
+  }
+  .sm\:ps-3	{padding-inline-start: 0.75rem; /* 12px */}
+  .sm\:pe-3	{padding-inline-end: 0.75rem; /* 12px */}
+  .sm\:pt-3	{padding-top: 0.75rem; /* 12px */}
+  .sm\:pr-3	{padding-right: 0.75rem; /* 12px */}
+  .sm\:pb-3	{padding-bottom: 0.75rem; /* 12px */}
+  .sm\:pl-3	{padding-left: 0.75rem; /* 12px */}
+  .sm\:p-4	{padding: 1rem; /* 16px */}
+  .sm\:px-4 {
+    padding-left: 1rem; /* 16px */
+    padding-right: 1rem; /* 16px */
+  }
+  .sm\:py-4 {
+    padding-top: 1rem; /* 16px */
+    padding-bottom: 1rem; /* 16px */
+  }
+  .sm\:ps-4	{padding-inline-start: 1rem; /* 16px */}
+  .sm\:pe-4	{padding-inline-end: 1rem; /* 16px */}
+  .sm\:pt-4	{padding-top: 1rem; /* 16px */}
+  .sm\:pr-4	{padding-right: 1rem; /* 16px */}
+  .sm\:pb-4	{padding-bottom: 1rem; /* 16px */}
+  .sm\:pl-4	{padding-left: 1rem; /* 16px */}
+  .sm\:p-5	{padding: 1.25rem; /* 20px */}
+  .sm\:px-5	{
+    padding-left: 1.25rem; /* 20px */
+    padding-right: 1.25rem; /* 20px */
+  }
+  .sm\:py-5	{
+    padding-top: 1.25rem; /* 20px */
+    padding-bottom: 1.25rem; /* 20px */
+  }
+  .sm\:ps-5	{padding-inline-start: 1.25rem; /* 20px */}
+  .sm\:pe-5	{padding-inline-end: 1.25rem; /* 20px */}
+  .sm\:pt-5	{padding-top: 1.25rem; /* 20px */}
+  .sm\:pr-5	{padding-right: 1.25rem; /* 20px */}
+  .sm\:pb-5	{padding-bottom: 1.25rem; /* 20px */}
+  .sm\:pl-5	{padding-left: 1.25rem; /* 20px */}
+  .sm\:p-6	{padding: 1.5rem; /* 24px */}
+  .sm\:px-6	{
+    padding-left: 1.5rem; /* 24px */
+    padding-right: 1.5rem; /* 24px */
+  }
+  .sm\:py-6	{
+    padding-top: 1.5rem; /* 24px */
+    padding-bottom: 1.5rem; /* 24px */
+  }
+  .sm\:ps-6	{padding-inline-start: 1.5rem; /* 24px */}
+  .sm\:pe-6	{padding-inline-end: 1.5rem; /* 24px */}
+  .sm\:pt-6	{padding-top: 1.5rem; /* 24px */}
+  .sm\:pr-6	{padding-right: 1.5rem; /* 24px */}
+  .sm\:pb-6	{padding-bottom: 1.5rem; /* 24px */}
+  .sm\:pl-6	{padding-left: 1.5rem; /* 24px */}
+  .sm\:p-7	{padding: 1.75rem; /* 28px */}
+  .sm\:px-7	{
+    padding-left: 1.75rem; /* 28px */
+    padding-right: 1.75rem; /* 28px */
+  }
+  .sm\:py-7	{
+    padding-top: 1.75rem; /* 28px */
+    padding-bottom: 1.75rem; /* 28px */
+  }
+  .sm\:ps-7	{padding-inline-start: 1.75rem; /* 28px */}
+  .sm\:pe-7	{padding-inline-end: 1.75rem; /* 28px */}
+  .sm\:pt-7	{padding-top: 1.75rem; /* 28px */}
+  .sm\:pr-7	{padding-right: 1.75rem; /* 28px */}
+  .sm\:pb-7	{padding-bottom: 1.75rem; /* 28px */}
+  .sm\:pl-7	{padding-left: 1.75rem; /* 28px */}
+  .sm\:p-8	{padding: 2rem; /* 32px */}
+  .sm\:px-8	{
+    padding-left: 2rem; /* 32px */
+    padding-right: 2rem; /* 32px */
+  }
+  .sm\:py-8	{
+    padding-top: 2rem; /* 32px */
+    padding-bottom: 2rem; /* 32px */
+  }
+  .sm\:ps-8	{padding-inline-start: 2rem; /* 32px */}
+  .sm\:pe-8	{padding-inline-end: 2rem; /* 32px */}
+  .sm\:pt-8	{padding-top: 2rem; /* 32px */}
+  .sm\:pr-8	{padding-right: 2rem; /* 32px */}
+  .sm\:pb-8	{padding-bottom: 2rem; /* 32px */}
+  .sm\:pl-8	{padding-left: 2rem; /* 32px */}
+  .sm\:p-9	{padding: 2.25rem; /* 36px */}
+  .sm\:px-9	{
+    padding-left: 2.25rem; /* 36px */
+    padding-right: 2.25rem; /* 36px */
+  }
+  .sm\:py-9	{
+    padding-top: 2.25rem; /* 36px */
+    padding-bottom: 2.25rem; /* 36px */
+  }
+  .sm\:ps-9	{padding-inline-start: 2.25rem; /* 36px */}
+  .sm\:pe-9	{padding-inline-end: 2.25rem; /* 36px */}
+  .sm\:pt-9	{padding-top: 2.25rem; /* 36px */}
+  .sm\:pr-9	{padding-right: 2.25rem; /* 36px */}
+  .sm\:pb-9	{padding-bottom: 2.25rem; /* 36px */}
+  .sm\:pl-9	{padding-left: 2.25rem; /* 36px */}
+  .sm\:p-10	{padding: 2.5rem; /* 40px */}
+  .sm\:px-10	{
+    padding-left: 2.5rem; /* 40px */
+    padding-right: 2.5rem; /* 40px */
+  }
+  .sm\:py-10	{
+    padding-top: 2.5rem; /* 40px */
+    padding-bottom: 2.5rem; /* 40px */
+  }
+  .sm\:ps-10	{padding-inline-start: 2.5rem; /* 40px */}
+  .sm\:pe-10	{padding-inline-end: 2.5rem; /* 40px */}
+  .sm\:pt-10	{padding-top: 2.5rem; /* 40px */}
+  .sm\:pr-10	{padding-right: 2.5rem; /* 40px */}
+  .sm\:pb-10	{padding-bottom: 2.5rem; /* 40px */}
+  .sm\:pl-10	{padding-left: 2.5rem; /* 40px */}
+  .sm\:p-11	{padding: 2.75rem; /* 44px */}
+  .sm\:px-11	{
+    padding-left: 2.75rem; /* 44px */
+    padding-right: 2.75rem; /* 44px */
+  }
+  .sm\:py-11	{
+    padding-top: 2.75rem; /* 44px */
+    padding-bottom: 2.75rem; /* 44px */
+  }
+  .sm\:ps-11	{padding-inline-start: 2.75rem; /* 44px */}
+  .sm\:pe-11	{padding-inline-end: 2.75rem; /* 44px */}
+  .sm\:pt-11	{padding-top: 2.75rem; /* 44px */}
+  .sm\:pr-11	{padding-right: 2.75rem; /* 44px */}
+  .sm\:pb-11	{padding-bottom: 2.75rem; /* 44px */}
+  .sm\:pl-11	{padding-left: 2.75rem; /* 44px */}
+  .sm\:p-12	{padding: 3rem; /* 48px */}
+  .sm\:px-12	{
+    padding-left: 3rem; /* 48px */
+    padding-right: 3rem; /* 48px */
+  }
+  .sm\:py-12	{
+    padding-top: 3rem; /* 48px */
+    padding-bottom: 3rem; /* 48px */
+  }
+  .sm\:ps-12	{padding-inline-start: 3rem; /* 48px */}
+  .sm\:pe-12	{padding-inline-end: 3rem; /* 48px */}
+  .sm\:pt-12	{padding-top: 3rem; /* 48px */}
+  .sm\:pr-12	{padding-right: 3rem; /* 48px */}
+  .sm\:pb-12	{padding-bottom: 3rem; /* 48px */}
+  .sm\:pl-12	{padding-left: 3rem; /* 48px */}
+  .sm\:p-14	{padding: 3.5rem; /* 56px */}
+  .sm\:px-14	{
+    padding-left: 3.5rem; /* 56px */
+    padding-right: 3.5rem; /* 56px */
+  }
+  .sm\:py-14	{
+    padding-top: 3.5rem; /* 56px */
+    padding-bottom: 3.5rem; /* 56px */
+  }
+  .sm\:ps-14	{padding-inline-start: 3.5rem; /* 56px */}
+  .sm\:pe-14	{padding-inline-end: 3.5rem; /* 56px */}
+  .sm\:pt-14	{padding-top: 3.5rem; /* 56px */}
+  .sm\:pr-14	{padding-right: 3.5rem; /* 56px */}
+  .sm\:pb-14	{padding-bottom: 3.5rem; /* 56px */}
+  .sm\:pl-14	{padding-left: 3.5rem; /* 56px */}
+  .sm\:p-16	{padding: 4rem; /* 64px */}
+  .sm\:px-16	{
+    padding-left: 4rem; /* 64px */
+    padding-right: 4rem; /* 64px */
+  }
+  .sm\:py-16	{
+    padding-top: 4rem; /* 64px */
+    padding-bottom: 4rem; /* 64px */
+  }
+  .sm\:ps-16	{padding-inline-start: 4rem; /* 64px */}
+  .sm\:pe-16	{padding-inline-end: 4rem; /* 64px */}
+  .sm\:pt-16	{padding-top: 4rem; /* 64px */}
+  .sm\:pr-16	{padding-right: 4rem; /* 64px */}
+  .sm\:pb-16	{padding-bottom: 4rem; /* 64px */}
+  .sm\:pl-16	{padding-left: 4rem; /* 64px */}
+  .sm\:p-20	{padding: 5rem; /* 80px */}
+  .sm\:px-20	{
+    padding-left: 5rem; /* 80px */
+    padding-right: 5rem; /* 80px */
+  }
+  .sm\:py-20	{
+    padding-top: 5rem; /* 80px */
+    padding-bottom: 5rem; /* 80px */
+  }
+  .sm\:ps-20	{padding-inline-start: 5rem; /* 80px */}
+  .sm\:pe-20	{padding-inline-end: 5rem; /* 80px */}
+  .sm\:pt-20	{padding-top: 5rem; /* 80px */}
+  .sm\:pr-20	{padding-right: 5rem; /* 80px */}
+  .sm\:pb-20	{padding-bottom: 5rem; /* 80px */}
+  .sm\:pl-20	{padding-left: 5rem; /* 80px */}
+  .sm\:p-24	{padding: 6rem; /* 96px */}
+  .sm\:px-24	{
+    padding-left: 6rem; /* 96px */
+    padding-right: 6rem; /* 96px */
+  }
+  .sm\:py-24	{
+    padding-top: 6rem; /* 96px */
+    padding-bottom: 6rem; /* 96px */
+  }
+  .sm\:ps-24	{padding-inline-start: 6rem; /* 96px */}
+  .sm\:pe-24	{padding-inline-end: 6rem; /* 96px */}
+  .sm\:pt-24	{padding-top: 6rem; /* 96px */}
+  .sm\:pr-24	{padding-right: 6rem; /* 96px */}
+  .sm\:pb-24	{padding-bottom: 6rem; /* 96px */}
+  .sm\:pl-24	{padding-left: 6rem; /* 96px */}
+  .sm\:p-28	{padding: 7rem; /* 112px */}
+  .sm\:px-28	{
+    padding-left: 7rem; /* 112px */
+    padding-right: 7rem; /* 112px */
+  }
+  .sm\:py-28	{
+    padding-top: 7rem; /* 112px */
+    padding-bottom: 7rem; /* 112px */
+  }
+  .sm\:ps-28	{padding-inline-start: 7rem; /* 112px */}
+  .sm\:pe-28	{padding-inline-end: 7rem; /* 112px */}
+  .sm\:pt-28	{padding-top: 7rem; /* 112px */}
+  .sm\:pr-28	{padding-right: 7rem; /* 112px */}
+  .sm\:pb-28	{padding-bottom: 7rem; /* 112px */}
+  .sm\:pl-28	{padding-left: 7rem; /* 112px */}
+  .sm\:p-32	{padding: 8rem; /* 128px */}
+  .sm\:px-32	{
+    padding-left: 8rem; /* 128px */
+    padding-right: 8rem; /* 128px */
+  }
+  .sm\:py-32	{
+    padding-top: 8rem; /* 128px */
+    padding-bottom: 8rem; /* 128px */
+  }
+  .sm\:ps-32	{padding-inline-start: 8rem; /* 128px */}
+  .sm\:pe-32	{padding-inline-end: 8rem; /* 128px */}
+  .sm\:pt-32	{padding-top: 8rem; /* 128px */}
+  .sm\:pr-32	{padding-right: 8rem; /* 128px */}
+  .sm\:pb-32	{padding-bottom: 8rem; /* 128px */}
+  .sm\:pl-32	{padding-left: 8rem; /* 128px */}
+  .sm\:p-36	{padding: 9rem; /* 144px */}
+  .sm\:px-36	{
+    padding-left: 9rem; /* 144px */
+    padding-right: 9rem; /* 144px */
+  }
+  .sm\:py-36	{
+    padding-top: 9rem; /* 144px */
+    padding-bottom: 9rem; /* 144px */
+  }
+  .sm\:ps-36	{padding-inline-start: 9rem; /* 144px */}
+  .sm\:pe-36	{padding-inline-end: 9rem; /* 144px */}
+  .sm\:pt-36	{padding-top: 9rem; /* 144px */}
+  .sm\:pr-36	{padding-right: 9rem; /* 144px */}
+  .sm\:pb-36	{padding-bottom: 9rem; /* 144px */}
+  .sm\:pl-36	{padding-left: 9rem; /* 144px */}
+  .sm\:p-40	{padding: 10rem; /* 160px */}
+  .sm\:px-40	{
+    padding-left: 10rem; /* 160px */
+    padding-right: 10rem; /* 160px */
+  }
+  .sm\:py-40	{
+    padding-top: 10rem; /* 160px */
+    padding-bottom: 10rem; /* 160px */
+  }
+  .sm\:ps-40	{padding-inline-start: 10rem; /* 160px */}
+  .sm\:pe-40	{padding-inline-end: 10rem; /* 160px */}
+  .sm\:pt-40	{padding-top: 10rem; /* 160px */}
+  .sm\:pr-40	{padding-right: 10rem; /* 160px */}
+  .sm\:pb-40	{padding-bottom: 10rem; /* 160px */}
+  .sm\:pl-40	{padding-left: 10rem; /* 160px */}
+  .sm\:p-44	{padding: 11rem; /* 176px */}
+  .sm\:px-44	{
+    padding-left: 11rem; /* 176px */
+    padding-right: 11rem; /* 176px */
+  }
+  .sm\:py-44	{
+    padding-top: 11rem; /* 176px */
+    padding-bottom: 11rem; /* 176px */
+  }
+  .sm\:ps-44	{padding-inline-start: 11rem; /* 176px */}
+  .sm\:pe-44	{padding-inline-end: 11rem; /* 176px */}
+  .sm\:pt-44	{padding-top: 11rem; /* 176px */}
+  .sm\:pr-44	{padding-right: 11rem; /* 176px */}
+  .sm\:pb-44	{padding-bottom: 11rem; /* 176px */}
+  .sm\:pl-44	{padding-left: 11rem; /* 176px */}
+  .sm\:p-48	{padding: 12rem; /* 192px */}
+  .sm\:px-48	{
+    padding-left: 12rem; /* 192px */
+    padding-right: 12rem; /* 192px */
+  }
+  .sm\:py-48	{
+    padding-top: 12rem; /* 192px */
+    padding-bottom: 12rem; /* 192px */
+  }
+  .sm\:ps-48	{padding-inline-start: 12rem; /* 192px */}
+  .sm\:pe-48	{padding-inline-end: 12rem; /* 192px */}
+  .sm\:pt-48	{padding-top: 12rem; /* 192px */}
+  .sm\:pr-48	{padding-right: 12rem; /* 192px */}
+  .sm\:pb-48	{padding-bottom: 12rem; /* 192px */}
+  .sm\:pl-48	{padding-left: 12rem; /* 192px */}
+  .sm\:p-52	{padding: 13rem; /* 208px */}
+  .sm\:px-52	{
+    padding-left: 13rem; /* 208px */
+    padding-right: 13rem; /* 208px */
+  }
+  .sm\:py-52	{
+    padding-top: 13rem; /* 208px */
+    padding-bottom: 13rem; /* 208px */
+  }
+  .sm\:ps-52	{padding-inline-start: 13rem; /* 208px */}
+  .sm\:pe-52	{padding-inline-end: 13rem; /* 208px */}
+  .sm\:pt-52	{padding-top: 13rem; /* 208px */}
+  .sm\:pr-52	{padding-right: 13rem; /* 208px */}
+  .sm\:pb-52	{padding-bottom: 13rem; /* 208px */}
+  .sm\:pl-52	{padding-left: 13rem; /* 208px */}
+  .sm\:p-56	{padding: 14rem; /* 224px */}
+  .sm\:px-56	{
+    padding-left: 14rem; /* 224px */
+    padding-right: 14rem; /* 224px */
+  }
+  .sm\:py-56	{
+    padding-top: 14rem; /* 224px */
+    padding-bottom: 14rem; /* 224px */
+  }
+  .sm\:ps-56	{padding-inline-start: 14rem; /* 224px */}
+  .sm\:pe-56	{padding-inline-end: 14rem; /* 224px */}
+  .sm\:pt-56	{padding-top: 14rem; /* 224px */}
+  .sm\:pr-56	{padding-right: 14rem; /* 224px */}
+  .sm\:pb-56	{padding-bottom: 14rem; /* 224px */}
+  .sm\:pl-56	{padding-left: 14rem; /* 224px */}
+  .sm\:p-60	{padding: 15rem; /* 240px */}
+  .sm\:px-60	{
+    padding-left: 15rem; /* 240px */
+    padding-right: 15rem; /* 240px */
+  }
+  .sm\:py-60	{
+    padding-top: 15rem; /* 240px */
+    padding-bottom: 15rem; /* 240px */
+  }
+  .sm\:ps-60	{padding-inline-start: 15rem; /* 240px */}
+  .sm\:pe-60	{padding-inline-end: 15rem; /* 240px */}
+  .sm\:pt-60	{padding-top: 15rem; /* 240px */}
+  .sm\:pr-60	{padding-right: 15rem; /* 240px */}
+  .sm\:pb-60	{padding-bottom: 15rem; /* 240px */}
+  .sm\:pl-60	{padding-left: 15rem; /* 240px */}
+  .sm\:p-64	{padding: 16rem; /* 256px */}
+  .sm\:px-64	{
+    padding-left: 16rem; /* 256px */
+    padding-right: 16rem; /* 256px */
+  }
+  .sm\:py-64	{
+    padding-top: 16rem; /* 256px */
+    padding-bottom: 16rem; /* 256px */
+  }
+  .sm\:ps-64	{padding-inline-start: 16rem; /* 256px */}
+  .sm\:pe-64	{padding-inline-end: 16rem; /* 256px */}
+  .sm\:pt-64	{padding-top: 16rem; /* 256px */}
+  .sm\:pr-64	{padding-right: 16rem; /* 256px */}
+  .sm\:pb-64	{padding-bottom: 16rem; /* 256px */}
+  .sm\:pl-64	{padding-left: 16rem; /* 256px */}
+  .sm\:p-72	{padding: 18rem; /* 288px */}
+  .sm\:px-72	{
+    padding-left: 18rem; /* 288px */
+    padding-right: 18rem; /* 288px */
+  }
+  .sm\:py-72	{
+    padding-top: 18rem; /* 288px */
+    padding-bottom: 18rem; /* 288px */
+  }
+  .sm\:ps-72	{padding-inline-start: 18rem; /* 288px */}
+  .sm\:pe-72	{padding-inline-end: 18rem; /* 288px */}
+  .sm\:pt-72	{padding-top: 18rem; /* 288px */}
+  .sm\:pr-72	{padding-right: 18rem; /* 288px */}
+  .sm\:pb-72	{padding-bottom: 18rem; /* 288px */}
+  .sm\:pl-72	{padding-left: 18rem; /* 288px */}
+  .sm\:p-80	{padding: 20rem; /* 320px */}
+  .sm\:px-80	{
+    padding-left: 20rem; /* 320px */
+    padding-right: 20rem; /* 320px */
+  }
+  .sm\:py-80	{
+    padding-top: 20rem; /* 320px */
+    padding-bottom: 20rem; /* 320px */
+  }
+  .sm\:ps-80	{padding-inline-start: 20rem; /* 320px */}
+  .sm\:pe-80	{padding-inline-end: 20rem; /* 320px */}
+  .sm\:pt-80	{padding-top: 20rem; /* 320px */}
+  .sm\:pr-80	{padding-right: 20rem; /* 320px */}
+  .sm\:pb-80	{padding-bottom: 20rem; /* 320px */}
+  .sm\:pl-80	{padding-left: 20rem; /* 320px */}
+  .sm\:p-96	{padding: 24rem; /* 384px */}
+  .sm\:px-96	{
+    padding-left: 24rem; /* 384px */
+    padding-right: 24rem; /* 384px */
+  }
+  .sm\:py-96	{
+    padding-top: 24rem; /* 384px */
+    padding-bottom: 24rem; /* 384px */
+  }
+  .sm\:ps-96	{padding-inline-start: 24rem; /* 384px */}
+  .sm\:pe-96	{padding-inline-end: 24rem; /* 384px */}
+  .sm\:pt-96	{padding-top: 24rem; /* 384px */}
+  .sm\:pr-96	{padding-right: 24rem; /* 384px */}
+  .sm\:pb-96	{padding-bottom: 24rem; /* 384px */}
+  .sm\:pl-96	{padding-left: 24rem; /* 384px */}
+  /* Margin: Utilities for controlling an element's margin. */
+  .sm\:m-0	{margin: 0px;}
+  .sm\:mx-0 {
+      margin-left: 0px;
+      margin-right: 0px;
+  }
+  .sm\:my-0 {
+      margin-top: 0px;
+      margin-bottom: 0px;
+  }
+  .sm\:ms-0	{margin-inline-start: 0px;}
+  .sm\:me-0	{margin-inline-end: 0px;}
+  .sm\:mt-0	{margin-top: 0px;}
+  .sm\:mr-0	{margin-right: 0px;}
+  .sm\:mb-0	{margin-bottom: 0px;}
+  .sm\:ml-0	{margin-left: 0px;}
+  .sm\:m-1	{margin: 0.25rem; /* 4px */}
+  .sm\:mx-1 {
+      margin-left: 0.25rem; /* 4px */
+      margin-right: 0.25rem; /* 4px */
+  }
+  .sm\:my-1 {
+      margin-top: 0.25rem; /* 4px */
+      margin-bottom: 0.25rem; /* 4px */
+  }
+  .sm\:ms-1	{margin-inline-start: 0.25rem; /* 4px */}
+  .sm\:me-1	{margin-inline-end: 0.25rem; /* 4px */}
+  .sm\:mt-1	{margin-top: 0.25rem; /* 4px */}
+  .sm\:mr-1	{margin-right: 0.25rem; /* 4px */}
+  .sm\:mb-1	{margin-bottom: 0.25rem; /* 4px */}
+  .sm\:ml-1	{margin-left: 0.25rem; /* 4px */}
+  .sm\:m-2	{margin: 0.5rem; /* 8px */}
+  .sm\:mx-2 {
+      margin-left: 0.5rem; /* 8px */
+      margin-right: 0.5rem; /* 8px */
+  }
+  .sm\:my-2 {
+      margin-top: 0.5rem; /* 8px */
+      margin-bottom: 0.5rem; /* 8px */
+  }
+  .sm\:ms-2	{margin-inline-start: 0.5rem; /* 8px */}
+  .sm\:me-2	{margin-inline-end: 0.5rem; /* 8px */}
+  .sm\:mt-2	{margin-top: 0.5rem; /* 8px */}
+  .sm\:mr-2	{margin-right: 0.5rem; /* 8px */}
+  .sm\:mb-2	{margin-bottom: 0.5rem; /* 8px */}
+  .sm\:ml-2	{margin-left: 0.5rem; /* 8px */}
+  .sm\:m-3	{margin: 0.75rem; /* 12px */}
+  .sm\:mx-3 {
+      margin-left: 0.75rem; /* 12px */
+      margin-right: 0.75rem; /* 12px */
+  }
+  .sm\:my-3 {
+      margin-top: 0.75rem; /* 12px */
+      margin-bottom: 0.75rem; /* 12px */
+  }
+  .sm\:ms-3	{margin-inline-start: 0.75rem; /* 12px */}
+  .sm\:me-3	{margin-inline-end: 0.75rem; /* 12px */}
+  .sm\:mt-3	{margin-top: 0.75rem; /* 12px */}
+  .sm\:mr-3	{margin-right: 0.75rem; /* 12px */}
+  .sm\:mb-3	{margin-bottom: 0.75rem; /* 12px */}
+  .sm\:ml-3	{margin-left: 0.75rem; /* 12px */}
+  .sm\:m-4	{margin: 1rem; /* 16px */}
+  .sm\:mx-4 {
+      margin-left: 1rem; /* 16px */
+      margin-right: 1rem; /* 16px */
+  }
+  .sm\:my-4	 { 
+      margin-top: 1rem; /* 16px */
+      margin-bottom: 1rem; /* 16px */
+  }
+  .sm\:ms-4	{margin-inline-start: 1rem; /* 16px */}
+  .sm\:me-4	{margin-inline-end: 1rem; /* 16px */}
+  .sm\:mt-4	{margin-top: 1rem; /* 16px */}
+  .sm\:mr-4	{margin-right: 1rem; /* 16px */}
+  .sm\:mb-4	{margin-bottom: 1rem; /* 16px */}
+  .sm\:ml-4	{margin-left: 1rem; /* 16px */}
+  .sm\:m-5	{margin: 1.25rem; /* 20px */}
+  .sm\:mx-5	 { 
+      margin-left: 1.25rem; /* 20px */
+      margin-right: 1.25rem; /* 20px */
+  }
+  .sm\:my-5 {
+      margin-top: 1.25rem; /* 20px */
+      margin-bottom: 1.25rem; /* 20px */
+  }
+  .sm\:ms-5	{margin-inline-start: 1.25rem; /* 20px */}
+  .sm\:me-5	{margin-inline-end: 1.25rem; /* 20px */}
+  .sm\:mt-5	{margin-top: 1.25rem; /* 20px */}
+  .sm\:mr-5	{margin-right: 1.25rem; /* 20px */}
+  .sm\:mb-5	{margin-bottom: 1.25rem; /* 20px */}
+  .sm\:ml-5	{margin-left: 1.25rem; /* 20px */}
+  .sm\:m-6	{margin: 1.5rem; /* 24px */}
+  .sm\:mx-6 {
+      margin-left: 1.5rem; /* 24px */
+      margin-right: 1.5rem; /* 24px */
+  }
+  .sm\:my-6 {
+      margin-top: 1.5rem; /* 24px */
+      margin-bottom: 1.5rem; /* 24px */
+  }
+  .sm\:ms-6	{margin-inline-start: 1.5rem; /* 24px */}
+  .sm\:me-6	{margin-inline-end: 1.5rem; /* 24px */}
+  .sm\:mt-6	{margin-top: 1.5rem; /* 24px */}
+  .sm\:mr-6	{margin-right: 1.5rem; /* 24px */}
+  .sm\:mb-6	{margin-bottom: 1.5rem; /* 24px */}
+  .sm\:ml-6	{margin-left: 1.5rem; /* 24px */}
+  .sm\:m-7	{margin: 1.75rem; /* 28px */}
+  .sm\:mx-7 {
+      margin-left: 1.75rem; /* 28px */
+      margin-right: 1.75rem; /* 28px */
+  }
+  .sm\:my-7 {
+      margin-top: 1.75rem; /* 28px */
+      margin-bottom: 1.75rem; /* 28px */
+  }
+  .sm\:ms-7	{margin-inline-start: 1.75rem; /* 28px */}
+  .sm\:me-7	{margin-inline-end: 1.75rem; /* 28px */}
+  .sm\:mt-7	{margin-top: 1.75rem; /* 28px */}
+  .sm\:mr-7	{margin-right: 1.75rem; /* 28px */}
+  .sm\:mb-7	{margin-bottom: 1.75rem; /* 28px */}
+  .sm\:ml-7	{margin-left: 1.75rem; /* 28px */}
+  .sm\:m-8	{margin: 2rem; /* 32px */}
+  .sm\:mx-8 {
+      margin-left: 2rem; /* 32px */
+      margin-right: 2rem; /* 32px */
+  }
+  .sm\:my-8 {
+      margin-top: 2rem; /* 32px */
+      margin-bottom: 2rem; /* 32px */
+  }
+  .sm\:ms-8	{margin-inline-start: 2rem; /* 32px */}
+  .sm\:me-8	{margin-inline-end: 2rem; /* 32px */}
+  .sm\:mt-8	{margin-top: 2rem; /* 32px */}
+  .sm\:mr-8	{margin-right: 2rem; /* 32px */}
+  .sm\:mb-8	{margin-bottom: 2rem; /* 32px */}
+  .sm\:ml-8	{margin-left: 2rem; /* 32px */}
+  .sm\:m-9	{margin: 2.25rem; /* 36px */}
+  .sm\:mx-9 {
+      margin-left: 2.25rem; /* 36px */
+      margin-right: 2.25rem; /* 36px */
+  }
+  .sm\:my-9 {
+      margin-top: 2.25rem; /* 36px */
+      margin-bottom: 2.25rem; /* 36px */
+  }
+  .sm\:ms-9	{margin-inline-start: 2.25rem; /* 36px */}
+  .sm\:me-9	{margin-inline-end: 2.25rem; /* 36px */}
+  .sm\:mt-9	{margin-top: 2.25rem; /* 36px */}
+  .sm\:mr-9	{margin-right: 2.25rem; /* 36px */}
+  .sm\:mb-9	{margin-bottom: 2.25rem; /* 36px */}
+  .sm\:ml-9	{margin-left: 2.25rem; /* 36px */}
+  .sm\:m-10	{margin: 2.5rem; /* 40px */}
+  .sm\:mx-10 {
+      margin-left: 2.5rem; /* 40px */
+      margin-right: 2.5rem; /* 40px */
+  }
+  .sm\:my-10 {
+      margin-top: 2.5rem; /* 40px */
+      margin-bottom: 2.5rem; /* 40px */
+  }
+  .sm\:ms-10	{margin-inline-start: 2.5rem; /* 40px */}
+  .sm\:me-10	{margin-inline-end: 2.5rem; /* 40px */}
+  .sm\:mt-10	{margin-top: 2.5rem; /* 40px */}
+  .sm\:mr-10	{margin-right: 2.5rem; /* 40px */}
+  .sm\:mb-10	{margin-bottom: 2.5rem; /* 40px */}
+  .sm\:m-11	{margin: 2.75rem; /* 44px */}
+  .sm\:mx-11	{
+    margin-left: 2.75rem; /* 44px */
+    margin-right: 2.75rem; /* 44px */
+  }
+  .sm\:my-11	{
+    margin-top: 2.75rem; /* 44px */
+    margin-bottom: 2.75rem; /* 44px */
+  }
+  .sm\:ms-11	{margin-inline-start: 2.75rem; /* 44px */}
+  .sm\:me-11	{margin-inline-end: 2.75rem; /* 44px */}
+  .sm\:mt-11	{margin-top: 2.75rem; /* 44px */}
+  .sm\:mr-11	{margin-right: 2.75rem; /* 44px */}
+  .sm\:mb-11	{margin-bottom: 2.75rem; /* 44px */}
+  .sm\:ml-11	{margin-left: 2.75rem; /* 44px */}
+  .sm\:m-12	{margin: 3rem; /* 48px */}
+  .sm\:mx-12	{
+    margin-left: 3rem; /* 48px */
+    margin-right: 3rem; /* 48px */
+  }
+  .sm\:my-12	{
+    margin-top: 3rem; /* 48px */
+    margin-bottom: 3rem; /* 48px */
+  }
+  .sm\:ms-12	{margin-inline-start: 3rem; /* 48px */}
+  .sm\:me-12	{margin-inline-end: 3rem; /* 48px */}
+  .sm\:mt-12	{margin-top: 3rem; /* 48px */}
+  .sm\:mr-12	{margin-right: 3rem; /* 48px */}
+  .sm\:mb-12	{margin-bottom: 3rem; /* 48px */}
+  .sm\:ml-12	{margin-left: 3rem; /* 48px */}
+  .sm\:m-14	{margin: 3.5rem; /* 56px */}
+  .sm\:mx-14	{
+    margin-left: 3.5rem; /* 56px */
+    margin-right: 3.5rem; /* 56px */
+  }
+  .sm\:my-14	{
+    margin-top: 3.5rem; /* 56px */
+    margin-bottom: 3.5rem; /* 56px */
+  }
+  .sm\:ms-14	{margin-inline-start: 3.5rem; /* 56px */}
+  .sm\:me-14	{margin-inline-end: 3.5rem; /* 56px */}
+  .sm\:mt-14	{margin-top: 3.5rem; /* 56px */}
+  .sm\:mr-14	{margin-right: 3.5rem; /* 56px */}
+  .sm\:mb-14	{margin-bottom: 3.5rem; /* 56px */}
+  .sm\:ml-14	{margin-left: 3.5rem; /* 56px */}
+  .sm\:m-16	{margin: 4rem; /* 64px */}
+  .sm\:mx-16	{
+    margin-left: 4rem; /* 64px */
+    margin-right: 4rem; /* 64px */
+  }
+  .sm\:my-16	{
+    margin-top: 4rem; /* 64px */
+    margin-bottom: 4rem; /* 64px */
+  }
+  .sm\:ms-16	{margin-inline-start: 4rem; /* 64px */}
+  .sm\:me-16	{margin-inline-end: 4rem; /* 64px */}
+  .sm\:mt-16	{margin-top: 4rem; /* 64px */}
+  .sm\:mr-16	{margin-right: 4rem; /* 64px */}
+  .sm\:mb-16	{margin-bottom: 4rem; /* 64px */}
+  .sm\:ml-16	{margin-left: 4rem; /* 64px */}
+  .sm\:m-20	{margin: 5rem; /* 80px */}
+  .sm\:mx-20	{
+    margin-left: 5rem; /* 80px */
+    margin-right: 5rem; /* 80px */
+  }
+  .sm\:my-20	{
+    margin-top: 5rem; /* 80px */
+    margin-bottom: 5rem; /* 80px */
+  }
+  .sm\:ms-20	{margin-inline-start: 5rem; /* 80px */}
+  .sm\:me-20	{margin-inline-end: 5rem; /* 80px */}
+  .sm\:mt-20	{margin-top: 5rem; /* 80px */}
+  .sm\:mr-20	{margin-right: 5rem; /* 80px */}
+  .sm\:mb-20	{margin-bottom: 5rem; /* 80px */}
+  .sm\:ml-20	{margin-left: 5rem; /* 80px */}
+  .sm\:m-24	{margin: 6rem; /* 96px */}
+  .sm\:mx-24	{
+    margin-left: 6rem; /* 96px */
+    margin-right: 6rem; /* 96px */
+  }
+  .sm\:my-24	{
+    margin-top: 6rem; /* 96px */
+    margin-bottom: 6rem; /* 96px */
+  }
+  .sm\:ms-24	{margin-inline-start: 6rem; /* 96px */}
+  .sm\:me-24	{margin-inline-end: 6rem; /* 96px */}
+  .sm\:mt-24	{margin-top: 6rem; /* 96px */}
+  .sm\:mr-24	{margin-right: 6rem; /* 96px */}
+  .sm\:mb-24	{margin-bottom: 6rem; /* 96px */}
+  .sm\:ml-24	{margin-left: 6rem; /* 96px */}
+  .sm\:m-28	{margin: 7rem; /* 112px */}
+  .sm\:mx-28	{
+    margin-left: 7rem; /* 112px */
+    margin-right: 7rem; /* 112px */
+  }
+  .sm\:my-28	{
+    margin-top: 7rem; /* 112px */
+    margin-bottom: 7rem; /* 112px */
+  }
+  .sm\:ms-28	{margin-inline-start: 7rem; /* 112px */}
+  .sm\:me-28	{margin-inline-end: 7rem; /* 112px */}
+  .sm\:mt-28	{margin-top: 7rem; /* 112px */}
+  .sm\:mr-28	{margin-right: 7rem; /* 112px */}
+  .sm\:mb-28	{margin-bottom: 7rem; /* 112px */}
+  .sm\:ml-28	{margin-left: 7rem; /* 112px */}
+  .sm\:m-32	{margin: 8rem; /* 128px */}
+  .sm\:mx-32	{
+    margin-left: 8rem; /* 128px */
+    margin-right: 8rem; /* 128px */
+  }
+  .sm\:my-32	{
+    margin-top: 8rem; /* 128px */
+    margin-bottom: 8rem; /* 128px */
+  }
+  .sm\:ms-32	{margin-inline-start: 8rem; /* 128px */}
+  .sm\:me-32	{margin-inline-end: 8rem; /* 128px */}
+  .sm\:mt-32	{margin-top: 8rem; /* 128px */}
+  .sm\:mr-32	{margin-right: 8rem; /* 128px */}
+  .sm\:mb-32	{margin-bottom: 8rem; /* 128px */}
+  .sm\:ml-32	{margin-left: 8rem; /* 128px */}
+  .sm\:m-36	{margin: 9rem; /* 144px */}
+  .sm\:mx-36	{
+    margin-left: 9rem; /* 144px */
+    margin-right: 9rem; /* 144px */
+  }
+  .sm\:my-36	{
+    margin-top: 9rem; /* 144px */
+    margin-bottom: 9rem; /* 144px */
+  }
+  .sm\:ms-36	{margin-inline-start: 9rem; /* 144px */}
+  .sm\:me-36	{margin-inline-end: 9rem; /* 144px */}
+  .sm\:mt-36	{margin-top: 9rem; /* 144px */}
+  .sm\:mr-36	{margin-right: 9rem; /* 144px */}
+  .sm\:mb-36	{margin-bottom: 9rem; /* 144px */}
+  .sm\:ml-36	{margin-left: 9rem; /* 144px */}
+  .sm\:m-40	{margin: 10rem; /* 160px */}
+  .sm\:mx-40	{
+    margin-left: 10rem; /* 160px */
+    margin-right: 10rem; /* 160px */
+  }
+  .sm\:my-40	{
+    margin-top: 10rem; /* 160px */
+    margin-bottom: 10rem; /* 160px */
+  }
+  .sm\:ms-40	{margin-inline-start: 10rem; /* 160px */}
+  .sm\:me-40	{margin-inline-end: 10rem; /* 160px */}
+  .sm\:mt-40	{margin-top: 10rem; /* 160px */}
+  .sm\:mr-40	{margin-right: 10rem; /* 160px */}
+  .sm\:mb-40	{margin-bottom: 10rem; /* 160px */}
+  .sm\:ml-40	{margin-left: 10rem; /* 160px */}
+  .sm\:m-44	{margin: 11rem; /* 176px */}
+  .sm\:mx-44	{
+    margin-left: 11rem; /* 176px */
+    margin-right: 11rem; /* 176px */
+  }
+  .sm\:my-44	{
+    margin-top: 11rem; /* 176px */
+    margin-bottom: 11rem; /* 176px */
+  }
+  .sm\:ms-44	{margin-inline-start: 11rem; /* 176px */}
+  .sm\:me-44	{margin-inline-end: 11rem; /* 176px */}
+  .sm\:mt-44	{margin-top: 11rem; /* 176px */}
+  .sm\:mr-44	{margin-right: 11rem; /* 176px */}
+  .sm\:mb-44	{margin-bottom: 11rem; /* 176px */}
+  .sm\:ml-44	{margin-left: 11rem; /* 176px */}
+  .sm\:m-48	{margin: 12rem; /* 192px */}
+  .sm\:mx-48	{
+    margin-left: 12rem; /* 192px */
+    margin-right: 12rem; /* 192px */
+  }
+  .sm\:my-48	{
+    margin-top: 12rem; /* 192px */
+    margin-bottom: 12rem; /* 192px */
+  }
+  .sm\:ms-48	{margin-inline-start: 12rem; /* 192px */}
+  .sm\:me-48	{margin-inline-end: 12rem; /* 192px */}
+  .sm\:mt-48	{margin-top: 12rem; /* 192px */}
+  .sm\:mr-48	{margin-right: 12rem; /* 192px */}
+  .sm\:mb-48	{margin-bottom: 12rem; /* 192px */}
+  .sm\:ml-48	{margin-left: 12rem; /* 192px */}
+  .sm\:m-52	{margin: 13rem; /* 208px */}
+  .sm\:mx-52	{
+    margin-left: 13rem; /* 208px */
+    margin-right: 13rem; /* 208px */
+  }
+  .sm\:my-52	{
+    margin-top: 13rem; /* 208px */
+    margin-bottom: 13rem; /* 208px */
+  }
+  .sm\:ms-52	{margin-inline-start: 13rem; /* 208px */}
+  .sm\:me-52	{margin-inline-end: 13rem; /* 208px */}
+  .sm\:mt-52	{margin-top: 13rem; /* 208px */}
+  .sm\:mr-52	{margin-right: 13rem; /* 208px */}
+  .sm\:mb-52	{margin-bottom: 13rem; /* 208px */}
+  .sm\:ml-52	{margin-left: 13rem; /* 208px */}
+  .sm\:m-56	{margin: 14rem; /* 224px */}
+  .sm\:mx-56	{
+    margin-left: 14rem; /* 224px */
+    margin-right: 14rem; /* 224px */
+  }
+  .sm\:my-56	{
+    margin-top: 14rem; /* 224px */
+    margin-bottom: 14rem; /* 224px */
+  }
+  .sm\:ms-56	{margin-inline-start: 14rem; /* 224px */}
+  .sm\:me-56	{margin-inline-end: 14rem; /* 224px */}
+  .sm\:mt-56	{margin-top: 14rem; /* 224px */}
+  .sm\:mr-56	{margin-right: 14rem; /* 224px */}
+  .sm\:mb-56	{margin-bottom: 14rem; /* 224px */}
+  .sm\:ml-56	{margin-left: 14rem; /* 224px */}
+  .sm\:m-60	{margin: 15rem; /* 240px */}
+  .sm\:mx-60	{
+    margin-left: 15rem; /* 240px */
+    margin-right: 15rem; /* 240px */
+  }
+  .sm\:my-60	{
+    margin-top: 15rem; /* 240px */
+    margin-bottom: 15rem; /* 240px */
+  }
+  .sm\:ms-60	{margin-inline-start: 15rem; /* 240px */}
+  .sm\:me-60	{margin-inline-end: 15rem; /* 240px */}
+  .sm\:mt-60	{margin-top: 15rem; /* 240px */}
+  .sm\:mr-60	{margin-right: 15rem; /* 240px */}
+  .sm\:mb-60	{margin-bottom: 15rem; /* 240px */}
+  .sm\:ml-60	{margin-left: 15rem; /* 240px */}
+  .sm\:m-64	{margin: 16rem; /* 256px */}
+  .sm\:mx-64	{
+    margin-left: 16rem; /* 256px */
+    margin-right: 16rem; /* 256px */
+  }
+  .sm\:my-64	{
+    margin-top: 16rem; /* 256px */
+    margin-bottom: 16rem; /* 256px */
+  }
+  .sm\:ms-64	{margin-inline-start: 16rem; /* 256px */}
+  .sm\:me-64	{margin-inline-end: 16rem; /* 256px */}
+  .sm\:mt-64	{margin-top: 16rem; /* 256px */}
+  .sm\:mr-64	{margin-right: 16rem; /* 256px */}
+  .sm\:mb-64	{margin-bottom: 16rem; /* 256px */}
+  .sm\:ml-64	{margin-left: 16rem; /* 256px */}
+  .sm\:m-72	{margin: 18rem; /* 288px */}
+  .sm\:mx-72	{
+    margin-left: 18rem; /* 288px */
+    margin-right: 18rem; /* 288px */
+  }
+  .sm\:my-72	{
+    margin-top: 18rem; /* 288px */
+    margin-bottom: 18rem; /* 288px */
+  }
+  .sm\:ms-72	{margin-inline-start: 18rem; /* 288px */}
+  .sm\:me-72	{margin-inline-end: 18rem; /* 288px */}
+  .sm\:mt-72	{margin-top: 18rem; /* 288px */}
+  .sm\:mr-72	{margin-right: 18rem; /* 288px */}
+  .sm\:mb-72	{margin-bottom: 18rem; /* 288px */}
+  .sm\:ml-72	{margin-left: 18rem; /* 288px */}
+  .sm\:m-80	{margin: 20rem; /* 320px */}
+  .sm\:mx-80	{
+    margin-left: 20rem; /* 320px */
+    margin-right: 20rem; /* 320px */
+  }
+  .sm\:my-80	{
+    margin-top: 20rem; /* 320px */
+    margin-bottom: 20rem; /* 320px */
+  }
+  .sm\:ms-80	{margin-inline-start: 20rem; /* 320px */}
+  .sm\:me-80	{margin-inline-end: 20rem; /* 320px */}
+  .sm\:mt-80	{margin-top: 20rem; /* 320px */}
+  .sm\:mr-80	{margin-right: 20rem; /* 320px */}
+  .sm\:mb-80	{margin-bottom: 20rem; /* 320px */}
+  .sm\:ml-80	{margin-left: 20rem; /* 320px */}
+  .sm\:m-96	{margin: 24rem; /* 384px */}
+  .sm\:mx-96	{
+    margin-left: 24rem; /* 384px */
+    margin-right: 24rem; /* 384px */
+  }
+  .sm\:my-96	{
+    margin-top: 24rem; /* 384px */
+    margin-bottom: 24rem; /* 384px */
+  }
+  .sm\:ms-96	{margin-inline-start: 24rem; /* 384px */}
+  .sm\:me-96	{margin-inline-end: 24rem; /* 384px */}
+  .sm\:mt-96	{margin-top: 24rem; /* 384px */}
+  .sm\:mr-96	{margin-right: 24rem; /* 384px */}
+  .sm\:mb-96	{margin-bottom: 24rem; /* 384px */}
+  .sm\:ml-96	{margin-left: 24rem; /* 384px */}
 
+  /* Width: Utilities for setting the width of an element. */
+  .sm\:w-auto	{width: auto;}
+  .sm\:w-1\/2	{width: 50%;}
+  .sm\:w-1\/3	{width: 33.333333%;}
+  .sm\:w-2\/3	{width: 66.666667%;}
+  .sm\:w-1\/4	{width: 25%;}
+  .sm\:w-2\/4	{width: 50%;}
+  .sm\:w-3\/4	{width: 75%;}
+  .sm\:w-1\/5	{width: 20%;}
+  .sm\:w-2\/5	{width: 40%;}
+  .sm\:w-3\/5	{width: 60%;}
+  .sm\:w-4\/5	{width: 80%;}
+  .sm\:w-1\/6	{width: 16.666667%;}
+  .sm\:w-2\/6	{width: 33.333333%;}
+  .sm\:w-3\/6	{width: 50%;}
+  .sm\:w-4\/6	{width: 66.666667%;}
+  .sm\:w-5\/6	{width: 83.333333%;}
+  .sm\:w-1\/12	{width: 8.333333%;}
+  .sm\:w-2\/12	{width: 16.666667%;}
+  .sm\:w-3\/12	{width: 25%;}
+  .sm\:w-4\/12	{width: 33.333333%;}
+  .sm\:w-5\/12	{width: 41.666667%;}
+  .sm\:w-6\/12	{width: 50%;}
+  .sm\:w-7\/12	{width: 58.333333%;}
+  .sm\:w-8\/12	{width: 66.666667%;}
+  .sm\:w-9\/12	{width: 75%;}
+  .sm\:w-10\/12	{width: 83.333333%;}
+  .sm\:w-11\/12	{width: 91.666667%;}
+  .sm\:w-full	{width: 100%;}
+  /* Height: Utilities for setting the height of an element. */
+  .sm\:h-0	{height: 0px;}
+  .sm\:h-px	{height: 1px;}
+  .sm\:h-1	{height: 0.25rem; /* 4px */}
+  .sm\:h-2	{height: 0.5rem; /* 8px */}
+  .sm\:h-3	{height: 0.75rem; /* 12px */}
+  .sm\:h-4	{height: 1rem; /* 16px */}
+  .sm\:h-5	{height: 1.25rem; /* 20px */}
+  .sm\:h-6	{height: 1.5rem; /* 24px */}
+  .sm\:h-7	{height: 1.75rem; /* 28px */}
+  .sm\:h-8	{height: 2rem; /* 32px */}
+  .sm\:h-9	{height: 2.25rem; /* 36px */}
+  .sm\:h-10	{height: 2.5rem; /* 40px */}
+  .sm\:h-11	{height: 2.75rem; /* 44px */}
+  .sm\:h-12	{height: 3rem; /* 48px */}
+  .sm\:h-14	{height: 3.5rem; /* 56px */}
+  .sm\:h-16	{height: 4rem; /* 64px */}
+  .sm\:h-20	{height: 5rem; /* 80px */}
+  .sm\:h-24	{height: 6rem; /* 96px */}
+  .sm\:h-28	{height: 7rem; /* 112px */}
+  .sm\:h-32	{height: 8rem; /* 128px */}
+  .sm\:h-36	{height: 9rem; /* 144px */}
+  .sm\:h-40	{height: 10rem; /* 160px */}
+  .sm\:h-44	{height: 11rem; /* 176px */}
+  .sm\:h-52	{height: 13rem; /* 208px */}
+  .sm\:h-48	{height: 12rem; /* 192px */}
+  .sm\:h-56	{height: 14rem; /* 224px */}
+  .sm\:h-60	{height: 15rem; /* 240px */}
+  .sm\:h-64	{height: 16rem; /* 256px */}
+  .sm\:h-72	{height: 18rem; /* 288px */}
+  .sm\:h-80	{height: 20rem; /* 320px */}
+  .sm\:h-96	{height: 24rem; /* 384px */}
+  .sm\:h-auto	{height: auto;}
+  .sm\:h-1\/2	{height: 50%;}
+  .sm\:h-1\/3	{height: 33.333333%;}
+  .sm\:h-2\/3	{height: 66.666667%;}
+  .sm\:h-1\/4	{height: 25%;}
+  .sm\:h-2\/4	{height: 50%;}
+  .sm\:h-3\/4	{height: 75%;}
+  .sm\:h-1\/5	{height: 20%;}
+  .sm\:h-2\/5	{height: 40%;}
+  .sm\:h-4\/5	{height: 80%;}
+  .sm\:h-3\/5	{height: 60%;}
+  .sm\:h-1\/6	{height: 16.666667%;}
+  .sm\:h-2\/6	{height: 33.333333%;}
+  .sm\:h-3\/6	{height: 50%;}
+  .sm\:h-4\/6	{height: 66.666667%;}
+  .sm\:h-5\/6	{height: 83.333333%;}
+  .sm\:h-full	{height: 100%;}
+  /* Font Size: Utilities for controlling the font size of an element. */
+  .sm\:text-xs	{
+    font-size: 0.75rem; /* 12px */
+    line-height: 1rem; /* 16px */
+  }
+  .sm\:text-sm	{
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.25rem; /* 20px */
+  } 
+  .sm\:text-base	{
+    font-size: 1rem; /* 16px */
+    line-height: 1.5rem; /* 24px */
+  }
+  .sm\:text-lg	{
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.75rem; /* 28px */
+  }
+  .sm\:text-xl	{
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.75rem; /* 28px */
+  }
+  .sm\:text-2xl	{
+    font-size: 1.5rem; /* 24px */
+    line-height: 2rem; /* 32px */
+  }
+  .sm\:text-3xl	{
+    font-size: 1.875rem; /* 30px */
+    line-height: 2.25rem; /* 36px */
+  }
+  .sm\:text-4xl	{
+    font-size: 2.25rem; /* 36px */
+    line-height: 2.5rem; /* 40px */
+  }
+  .sm\:text-5xl	{
+    font-size: 3rem; /* 48px */
+    line-height: 1;
+  }
+  .sm\:text-6xl	{
+    font-size: 3.75rem; /* 60px */
+    line-height: 1;
+  }
+  .sm\:text-7xl	{
+    font-size: 4.5rem; /* 72px */
+    line-height: 1;
+  }
+  .sm\:text-8xl	{
+    font-size: 6rem; /* 96px */
+    line-height: 1;
+  }
+  .sm\:text-9xl	{
+    font-size: 8rem; /* 128px */
+    line-height: 1;
+  }
   .sm\:col-span-3 {
     grid-column: span 3 / span 3;
   }
