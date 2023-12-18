@@ -36,6 +36,9 @@ text-yellow
 <script src='fullcalendar/core/locales/es.global.js'></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        
+        var motiveOptions = @json($motiveOptions);
+        console.log(motiveOptions);
 
         var calendarEl = document.getElementById('calendar');
 
@@ -91,9 +94,13 @@ text-yellow
                 modalCreateEdit.classList.add('block');
                 console.log(info);
                 let dateElements = document.querySelectorAll('.date');
+                let dateInputs = document.getElementById('date_input');
+                
                 dateElements.forEach(function(element) {
                     element.innerText = info.dateStr;
                 });
+                dateInputs.value = info.dateStr;
+
 
                 // var dateStr = prompt('Seleccionaste' + info.startStr + 'a' + info.endStr);
                 // var date = new Date(dateStr + 'T00:00:00'); // will be in local time
