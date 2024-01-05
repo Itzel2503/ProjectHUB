@@ -16,8 +16,8 @@ class HomeOffice extends Model
     const LEGAL = 'LEGAL';
     const OTHER = 'OTHER';
 
-    public function permits()
+    public function permit()
     {
-        return $this->belongsTo(Permits::class);
+        return $this->morphMany(Permit::class, 'permitable');
     }
 }

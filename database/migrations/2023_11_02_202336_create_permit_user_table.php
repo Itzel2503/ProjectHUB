@@ -16,11 +16,11 @@ class CreatePermitUserTable extends Migration
         Schema::create('permit_user', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('permit_id');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('permitable_id');
+            $table->string('permitable_type');
             
-            $table->foreign('permit_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('permits')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->string('approved');
 

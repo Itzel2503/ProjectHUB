@@ -30,16 +30,26 @@ text-yellow
 </div>
 
 {{-- MODAL CREATE --}}
-@include('/activitycontrol/permits/modal/create')
+<div  id="modal_create_edit" class="top-20 left-0 z-50 max-h-full overflow-y-auto hidden">      
+    <livewire:permits.modal-create/>
+</div>
 
 <script src='fullcalendar/core/index.global.js'></script>
 <script src='fullcalendar/core/locales/es.global.js'></script>
+
+<script>
+    let closeModal = document.getElementById('close_modal');
+    let modalCreateEdit = document.getElementById('modal_create_edit');
+
+    closeModal.addEventListener('click', function() {
+        modalCreateEdit.classList.add('hidden');
+        modalCreateEdit.classList.remove('block');
+        
+    });
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        
-        var motiveOptions = @json($motiveOptions);
-        console.log(motiveOptions);
-
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -120,48 +130,48 @@ text-yellow
             events: [
                 {
                     title: 'All Day Event',
-                    start: '2023-12-01'
+                    start: '2024-01-01'
                 },
                 {
                     title: 'Long Event',
-                    start: '2023-12-07',
-                    end: '2023-12-10',
+                    start: '2024-01-07',
+                    end: '2024-01-10',
                     color: 'purple' // override!
                 },
                 {
                     title: 'Conference',
-                    start: '2023-12-07',
-                    end: '2023-12-10',
+                    start: '2024-01-07',
+                    end: '2024-01-10',
                     color: 'yellow' // override!
                 },
                 {
                     groupId: '999',
                     title: 'Repeating Event',
-                    start: '2023-12-09T16:00:00'
+                    start: '2024-01-09T16:00:00'
                 },
                 {
                     groupId: '999',
                     title: 'Repeating Event',
-                    start: '2023-12-16T16:00:00'
+                    start: '2024-01-16T16:00:00'
                 },
                 {
                     title: 'Meeting',
-                    start: '2023-12-12T10:30:00',
-                    end: '2023-12-12T12:30:00'
+                    start: '2024-01-12T10:30:00',
+                    end: '2024-01-12T12:30:00'
                 },
                 {
                     title: 'Lunch',
-                    start: '2023-12-12T12:00:00'
+                    start: '2024-01-12T12:00:00'
                 },
                 {
                     title: 'Meeting',
-                    start: '2023-12-12T14:30:00',
+                    start: '2024-01-12T14:30:00',
                     color: 'purple' // override!
                 },
                 {
                     title: 'Click for Google',
                     url: 'https://google.com/',
-                    start: '2023-12-28'
+                    start: '2024-01-28'
                 }
             ]
         });

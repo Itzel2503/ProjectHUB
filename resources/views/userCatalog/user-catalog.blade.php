@@ -28,7 +28,7 @@ text-yellow
                         <span class="ml-4">Usuarios</span>
                     </h1>
                 </div>
-                <livewire:user-catalog.user-catalog />
+                <livewire:user-catalog.user-catalog/>
             </div>
         </div>
     </div>

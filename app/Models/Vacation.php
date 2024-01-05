@@ -9,8 +9,8 @@ class Vacation extends Model
 {
     use HasFactory;
 
-    public function permits()
+    public function permit()
     {
-        return $this->belongsTo(Permits::class);
+        return $this->morphMany(Permit::class, 'permitable');
     }
 }

@@ -19,8 +19,8 @@ class LeaveAbsence extends Model
     const WITH_PAY = 'WITH_PAY';
     const WITHOUT_PAY = 'WITHOUT_PAY';
 
-    public function permits()
+    public function permit()
     {
-        return $this->belongsTo(Permits::class);
+        return $this->morphMany(Permit::class, 'permitable');
     }
 }

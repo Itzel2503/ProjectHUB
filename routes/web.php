@@ -22,10 +22,9 @@ Route::get('/', function () {
 });
 
 // Grupo de rutas protegidas por autenticación
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('/permits', Permit::class);
     Route::resource('/profile', ProfileController::class)->only(['index']);
-    Route::resource('/permits', Permit::class);
     Route::resource('/userCatalog', UserCatalog::class)->only(['index']);
 });
 

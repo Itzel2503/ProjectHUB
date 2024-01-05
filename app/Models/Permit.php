@@ -14,28 +14,8 @@ class Permit extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function homeOffice()
+    public function permitable()
     {
-        return $this->hasMany(HomeOffice::class);
-    }
-
-    public function leaveAbsence()
-    {
-        return $this->hasMany(LeaveAbsence::class);
-    }
-
-    public function outOfOfficeHours()
-    {
-        return $this->hasMany(OutOfOfficeHours::class);
-    }
-
-    public function overtime()
-    {
-        return $this->hasMany(Overtime::class);
-    }
-
-    public function vacation()
-    {
-        return $this->hasMany(Vacation::class);
+        return $this->morphTo();
     }
 }
