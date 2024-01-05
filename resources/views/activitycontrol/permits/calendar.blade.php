@@ -34,9 +34,6 @@ text-yellow
     <livewire:permits.modal-create/>
 </div>
 
-<script src='fullcalendar/core/index.global.js'></script>
-<script src='fullcalendar/core/locales/es.global.js'></script>
-
 <script>
     let closeModal = document.getElementById('close_modal');
     let modalCreateEdit = document.getElementById('modal_create_edit');
@@ -48,6 +45,8 @@ text-yellow
     });
 </script>
 
+<script src='fullcalendar/core/index.global.js'></script>
+<script src='fullcalendar/core/locales/es.global.js'></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
@@ -78,7 +77,7 @@ text-yellow
             footerToolbar: {
                 start: '',
                 center: '',
-                end: 'prev,next'
+                end: ''
             },
 
             eventClick: function(info) {

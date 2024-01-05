@@ -12,6 +12,8 @@ use Livewire\Component;
 
 class ModalCreate extends Component
 {
+    public $date;
+
     public function render()
     {
         // MODAL CREATE
@@ -60,5 +62,10 @@ class ModalCreate extends Component
             'users' => $users,
             'takeHours' => $takeHours,
         ]);
+    }
+
+    public function createPermit1()
+    {
+        dd($this);
     }
 }
