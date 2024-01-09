@@ -182,7 +182,7 @@
 </head>
 
 <body class="font-sans antialiased overflow-y-hidden">
-    <x-jet-banner />
+    
 
     <div class="min-h-screen bg-gray-100">
         <main class="">

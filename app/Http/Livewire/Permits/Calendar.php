@@ -2,16 +2,17 @@
 
 namespace App\Http\Livewire\Permits;
 
+use Livewire\Component;
 use App\Models\HomeOffice;
 use App\Models\LeaveAbsence;
 use App\Models\OutOfOfficeHours;
 use App\Models\Permit;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 
-class ModalCreate extends Component
+class Calendar extends Component
 {
+    public $events = '';
     public $date;
     //PERMIT1
     public $reason, $activities, $delegate_activities;
@@ -54,8 +55,8 @@ class ModalCreate extends Component
         for ($i=0; $i < 7; $i++) { 
             $takeHours[$i] = $i + 1;
         }
-        
-        return view('livewire.permits.modal-create', [
+
+        return view('livewire.permits.calendar', [
             'permits' => $permits,
             'motiveOptions' => $motiveOptions,
             'typeHours' => $typeHours,
@@ -65,8 +66,29 @@ class ModalCreate extends Component
         ]);
     }
 
-    public function createPermit1()
+
+    /**
+    * Write code on Method
+    *
+    * @return response()
+    */ 
+    public function createPermit($event)
     {
-        dd($this);
+        dd($event);
+        $input['title'] = $event['title'];
+        $input['start'] = $event['start'];
+        
     }
+
+    /**
+    * Write code on Method
+    *
+    * @return response()
+    */
+    public function eventDrop($event, $oldEvent)
+    {
+      
+    }
+
+    
 }

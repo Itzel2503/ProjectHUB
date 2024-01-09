@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
         Area::create([
             'name' => 'Soporte'
         ]);
+
         Permit::create([
             'name' => 'Home Office'
         ]);
@@ -49,14 +50,42 @@ class DatabaseSeeder extends Seeder
         Permit::create([
             'name' => 'Tiempo extra'
         ]);
+
         User::create([
-            'name' => 'Kircof',
-            'lastname' => 'admin',
+            'name' => 'Super admin',
+            'lastname' => 'Kircof',
             'email' => 'admin@kircof.com',
             'password' => Hash::make('Arten.123!'),
             'type_user' => '1',
             'date_birthday' => Carbon::now(),
             'area_id' => '1',
+        ]);
+        User::create([
+            'name' => 'Administrador',
+            'lastname' => 'Arten',
+            'email' => 'admin@arten.com',
+            'password' => Hash::make('Arten.123!'),
+            'type_user' => '2',
+            'date_birthday' => Carbon::now(),
+            'area_id' => '1',
+        ]);
+        User::create([
+            'name' => 'Itzel',
+            'lastname' => 'De La Cruz',
+            'email' => 'itzel@artendigital.mx',
+            'password' => Hash::make('Arten.123!'),
+            'type_user' => '3',
+            'date_birthday' => Carbon::now(),
+            'area_id' => '3',
+        ]);
+        User::create([
+            'name' => 'Jonathan',
+            'lastname' => 'Quistiano',
+            'email' => 'jonathan@artendigital.mx',
+            'password' => Hash::make('Arten.123!'),
+            'type_user' => '3',
+            'date_birthday' => Carbon::now(),
+            'area_id' => '3',
         ]);
     }
 }

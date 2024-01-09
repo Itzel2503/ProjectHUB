@@ -57,13 +57,13 @@
                         Ingresar
                     </button>
                 </div>
-                <div class="mt-7 flex">
+                {{-- <div class="mt-7 flex">
                     <div class="w-full text-center font-bold">
                         <a class="underline text-sm hover:text-secondary" href="{{ route('register') }}">
                             Regístrate
                         </a>
                     </div>
-                </div>
+                </div> --}}
                 <div class="m-7 flex">
                     <div class="w-full text-center font-bold">
                         <a class="underline text-sm hover:text-secondary" href="{{ route('password.request') }}">
