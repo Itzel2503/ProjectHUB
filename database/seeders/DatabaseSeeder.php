@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
             'lastname' => 'Arten',
             'email' => 'admin@arten.com',
             'password' => Hash::make('Arten.123!'),
-            'type_user' => '2',
+            'type_user' => '1',
             'date_birthday' => Carbon::now(),
             'area_id' => '1',
         ]);
@@ -74,7 +74,7 @@ class DatabaseSeeder extends Seeder
             'lastname' => 'De La Cruz',
             'email' => 'itzel@artendigital.mx',
             'password' => Hash::make('Arten.123!'),
-            'type_user' => '3',
+            'type_user' => '2',
             'date_birthday' => Carbon::now(),
             'area_id' => '3',
         ]);
@@ -83,7 +83,7 @@ class DatabaseSeeder extends Seeder
             'lastname' => 'Quistiano',
             'email' => 'jonathan@artendigital.mx',
             'password' => Hash::make('Arten.123!'),
-            'type_user' => '3',
+            'type_user' => '2',
             'date_birthday' => Carbon::now(),
             'area_id' => '3',
         ]);
