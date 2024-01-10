@@ -31,6 +31,7 @@ class CreateReportsTable extends Migration
             $table->string('comment');
             $table->integer('value');
             $table->string('url');
+            $table->boolean('repeat')->default(false);
 
             $table->softDeletes();
             $table->timestamps();
