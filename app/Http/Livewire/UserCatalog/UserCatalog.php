@@ -11,11 +11,14 @@ use Livewire\Component;
 class UserCatalog extends Component
 {
     public $listeners = ['reloadPage' => 'reloadPage'];
+    // modal
     public $modalCreateEdit = false, $modalDelete = false, $modalRestore = false;
     public $showUpdate = false, $showDelete = false, $showRestore = false;
+    // table, action's user
     public $search, $userEdit, $areaUser, $userDelete, $userRestore;
     public $perPage = '25';
     public $rules = [], $allAreas = [];
+    // inputs
     public $name, $lastname, $date_birthday, $curp, $rfc, $phone, $area, $email, $password, $password_confirmation;
 
     public function render()

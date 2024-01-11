@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Report as ModelsReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class Report extends Controller
+class Customer extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +15,7 @@ class Report extends Controller
     public function index()
     {
         if (Auth::check()) {
-            return view('reports.reports');
+            return view('customers.customers');
         } else {
             return redirect('/login');
         }
@@ -29,11 +28,7 @@ class Report extends Controller
      */
     public function create()
     {
-        if (Auth::check()) {
-            return view('reports.newreport');
-        } else {
-            return redirect('/login');
-        }
+        //
     }
 
     /**
@@ -44,18 +39,7 @@ class Report extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
-
-        $report = new ModelsReport();
-        
-
-        // $report->title = $request->title;
-        // $report->report = $request->report;
-        // $report->state = '1';
-
-        // $report->save();
-
-        // return redirect()->route('reports');
+        //
     }
 
     /**

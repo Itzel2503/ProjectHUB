@@ -75,17 +75,60 @@
                         @yield('profile')
                         <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow  @yield('black1')" href="{{ route('profile.index' ) }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-circle" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
-                                <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
-                                <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855"></path>
-                            </svg>
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                                <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
+                            </svg>                             
                             <span class="ml-4">Perfil</span>
                         </a>
                     </li>
                     <li class="relative px-6 py-3">
+                        @yield('userCatalog')
+                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow @yield('black2')" href="{{ route('userCatalog.index') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
+                                <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                <path d="M17 10h2a2 2 0 0 1 2 2v1" />
+                                <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                <path d="M3 13v-1a2 2 0 0 1 2 -2h2" />
+                            </svg>                        
+                            <span class="ml-4">Usuarios</span>
+                        </a>
+                    </li>
+                    <li class="relative px-6 py-3">
+                        @yield('customers')
+                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow  @yield('black3')" href="{{ route('customers.index') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                            </svg>                                                       
+                            <span class="ml-4">Clientes</span>
+                        </a>
+                    </li>
+                    <li class="relative px-6 py-3">
+                        @yield('projects')
+                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow  @yield('black4')" href="{{ route('projects.index') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-books" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M5 4m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+                                <path d="M9 4m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+                                <path d="M5 8h4" />
+                                <path d="M9 16h4" />
+                                <path d="M13.803 4.56l2.184 -.53c.562 -.135 1.133 .19 1.282 .732l3.695 13.418a1.02 1.02 0 0 1 -.634 1.219l-.133 .041l-2.184 .53c-.562 .135 -1.133 -.19 -1.282 -.732l-3.695 -13.418a1.02 1.02 0 0 1 .634 -1.219l.133 -.041z" />
+                                <path d="M14 9l4 -1" />
+                                <path d="M16 16l3.923 -.98" />
+                            </svg>                             
+                            <span class="ml-4">Proyectos</span>
+                        </a>
+                    </li>
+                    <li class="relative px-6 py-3">
                         @yield('permits')
-                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow  @yield('black2')" href="{{ route('permits.index') }}">
+                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow  @yield('black5')" href="{{ route('permits.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-run" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M13 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
@@ -97,33 +140,8 @@
                         </a>
                     </li>
                     <li class="relative px-6 py-3">
-                        @yield('reports')
-                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow  @yield('black3')" href="{{ route('reports.index') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
-                            </svg>                              
-                            <span class="ml-4">Reportes</span>
-                        </a>
-                    </li>
-                    @if (Auth::user()->type_user == 1)
-                    <li class="relative px-6 py-3">
-                        @yield('userCatalog')
-                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow @yield('black4')" href="{{ route('userCatalog.index') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-                                <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path>
-                                <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-                                <path d="M17 10h2a2 2 0 0 1 2 2v1"></path>
-                                <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-                                <path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path>
-                            </svg>
-                            <span class="ml-4">Usuarios</span>
-                        </a>
-                    </li>
-                    <li class="relative px-6 py-3">
                         @yield('control_activities')
-                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow  @yield('black5')" href="">
+                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow  @yield('black6')" href="">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M12 21h-6a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4.5"></path>
@@ -138,7 +156,7 @@
                     </li>
                     <li class="relative px-6 py-3">
                         @yield('petty_cash')
-                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow  @yield('black6')" href="">
+                        <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow  @yield('black7')" href="">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-currency-dollar" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M16.7 8a3 3 0 0 0 -2.7 -2h-4a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6h-4a3 3 0 0 1 -2.7 -2"></path>
@@ -147,7 +165,6 @@
                             <span class="ml-4">Caja chica</span>
                         </a>
                     </li>
-                    @endif
                 </ul>
 
                 <form method="POST" action="{{ route('logout') }}" x-data>

@@ -15,7 +15,7 @@ class Table extends Component
     public $showDelete = false;
 
     public $perPage = '25';
-    public $rules = [], $allAreas = [];
+    public $rules = [];
 
     public function render()
     {

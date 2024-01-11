@@ -55,30 +55,29 @@
         /* Style for the range slider */
         input[type="range"] {
             -webkit-appearance: none;
-            width: 100px;
+            width: 150px;
             height: 10px;
             border-radius: 5px;
-            background: #d3d3d3; /* Gray background */
+            background: rgb(50 77 87);
             outline: none;
             opacity: 1;
             transition: opacity 0.2s;
-            margin-bottom: 15px;
         }
         /* Style for the slider thumb */
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            background: #1c274c; /* Green thumb */
+            background: rgb(79 174 173);
             cursor: pointer;
         }
         input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            background: #1c274c; /* Green thumb */
+            background: rgb(79 174 173);
             cursor: pointer;
         }
     </style>
@@ -109,8 +108,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
             </svg>              
         </button>
-        <button class="mx-5 w-12 h-12 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-red">
+        <button class="ml-5 w-10 h-10 flex justify-center items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-red">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
             </svg>              
         </button>
@@ -154,7 +153,7 @@
                 </h2>
                 <div id="renderedCanvas" class="w-full h-auto mt-8"></div>
                 <div class="flex justify-center items-center py-6 bg-main-fund">
-                    <button type="submit" id="downloadButton" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Guardar captura</button>
+                    <button id="downloadButton" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Guardar captura</button>
                 </div>
             </div>
             
@@ -164,24 +163,27 @@
                 </h2>
                 <video id="recording" width="300" height="200" controls class="mt-8 w-full h-2/5"></video>
                 <div class="flex justify-center items-center py-6 bg-main-fund">
-                    <button type="submit" id="downloadVideoButton" class="px-4 py-2 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Descargar video</button>
+                    <a id="downloadVideoButton" class="px-4 py-2 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Descargar video</a>
                 </div>
             </div>
             
-            <form action="{{route('reports.store')}}" method="POST">
+            <form id="formReport" action="{{route('reports.store')}}" method="POST">
             @csrf 
+                <input type="text" id="inputVideo" name="video">
+                <input type="text" id="inputPhoto" name="photo">
+
                 <div class="-mx-3 md:flex mb-6 bg-main-fund">
                     <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                         <h5 class="inline-flex font-semibold" for="name">
                             Tìtulo del reporte
                         </h5>
-                        <input  type="text" name="title" id="title" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                        <input required type="text" name="title" id="title" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                     </div>
                     <div class="md:w-1/2 flex flex-col px-3">
                         <h5 class="inline-flex font-semibold" for="name">
                             Descripción del reporte
                         </h5>
-                        <textarea type="text" rows="10" placeholder="Describir observación y especificar objetivo a cumplir" name="report" id="report" class="fields1 leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto"></textarea> 
+                        <textarea required type="text" rows="10" placeholder="Describa la observación y especifique el objetivo a cumplir." name="report" id="report" class="fields1 leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto"></textarea> 
                     </div>
                 </div>
 
@@ -206,15 +208,27 @@
 
     {{-- CORDER --}}
     <script>
+        
         let preview = document.getElementById("preview");
         let recording = document.getElementById("recording");
         let startButton = document.getElementById("startButton");
         let stopButton = document.getElementById("stopButton");
         let downloadVideoButton = document.getElementById("downloadVideoButton");
         let logElement = document.getElementById("log");
+        let inputVideo = document.getElementById("inputVideo");
+
+        let dateNow = new Date();
+        let year = dateNow.getFullYear();
+        let month = ('0' + (dateNow.getMonth() + 1)).slice(-2);
+        let day = ('0' + dateNow.getDate()).slice(-2);
+        let hours = ('0' + dateNow.getHours()).slice(-2);
+        let minutes = ('0' + dateNow.getMinutes()).slice(-2);
+        let seconds = ('0' + dateNow.getSeconds()).slice(-2);
+
+        let dateHour = year + '-' + month + '-' + day + ' ' + hours + '_' + minutes + '_' + seconds;
         
         function log(msg) {
-            logElement.innerHTML += msg + "\n";
+            logElement.innerHTML = msg;
         }
 
         function startRecording(stream, lengthInMS) {
@@ -249,20 +263,45 @@
                 return new Promise(resolve => preview.onplaying = resolve);
             }).then(() => startRecording(preview.captureStream()))
             .then (recordedChunks => {
-                let recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
+                let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
                 recording.src = URL.createObjectURL(recordedBlob);
                 downloadVideoButton.href = recording.src;
-                downloadVideoButton.download = "Reporte.mp4";
-                
-                // log("Capturado correctamente " + recordedBlob.size + " bytes de " +
-                //     recordedBlob.type + " media.");
+                inputVideo.value = 'Reporte ' + dateHour +'.mp4';
+                downloadVideoButton.download = 'Reporte ' + dateHour +'.mp4';
             })
             /* .catch(log); */
         }, false);
 
         stopButton.addEventListener("click", function() {
             stop(preview.srcObject);
+            log("Grabación finalizada.");
         }, false);
+
+        //returnButton from Video
+        document.getElementById('returnButtonVideo').addEventListener('click', function() {
+            // Detener el video
+            let preview = document.getElementById("preview");
+            let recorder;
+            preview.pause();
+            preview.srcObject = null;
+
+            if (recorder) {
+                recorder.stop();
+            }
+            log('');
+            recording.src = '';
+            downloadVideoButton.href = '';
+            inputVideo.value = '';
+
+            // Mostrar el div principal y ocultar otros elementos
+            document.getElementById('rightBar').style.display = 'none';
+            document.getElementById('viewPhoto').style.display = 'none';
+            document.getElementById('viewVideo').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'flex';
+            document.getElementById('videoMenu').style.display = 'none';
+
+            cleanForm();
+        });
     </script>
 
     {{-- SCREEN --}}
@@ -273,7 +312,7 @@
             ctx.moveTo(prevX, prevY);
             ctx.lineTo(x, y);
             ctx.lineCap = 'round'; // Make lines rounded
-            ctx.strokeStyle = 'red'; // Set the color for drawing (change as needed)
+            ctx.strokeStyle = 'rgb(221 66 49)'; // Set the color for drawing (change as needed)
             ctx.lineWidth = lineWidthValue; // Set the line width from the slider
             ctx.stroke();
         };
@@ -282,6 +321,17 @@
             const screenshotButton = document.getElementById('screenshotButton');
             const lineWidthSlider = document.getElementById('lineWidthSlider');
             const capturedImageContainer = document.getElementById('capturedImageContainer'); // Container to display captured image
+            const inputPhoto = document.getElementById("inputPhoto");
+
+            let dateNow = new Date();
+            let year = dateNow.getFullYear();
+            let month = ('0' + (dateNow.getMonth() + 1)).slice(-2);
+            let day = ('0' + dateNow.getDate()).slice(-2);
+            let hours = ('0' + dateNow.getHours()).slice(-2);
+            let minutes = ('0' + dateNow.getMinutes()).slice(-2);
+            let seconds = ('0' + dateNow.getSeconds()).slice(-2);
+
+            let dateHour = year + '-' + month + '-' + day + ' ' + hours + '_' + minutes + '_' + seconds;
 
             screenshotButton.addEventListener('click', () => {
                 navigator.mediaDevices.getDisplayMedia({
@@ -370,6 +420,7 @@
                                 renderedCanvas.innerHTML = ''; // Clear previous content
                                 const renderedImage = new Image();
                                 renderedImage.src = combinedDataURL;
+                                inputPhoto.value = 'Reporte ' + dateHour +'.jpg';
                                 renderedCanvas.appendChild(renderedImage);
                             };
 
@@ -400,7 +451,6 @@
                                 };
                             });
 
-                
                             // Function to handle the download
                             const downloadImage = () => {
                                 const combinedCanvas = document.createElement('canvas');
@@ -423,7 +473,7 @@
                                     const combinedDataURL = combinedCanvas.toDataURL('image/jpg');
                                     const a = document.createElement('a');
                                     a.href = combinedDataURL;
-                                    a.download = 'Reporte.jpg';
+                                    a.download = 'Reporte ' + dateHour +'.jpg';
                                     a.click();
                                 };
                             };    
@@ -451,11 +501,27 @@
         });
         //returnButton from screen Shot
         document.getElementById('returnButton').addEventListener('click', function() {
+            // Reiniciar el div donde se muestra la captura de pantalla
+            const capturedImageContainer = document.getElementById('capturedImageContainer');
+            capturedImageContainer.innerHTML = '';
+
+            // Eliminar el dibujo realizado en el overlay canvas
+            const drawCanvas = document.querySelector('canvas');
+            if (drawCanvas) {
+                drawCanvas.parentNode.removeChild(drawCanvas);
+            }
+
+            // Reiniciar el div donde se muestra la vista previa de la imagen combinada
+            const renderedCanvas = document.getElementById('renderedCanvas');
+            renderedCanvas.innerHTML = '';
+
+            // Mostrar el div principal y ocultar otros elementos
             document.getElementById('rightBar').style.display = 'none';
             document.getElementById('viewPhoto').style.display = 'none';
             document.getElementById('viewVideo').style.display = 'none';
             document.getElementById('mainMenu').style.display = 'flex';
             document.getElementById('shotMenu').style.display = 'none';
+            cleanForm();
         });
         //start recording video button
         document.getElementById('startButton').addEventListener('click', function() {
@@ -468,14 +534,6 @@
             document.getElementById('textMenu').style.display = 'flex';
             document.getElementById('mainMenu').style.display = 'none';
         });
-        //returnButton from Video
-        document.getElementById('returnButtonVideo').addEventListener('click', function() {
-            document.getElementById('rightBar').style.display = 'none';
-            document.getElementById('viewPhoto').style.display = 'none';
-            document.getElementById('viewVideo').style.display = 'none';
-            document.getElementById('mainMenu').style.display = 'flex';
-            document.getElementById('videoMenu').style.display = 'none';
-        });
         //returnButtonText from text
         document.getElementById('returnButtonText').addEventListener('click', function() {
             document.getElementById('rightBar').style.display = 'none';
@@ -483,6 +541,7 @@
             document.getElementById('viewVideo').style.display = 'none';
             document.getElementById('mainMenu').style.display = 'flex';
             document.getElementById('textMenu').style.display = 'none';
+            cleanForm();
         });
         //stop recording button
         document.getElementById('stopButton').addEventListener('click', function() {
@@ -494,6 +553,18 @@
             document.getElementById('rightBar').style.display = 'flex';
             document.getElementById('viewPhoto').style.display = 'block';
         });
+
+        function cleanForm() {
+            const formulario = document.getElementById('formReport'); 
+            const elementosFormulario = formulario.querySelectorAll('input, textarea');
+
+            // Establece los valores de los elementos en vacío
+            elementosFormulario.forEach(elemento => {
+                if (elemento.type !== 'button' && elemento.type !== 'submit') {
+                    elemento.value = '';
+                }
+            });
+        }
     </script>
 </body>
 </html>

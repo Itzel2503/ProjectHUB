@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Customer;
 use App\Http\Controllers\Permit;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Projects\Project;
 use App\Http\Controllers\Report;
 use App\Http\Controllers\UserCatalog;
 use Illuminate\Support\Facades\Auth;
@@ -24,10 +26,16 @@ Route::get('/', function () {
 
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['web', 'auth'])->group(function () {
-    Route::resource('/permits', Permit::class);
-    Route::resource('/reports', Report::class);
     Route::resource('/profile', ProfileController::class)->only(['index']);
+
     Route::resource('/userCatalog', UserCatalog::class)->only(['index']);
+
+    Route::resource('/customers', Customer::class);
+
+    Route::resource('/projects', Project::class);
+    Route::resource('/reports', Report::class);
+
+    Route::resource('/permits', Permit::class);
 });
 
 // Rutas de autenticación generadas por Auth::routes();
