@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use App\Models\Report as ModelsReport;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,10 +15,12 @@ class Report extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id_project)
     {
         if (Auth::check()) {
-            return view('reports.reports');
+            $project = Project::find($id_project);
+            
+            return view('reports.reports', compact('project'));
         } else {
             return redirect('/login');
         }
@@ -27,10 +31,13 @@ class Report extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id_project)
     {
         if (Auth::check()) {
-            return view('reports.newreport');
+            $user = Auth::user();
+            $users = User::all();
+
+            return view('reports.newreport', compact('id_project', 'user', 'users'));
         } else {
             return redirect('/login');
         }

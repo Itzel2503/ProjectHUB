@@ -14,15 +14,14 @@ class Projects extends Component
     public $modalCreateEdit = false, $modalDelete = false, $modalRestore = false;
     public $showUpdate = false, $showDelete = false, $showRestore = false;
     // table, action's user
-    public $search, $projectCustomer, $projectEdit, $projectDelete, $projectRestore;
+    public $search, $projectCustomer, $projectEdit, $projectDelete, $projectRestore, $filteredType;
     public $perPage = '25';
-    public $rules = [], $allCustomers = [], $selectedLeaders = [];
+    public $rules = [], $allCustomers = [], $selectedLeaders = [], $allType = ['Activo', 'Soporte', 'Resolución Piloto', 'Entregado seguimiento', 'No activo seguimiento'];
     // inputs
     public $name, $type, $priority, $customer;
 
     public function render()
     {
-
         $customers = Customer::all();
         $leaders = User::all();
 
@@ -74,7 +73,6 @@ class Projects extends Component
 
     public function update($id)
     {
-        dd($this);
         $this->rules = [
             'name' => 'max:255',
             'type' => 'max:255',
@@ -85,15 +83,37 @@ class Projects extends Component
         $this->validateOnly($id, $this->rules);
 
         $project = Project::find($id);
-        $project->customer_id = $this->customer;
-        $project->type = $this->type;
-        $project->name = $this->name;
-        $project->priority = $this->priority;
+        $project->customer_id = $this->customer ?? $project->customer_id;
+        $project->type = $this->type ?? $project->type;
+        $project->name = $this->name ?? $project->name;
+        $project->priority = $this->priority ?? $project->priority;
         $project->save();
 
-        // Adjuntar usuarios al proyecto
-        foreach ($this->selectedLeaders as $userId => $isLeader) {
-            $project->users()->attach($userId, ['leader' => $isLeader]);
+        if (!empty($this->selectedLeaders)) {
+            // Obtener la colección de usuarios asociados al proyecto
+            $projectUsers = $project->users;
+
+            // Iterar sobre todos los usuarios asociados al proyecto
+            foreach ($projectUsers as $user) {
+                $userId = $user->id;
+                // Verificar si el usuario está presente en $this->selectedLeaders
+                if (array_key_exists($userId, $this->selectedLeaders)) {
+                    $isLeader = $this->selectedLeaders[$userId];
+
+                    // Actualizar la tabla pivote según el estado del líder
+                    $project->users()->updateExistingPivot($userId, ['leader' => $isLeader]);
+                } else {
+                    // Si el usuario no está presente en $this->selectedLeaders, establecer leader en false
+                    $project->users()->updateExistingPivot($userId, ['leader' => false]);
+                }
+            }
+
+            // Agregar nuevos usuarios a la tabla pivote
+            foreach ($this->selectedLeaders as $userId => $isLeader) {
+                if (!$projectUsers->contains('id', $userId)) {
+                    $project->users()->attach($userId, ['leader' => $isLeader]);
+                }
+            }
         }
 
         $this->modalCreateEdit = false;
@@ -169,6 +189,22 @@ class Projects extends Component
                 unset($this->allCustomers[$key]);
             }
         }
+        $filteredTypes = array_filter($this->allType, function ($type) {
+            return $type === $this->projectEdit->type;
+        });
+
+        $this->filteredType = reset($filteredTypes);
+
+        foreach ($this->allType as $key => $type) {
+            if ($type === $this->filteredType) {
+                unset($this->allType[$key]);
+            }
+        }
+    }
+
+    public function showReports($id_project)
+    {
+        return redirect()->route('reports.index', ['id_project' => $id_project]);
     }
 
     public function modalCreateEdit()
@@ -180,6 +216,7 @@ class Projects extends Component
         } else {
             $this->modalCreateEdit = true;
         }
+        $this->clearInputs();
     }
 
     public function modalDelete()
@@ -198,6 +235,17 @@ class Projects extends Component
         } else {
             $this->modalRestore = true;
         }
+    }
+
+    public function clearInputs()
+    {
+        $this->name = '';
+        $this->type = '';
+        $this->priority = '';
+        $this->customer = '';
+        $this->filteredType = '';
+        $this->allType = ['Activo', 'Soporte', 'Resolución Piloto', 'Entregado seguimiento', 'No activo seguimiento'];
+        $this->selectedLeaders = [];
     }
 
     public function reloadPage()

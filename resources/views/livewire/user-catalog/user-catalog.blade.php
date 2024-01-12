@@ -2,7 +2,7 @@
     {{--Tabla usuarios--}}
     <div class="shadow-xl sm:rounded-lg px-4 py-4">
         {{-- NAVEGADOR --}}
-        <div class="flex justify-between text-sm lg:text-xs lg:text-base">
+        <div class="flex justify-between text-sm lg:text-base">
             <!-- SEARCH -->
             <div class="inline-flex w-3/4 h-12 bg-transparent mb-2">
                 <div class="flex w-full h-full relative">
@@ -14,7 +14,7 @@
                             </svg>
                         </span>
                     </div>
-                    <input wire:model="search" type="text" placeholder="Buscar" class="flex w-full border-0 border-yellow border-b-2 rounded rounded-l-none relative focus:outline-none text-xxs lg:text-xs lg:text-base text-gray-500 font-thin">
+                    <input wire:model="search" type="text" placeholder="Buscar" class="flex w-full border-0 border-yellow border-b-2 rounded rounded-l-none relative focus:outline-none text-xxs lg:text-base  text-gray-500 font-thin">
                 </div>
             </div>
             <!-- COUNT -->
@@ -55,7 +55,7 @@
                         <td class="px-4 py-2">{{$user->email}}</td>
                         <td class="px-4 py-2">{{$user->area_name}}</td>
                         <td class="px-4 py-2">{{($user->type_user == 1 ) ? 'Administrador' : 'Usuario'}}</td>
-                        <td class="px-4 py-2 justify-between">
+                        <td class="px-4 py-2 flex justify-center">
                             @if($user->deleted_at != null)
                             <button wire:click="showRestore({{$user->id}})" class="bg-secondary-fund text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-reload" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -65,7 +65,7 @@
                                 </svg>
                             </button>
                             @else
-                            <button wire:click="showUpdate({{$user->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
+                            <button wire:click="showUpdate({{$user->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
@@ -73,7 +73,7 @@
                                     <path d="M16 5l3 3"></path>
                                 </svg>
                             </button>
-                            <button wire:click="showDelete({{$user->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
+                            <button wire:click="showDelete({{$user->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <path d="M4 7l16 0"></path>
@@ -98,8 +98,8 @@
 
     {{-- MODAL EDIT / CREATE --}}
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalCreateEdit) block  @else hidden @endif">
-        <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full h-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
-        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full h-full fixed">
+        <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
+        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
             <div class="flex flex-col w-2/4 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     @if($showUpdate)
@@ -224,14 +224,14 @@
                                     Área @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                <select wire:model='area' name="area" id="area" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <select wire:model='area' name="area" id="area" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                     <option selected value="{{ $areaUser->id }}">{{ $areaUser->name }}</option>
                                     @foreach ($allAreas as $allArea)
                                     <option value="{{ $allArea->id }}">{{ $allArea->name }}</option>
                                     @endforeach
                                 </select>
                                 @else
-                                <select wire:model='area' required name="area" id="area" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <select wire:model='area' required name="area" id="area" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                     <option selected>Selecciona...</option>
                                     @foreach ($areas as $area)
                                     <option value="{{ $area->id }}">{{ $area->name }}</option>
@@ -285,9 +285,9 @@
                 </div>
                 <div class="flex justify-center items-center py-6 bg-main-fund">
                     @if($showUpdate)
-                    <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="update({{$userEdit->id}})" wire:loading.remove wire:target="update({{$userEdit->id}})"> Guardar </button>
+                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="update({{$userEdit->id}})" wire:loading.remove wire:target="update({{$userEdit->id}})"> Guardar </button>
                     @else
-                    <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="create" wire:loading.remove wire:target="create"> Guardar </button>
+                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="create" wire:loading.remove wire:target="create"> Guardar </button>
                     @endif
                 </div>
             </div>
@@ -337,7 +337,7 @@
                 </div>
                 @if($showRestore)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
-                    <div class="w-full sm:w-3/5 md-3/4 mb-5 mt-5 flex flex-col">
+                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
                         <div class="text-lg md:flex mb-6 text-center">
                             <h2 class="font-semibold">¿Quieres restaurar a {{$userRestore->name}} {{$userRestore->lastname}}?</h2>
                         </div>

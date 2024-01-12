@@ -172,6 +172,15 @@
                 <input type="text" id="inputVideo" name="video">
                 <input type="text" id="inputPhoto" name="photo">
 
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                        <h5 class="inline-flex font-semibold" for="name">
+                            Selecciona un archivo
+                        </h5>
+                        <input type="file" name="file" id="file" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                    </div>
+                </div>
+
                 <div class="-mx-3 md:flex mb-6 bg-main-fund">
                     <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                         <h5 class="inline-flex font-semibold" for="name">
@@ -184,6 +193,15 @@
                             Descripción del reporte
                         </h5>
                         <textarea required type="text" rows="10" placeholder="Describa la observación y especifique el objetivo a cumplir." name="report" id="report" class="fields1 leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto"></textarea> 
+                    </div>
+                </div>
+
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                        <h5 class="inline-flex font-semibold" for="name">
+                            Delegar
+                        </h5>
+                        <input type="file" name="file" id="file" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                     </div>
                 </div>
 

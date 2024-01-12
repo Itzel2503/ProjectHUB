@@ -33,7 +33,10 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('/customers', Customer::class);
 
     Route::resource('/projects', Project::class);
-    Route::resource('/reports', Report::class);
+
+    Route::get('{id_project}/reports', [Report::class, 'index'])->name('reports.index');
+    Route::get('{id_project}/reports/create', [Report::class, 'create'])->name('reports.create');
+    Route::get('reports', [Report::class, 'store'])->name('reports.store');
 
     Route::resource('/permits', Permit::class);
 });
