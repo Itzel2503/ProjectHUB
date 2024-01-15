@@ -15,10 +15,10 @@ class Report extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($id_project)
+    public function index($project_id)
     {
         if (Auth::check()) {
-            $project = Project::find($id_project);
+            $project = Project::find($project_id);
             
             return view('reports.reports', compact('project'));
         } else {
@@ -31,13 +31,13 @@ class Report extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($id_project)
+    public function create($project_id)
     {
         if (Auth::check()) {
             $user = Auth::user();
-            $users = User::all();
+            $allUsers = User::all();
 
-            return view('reports.newreport', compact('id_project', 'user', 'users'));
+            return view('reports.newreport', compact('project_id', 'user', 'allUsers'));
         } else {
             return redirect('/login');
         }
@@ -51,18 +51,54 @@ class Report extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
-
+        // dd($request->all(), isset($request->video), isset($request->photo), isset($request->file));
         $report = new ModelsReport();
+
+        if (isset($request->video)) {
+            $report->project_id = $request->project_id;
+            $report->user_id = $request->user_id;
+            $report->delegate_id = $request->delegate;
+            $report->title = $request->title;
+            $report->content = $request->video;
+            $report->state = "Abierto";
+            $report->comment = $request->comment;
+            $report->save();
+        }
+
+        if (isset($request->photo)) {
+            $report->project_id = $request->project_id;
+            $report->user_id = $request->user_id;
+            $report->delegate_id = $request->delegate;
+            $report->title = $request->title;
+            $report->content = $request->photo;
+            $report->state = "Abierto";
+            $report->comment = $request->comment;
+            $report->save();
+        }
+
+        if (isset($request->file)) {
+            $report->project_id = $request->project_id;
+            $report->user_id = $request->user_id;
+            $report->delegate_id = $request->delegate;
+            $report->title = $request->title;
+            $report->content = $request->file;
+            $report->state = "Abierto";
+            $report->comment = $request->comment;
+            $report->save();
+        }
+
+        if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
+            $report->project_id = $request->project_id;
+            $report->user_id = $request->user_id;
+            $report->delegate_id = $request->delegate;
+            $report->title = $request->title;
+            $report->content = $request->file;
+            $report->state = "Abierto";
+            $report->comment = $request->comment;
+            $report->save();
+        }
         
-
-        // $report->title = $request->title;
-        // $report->report = $request->report;
-        // $report->state = '1';
-
-        // $report->save();
-
-        // return redirect()->route('reports');
+        return redirect()->route('reports.index', ['project_id' => $request->project_id]);
     }
 
     /**
@@ -73,7 +109,7 @@ class Report extends Controller
      */
     public function show($id)
     {
-        //
+        dd($id);
     }
 
     /**

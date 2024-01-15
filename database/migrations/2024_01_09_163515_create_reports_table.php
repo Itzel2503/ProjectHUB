@@ -25,12 +25,12 @@ class CreateReportsTable extends Migration
             $table->unsignedBigInteger('delegate_id'); // El usuario que finaliza el state a true
             $table->foreign('delegate_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->string('tittle');
-            $table->text('content');
+            $table->string('title');
+            $table->text('content')->nullable();;
             $table->string('state');
             $table->string('comment');
-            $table->integer('value');
-            $table->string('url');
+            $table->integer('value')->default('0');
+            $table->string('url')->nullable();
             $table->boolean('repeat')->default(false);
 
             $table->softDeletes();

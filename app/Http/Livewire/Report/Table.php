@@ -11,11 +11,11 @@ class Table extends Component
 {
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
-    public $modalCreateEdit = false, $modalDelete = false, $modalRestore = false;
-    public $showUpdate = false, $showDelete = false, $showRestore = false;
+    public $modalShow = false;
+    public $showReport = false;
     // table, action's user
     public $leader = false;
-    public $search, $project, $reportDelete;
+    public $search, $project, $reportShow;
     public $perPage = '25';
     public $rules = [];
     // inputs
@@ -24,14 +24,18 @@ class Table extends Component
     public function render()
     {
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
-        
-        $reports = Report::where(function ($query) {
-            $query->where('tittle', 'like', '%' . $this->search . '%')
-                ->orWhere('comment', 'like', '%' . $this->search . '%')
-                ->orWhere('state', 'like', '%' . $this->search . '%');
-        })->paginate($this->perPage);
 
         $user = Auth::user();
+        
+        $reports = Report::where('project_id', $this->project->id)
+        ->where(function ($query) {
+            $query->where('title', 'like', '%' . $this->search . '%')
+                ->orWhere('comment', 'like', '%' . $this->search . '%')
+                ->orWhere('state', 'like', '%' . $this->search . '%');
+        })
+        ->with(['user', 'delegate'])
+        ->paginate($this->perPage);
+        
         foreach ($this->project->users as $projectUser) {
             if ($projectUser->id === $user->id && $projectUser->pivot->leader) {
                 $this->leader = true;
@@ -44,34 +48,36 @@ class Table extends Component
         ]);
     }
 
-    public function create($id_project)
+    public function create($project_id)
     {
-        return redirect()->route('reports.create', ['id_project' => $id_project]);
+        return redirect()->route('reports.create', ['project_id' => $project_id]);
     }
 
-    public function destroy($id)
-    {
-        $report = Report::find($id);
-
-        if ($report) {
-            $report->delete();
-        }
-
-        $this->modalDelete = false;
-        $this->emit('reloadPage');
+    public function show($report_id)
+    {   
+        return redirect()->route('reports.show', ['project_id' => $this->project->id, 'report_id' => $report_id]);
     }
 
-    public function showDelete($id)
+    public function showReport($id)
     {
-        $this->showDelete = true;
+        $this->showReport = true;
 
-        if ($this->modalDelete == true) {
-            $this->modalDelete = false;
+        if ($this->modalShow == true) {
+            $this->modalShow = false;
         } else {
-            $this->modalDelete = true;
+            $this->modalShow = true;
         }
 
-        $this->reportDelete = Report::find($id);
+        $this->reportShow = Report::find($id);
+    }
+
+    public function modalShow()
+    {
+        if ($this->modalShow == true) {
+            $this->modalShow = false;
+        } else {
+            $this->modalShow = true;
+        }
     }
 
     public function reloadPage()

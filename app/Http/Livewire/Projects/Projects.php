@@ -189,6 +189,7 @@ class Projects extends Component
                 unset($this->allCustomers[$key]);
             }
         }
+
         $filteredTypes = array_filter($this->allType, function ($type) {
             return $type === $this->projectEdit->type;
         });
@@ -202,9 +203,9 @@ class Projects extends Component
         }
     }
 
-    public function showReports($id_project)
+    public function showReports($project_id)
     {
-        return redirect()->route('reports.index', ['id_project' => $id_project]);
+        return redirect()->route('reports.index', ['project_id' => $project_id]);
     }
 
     public function modalCreateEdit()
@@ -216,7 +217,6 @@ class Projects extends Component
         } else {
             $this->modalCreateEdit = true;
         }
-        $this->clearInputs();
     }
 
     public function modalDelete()

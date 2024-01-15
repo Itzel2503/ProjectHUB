@@ -36,7 +36,7 @@ class UserCatalog extends Component
             ->orWhere('users.lastname', 'ilike', '%' . $this->search . '%')
             ->orWhere('users.email', 'ilike', '%' . $this->search . '%')
             ->orWhere('areas.name', 'ilike', '%' . $this->search . '%') 
-            ->paginate($this->perPage);;
+            ->paginate($this->perPage);
 
         return view('livewire.user-catalog.user-catalog', [
             'users' => $users,

@@ -34,9 +34,10 @@ Route::middleware(['web', 'auth'])->group(function () {
 
     Route::resource('/projects', Project::class);
 
-    Route::get('{id_project}/reports', [Report::class, 'index'])->name('reports.index');
-    Route::get('{id_project}/reports/create', [Report::class, 'create'])->name('reports.create');
-    Route::get('reports', [Report::class, 'store'])->name('reports.store');
+    Route::get('{project_id}/reports', [Report::class, 'index'])->name('reports.index');
+    Route::post('reports', [Report::class, 'store'])->name('reports.store');
+    Route::get('{project_id}/reports/create', [Report::class, 'create'])->name('reports.create');
+    Route::get('{project_id}/reports/{report_id}', [Report::class, 'show'])->name('reports.show');
 
     Route::resource('/permits', Permit::class);
 });

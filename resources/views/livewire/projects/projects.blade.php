@@ -52,7 +52,7 @@
                     <tr class="border-white text-sm">
                         <td class="px-4 py-2">{{ $project->name }}</td>
                         <td class="px-4 py-2">{{ $project->type }}</td>
-                        <td class="px-4 py-2">{{ $project->priority }}</td>
+                        <td class="px-4 py-2">K{{ $project->priority }}</td>
                         <td class="px-4 py-2">
                             @foreach ($project->users as $user) 
                                 - {{ $user->name }} {{ $user->lastname }} <br>
@@ -146,8 +146,8 @@
                                     Tipo @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                    <select wire:model.defer='type' name="type" id="type" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                        <option selected value='{{ $filteredType }}'>{{ $filteredType }}</option>
+                                    <select wire:model='type' required name="type" id="type" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                        <option selected>{{ $filteredType }}</option>
                                         @foreach ($allType as $typeOption)
                                             <option value='{{ $typeOption }}'>{{ $typeOption }}</option>
                                         @endforeach
