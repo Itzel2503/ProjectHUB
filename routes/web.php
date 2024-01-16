@@ -4,7 +4,7 @@ use App\Http\Controllers\Customer;
 use App\Http\Controllers\Permit;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Projects\Project;
-use App\Http\Controllers\Report;
+use App\Http\Controllers\Projects\Report;
 use App\Http\Controllers\UserCatalog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;

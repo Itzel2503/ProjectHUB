@@ -22,8 +22,11 @@ class CreateReportsTable extends Migration
             $table->unsignedBigInteger('user_id'); // El usuario que crea el reporte
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->unsignedBigInteger('delegate_id'); // El usuario que finaliza el state a true
+            $table->unsignedBigInteger('delegate_id');
             $table->foreign('delegate_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unsignedBigInteger('resolved_id')->nullable();
+            $table->foreign('resolved_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->string('title');
             $table->text('content')->nullable();;

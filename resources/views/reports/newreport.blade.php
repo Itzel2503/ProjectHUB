@@ -167,12 +167,12 @@
                 </div>
             </div>
             
-            <form id="formReport" action="{{route('reports.store')}}" method="POST">
+            <form id="formReport" action="{{route('reports.store')}}" method="POST" enctype="multipart/form-data">
             @csrf 
                 <input hidden type="text" id="project_id" name="project_id" value="{{ $project_id }}">
                 <input hidden type="text" id="user_id" name="user_id" value="{{ $user->id }}">
-                <input hidden type="text" id="inputVideo" name="video">
-                <input hidden type="text" id="inputPhoto" name="photo">
+                <input  type="text" id="inputVideo" name="video">
+                <input  type="text" id="inputPhoto" name="photo">
 
                 <div id="viewText" class="-mx-3 md:flex mb-6" style="display: none;">
                     <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
@@ -288,7 +288,6 @@
             }).then(stream => {
                 preview.srcObject = stream;
                 downloadVideoButton.href = stream;
-                inputVideo.value = 'Reporte ' + dateHour +'.mp4';
                 projectId.value = idProject;
                 userId.value = user.id;
                 preview.captureStream = preview.captureStream || preview.mozCaptureStream;
@@ -298,6 +297,7 @@
                 let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
                 recording.src = URL.createObjectURL(recordedBlob);
                 downloadVideoButton.href = recording.src;
+                inputVideo.value = recording.src;
                 downloadVideoButton.download = 'Reporte ' + dateHour +'.mp4';
             })
             /* .catch(log); */
@@ -457,7 +457,7 @@
                                 renderedCanvas.innerHTML = ''; // Clear previous content
                                 const renderedImage = new Image();
                                 renderedImage.src = combinedDataURL;
-                                inputPhoto.value = 'Reporte ' + dateHour +'.jpg';
+                                inputPhoto.value = combinedDataURL;
                                 projectId.value = idProject;
                                 userId.value = user.id;
                                 renderedCanvas.appendChild(renderedImage);

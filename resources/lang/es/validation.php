@@ -191,5 +191,9 @@ return [
         'updated_at'               => 'actualizado el',
         'username'                 => 'usuario',
         'year'                     => 'año',
+        'type'                     => 'tipo',
+        'priority'                 => 'prioridad',
+        'customer'                 => 'cliente',
+        'selectedLeaders'          => 'seleccionar líder/es',
     ],
 ];

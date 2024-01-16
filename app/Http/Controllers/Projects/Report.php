@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects;
 
+use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Report as ModelsReport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class Report extends Controller
 {
@@ -51,7 +53,8 @@ class Report extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all(), isset($request->video), isset($request->photo), isset($request->file));
+        $project = Project::find($request->project_id);
+
         $report = new ModelsReport();
 
         if (isset($request->video)) {
@@ -77,13 +80,19 @@ class Report extends Controller
         }
 
         if (isset($request->file)) {
+
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            Storage::disk('public')->put(now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' .$fileName, file_get_contents($file));
+
             $report->project_id = $request->project_id;
             $report->user_id = $request->user_id;
             $report->delegate_id = $request->delegate;
             $report->title = $request->title;
-            $report->content = $request->file;
+            $report->content = $file->getClientOriginalName();
             $report->state = "Abierto";
             $report->comment = $request->comment;
+
             $report->save();
         }
 

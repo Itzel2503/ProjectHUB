@@ -16,7 +16,7 @@ class Table extends Component
     // table, action's user
     public $leader = false;
     public $search, $project, $reportShow;
-    public $perPage = '25';
+    public $perPage = '8';
     public $rules = [];
     // inputs
     public $name, $type, $priority, $customer;

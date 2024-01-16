@@ -217,6 +217,7 @@ class Projects extends Component
         } else {
             $this->modalCreateEdit = true;
         }
+        $this->clearInputs();
     }
 
     public function modalDelete()
