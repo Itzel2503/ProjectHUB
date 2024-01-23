@@ -42,6 +42,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'reports' => [
+            'driver' => 'local',
+            'root' => 'reportes',
+            'url' => '',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

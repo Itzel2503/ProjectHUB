@@ -167,7 +167,7 @@
                 </div>
             </div>
             
-            <form id="formReport" action="{{route('reports.store')}}" method="POST" enctype="multipart/form-data">
+            <form id="formReport" action="{{route('report.store')}}" method="POST" enctype="multipart/form-data">
             @csrf 
                 <input hidden type="text" id="project_id" name="project_id" value="{{ $project_id }}">
                 <input hidden type="text" id="user_id" name="user_id" value="{{ $user->id }}">
@@ -243,18 +243,8 @@
         let projectId = document.getElementById("project_id");
         let userId = document.getElementById("user_id");
 
-        let dateNow = new Date();
-        let year = dateNow.getFullYear();
-        let month = ('0' + (dateNow.getMonth() + 1)).slice(-2);
-        let day = ('0' + dateNow.getDate()).slice(-2);
-        let hours = ('0' + dateNow.getHours()).slice(-2);
-        let minutes = ('0' + dateNow.getMinutes()).slice(-2);
-        let seconds = ('0' + dateNow.getSeconds()).slice(-2);
-
         let idProject = @json($project_id);
         let user = @json($user);
-
-        let dateHour = year + '-' + month + '-' + day + ' ' + hours + '_' + minutes + '_' + seconds;
         
         function log(msg) {
             logElement.innerHTML = msg;
@@ -298,7 +288,7 @@
                 recording.src = URL.createObjectURL(recordedBlob);
                 downloadVideoButton.href = recording.src;
                 inputVideo.value = recording.src;
-                downloadVideoButton.download = 'Reporte ' + dateHour +'.mp4';
+                downloadVideoButton.download = 'Reporte.mp4';
             })
             /* .catch(log); */
         }, false);
@@ -359,16 +349,6 @@
 
             let idProject = @json($project_id);
             let user = @json($user);
-
-            let dateNow = new Date();
-            let year = dateNow.getFullYear();
-            let month = ('0' + (dateNow.getMonth() + 1)).slice(-2);
-            let day = ('0' + dateNow.getDate()).slice(-2);
-            let hours = ('0' + dateNow.getHours()).slice(-2);
-            let minutes = ('0' + dateNow.getMinutes()).slice(-2);
-            let seconds = ('0' + dateNow.getSeconds()).slice(-2);
-
-            let dateHour = year + '-' + month + '-' + day + ' ' + hours + '_' + minutes + '_' + seconds;
 
             screenshotButton.addEventListener('click', () => {
                 navigator.mediaDevices.getDisplayMedia({
@@ -512,7 +492,7 @@
                                     const combinedDataURL = combinedCanvas.toDataURL('image/jpg');
                                     const a = document.createElement('a');
                                     a.href = combinedDataURL;
-                                    a.download = 'Reporte ' + dateHour +'.jpg';
+                                    a.download = 'Reporte.jpg';
                                     a.click();
                                 };
                             };    

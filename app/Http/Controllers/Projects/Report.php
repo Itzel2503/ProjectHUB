@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Report as ModelsReport;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class Report extends Controller
 {
@@ -21,7 +24,7 @@ class Report extends Controller
     {
         if (Auth::check()) {
             $project = Project::find($project_id);
-            
+
             return view('reports.reports', compact('project'));
         } else {
             return redirect('/login');
@@ -57,23 +60,63 @@ class Report extends Controller
 
         $report = new ModelsReport();
 
+        $now = Carbon::now();
+        $dateString = $now->format("Y-m-d H_i_s");
+        // dd($request->all(), isset($request->video), isset($request->photo), isset($request->file));
+
         if (isset($request->video)) {
+            $fileName = 'Reporte ' . $dateString . '.mp4';
+            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/';
+
+            // Obtener el contenido del video en formato "blob"
+            $videoBlob = $request->input('video');
+            // Decodificar el contenido base64 si es necesario
+            $videoData = base64_decode($videoBlob);
+
+            // Crear un objeto Blob a partir del contenido del video
+            // Crear el archivo temporal
+            $archivoTemporal = tempnam(sys_get_temp_dir(), 'video');
+            file_put_contents($archivoTemporal, $videoData);
+            $blobVideo = new \Illuminate\Http\File($archivoTemporal);
+            $rutaDeseada = 'uploads/temp/video.mp4';
+
+            // Copia el archivo a la ruta deseada en tu directorio de almacenamiento
+            Storage::put($rutaDeseada, file_get_contents($blobVideo));
+
+            // Puedes imprimir o usar la ruta según tus necesidades
+            // dd($rutaDeseada);
+
+            FFMpeg::open($rutaDeseada)
+                ->export()
+                ->toDisk('reports')
+                ->inFormat(new \FFMpeg\Format\Video\X264())
+                ->save($filePath . '/' . 'Reporte ' . $dateString . '.mp4');
+
             $report->project_id = $request->project_id;
             $report->user_id = $request->user_id;
             $report->delegate_id = $request->delegate;
             $report->title = $request->title;
-            $report->content = $request->video;
+            $report->content = $fileName;
             $report->state = "Abierto";
             $report->comment = $request->comment;
             $report->save();
         }
 
         if (isset($request->photo)) {
+            list($type, $data) = explode(';', $request->photo);
+            list(, $data)      = explode(',', $data);
+
+            $imageData = base64_decode($data);
+
+            $fileName = 'Reporte ' . $dateString . '.jpg';
+            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+            Storage::disk('reports')->put($filePath, $imageData);
+
             $report->project_id = $request->project_id;
             $report->user_id = $request->user_id;
             $report->delegate_id = $request->delegate;
             $report->title = $request->title;
-            $report->content = $request->photo;
+            $report->content = $filePath;
             $report->state = "Abierto";
             $report->comment = $request->comment;
             $report->save();
@@ -83,7 +126,7 @@ class Report extends Controller
 
             $file = $request->file('file');
             $fileName = $file->getClientOriginalName();
-            Storage::disk('public')->put(now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' .$fileName, file_get_contents($file));
+            Storage::disk('reports')->put(now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName, file_get_contents($file));
 
             $report->project_id = $request->project_id;
             $report->user_id = $request->user_id;
@@ -106,7 +149,7 @@ class Report extends Controller
             $report->comment = $request->comment;
             $report->save();
         }
-        
+
         return redirect()->route('reports.index', ['project_id' => $request->project_id]);
     }
 

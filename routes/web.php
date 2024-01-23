@@ -35,7 +35,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('/projects', Project::class);
 
     Route::get('{project_id}/reports', [Report::class, 'index'])->name('reports.index');
-    Route::post('reports', [Report::class, 'store'])->name('reports.store');
+    Route::post('report', [Report::class, 'store'])->name('report.store');
     Route::get('{project_id}/reports/create', [Report::class, 'create'])->name('reports.create');
     Route::get('{project_id}/reports/{report_id}', [Report::class, 'show'])->name('reports.show');
 
