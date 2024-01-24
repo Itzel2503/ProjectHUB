@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Customers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class UserCatalog extends Controller
+class Customer extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +16,7 @@ class UserCatalog extends Controller
     public function index()
     {
         if (Auth::check()) {
-            return view('userCatalog/user-catalog');
+            return view('customers.customers');
         } else {
             return redirect('/login');
         }

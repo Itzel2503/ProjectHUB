@@ -10,7 +10,7 @@ text-yellow
 
 @section('content')
 <div>
-    <livewire:profile />
+    <livewire:auth.profile />
 </div>
 
 @endsection

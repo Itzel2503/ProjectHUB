@@ -25,7 +25,7 @@ class Report extends Controller
         if (Auth::check()) {
             $project = Project::find($project_id);
 
-            return view('reports.reports', compact('project'));
+            return view('projects.reports', compact('project'));
         } else {
             return redirect('/login');
         }
@@ -42,7 +42,7 @@ class Report extends Controller
             $user = Auth::user();
             $allUsers = User::all();
 
-            return view('reports.newreport', compact('project_id', 'user', 'allUsers'));
+            return view('projects.newreport', compact('project_id', 'user', 'allUsers'));
         } else {
             return redirect('/login');
         }
@@ -54,7 +54,7 @@ class Report extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $project_id)
     {
         $project = Project::find($request->project_id);
 
@@ -65,6 +65,7 @@ class Report extends Controller
         // dd($request->all(), isset($request->video), isset($request->photo), isset($request->file));
 
         if (isset($request->video)) {
+            dd($request->all());
             $fileName = 'Reporte ' . $dateString . '.mp4';
             $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/';
 
@@ -78,7 +79,7 @@ class Report extends Controller
             $archivoTemporal = tempnam(sys_get_temp_dir(), 'video');
             file_put_contents($archivoTemporal, $videoData);
             $blobVideo = new \Illuminate\Http\File($archivoTemporal);
-            $rutaDeseada = 'uploads/temp/video.mp4';
+            $rutaDeseada = 'public/uploads/temp/video.mp4';
 
             // Copia el archivo a la ruta deseada en tu directorio de almacenamiento
             Storage::put($rutaDeseada, file_get_contents($blobVideo));
@@ -86,7 +87,8 @@ class Report extends Controller
             // Puedes imprimir o usar la ruta según tus necesidades
             // dd($rutaDeseada);
 
-            FFMpeg::open($rutaDeseada)
+            FFMpeg::fromDisk('public')
+                ->open($rutaDeseada)
                 ->export()
                 ->toDisk('reports')
                 ->inFormat(new \FFMpeg\Format\Video\X264())
@@ -159,7 +161,7 @@ class Report extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, $project_id)
     {
         dd($id);
     }

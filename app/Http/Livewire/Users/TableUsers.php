@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\UserCatalog;
+namespace App\Http\Livewire\Users;
 
 use App\Models\Area;
 use App\Models\User;
@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
-class UserCatalog extends Component
+class TableUsers extends Component
 {
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
@@ -38,7 +38,7 @@ class UserCatalog extends Component
             ->orWhere('areas.name', 'ilike', '%' . $this->search . '%') 
             ->paginate($this->perPage);
 
-        return view('livewire.user-catalog.user-catalog', [
+        return view('livewire.users.table-users', [
             'users' => $users,
             'areas' => $areas,
         ]);

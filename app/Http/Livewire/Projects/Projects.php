@@ -205,7 +205,7 @@ class Projects extends Component
 
     public function showReports($project_id)
     {
-        return redirect()->route('reports.index', ['project_id' => $project_id]);
+        return redirect()->route('projects.reports.index', ['project' => $project_id]);
     }
 
     public function modalCreateEdit()

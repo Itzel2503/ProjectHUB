@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Livewire\Report;
+namespace App\Http\Livewire\Projects;
 
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-class Table extends Component
+class TableReports extends Component
 {
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
@@ -43,14 +43,14 @@ class Table extends Component
             }
         }
 
-        return view('livewire.report.table', [
+        return view('livewire.projects.table-reports', [
             'reports' => $reports,
         ]);
     }
 
     public function create($project_id)
     {
-        return redirect()->route('reports.create', ['project_id' => $project_id]);
+        return redirect()->route('projects.reports.create', ['project' => $project_id]);
     }
 
     public function show($report_id)

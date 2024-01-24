@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Auth;
 
 use App\Models\Area;
 use App\Models\User;
@@ -26,7 +26,7 @@ class Profile extends Component
             }
         }
 
-        return view('livewire.profile', [
+        return view('livewire.auth.profile', [
             'user' => $user,
             'areaUser' => $areaUser,
             'areas' => $areas,

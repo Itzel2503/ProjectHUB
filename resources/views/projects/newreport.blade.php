@@ -152,9 +152,9 @@
                     Imagen capturada
                 </h2>
                 <div id="renderedCanvas" class="w-full h-auto mt-8"></div>
-                <div class="flex justify-center items-center py-6 bg-main-fund">
+                {{-- <div class="flex justify-center items-center py-6 bg-main-fund">
                     <button id="downloadButton" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Guardar captura</button>
-                </div>
+                </div> --}}
             </div>
             
             <div id="viewVideo" style="display: none;">
@@ -166,12 +166,12 @@
                     <a id="downloadVideoButton" class="px-4 py-2 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Descargar video</a>
                 </div>
             </div>
-            
-            <form id="formReport" action="{{route('report.store')}}" method="POST" enctype="multipart/form-data">
-            @csrf 
+
+            <form id="formReport" action="{{ route('projects.reports.store', ['project' => $project_id]) }}" method="POST" enctype="multipart/form-data">
+                @csrf
                 <input hidden type="text" id="project_id" name="project_id" value="{{ $project_id }}">
                 <input hidden type="text" id="user_id" name="user_id" value="{{ $user->id }}">
-                <input  type="text" id="inputVideo" name="video">
+                <input id="inputVideo" name="video">
                 <input  type="text" id="inputPhoto" name="photo">
 
                 <div id="viewText" class="-mx-3 md:flex mb-6" style="display: none;">
@@ -242,6 +242,7 @@
         let inputVideo = document.getElementById("inputVideo");
         let projectId = document.getElementById("project_id");
         let userId = document.getElementById("user_id");
+        let formReport = document.getElementById("formReport");
 
         let idProject = @json($project_id);
         let user = @json($user);
@@ -284,11 +285,12 @@
                 return new Promise(resolve => preview.onplaying = resolve);
             }).then(() => startRecording(preview.captureStream()))
             .then (recordedChunks => {
-                let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
+                let recordedBlob = new Blob(recordedChunks);
                 recording.src = URL.createObjectURL(recordedBlob);
-                downloadVideoButton.href = recording.src;
-                inputVideo.value = recording.src;
-                downloadVideoButton.download = 'Reporte.mp4';
+                inputVideo.value = recordedBlob;
+                formReport.append("video", recordedBlob);
+                // downloadVideoButton.href = recording.src;
+                // downloadVideoButton.download = 'Reporte.mp4';
             })
             /* .catch(log); */
         }, false);
@@ -471,35 +473,35 @@
                             });
 
                             // Function to handle the download
-                            const downloadImage = () => {
-                                const combinedCanvas = document.createElement('canvas');
-                                combinedCanvas.width = imageBitmap.width;
-                                combinedCanvas.height = imageBitmap.height;
-                                const combinedCtx = combinedCanvas.getContext('2d');
+                            // const downloadImage = () => {
+                            //     const combinedCanvas = document.createElement('canvas');
+                            //     combinedCanvas.width = imageBitmap.width;
+                            //     combinedCanvas.height = imageBitmap.height;
+                            //     const combinedCtx = combinedCanvas.getContext('2d');
 
-                                // Draw the screen capture onto the combined canvas
-                                combinedCtx.drawImage(imageBitmap, 0, 0);
+                            //     // Draw the screen capture onto the combined canvas
+                            //     combinedCtx.drawImage(imageBitmap, 0, 0);
 
-                                // Create a new image element for the drawing canvas
-                                const drawImage = new Image();
-                                drawImage.src = drawCanvas.toDataURL('image/jpg');
+                            //     // Create a new image element for the drawing canvas
+                            //     const drawImage = new Image();
+                            //     drawImage.src = drawCanvas.toDataURL('image/jpg');
 
-                                // When the drawing canvas image is fully loaded, render it onto the combined canvas
-                                drawImage.onload = () => {
-                                    combinedCtx.drawImage(drawImage, 0, 0);
+                            //     // When the drawing canvas image is fully loaded, render it onto the combined canvas
+                            //     drawImage.onload = () => {
+                            //         combinedCtx.drawImage(drawImage, 0, 0);
 
-                                    // Get the combined canvas data URL and create a download link
-                                    const combinedDataURL = combinedCanvas.toDataURL('image/jpg');
-                                    const a = document.createElement('a');
-                                    a.href = combinedDataURL;
-                                    a.download = 'Reporte.jpg';
-                                    a.click();
-                                };
-                            };    
-                            // button with the id "downloadButton"
-                            const downloadButton = document.getElementById('downloadButton');
-                            // Add click event listener to the download button
-                            downloadButton.addEventListener('click', downloadImage);
+                            //         // Get the combined canvas data URL and create a download link
+                            //         const combinedDataURL = combinedCanvas.toDataURL('image/jpg');
+                            //         const a = document.createElement('a');
+                            //         a.href = combinedDataURL;
+                            //         a.download = 'Reporte.jpg';
+                            //         a.click();
+                            //     };
+                            // };    
+                            // // button with the id "downloadButton"
+                            // const downloadButton = document.getElementById('downloadButton');
+                            // // Add click event listener to the download button
+                            // downloadButton.addEventListener('click', downloadImage);
                         };
                     }).catch(error => {
                         console.error('Error grabbing frame:', error);

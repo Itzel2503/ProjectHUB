@@ -20,7 +20,7 @@ text-yellow
                     <span class="ml-4">Reportes del proyecto {{ $project->name }}</span>
                 </h1>
             </div>
-            <livewire:report.table :project="$project">
+            <livewire:projects.table-reports :project="$project">
         </div>
     </div>
 </div>
