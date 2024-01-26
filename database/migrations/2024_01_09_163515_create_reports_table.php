@@ -29,7 +29,9 @@ class CreateReportsTable extends Migration
             $table->foreign('resolved_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->string('title');
-            $table->text('content')->nullable();;
+            $table->text('content')->nullable();
+            $table->boolean('image');
+            $table->boolean('video');
             $table->string('state');
             $table->string('comment');
             $table->integer('value')->default('0');

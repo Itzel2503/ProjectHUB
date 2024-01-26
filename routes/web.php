@@ -26,16 +26,20 @@ Route::get('/', function () {
 
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['web', 'auth'])->group(function () {
+    // USER
     Route::resource('/profile', ProfileController::class)->only(['index']);
 
+    // USERS
     Route::resource('/userCatalog', UserCatalog::class)->only(['index']);
 
+    // CUSTOMERS
     Route::resource('/customers', Customer::class);
 
+    // PROJECTS
     Route::resource('/projects', Project::class);
-
     Route::resource('projects.reports', Report::class);
-
+    
+    // PERMITS
     Route::resource('/permits', Permit::class);
 });
 

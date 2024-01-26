@@ -8,6 +8,7 @@ use App\Models\Report as ModelsReport;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -41,8 +42,9 @@ class Report extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             $allUsers = User::all();
+            $project = Project::find($project_id);
 
-            return view('projects.newreport', compact('project_id', 'user', 'allUsers'));
+            return view('projects.newreport', compact('project', 'user', 'allUsers'));
         } else {
             return redirect('/login');
         }
@@ -56,49 +58,45 @@ class Report extends Controller
      */
     public function store(Request $request, $project_id)
     {
-        $project = Project::find($request->project_id);
-
+        $project = Project::find($project_id);
         $report = new ModelsReport();
-
         $now = Carbon::now();
         $dateString = $now->format("Y-m-d H_i_s");
-        // dd($request->all(), isset($request->video), isset($request->photo), isset($request->file));
 
         if (isset($request->video)) {
-            dd($request->all());
-            $fileName = 'Reporte ' . $dateString . '.mp4';
-            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/';
+            // $fileName = 'Reporte ' . $dateString . '.mp4';
+            // $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/';
 
-            // Obtener el contenido del video en formato "blob"
-            $videoBlob = $request->input('video');
-            // Decodificar el contenido base64 si es necesario
-            $videoData = base64_decode($videoBlob);
+            // // Obtener el contenido del video en formato "blob"
+            // $videoBlob = $request->input('video');
+            // // Decodificar el contenido base64 si es necesario
+            // $videoData = base64_decode($videoBlob);
 
-            // Crear un objeto Blob a partir del contenido del video
-            // Crear el archivo temporal
-            $archivoTemporal = tempnam(sys_get_temp_dir(), 'video');
-            file_put_contents($archivoTemporal, $videoData);
-            $blobVideo = new \Illuminate\Http\File($archivoTemporal);
-            $rutaDeseada = 'public/uploads/temp/video.mp4';
+            // // Crear un objeto Blob a partir del contenido del video
+            // // Crear el archivo temporal
+            // $archivoTemporal = tempnam(sys_get_temp_dir(), 'video');
+            // file_put_contents($archivoTemporal, $videoData);
+            // $blobVideo = new \Illuminate\Http\File($archivoTemporal);
+            // $rutaDeseada = 'public/uploads/temp/video.mp4';
 
-            // Copia el archivo a la ruta deseada en tu directorio de almacenamiento
-            Storage::put($rutaDeseada, file_get_contents($blobVideo));
+            // // Copia el archivo a la ruta deseada en tu directorio de almacenamiento
+            // Storage::put($rutaDeseada, file_get_contents($blobVideo));
 
-            // Puedes imprimir o usar la ruta según tus necesidades
-            // dd($rutaDeseada);
+            // // Puedes imprimir o usar la ruta según tus necesidades
+            // // dd($rutaDeseada);
 
-            FFMpeg::fromDisk('public')
-                ->open($rutaDeseada)
-                ->export()
-                ->toDisk('reports')
-                ->inFormat(new \FFMpeg\Format\Video\X264())
-                ->save($filePath . '/' . 'Reporte ' . $dateString . '.mp4');
+            // FFMpeg::fromDisk('public')
+            //     ->open($rutaDeseada)
+            //     ->export()
+            //     ->toDisk('reports')
+            //     ->inFormat(new \FFMpeg\Format\Video\X264())
+            //     ->save($filePath . '/' . 'Reporte ' . $dateString . '.mp4');
 
-            $report->project_id = $request->project_id;
+            $report->project_id = $project_id;
             $report->user_id = $request->user_id;
             $report->delegate_id = $request->delegate;
             $report->title = $request->title;
-            $report->content = $fileName;
+            $report->video = true;
             $report->state = "Abierto";
             $report->comment = $request->comment;
             $report->save();
@@ -107,18 +105,18 @@ class Report extends Controller
         if (isset($request->photo)) {
             list($type, $data) = explode(';', $request->photo);
             list(, $data)      = explode(',', $data);
-
             $imageData = base64_decode($data);
 
             $fileName = 'Reporte ' . $dateString . '.jpg';
             $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
             Storage::disk('reports')->put($filePath, $imageData);
 
-            $report->project_id = $request->project_id;
+            $report->project_id = $project_id;
             $report->user_id = $request->user_id;
             $report->delegate_id = $request->delegate;
             $report->title = $request->title;
             $report->content = $filePath;
+            $report->image = true;
             $report->state = "Abierto";
             $report->comment = $request->comment;
             $report->save();
@@ -127,14 +125,23 @@ class Report extends Controller
         if (isset($request->file)) {
 
             $file = $request->file('file');
+            dd($file);
             $fileName = $file->getClientOriginalName();
-            Storage::disk('reports')->put(now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName, file_get_contents($file));
+            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+            Storage::disk('reports')->put($filePath, file_get_contents($file));
 
-            $report->project_id = $request->project_id;
+            $report->project_id = $project_id;
             $report->user_id = $request->user_id;
             $report->delegate_id = $request->delegate;
             $report->title = $request->title;
-            $report->content = $file->getClientOriginalName();
+            $report->content = $filePath;
+
+            if ($file) {
+                $report->image = true;
+            } else {
+                $report->video = true;
+            }
+            
             $report->state = "Abierto";
             $report->comment = $request->comment;
 
@@ -142,17 +149,17 @@ class Report extends Controller
         }
 
         if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
-            $report->project_id = $request->project_id;
+            $report->project_id = $project_id;
             $report->user_id = $request->user_id;
             $report->delegate_id = $request->delegate;
             $report->title = $request->title;
-            $report->content = $request->file;
+            $report->content = "video";
             $report->state = "Abierto";
             $report->comment = $request->comment;
             $report->save();
         }
 
-        return redirect()->route('reports.index', ['project_id' => $request->project_id]);
+        return redirect()->route('projects.reports.index', ['project' => $project_id]);
     }
 
     /**

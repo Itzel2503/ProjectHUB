@@ -63,15 +63,22 @@
                         <td class="px-4 py-2">{{ $report->state }}</td>
                         <td class="px-4 py-2">{{ $report->created_at->diffForHumans(null, false, false, 2) }}</td>
                         <td class="px-4 py-2 flex justify-center items-center">
-                            <button wire:click="show({{$report->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                            {{-- <button wire:click="show({{$report->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
                                     <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
                                     <path d="M16 5l3 3"></path>
                                 </svg>
-                            </button>
-                            <button wire:click="" class="bg-secondary text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                            </button> --}}
+                            <select wire:model='state' name="state" id="state" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <option selected>Abierto</option>
+                                <option value=''>Proceso</option>
+                                <option value=''>Resuelto</option>
+                                <option value=''>Conflicto</option>
+                            </select>
+
+                            {{-- <button wire:click="" class="bg-secondary text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-time" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                     <path d="M14 3v4a1 1 0 0 0 1 1h4" />
@@ -95,7 +102,7 @@
                                     <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2zm-7 -7h.01m3.99 0h.01" />
                                     <path d="M10 18a3.5 3.5 0 0 1 4 0" />
                                 </svg>
-                            </button>
+                            </button> --}}
                         </td>
                     </tr>
                     @endforeach
@@ -121,9 +128,13 @@
                 </div>
                 @if($showReport)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
-                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                        <img src="{{ asset('img/Reporte 2024-01-11 10_37_44.jpg') }}" alt="image">
-                    </div>
+
+                    @if (!empty($reportShow->content) && $reportShow->content !== 'video')
+                        <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                            <img src="{{ asset('reportes/' . $reportShow->content) }}" alt="Report Image">
+                        </div>
+                    @endif
+
                     <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
                         <div class="text-lg md:flex mb-6 text-justify">
                             <p class="text-base">{{ $reportShow->comment }}</p>

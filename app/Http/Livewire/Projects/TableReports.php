@@ -12,8 +12,9 @@ class TableReports extends Component
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
     public $modalShow = false;
+
     public $showReport = false;
-    // table, action's user
+    // table, action's reports
     public $leader = false;
     public $search, $project, $reportShow;
     public $perPage = '8';
@@ -47,7 +48,7 @@ class TableReports extends Component
             'reports' => $reports,
         ]);
     }
-
+    // ACTIONS
     public function create($project_id)
     {
         return redirect()->route('projects.reports.create', ['project' => $project_id]);
@@ -57,7 +58,7 @@ class TableReports extends Component
     {   
         return redirect()->route('reports.show', ['project_id' => $this->project->id, 'report_id' => $report_id]);
     }
-
+    // INFO MODAL
     public function showReport($id)
     {
         $this->showReport = true;
@@ -69,8 +70,9 @@ class TableReports extends Component
         }
 
         $this->reportShow = Report::find($id);
+        // dd($this->reportShow);
     }
-
+    // MODAL
     public function modalShow()
     {
         if ($this->modalShow == true) {
