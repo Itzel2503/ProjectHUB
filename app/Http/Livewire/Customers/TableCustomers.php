@@ -73,6 +73,7 @@ class TableCustomers extends Component
         }
 
         $this->customerEdit = Customer::find($id);
+        $this->name = $this->customerEdit->name;
     }
 
     public function modalCreateEdit()

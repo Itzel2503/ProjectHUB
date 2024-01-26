@@ -91,7 +91,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Nombre @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='name' @if(!$showUpdate) required @endif type="text" placeholder="{{ ($customerEdit) ? $customerEdit->name : 'Nombre' }}" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='name' @if(!$showUpdate) required @endif type="text" placeholder="Nombre" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('name')

@@ -129,10 +129,22 @@
                 @if($showReport)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
 
-                    @if (!empty($reportShow->content) && $reportShow->content !== 'video')
-                        <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                            <img src="{{ asset('reportes/' . $reportShow->content) }}" alt="Report Image">
-                        </div>
+                    @if (!empty($reportShow->content))
+                        @if ($reportShow->image == true)
+                            <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                                <img src="{{ asset('reportes/' . $reportShow->content) }}" alt="Report Image">
+                            </div>
+                        @endif
+                        @if ($reportShow->video == true)
+                            @if ($reportShow->content == 'Falta video grabado')
+                                <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                                    
+                                </div>
+                            @endif
+                            <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                                <video src="{{ asset('reportes/' . $reportShow->content) }}" loop autoplay alt="Report Video"></video>
+                            </div>
+                        @endif
                     @endif
 
                     <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">

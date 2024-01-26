@@ -130,7 +130,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Nombre @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='name' @if(!$showUpdate) required @endif type="text" placeholder="{{ ($showUpdate) ? $projectEdit->name : 'Nombre' }}" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='name' @if(!$showUpdate) required @endif type="text" placeholder="Nombre" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('name')
@@ -146,14 +146,14 @@
                                     Tipo @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                    <select wire:model='type' required name="type" id="type" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <select wire:model.defer='type' required name="type" id="type" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                         <option selected>{{ $filteredType }}</option>
                                         @foreach ($allType as $typeOption)
                                             <option value='{{ $typeOption }}'>{{ $typeOption }}</option>
                                         @endforeach
                                     </select>
                                 @else
-                                    <select wire:model='type' required name="type" id="type" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <select wire:model.defer='type' required name="type" id="type" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                         <option selected>Selecciona...</option>
                                         @foreach ($allType as $type)
                                             <option value='{{ $type }}'>{{ $type }}</option>
@@ -176,7 +176,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Prioridad @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='priority' @if(!$showUpdate) required @endif type="number" placeholder="{{ ($showUpdate) ? $projectEdit->priority : '0-99' }}" min="0" max="99" name="priority" id="priority" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='priority' @if(!$showUpdate) required @endif type="number" placeholder="0 - 99" min="0" max="99" name="priority" id="priority" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('priority')

@@ -96,6 +96,8 @@ class Report extends Controller
             $report->user_id = $request->user_id;
             $report->delegate_id = $request->delegate;
             $report->title = $request->title;
+            $report->content = 'Falta video grabado';
+            $report->image = false;
             $report->video = true;
             $report->state = "Abierto";
             $report->comment = $request->comment;
@@ -117,6 +119,7 @@ class Report extends Controller
             $report->title = $request->title;
             $report->content = $filePath;
             $report->image = true;
+            $report->video = false;
             $report->state = "Abierto";
             $report->comment = $request->comment;
             $report->save();
@@ -124,8 +127,10 @@ class Report extends Controller
 
         if (isset($request->file)) {
 
+            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+            $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
+            
             $file = $request->file('file');
-            dd($file);
             $fileName = $file->getClientOriginalName();
             $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
             Storage::disk('reports')->put($filePath, file_get_contents($file));
@@ -136,15 +141,19 @@ class Report extends Controller
             $report->title = $request->title;
             $report->content = $filePath;
 
-            if ($file) {
+            if (in_array($file->extension(), $extensionesImagen)) {
                 $report->image = true;
-            } else {
+                $report->video = false;
+            } elseif (in_array($file->extension(), $extensionesVideo)) {
+                $report->image = false;
                 $report->video = true;
+            } else {
+                $report->image = false;
+                $report->video = false;
             }
             
             $report->state = "Abierto";
             $report->comment = $request->comment;
-
             $report->save();
         }
 
@@ -153,7 +162,8 @@ class Report extends Controller
             $report->user_id = $request->user_id;
             $report->delegate_id = $request->delegate;
             $report->title = $request->title;
-            $report->content = "video";
+            $report->image = false;
+            $report->video = false;
             $report->state = "Abierto";
             $report->comment = $request->comment;
             $report->save();

@@ -68,7 +68,7 @@
                 <div class="flex justify-center justify-items-center">
                     <img class="h-20 w-20 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar" />
                 </div>
-                <div class="pt-2 mb-10 w-full text-center text-base text-white">{{ Auth::user()->name }}</div>
+                <div class="text-white pt-2 mb-10 w-full text-center text-base">{{ Auth::user()->name }}</div>
                 @endif
                 <ul class="mt-6">
                     <li class="relative px-6 py-3">

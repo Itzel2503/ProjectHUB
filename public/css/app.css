@@ -2696,38 +2696,38 @@ video {
 .text-current	{color: currentColor;}
 .text-transparent	{color: transparent;}
 .text-black {
-  color: rgb(0 0 0 / var(--tw-text-opacity));
+  color: rgb(0 0 0);
 }
 .text-white {
-  color: rgb(255 255 255 / var(--tw-text-opacity));
+  color: rgb(255 255 255);
 }
 .text-main {
   --tw-text-opacity: 1;
-  color: rgb(79 174 173 / var(--tw-text-opacity));
+  color: rgb(79 174 173);
 }
 .text-main-fund {
   --tw-text-opacity: 1;
-  color: rgb(223 241 242 / var(--tw-text-opacity));
+  color: rgb(223 241 242);
 }
 .text-secondary {
   --tw-text-opacity: 1;
-  color: rgb(0 98 204 / var(--tw-text-opacity));
+  color: rgb(0 98 204);
 }
 .text-secondary-fund {
   --tw-text-opacity: 1;
-  color: rgb(50 77 87 / var(--tw-text-opacity));
+  color: rgb(50 77 87);
 }
 .text-yellow {
   --tw-text-opacity: 1;
-  color: rgb(246 192 62 / var(--tw-text-opacity));
+  color: rgb(246 192 62);
 }
 .text-red {
   --tw-text-opacity: 1;
-  color: rgb(221 66 49 / var(--tw-text-opacity));
+  color: rgb(221 66 49);
 }
 .text-gray-500 {
   --tw-text-opacity: 1;
-  color: rgb(107 114 128 / var(--tw-text-opacity));
+  color: rgb(107 114 128);
 }
 /* Text Decoration: Utilities for controlling the decoration of text. */
 .underline	{text-decoration-line: underline;}

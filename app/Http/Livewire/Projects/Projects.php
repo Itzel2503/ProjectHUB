@@ -83,7 +83,8 @@ class Projects extends Component
         $this->validateOnly($id, $this->rules);
 
         $project = Project::find($id);
-        $project->customer_id = $this->customer ?? $project->customer_id;
+        
+        $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
         $project->type = $this->type ?? $project->type;
         $project->name = $this->name ?? $project->name;
         $project->priority = $this->priority ?? $project->priority;
@@ -181,6 +182,9 @@ class Projects extends Component
         }
 
         $this->projectEdit = Project::find($id);
+        $this->name = $this->projectEdit->name;
+        $this->priority = $this->projectEdit->priority;
+
         $this->allCustomers = Customer::all();
         $this->projectCustomer = $this->allCustomers->find($this->projectEdit->customer_id);
 
