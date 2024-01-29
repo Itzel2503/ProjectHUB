@@ -163,8 +163,8 @@
             </div>
             
             <div id="viewVideo" style="display: none;">
-                <video id="recording" width="300" height="200" loop autoplay class="mt-8 w-full h-2/5"></video>
-                <div class="flex justify-center items-center py-6 bg-main-fund">
+                <video id="recording" width="300" height="200" loop autoplay class="my-8 w-full h-2/5"></video>
+                <div class="flex justify-center items-center py-6 bg-main-fund hidden">
                     <a id="downloadVideoButton" class="px-4 py-2 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Descargar video</a>
                 </div>
             </div>
@@ -583,6 +583,16 @@
 
     {{-- BUTTONS --}}
     <script>
+        document.getElementById('formReport').addEventListener('submit', function(e) {
+            let downloadButton = document.getElementById('downloadVideoButton');
+
+            if (downloadButton.href) {
+                setTimeout(function() {
+                    downloadButton.click();
+                }, 100);
+            }
+        });
+
         //screenshotButton
         document.getElementById('screenshotButton').addEventListener('click', function() {
             document.getElementById('mainMenu').style.display = 'none';

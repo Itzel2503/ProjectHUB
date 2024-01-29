@@ -23,6 +23,8 @@ class TableReports extends Component
     public $leader = false;
     public $search, $project, $reportShow, $reportEdit;
     public $perPage = '10';
+    public $sortField = 'updated_at'; // La columna por defecto por la que se ordenará
+    public $sortAsc = true; // Dirección del ordenamiento
     public $rules = [], $usersFiltered = [];
     // inputs
     public $name, $type, $priority, $customer, $file;
@@ -41,6 +43,7 @@ class TableReports extends Component
                     ->orWhere('state', 'like', '%' . $this->search . '%');
             })
             ->with(['user', 'delegate'])
+            ->orderBy($this->sortField, $this->sortAsc ? 'desc' : 'asc')
             ->paginate($this->perPage);
 
         foreach ($this->project->users as $projectUser) {
@@ -224,6 +227,16 @@ class TableReports extends Component
         return array_filter($actions, function ($action) use ($currentState) {
             return $action != $currentState;
         });
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortAsc = !$this->sortAsc;
+        } else {
+            $this->sortAsc = true;
+            $this->sortField = $field;
+        }
     }
 
     public function reloadPage()

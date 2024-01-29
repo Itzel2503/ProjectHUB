@@ -42,9 +42,14 @@
                 <thead class="border-0 bg-secondary-fund">
                     <tr class="font-semibold tracking-wide text-center text-white text-base">
                         <th class=" px-4 py-3"></th>
+                        
                         <th class=" px-4 py-3">Delegado a</th>
                         <th class=" px-4 py-3">Reporte</th>
-                        <th class=" px-4 py-3">Duración</th>
+                        <th wire:click="sortBy('updated_at')" class=" px-4 py-3">Duración
+                            @if($sortField == 'updated_at')
+                                <span>{!! $sortAsc ? '🔽' : '🔼' !!}</span>
+                            @endif
+                        </th>
                         <th class=" px-4 py-3">Acciones / Estado</th>
                     </tr>
                 </thead>
@@ -68,7 +73,13 @@
                         </td>
 
                         <td class="px-4 py-2">{{ $report->title }}</td>
-                        <td class="px-4 py-2">{{ $report->created_at->diffForHumans(null, false, false, 2) }}</td>
+                        <td class="px-4 py-2">
+                            @if($report->created_at != $report->updated_at)
+                                Actualizado {{ $report->updated_at->diffForHumans(null, false, false, 2) }}
+                            @else
+                                Creado {{ $report->created_at->diffForHumans(null, false, false, 2) }}
+                            @endif
+                        </td>
                         <td class="px-4 py-2 flex justify-center items-center">
                             @if ($report->user->id == Auth::id())
                                 <button wire:click="showEdit({{$report->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
