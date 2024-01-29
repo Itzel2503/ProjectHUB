@@ -8,11 +8,8 @@ use App\Models\Report as ModelsReport;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class Report extends Controller
 {
@@ -180,7 +177,7 @@ class Report extends Controller
      */
     public function show($id, $project_id)
     {
-        dd($id);
+        //
     }
 
     /**
