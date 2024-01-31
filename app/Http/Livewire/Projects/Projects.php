@@ -45,7 +45,7 @@ class Projects extends Component
             'leaders' => $leaders,
         ]);
     }
-    // ACTIONSS
+    // ACTIONS
     public function create()
     {
         $this->rules = [
