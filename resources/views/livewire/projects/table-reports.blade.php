@@ -77,12 +77,16 @@
                         </td>
 
                         <td class="px-4 py-2">
-                            <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'  name="delegate" id="delegate" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                <option selected value={{ $report->delegate->id }}>{{ $report->delegate->name }} {{ $report->delegate->lastname }}</option>
-                                @foreach ($report->usersFiltered as $userFiltered)
-                                    <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }} {{ $userFiltered->lastname }}</option>
-                                @endforeach
-                            </select>
+                            @if ($report->state == 'Resuelto')
+                                <p>{{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
+                            @else
+                                <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'  name="delegate" id="delegate" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <option selected value={{ $report->delegate->id }}>{{ $report->delegate->name }} {{ $report->delegate->lastname }}</option>
+                                    @foreach ($report->usersFiltered as $userFiltered)
+                                        <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }} {{ $userFiltered->lastname }}</option>
+                                    @endforeach
+                                </select>
+                            @endif
                         </td>
 
                         <td class="px-4 py-2">
@@ -158,13 +162,56 @@
         <div class="flex justify-center h-full items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-full items-center top-0 left-0 z-40 w-full fixed">
             <div class="flex flex-col w-2/6 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
-                <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
-                    <svg wire:click="modalShow" wire:loading.remove wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M18 6l-12 12"></path>
-                        <path d="M6 6l12 12"></path>
-                    </svg>
-                </div>
+                    @if (!empty($reportShow->content))
+                        @if ($reportShow->image == true)
+                        <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
+                            <div class="flex justify-center items-center">
+                                <a href="{{ asset('reportes/' . $report->content) }}" download="{{ basename($report->content) }}" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">
+                                    Descargar captura
+                                </a>
+                            </div>
+                            <svg wire:click="modalShow" wire:loading.remove wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M18 6l-12 12"></path>
+                                <path d="M6 6l12 12"></path>
+                            </svg>
+                        </div>
+                        @endif
+                        @if ($reportShow->video == true)
+                            @if (strpos($reportShow->content, "Reporte") === 0)
+                            <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
+                                <svg wire:click="modalShow" wire:loading.remove wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M18 6l-12 12"></path>
+                                    <path d="M6 6l12 12"></path>
+                                </svg>
+                            </div>
+                            @else
+                            <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
+                                <div class="flex justify-center items-center">
+                                    <a href="{{ asset('reportes/' . $report->content) }}" download="{{ basename($report->content) }}" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">
+                                        Descargar video
+                                    </a>
+                                </div>
+                                <svg wire:click="modalShow" wire:loading.remove wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M18 6l-12 12"></path>
+                                    <path d="M6 6l12 12"></path>
+                                </svg>
+                            </div>
+                            @endif
+                        @endif
+                    @else
+                        <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
+                            <svg wire:click="modalShow" wire:loading.remove wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M18 6l-12 12"></path>
+                                <path d="M6 6l12 12"></path>
+                            </svg>
+                        </div>
+                    @endif
+
+                    
                 @if($showReport)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
 
