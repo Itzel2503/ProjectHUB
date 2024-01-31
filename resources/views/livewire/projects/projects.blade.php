@@ -40,19 +40,21 @@
         <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs mt-4">
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 bg-secondary-fund">
-                    <tr class="font-semibold tracking-wide text-center text-white text-base">
-                        <th class=" px-4 py-3">Nombre</th>
-                        <th class=" px-4 py-3">Tipo</th>
-                        <th class=" px-4 py-3">Prioridad</th>
-                        <th class=" px-4 py-3">Líder/es</th>
-                        <th class=" px-4 py-3">Cliente</th>
-                        <th class="px-4 py-2">Acciones</th>
+                    <tr class="font-semibold tracking-wide text-left text-white text-base">
+                        {{-- <th class="px-4 py-3"></th> LOGO --}}
+                        <th class="px-4 py-3">Proyecto</th>
+                        <th class="px-4 py-3">Cliente</th>
+                        <th class="px-4 py-3">Tipo</th>
+                        <th class="px-4 py-3">Prioridad</th>
+                        <th class="px-4 py-3">Líder/es</th>
+                        <th class="text-center px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($projects as $project)
                     <tr class="border-white text-sm">
                         <td class="px-4 py-2">{{ $project->name }}</td>
+                        <td class="px-4 py-2">{{ $project->customer_name }}</td>
                         <td class="px-4 py-2">{{ $project->type }}</td>
                         <td class="px-4 py-2">K{{ $project->priority }}</td>
                         <td class="px-4 py-2">
@@ -60,7 +62,6 @@
                                 - {{ $user->name }} {{ $user->lastname }} <br>
                             @endforeach
                         </td>
-                        <td class="px-4 py-2">{{ $project->customer_name }}</td>
                         <td class="px-4 py-2 flex justify-center">
                             @if($project->deleted_at != null)
                             <button wire:click="showRestore({{$project->id}})" class="bg-secondary-fund text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">

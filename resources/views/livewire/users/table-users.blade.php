@@ -349,4 +349,9 @@
         </div>
     </div>
     {{-- END MODAL DELETE --}}
+    <script>
+        window.addEventListener('swal:modal', event => {
+            toastr[event.detail.type](event.detail.text, event.detail.title);
+        });
+    </script>
 </div>

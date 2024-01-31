@@ -34,6 +34,7 @@ class CreateReportsTable extends Migration
             $table->text('content')->nullable();
             $table->boolean('image');
             $table->boolean('video');
+            $table->boolean('file');
             $table->string('state');
             $table->string('comment');
             $table->integer('value')->default('0');
@@ -42,7 +43,6 @@ class CreateReportsTable extends Migration
 
             $table->dateTime('progress')->nullable();
 
-            $table->softDeletes();
             $table->timestamps();
         });
     }

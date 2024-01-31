@@ -15,7 +15,7 @@ class Projects extends Component
     public $showUpdate = false, $showDelete = false, $showRestore = false;
     // table, action's user
     public $search, $projectCustomer, $projectEdit, $projectDelete, $projectRestore, $filteredType;
-    public $perPage = '25';
+    public $perPage = '10';
     public $rules = [], $allCustomers = [], $selectedLeaders = [], $allType = ['Activo', 'Soporte', 'Resolución Piloto', 'Entregado seguimiento', 'No activo seguimiento'];
     // inputs
     public $name, $type, $priority, $customer;
@@ -25,12 +25,15 @@ class Projects extends Component
         $customers = Customer::all();
         $leaders = User::all();
 
-        $projects = Project::onlyTrashed()
-            ->select('projects.*', 'customers.name as customer_name')
+        $projects = Project::select('projects.*', 'customers.name as customer_name')
             ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
-            ->where('projects.type', 'like', '%' . $this->search . '%')
-            ->orwhere('projects.name', 'like', '%' . $this->search . '%')
-            ->orWhere('projects.priority', 'like', '%' . $this->search . '%')
+            ->withTrashed()
+            ->where(function ($query) {
+                $query->where('customers.name', 'like', '%' . $this->search . '%')
+                    ->orWhere('projects.type', 'like', '%' . $this->search . '%')
+                    ->orWhere('projects.name', 'like', '%' . $this->search . '%')
+                    ->orWhere('projects.priority', 'like', '%' . $this->search . '%');
+            })
             ->with(['users' => function ($query) {
                 $query->wherePivot('leader', true);
             }])

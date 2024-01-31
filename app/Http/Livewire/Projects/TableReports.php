@@ -7,6 +7,7 @@ use App\Models\Report;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -17,15 +18,14 @@ class TableReports extends Component
 
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
-    public $modalShow = false, $modalEdit = false;
-    public $showReport = false, $showEdit = false;
+    public $modalShow = false, $modalEdit = false, $modalDelete = false;
+    public $showReport = false, $showEdit = false, $showDelete = false;
 
     // table, action's reports
     public $leader = false;
-    public $search, $project, $reportShow, $reportEdit;
+    public $search, $project, $reportShow, $reportEdit, $reportDelete;
     public $perPage = '10';
-    public $sortField = 'updated_at'; // La columna por defecto por la que se ordenará
-    public $sortAsc = true; // Dirección del ordenamiento
+    public $selectedState = '';
     public $rules = [], $usersFiltered = [];
 
     // inputs
@@ -42,12 +42,25 @@ class TableReports extends Component
             ->where(function ($query) {
                 $query->where('title', 'like', '%' . $this->search . '%')
                     ->orWhere('comment', 'like', '%' . $this->search . '%')
-                    ->orWhere('state', 'like', '%' . $this->search . '%');
+                    ->orWhere('state', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('delegate', function ($subQuery) {
+                        $subQuery->where('name', 'like', '%' . $this->search . '%');
+                    });
+                // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
+                if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
+                    $query->orWhere('repeat', true);
+                }
+            })
+            ->when($this->selectedState, function ($query) {
+                $query->where('state', $this->selectedState);
             })
             ->with(['user', 'delegate'])
-            ->orderBy($this->sortField, $this->sortAsc ? 'desc' : 'asc')
             ->paginate($this->perPage);
 
+        // REICIDENCIAS
+        $reincidenceCounters = [];
+
+        // LEADER TABLE
         foreach ($this->project->users as $projectUser) {
             if ($projectUser->id === $user->id && $projectUser->pivot->leader) {
                 $this->leader = true;
@@ -65,9 +78,43 @@ class TableReports extends Component
             })->values();
             // PROGRESS
             if ($report->progress && $report->updated_at) {
-                $report->timeDifference = Carbon::parse($report->progress)->diffForHumans($report->updated_at, null, false, 2);
+                $progress = Carbon::parse($report->progress);
+                $updated_at = Carbon::parse($report->updated_at);
+                $diff = $progress->diff($updated_at);
+
+                $units = [
+                    'año' => $diff->y,
+                    'mes' => $diff->m,
+                    'semana' => floor($diff->days / 7),
+                    'dia' => $diff->d % 7, // Días restantes después de calcular las semanas
+                    'hora' => $diff->h,
+                    'minuto' => $diff->i,
+                    'segundo' => $diff->s,
+                ];
+
+                $timeDifference = '';
+                foreach ($units as $unit => $value) {
+                    if ($value > 0) {
+                        $timeDifference = $value . ' ' . $unit . ($value > 1 ? 's' : '');
+                        break;
+                    }
+                }
+
+                $report->timeDifference = $timeDifference;
             } else {
                 $report->timeDifference = null;
+            }
+            // REICIDENCIAS
+            if ($report->repeat && isset($report->report_id)) {
+                // Inicializar el contador para este report_id si aún no se ha hecho
+                if (!isset($reincidenceCounters[$report->report_id])) {
+                    $reincidenceCounters[$report->report_id] = 0;
+                }
+                // Incrementar el contador para este report_id y asignarlo al reporte
+                $reincidenceCounters[$report->report_id]++;
+                $report->reincidenceNumber = $reincidenceCounters[$report->report_id];
+            } else {
+                $report->reincidenceNumber = null;
             }
         }
 
@@ -84,6 +131,7 @@ class TableReports extends Component
     public function updateState($id, $state)
     {
         $report = Report::find($id);
+
         if ($report) {
             $report->state = $state;
 
@@ -100,7 +148,7 @@ class TableReports extends Component
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
-                'title' => 'Operación exitosa',
+                'title' => 'Estado actualizado',
             ]);
         }
     }
@@ -114,7 +162,7 @@ class TableReports extends Component
 
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
-                'title' => 'Operación exitosa',
+                'title' => 'Delegado actualizado',
             ]);
         }
     }
@@ -123,50 +171,74 @@ class TableReports extends Component
     {
         $report = Report::find($id);
         $project = Project::find($project_id);
-        
-        if ($this->file) {
-            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-            $fileName = $this->file->getClientOriginalName();
 
-            $fullNewFilePath = $filePath . '/' . $fileName;
+        if ($report) {
+            if ($this->file) {
+                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                $fileName = $this->file->getClientOriginalName();
 
-            // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-            if ($report->content && Storage::disk('reports')->exists($report->content)) {
-                $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
+                $fullNewFilePath = $filePath . '/' . $fileName;
 
-                if ($existingFilePath == $filePath) {
-                    Storage::disk('reports')->delete($report->content);
+                // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
+                if ($report->content && Storage::disk('reports')->exists($report->content)) {
+                    $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
+
+                    if ($existingFilePath == $filePath) {
+                        Storage::disk('reports')->delete($report->content);
+                    }
                 }
-            }
-            // Guardar el archivo en el disco 'reports'
-            $this->file->storeAs($filePath, $fileName, 'reports');
+                // Guardar el archivo en el disco 'reports'
+                $this->file->storeAs($filePath, $fileName, 'reports');
 
-            $extension = $this->file->extension();
-            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-            $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];
+                $extension = $this->file->extension();
+                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];
 
-            if (in_array($extension, $extensionesImagen)) {
-                $report->image = true;
-                $report->video = false;
-            } elseif (in_array($extension, $extensionesVideo)) {
-                $report->image = false;
-                $report->video = true;
-            } else {
-                $report->image = false;
-                $report->video = false;
+                if (in_array($extension, $extensionesImagen)) {
+                    $report->image = true;
+                    $report->video = false;
+                } elseif (in_array($extension, $extensionesVideo)) {
+                    $report->image = false;
+                    $report->video = true;
+                } else {
+                    $report->image = false;
+                    $report->video = false;
+                }
+
+                $report->content = $fullNewFilePath;
             }
             
             $report->comment = $this->comment;
-            $report->content = $fullNewFilePath;
             $report->save();
+
+            
+            $this->modalEdit = false;
 
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
-                'title' => 'Operación exitosa',
+                'title' => 'Guardado exitoso',
             ]);
-
-            $this->modalEdit = false;
         }
+        
+    }
+
+    public function destroy($id)
+    {
+        $report = Report::find($id);
+
+        if ($report) {
+            if ($report->content) {
+                $contentPath = 'reportes/' . $report->content;
+                $fullPath = public_path($contentPath);
+                if (File::exists($fullPath)) {
+                    File::delete($fullPath);
+                }
+            }
+            $report->delete();
+        }
+
+        $this->modalDelete = false;
+        $this->emit('reloadPage');
     }
     // INFO MODAL
     public function showReport($id)
@@ -182,10 +254,16 @@ class TableReports extends Component
         $this->reportShow = Report::find($id);
         $user = Auth::user();
 
-        if ($this->reportShow && $this->reportShow->delegate_id == $user->id && $this->reportShow->state != 'Resuelto') {
+        if ($this->reportShow && $this->reportShow->delegate_id == $user->id && $this->reportShow->state == 'Abierto') {
             $this->reportShow->state = 'Proceso';
             $this->reportShow->progress = Carbon::now();
             $this->reportShow->save();
+
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Estado actualizado',
+            ]);
         }
     }
 
@@ -201,6 +279,20 @@ class TableReports extends Component
 
         $this->reportEdit = Report::find($id);
         $this->comment = $this->reportEdit->comment;
+    }
+
+    // INFO MODAL
+    public function showDelete($id)
+    {
+        $this->showDelete = true;
+
+        if ($this->modalDelete == true) {
+            $this->modalDelete = false;
+        } else {
+            $this->modalDelete = true;
+        }
+
+        $this->reportDelete = Report::find($id);
     }
     // MODAL
     public function modalShow()
@@ -220,6 +312,15 @@ class TableReports extends Component
             $this->modalEdit = false;
         } else {
             $this->modalEdit = true;
+        }
+    }
+
+    public function modalDelete()
+    {
+        if ($this->modalDelete == true) {
+            $this->modalDelete = false;
+        } else {
+            $this->modalDelete = true;
         }
     }
     // EXTRAS
@@ -250,16 +351,6 @@ class TableReports extends Component
         return array_filter($actions, function ($action) use ($currentState) {
             return $action != $currentState;
         });
-    }
-
-    public function sortBy($field)
-    {
-        if ($this->sortField === $field) {
-            $this->sortAsc = !$this->sortAsc;
-        } else {
-            $this->sortAsc = true;
-            $this->sortField = $field;
-        }
     }
 
     public function reloadPage()

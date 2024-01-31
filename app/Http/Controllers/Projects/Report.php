@@ -25,7 +25,11 @@ class Report extends Controller
         if (Auth::check()) {
             $project = Project::find($project_id);
 
-            return view('projects.reports', compact('project'));
+            if ($project) {
+                return view('projects.reports', compact('project'));
+            } else {
+                return redirect('/projects');
+            }
         } else {
             return redirect('/login');
         }
@@ -42,8 +46,13 @@ class Report extends Controller
             $user = Auth::user();
             $allUsers = User::all();
             $project = Project::find($project_id);
+            
+            if ($project) {
+                return view('projects.newreport', compact('project', 'user', 'allUsers'));
+            } else {
+                return redirect('/projects');
+            }
 
-            return view('projects.newreport', compact('project', 'user', 'allUsers'));
         } else {
             return redirect('/login');
         }
@@ -57,89 +66,103 @@ class Report extends Controller
      */
     public function store(Request $request, $project_id)
     {
-        $project = Project::find($project_id);
-        $report = new ModelsReport();
-        $now = Carbon::now();
-        $dateString = $now->format("Y-m-d H_i_s");
+        if (Auth::check()) {
+            $project = Project::find($project_id);
+            $report = new ModelsReport();
+            $now = Carbon::now();
+            $dateString = $now->format("Y-m-d H_i_s");
 
-        if (isset($request->video)) {
-            $report->project_id = $project_id;
-            $report->user_id = $request->user_id;
-            $report->delegate_id = $request->delegate;
-            $report->title = $request->title;
-            $report->content = $request->video;
-            $report->image = false;
-            $report->video = true;
-            $report->state = "Abierto";
-            $report->comment = $request->comment;
-            $report->save();
-        }
-
-        if (isset($request->photo)) {
-            list($type, $data) = explode(';', $request->photo);
-            list(, $data)      = explode(',', $data);
-            $imageData = base64_decode($data);
-
-            $fileName = 'Reporte ' . $dateString . '.jpg';
-            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
-            Storage::disk('reports')->put($filePath, $imageData);
-
-            $report->project_id = $project_id;
-            $report->user_id = $request->user_id;
-            $report->delegate_id = $request->delegate;
-            $report->title = $request->title;
-            $report->content = $filePath;
-            $report->image = true;
-            $report->video = false;
-            $report->state = "Abierto";
-            $report->comment = $request->comment;
-            $report->save();
-        }
-
-        if (isset($request->file)) {
-            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-            $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
-            
-            $file = $request->file('file');
-            $fileName = $file->getClientOriginalName();
-            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
-            Storage::disk('reports')->put($filePath, file_get_contents($file));
-
-            $report->project_id = $project_id;
-            $report->user_id = $request->user_id;
-            $report->delegate_id = $request->delegate;
-            $report->title = $request->title;
-            $report->content = $filePath;
-
-            if (in_array($file->extension(), $extensionesImagen)) {
-                $report->image = true;
-                $report->video = false;
-            } elseif (in_array($file->extension(), $extensionesVideo)) {
-                $report->image = false;
-                $report->video = true;
+            if ($project && $report) {
+                if (isset($request->video)) {
+                    $report->project_id = $project_id;
+                    $report->user_id = $request->user_id;
+                    $report->delegate_id = $request->delegate;
+                    $report->title = $request->title;
+                    $report->content = $request->video;
+                    $report->image = false;
+                    $report->video = true;
+                    $report->file = false;
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->save();
+                }
+    
+                if (isset($request->photo)) {
+                    list($type, $data) = explode(';', $request->photo);
+                    list(, $data)      = explode(',', $data);
+                    $imageData = base64_decode($data);
+    
+                    $fileName = 'Reporte ' . $dateString . '.jpg';
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                    Storage::disk('reports')->put($filePath, $imageData);
+    
+                    $report->project_id = $project_id;
+                    $report->user_id = $request->user_id;
+                    $report->delegate_id = $request->delegate;
+                    $report->title = $request->title;
+                    $report->content = $filePath;
+                    $report->image = true;
+                    $report->video = false;
+                    $report->file = false;
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->save();
+                }
+    
+                if (isset($request->file)) {
+                    $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
+                    
+                    $file = $request->file('file');
+                    $fileName = $file->getClientOriginalName();
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                    Storage::disk('reports')->put($filePath, file_get_contents($file));
+    
+                    $report->project_id = $project_id;
+                    $report->user_id = $request->user_id;
+                    $report->delegate_id = $request->delegate;
+                    $report->title = $request->title;
+                    $report->content = $filePath;
+    
+                    if (in_array($file->extension(), $extensionesImagen)) {
+                        $report->image = true;
+                        $report->video = false;
+                        $report->file = false;
+                    } elseif (in_array($file->extension(), $extensionesVideo)) {
+                        $report->image = false;
+                        $report->video = true;
+                        $report->file = false;
+                    } else {
+                        $report->image = false;
+                        $report->video = false;
+                        $report->file = true;
+                    }
+                    
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->save();
+                }
+    
+                if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
+                    $report->project_id = $project_id;
+                    $report->user_id = $request->user_id;
+                    $report->delegate_id = $request->delegate;
+                    $report->title = $request->title;
+                    $report->image = false;
+                    $report->video = false;
+                    $report->file = false;
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->save();
+                }
+    
+                return redirect()->route('projects.reports.index', ['project' => $project_id]);
             } else {
-                $report->image = false;
-                $report->video = false;
+                return redirect('/projects');
             }
-            
-            $report->state = "Abierto";
-            $report->comment = $request->comment;
-            $report->save();
+        } else {
+            return redirect('/login');
         }
-
-        if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
-            $report->project_id = $project_id;
-            $report->user_id = $request->user_id;
-            $report->delegate_id = $request->delegate;
-            $report->title = $request->title;
-            $report->image = false;
-            $report->video = false;
-            $report->state = "Abierto";
-            $report->comment = $request->comment;
-            $report->save();
-        }
-
-        return redirect()->route('projects.reports.index', ['project' => $project_id]);
     }
 
     /**
@@ -156,12 +179,16 @@ class Report extends Controller
             $project = Project::find($project_id);
             $report = ModelsReport::find($report_id);
 
-             // Filtrar la colección para eliminar el usuario que coincide con delegate_id
-            $filteredUsers = $allUsers->reject(function ($user) use ($report) {
-                return $user->id == $report->delegate_id;
-            });
+            if ($project && $report) {
+                // Filtrar la colección para eliminar el usuario que coincide con delegate_id
+                $filteredUsers = $allUsers->reject(function ($user) use ($report) {
+                    return $user->id == $report->delegate_id;
+                });
 
-            return view('projects.clonereport', compact('project', 'user', 'filteredUsers', 'report'));
+                return view('projects.clonereport', compact('project', 'user', 'filteredUsers', 'report'));
+            } else {
+                return redirect('/projects');
+            }
         } else {
             return redirect('/login');
         }
@@ -187,146 +214,165 @@ class Report extends Controller
      */
     public function update(Request $request, $project_id, $id)
     {
-        $project = Project::find($project_id);
-        $report = ModelsReport::find($id);
-        $reportNew = new ModelsReport();
-        $now = Carbon::now();
-        $dateString = $now->format("Y-m-d H_i_s");
+        if (Auth::check()) {
+            $project = Project::find($project_id);
+            $report = ModelsReport::find($id);
+            $reportNew = new ModelsReport();
+            $now = Carbon::now();
+            $dateString = $now->format("Y-m-d H_i_s");
 
-        $report->resolved_id = $request->user_id;
-        $report->report_id = $id;
-        $report->state = "Resuelto";
-        $report->repeat = true; 
-        $report->save();
-
-        if (isset($request->video)) {
-            $reportNew->project_id = $project_id;
-            $reportNew->user_id = $request->user_id;
-            $reportNew->delegate_id = $request->delegate;
-            $reportNew->report_id = $id;
-            $reportNew->title = $report->title;
-            $reportNew->content = $request->video;
-            $reportNew->image = false;
-            $reportNew->video = true;
-            $reportNew->state = "Abierto";
-            $reportNew->comment = 'ANTERIOR: ' . $report->comment . ' NUEVO: ' . $request->comment;
-            $reportNew->repeat = true;
-            $reportNew->save();
-        }
-
-        if (isset($request->photo)) {
-            list($type, $data) = explode(';', $request->photo);
-            list(, $data)      = explode(',', $data);
-            $imageData = base64_decode($data);
-
-            $fileName = 'Reporte ' . $dateString . '.jpg';
-            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
-            Storage::disk('reports')->put($filePath, $imageData);
-
-            $reportNew->project_id = $project_id;
-            $reportNew->user_id = $request->user_id;
-            $reportNew->delegate_id = $request->delegate;
-            $reportNew->report_id = $id;
-            $reportNew->title = $report->title;
-            $reportNew->content = $filePath;
-            $reportNew->image = true;
-            $reportNew->video = false;
-            $reportNew->state = "Abierto";
-            $reportNew->comment = 'ANTERIOR: ' . $report->comment . ' NUEVO: ' . $request->comment;
-            $reportNew->repeat = true;
-            $reportNew->save();
-        }
-
-        if (isset($request->file)) {
-            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-            $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
-            
-            $file = $request->file('file');
-            $fileExtension = $file->extension();
-            $fileName = 'Reporte ' . $dateString . '.' . $fileExtension;
-            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
-            Storage::disk('reports')->put($filePath, file_get_contents($file));
-
-            $reportNew->project_id = $project_id;
-            $reportNew->user_id = $request->user_id;
-            $reportNew->delegate_id = $request->delegate;
-            $reportNew->report_id = $id;
-            $reportNew->title = $report->title;
-            $reportNew->content = $filePath;
-            if (in_array($fileExtension, $extensionesImagen)) {
-                $reportNew->image = true;
-                $reportNew->video = false;
-            } elseif (in_array($fileExtension, $extensionesVideo)) {
-                $reportNew->image = false;
-                $reportNew->video = true;
-            } else {
-                $reportNew->image = false;
-                $reportNew->video = false;
-            }
-            $reportNew->state = "Abierto";
-            $reportNew->comment = 'ANTERIOR: ' . $report->comment . ' NUEVO: ' . $request->comment;
-            $reportNew->repeat = true;
-            $reportNew->save();
-        }
-
-        if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
-            $reportNew->project_id = $project_id;
-            $reportNew->user_id = $request->user_id;
-            $reportNew->delegate_id = $request->delegate;
-            $reportNew->report_id = $id;
-            $reportNew->title = $report->title;
-
-            $currentYear = date("Y");
-            $startsWithYear = strpos($report->content, $currentYear) === 0;
-            $startsWithReporte = strpos($report->content, "Reporte") === 0;
-
-            if ($startsWithYear) {
-                // $report->content comienza con el año actual
-                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
-
-                $sourcePath = public_path('reportes/'.$report->content); // Ruta del archivo existente
-                $pathInfo = pathinfo($sourcePath); // Obtener información sobre la ruta del archivo
-                $fileExtension = $pathInfo['extension']; // Obtener la extensión del archivo
-
-                $fileName = 'Reporte ' . $dateString . '.' . $fileExtension;
-                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
-                
-                $destinationPath = public_path('reportes/' . $filePath); // Ruta donde se guardará la copia
-
-                if (File::exists($sourcePath)) {
-                    File::copy($sourcePath, $destinationPath);
+            if ($project && $report) {
+                if ($report->report_id == null) {
+                    $report->resolved_id = $request->user_id;
+                    $report->report_id = $id;
+                    $report->state = "Resuelto";
+                    $report->save();
                 }
-                
-                $reportNew->content = $filePath;
-                if (in_array($fileExtension, $extensionesImagen)) {
-                    $reportNew->image = true;
-                    $reportNew->video = false;
-                } elseif (in_array($fileExtension, $extensionesVideo)) {
+    
+                if (isset($request->video)) {
+                    $reportNew->project_id = $project_id;
+                    $reportNew->user_id = $request->user_id;
+                    $reportNew->delegate_id = $request->delegate;
+                    $reportNew->report_id = $report->report_id;
+                    $reportNew->title = $report->title;
+                    $reportNew->content = $request->video;
                     $reportNew->image = false;
                     $reportNew->video = true;
-                } else {
-                    $reportNew->image = false;
-                    $reportNew->video = false;
+                    $reportNew->file = false;
+                    $reportNew->state = "Abierto";
+                    $reportNew->comment = $request->comment;
+                    $reportNew->repeat = true;
+                    $reportNew->save();
                 }
-
-            } elseif ($startsWithReporte) {
-                // $report->content comienza con "Reporte"
-                $reportNew->content = $report->content;
-                $reportNew->image = false;
-                $reportNew->video = true;
+    
+                if (isset($request->photo)) {
+                    list($type, $data) = explode(';', $request->photo);
+                    list(, $data)      = explode(',', $data);
+                    $imageData = base64_decode($data);
+    
+                    $fileName = 'Reporte ' . $dateString . '.jpg';
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                    Storage::disk('reports')->put($filePath, $imageData);
+    
+                    $reportNew->project_id = $project_id;
+                    $reportNew->user_id = $request->user_id;
+                    $reportNew->delegate_id = $request->delegate;
+                    $reportNew->report_id = $report->report_id;
+                    $reportNew->title = $report->title;
+                    $reportNew->content = $filePath;
+                    $reportNew->image = true;
+                    $reportNew->video = false;
+                    $reportNew->file = false;
+                    $reportNew->state = "Abierto";
+                    $reportNew->comment = $request->comment;
+                    $reportNew->repeat = true;
+                    $reportNew->save();
+                }
+    
+                if (isset($request->file)) {
+                    $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
+                    
+                    $file = $request->file('file');
+                    $fileExtension = $file->extension();
+                    $fileName = 'Reporte ' . $dateString . '.' . $fileExtension;
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                    Storage::disk('reports')->put($filePath, file_get_contents($file));
+    
+                    $reportNew->project_id = $project_id;
+                    $reportNew->user_id = $request->user_id;
+                    $reportNew->delegate_id = $request->delegate;
+                    $reportNew->report_id = $report->report_id;
+                    $reportNew->title = $report->title;
+                    $reportNew->content = $filePath;
+                    if (in_array($fileExtension, $extensionesImagen)) {
+                        $reportNew->image = true;
+                        $reportNew->video = false;
+                        $reportNew->file = false;
+                    } elseif (in_array($fileExtension, $extensionesVideo)) {
+                        $reportNew->image = false;
+                        $reportNew->video = true;
+                        $reportNew->file = false;
+                    } else {
+                        $reportNew->image = false;
+                        $reportNew->video = false;
+                        $reportNew->file = true;
+                    }
+                    $reportNew->state = "Abierto";
+                    $reportNew->comment = $request->comment;
+                    $reportNew->repeat = true;
+                    $reportNew->save();
+                }
+    
+                if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
+                    $reportNew->project_id = $project_id;
+                    $reportNew->user_id = $request->user_id;
+                    $reportNew->delegate_id = $request->delegate;
+                    $reportNew->report_id = $report->report_id;
+                    $reportNew->title = $report->title;
+    
+                    $currentYear = date("Y");
+                    $startsWithYear = strpos($report->content, $currentYear) === 0;
+                    $startsWithReporte = strpos($report->content, "Reporte") === 0;
+    
+                    if ($startsWithYear) {
+                        
+                        // $report->content comienza con el año actual
+                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                        $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
+    
+                        $sourcePath = public_path('reportes/'.$report->content); // Ruta del archivo existente
+                        $pathInfo = pathinfo($sourcePath); // Obtener información sobre la ruta del archivo
+                        $fileExtension = $pathInfo['extension']; // Obtener la extensión del archivo
+    
+                        $fileName = 'Reporte ' . $dateString . '.' . $fileExtension;
+                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                        
+                        $destinationPath = public_path('reportes/' . $filePath); // Ruta donde se guardará la copia
+    
+                        if (File::exists($sourcePath)) {
+                            File::copy($sourcePath, $destinationPath);
+                        }
+                        $reportNew->content = $filePath;
+                        if (in_array($fileExtension, $extensionesImagen)) {
+                            $reportNew->image = true;
+                            $reportNew->video = false;
+                            $reportNew->file = false;
+                        } elseif (in_array($fileExtension, $extensionesVideo)) {
+                            $reportNew->image = false;
+                            $reportNew->video = true;
+                            $reportNew->file = false;
+                        } else {
+                            $reportNew->image = false;
+                            $reportNew->video = false;
+                            $reportNew->file = true;
+                        }
+    
+                    } elseif ($startsWithReporte) {
+                        // $report->content comienza con "Reporte"
+                        $reportNew->content = $report->content;
+                        $reportNew->image = false;
+                        $reportNew->video = true;
+                        $reportNew->file = false;
+                    } else {
+                        $reportNew->image = false;
+                        $reportNew->video = false;
+                        $reportNew->file = false;
+                    }
+                    
+                    $reportNew->state = "Abierto";
+                    $reportNew->comment = $request->comment;
+                    $reportNew->repeat = true; 
+                    $reportNew->save();
+                }
+    
+                return redirect()->route('projects.reports.index', ['project' => $project_id]);
             } else {
-                $reportNew->image = false;
-                $reportNew->video = false;
+                return redirect('/projects');
             }
-            
-            $reportNew->state = "Abierto";
-            $reportNew->comment = 'ANTERIOR: ' . $report->comment . ' NUEVO: ' . $request->comment;
-            $reportNew->repeat = true;
-            $reportNew->save();
+        } else {
+            return redirect('/login');
         }
-
-        return redirect()->route('projects.reports.index', ['project' => $project_id]);
     }
 
     /**
