@@ -9,7 +9,6 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    @livewireStyles
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -84,6 +83,12 @@
 
 <body>
     <div id="mainMenu" class="flex flex-row items-center justify-center rounded-md p-5 bg-main-fund">
+        <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}" class="mx-5 w-auto h-12 flex justify-center items-center text-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mr-2 text-main hover:text-secondary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>     
+            Regresar            
+        </a>
         <button id="screenshotButton" class="mx-5 w-12 h-12 flex justify-center items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
@@ -94,11 +99,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
             </svg>              
-        </button>
-        <button id="textButton" class="mx-5 w-12 h-12 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-            </svg>                       
         </button>
     </div>
     
@@ -137,92 +137,126 @@
         </button>
     </div>
 
-    <div id="textMenu" class="flex flex-row items-center justify-center rounded-md p-5 bg-main-fund" style="display: none;">
-        <button id="returnButtonText" class="mx-5 w-12 h-12 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
-            </svg> 
-        </button>
-    </div>
+    <div id="rightBar" class="w-full" style="display: block;">
+        <div class="w-full my-10 text-center">
+            <label class=" text-secondary-fund">
+                Reescribe o detalla más la descripción del reporte.<br>
+                Delega el reporte a otro miembro del equipo si es necesario.<br>
+                Sube archivos adicionales, graba o fotografía tu pantalla, y descarga los archivos existentes usando el botón de descarga.
+            </label>
+        </div>
 
-    <div id="rightBar" class="fixed pb-20 top-0 right-0 h-full w-1/3 z-5 overflow-y-auto scrollEdit bg-main-fund" style="display: none;">
-        <div class="px-4 pb-4 pt-10  h-full w-full">
-            <div id="viewPhoto" style="display: none;">
-                <h2 class="inline-flex font-semibold">
-                    Imagen capturada
-                </h2>
-                <div id="renderedCanvas" class="w-full h-auto mt-8"></div>
-                <div class="flex justify-center items-center py-6 bg-main-fund">
-                    <button id="downloadButton" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Guardar captura</button>
+        <div class="px-4 pb-4 pt-10 flex h-full w-full">
+            <div class="w-2/4">
+                <div id="viewPhoto" style="display: none;">
+                    <h2 class="inline-flex font-semibold">
+                        Imagen capturada
+                    </h2>
+                    <div id="renderedCanvas" class="w-full h-auto my-8"></div>
+                    {{-- <div class="flex justify-center items-center py-6 bg-main-fund">
+                        <button id="downloadButton" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Guardar captura</button>
+                    </div> --}}
                 </div>
+                
+                <div id="viewVideo" style="display: none;">
+                    <video id="recording" width="300" height="200" loop autoplay class="my-8 w-full h-2/5"></video>
+                    <div class="flex justify-center items-center py-6 hidden">
+                        <a id="downloadVideoButton" class="px-4 py-2 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Descargar video</a>
+                    </div>
+                </div>
+
+                <div id="viewFile" style="display: block;">
+                    @if (!empty($report->content))
+                        @if ($report->image == true)
+                            <h2 class="inline-flex font-semibold">
+                                Imagen capturada
+                            </h2>
+                            <img name="imageFile" src="{{ asset('reportes/' . $report->content) }}" alt="Report Image">
+                            <div class="flex justify-center items-center py-6 ">
+                                <a href="{{ asset('reportes/' . $report->content) }}" download="{{ basename($report->content) }}" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">
+                                    Descargar captura
+                                </a>
+                            </div>
+                        @endif
+
+                        @if ($report->video == true)
+                            @if (strpos($report->content, "Reporte") === 0)
+                                <p class="text-red my-5">Falta subir '{{ $report->content }}'</p>
+                            @else
+                                <video name="videoFile" src="{{ asset('reportes/' . $report->content) }}" loop autoplay alt="Report Video"></video>
+                                <div class="flex justify-center items-center py-6 ">
+                                    <a href="{{ asset('reportes/' . $report->content) }}" download="{{ basename($report->content) }}" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">
+                                        Descargar video
+                                    </a>
+                                </div>
+                            @endif
+                        @endif
+                    @else
+                        <p class="text-red my-5">Sin archivo</p>
+                    @endif
+                </div>
+
             </div>
-            
-            <div id="viewVideo" style="display: none;">
-                <h2 class="inline-flex font-semibold">
-                    Video capturado
-                </h2>
-                <video id="recording" width="300" height="200" controls class="mt-8 w-full h-2/5"></video>
-                <div class="flex justify-center items-center py-6 bg-main-fund">
-                    <a id="downloadVideoButton" class="px-4 py-2 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Descargar video</a>
-                </div>
+            <div class="w-2/4">
+                <form id="formReport" action="{{ route('projects.reports.update', ['project' => $project->id, 'report' => $report->id]) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <input hidden type="text" id="user_id" name="user_id" value="{{ $user->id }}">
+                    <input hidden type="text" id="inputPhoto" name="photo">
+                    <input hidden type="text" id="inputVideo" name="video">
+
+                    <div id="viewText" class="-mx-3 md:flex mb-6" style="block">
+                        <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                            <h5 class="inline-flex font-semibold" for="name">
+                                Selecciona un archivo
+                            </h5>
+                            <input type="file" name="file" id="file" value="{{ $report->title }}" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                        </div>
+                    </div>
+
+                    <div class="-mx-3 md:flex mb-6">
+                        <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                            <h5 class="inline-flex font-semibold" for="name">
+                                Título del reporte
+                            </h5>
+                            <input disabled type="text" name="title" id="title" value="{{ $report->title }}" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">                        </div>
+                        <div class="md:w-1/2 flex flex-col px-3">
+                            <h5 class="inline-flex font-semibold" for="name">
+                                Descripción del reporte
+                            </h5>
+                            <textarea disabled type="text" placeholder="Describa la observación y especifique el objetivo a cumplir." class="fields1 leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 pt-1 mb-5 px-4 w-full rounded mx-auto">{{ $report->comment }}</textarea>
+                            <textarea required type="text" rows="10" placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" class="fields1 leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto"></textarea>
+
+                        </div>
+                    </div>
+
+                    <div class="-mx-3 md:flex mb-6">
+                        <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                            <h5 class="inline-flex font-semibold" for="name">
+                                Delegar
+                            </h5>
+                            <select required name="delegate" id="delegate" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <option value="{{ $report->delegate->id }}" selected>{{ $report->delegate->name }} {{ $report->delegate->lastname }}</option>
+                                @foreach ($filteredUsers as $filteredUser)
+                                    <option value="{{ $filteredUser->id }}">{{ $filteredUser->name }} {{ $filteredUser->lastname }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center items-center py-6">
+                        <button type="submit" class="px-4 py-2 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Guardar</button>
+                    </div>
+                </form>            
             </div>
-            
-            <form id="formReport" action="{{route('reports.store')}}" method="POST">
-            @csrf 
-                <input hidden type="text" id="project_id" name="project_id" value="{{ $project_id }}">
-                <input hidden type="text" id="user_id" name="user_id" value="{{ $user->id }}">
-                <input hidden type="text" id="inputVideo" name="video">
-                <input hidden type="text" id="inputPhoto" name="photo">
-
-                <div id="viewText" class="-mx-3 md:flex mb-6" style="display: none;">
-                    <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
-                        <h5 class="inline-flex font-semibold" for="name">
-                            Selecciona un archivo
-                        </h5>
-                        <input type="file" name="file" id="file" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                    </div>
-                </div>
-
-                <div class="-mx-3 md:flex mb-6 bg-main-fund">
-                    <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
-                        <h5 class="inline-flex font-semibold" for="name">
-                            Tìtulo del reporte
-                        </h5>
-                        <input required type="text" name="title" id="title" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                    </div>
-                    <div class="md:w-1/2 flex flex-col px-3">
-                        <h5 class="inline-flex font-semibold" for="name">
-                            Descripción del reporte
-                        </h5>
-                        <textarea required type="text" rows="10" placeholder="Describa la observación y especifique el objetivo a cumplir." name="comment" id="report" class="fields1 leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto"></textarea> 
-                    </div>
-                </div>
-
-                <div class="-mx-3 md:flex mb-6">
-                    <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
-                        <h5 class="inline-flex font-semibold" for="name">
-                            Delegar
-                        </h5>
-                        <select required name="delegate" id="delegate" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                            <option selected>Selecciona...</option>
-                            @foreach ($allUsers as $allUser)
-                                <option value="{{ $allUser->id }}">{{ $allUser->name }} {{ $allUser->lastname }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex justify-center items-center py-6 bg-main-fund">
-                    <button type="submit" class="px-4 py-2 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Guardar</button>
-                </div>
-            </form>
         </div>
     </div>
 
-    <div id="artboard" class="w-full">
+    <div id="artboard" class="w-full" style="display: none;">
         <h2 class="top-10 left-10 px-2 py-4 font-semibold text-3xl">Previsualización</h2>
         <div class="w-full flex justify-center items-center">
             <p id="log" class="text-xl font-semibold text-red"></p>
+            <p id="time" class="mx-3 text-xl font-semibold text-red"></p>
         </div>
 
         <div id="capturedImageContainer" class="flex items-center justify-center"></div>
@@ -231,7 +265,7 @@
         <video id="preview" width="100%" height="auto" autoplay muted class="mt-2"></video>
     </div>
 
-    {{-- CORDER --}}
+    {{-- RECORDING --}}
     <script>
         let preview = document.getElementById("preview");
         let recording = document.getElementById("recording");
@@ -239,47 +273,104 @@
         let stopButton = document.getElementById("stopButton");
         let downloadVideoButton = document.getElementById("downloadVideoButton");
         let logElement = document.getElementById("log");
+        let time = document.getElementById("time");
+
+        let inputUser = document.getElementById("user_id");
         let inputVideo = document.getElementById("inputVideo");
-        let projectId = document.getElementById("project_id");
-        let userId = document.getElementById("user_id");
 
-        let dateNow = new Date();
-        let year = dateNow.getFullYear();
-        let month = ('0' + (dateNow.getMonth() + 1)).slice(-2);
-        let day = ('0' + dateNow.getDate()).slice(-2);
-        let hours = ('0' + dateNow.getHours()).slice(-2);
-        let minutes = ('0' + dateNow.getMinutes()).slice(-2);
-        let seconds = ('0' + dateNow.getSeconds()).slice(-2);
-
-        let idProject = @json($project_id);
         let user = @json($user);
+        let project = @json($project);
 
-        let dateHour = year + '-' + month + '-' + day + ' ' + hours + '_' + minutes + '_' + seconds;
+        // variables "globales"
+        let startTime, intervalId, mediaRecorder;
+
+        // Nombre del Video con fecha y hora
+        let fechaActual = new Date();
+        let dia = ("0" + fechaActual.getDate()).slice(-2);
+        let mes = ("0" + (fechaActual.getMonth() + 1)).slice(-2);
+        let año = fechaActual.getFullYear();
+        let horas = ("0" + fechaActual.getHours()).slice(-2);
+        let minutos = ("0" + fechaActual.getMinutes()).slice(-2);
+        let segundos = ("0" + fechaActual.getSeconds()).slice(-2);
+        let fechaEnFormato = dia + '-' + mes + '-' + año + ' ' + horas + '_' + minutos + '_' + segundos;
+
+        // Ayudante para la duración; no ayuda en nada pero muestra algo informativo
+        const secondsOnTime = numeroDeSegundos => {
+            let horas = Math.floor(numeroDeSegundos / 60 / 60);
+            numeroDeSegundos -= horas * 60 * 60;
+            let minutos = Math.floor(numeroDeSegundos / 60);
+            numeroDeSegundos -= minutos * 60;
+            numeroDeSegundos = parseInt(numeroDeSegundos);
+            if (horas < 10) horas = "0" + horas;
+            if (minutos < 10) minutos = "0" + minutos;
+            if (numeroDeSegundos < 10) numeroDeSegundos = "0" + numeroDeSegundos;
+
+            return `${horas}:${minutos}:${numeroDeSegundos}`;
+        };
+
+        const refresh = () => {
+            time.textContent = secondsOnTime((Date.now() - startTime) / 1000);
+        }
+        
+        const startCounting = () => {
+            startTime = Date.now();
+            intervalId = setInterval(refresh, 500);
+        };
+
+        const stopCounting = () => {
+            clearInterval(intervalId);
+            startTime = null;
+            time.textContent = "";
+        }
         
         function log(msg) {
             logElement.innerHTML = msg;
         }
 
         function startRecording(stream, lengthInMS) {
-            let recorder = new MediaRecorder(stream);
+            mediaRecorder = new MediaRecorder(stream);
             let data = [];
-        
-            recorder.ondataavailable = event => data.push(event.data);
-            
+
+            mediaRecorder.ondataavailable = event => data.push(event.data);
+
             let stopped = new Promise((resolve, reject) => {
-                recorder.onstop = resolve;
-                recorder.onerror = event => reject(event.name);
+                mediaRecorder.onstop = resolve;
+                mediaRecorder.onerror = event => reject(event.name);
             });
 
-            recorder.start();
+            // Manejar el evento oninactive del MediaStream
+            stream.oninactive = () => {
+                log("Grabación finalizada.");
+                stopCounting();
+                mediaRecorder.stop();  // Detener la grabación si el stream se vuelve inactivo
+
+                inputUser.value = user.id;
+                downloadVideoButton.download = 'Reporte ' + fechaEnFormato + ', ' + project.name;
+                inputVideo.value = 'Reporte ' + fechaEnFormato + ', ' + project.name;
+
+                document.getElementById('rightBar').style.display = 'block';
+                document.getElementById('artboard').style.display = 'none';
+
+                document.getElementById('viewVideo').style.display = 'block';
+                document.getElementById('viewFile').style.display = 'none';
+                document.getElementById('viewText').style.display = 'none';
+            };
+
+            mediaRecorder.start();
             log("Grabación iniciada.");
 
+            // return stopped;
             return stopped.then(() => data);
         }
 
         function stop(stream) {
             stream.getTracks().forEach(track => track.stop());
         }
+
+        // Event listener for the stopButton
+        stopButton.addEventListener("click", function() {
+            stop(preview.srcObject);
+        }, false);
 
         startButton.addEventListener("click", function() {
             navigator.mediaDevices.getDisplayMedia({
@@ -288,50 +379,44 @@
             }).then(stream => {
                 preview.srcObject = stream;
                 downloadVideoButton.href = stream;
-                inputVideo.value = 'Reporte ' + dateHour +'.mp4';
-                projectId.value = idProject;
-                userId.value = user.id;
                 preview.captureStream = preview.captureStream || preview.mozCaptureStream;
-                return new Promise(resolve => preview.onplaying = resolve);
-            }).then(() => startRecording(preview.captureStream()))
-            .then (recordedChunks => {
+
+                // Iniciar la grabación automáticamente cuando se obtiene la captura de pantalla
+                startCounting();
+                return startRecording(stream);
+            }).then (recordedChunks => {
                 let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
                 recording.src = URL.createObjectURL(recordedBlob);
                 downloadVideoButton.href = recording.src;
-                downloadVideoButton.download = 'Reporte ' + dateHour +'.mp4';
+                downloadVideoButton.download = 'Reporte ' + fechaEnFormato + ', ' + project.name;
             })
             /* .catch(log); */
         }, false);
 
-        stopButton.addEventListener("click", function() {
-            stop(preview.srcObject);
-            log("Grabación finalizada.");
-        }, false);
-
-        //returnButton from Video
+        // returnButton from Video
         document.getElementById('returnButtonVideo').addEventListener('click', function() {
             // Detener el video
-            let preview = document.getElementById("preview");
-            let recorder;
             preview.pause();
             preview.srcObject = null;
 
-            if (recorder) {
-                recorder.stop();
+            if (mediaRecorder) {
+                mediaRecorder.stop();
             }
             log('');
-            recording.src = '';
+            preview.src = '';
             downloadVideoButton.href = '';
             inputVideo.value = '';
 
             // Mostrar el div principal y ocultar otros elementos
-            document.getElementById('rightBar').style.display = 'none';
-            document.getElementById('viewPhoto').style.display = 'none';
+            document.getElementById('rightBar').style.display = 'block';
+            document.getElementById('artboard').style.display = 'none';
+
             document.getElementById('viewVideo').style.display = 'none';
+            document.getElementById('viewFile').style.display = 'block';
+            document.getElementById('viewText').style.display = 'block';
+
             document.getElementById('mainMenu').style.display = 'flex';
             document.getElementById('videoMenu').style.display = 'none';
-
-            cleanForm();
         });
     </script>
 
@@ -354,21 +439,9 @@
             const capturedImageContainer = document.getElementById('capturedImageContainer'); // Container to display captured image
             
             let inputPhoto = document.getElementById("inputPhoto");
-            let projectId = document.getElementById("project_id");
-            let userId = document.getElementById("user_id");
+            let inputUser = document.getElementById("user_id");
 
-            let idProject = @json($project_id);
             let user = @json($user);
-
-            let dateNow = new Date();
-            let year = dateNow.getFullYear();
-            let month = ('0' + (dateNow.getMonth() + 1)).slice(-2);
-            let day = ('0' + dateNow.getDate()).slice(-2);
-            let hours = ('0' + dateNow.getHours()).slice(-2);
-            let minutes = ('0' + dateNow.getMinutes()).slice(-2);
-            let seconds = ('0' + dateNow.getSeconds()).slice(-2);
-
-            let dateHour = year + '-' + month + '-' + day + ' ' + hours + '_' + minutes + '_' + seconds;
 
             screenshotButton.addEventListener('click', () => {
                 navigator.mediaDevices.getDisplayMedia({
@@ -418,7 +491,7 @@
                                 drawCtx.lineWidth = lineWidthValue;
                             });
 
-                            // Variables to store previous coordinates
+                            // letiables to store previous coordinates
                             let prevX, prevY;
 
                             // Event listeners to handle drawing on mouse interactions
@@ -450,16 +523,14 @@
                                 isDrawing = false;
                             });
 
-
                             // Function to render the combined image for preview
                             const renderCombinedImage = (combinedDataURL) => {
                                 const renderedCanvas = document.getElementById('renderedCanvas');
                                 renderedCanvas.innerHTML = ''; // Clear previous content
                                 const renderedImage = new Image();
                                 renderedImage.src = combinedDataURL;
-                                inputPhoto.value = 'Reporte ' + dateHour +'.jpg';
-                                projectId.value = idProject;
-                                userId.value = user.id;
+                                inputPhoto.value = combinedDataURL;
+                                inputUser.value = user.id;
                                 renderedCanvas.appendChild(renderedImage);
                             };
 
@@ -488,38 +559,39 @@
                                     const combinedDataURL = combinedCanvas.toDataURL('image/jpg');
                                     renderCombinedImage(combinedDataURL);
                                 };
+                                drawCanvas.hidden = true;
                             });
 
                             // Function to handle the download
-                            const downloadImage = () => {
-                                const combinedCanvas = document.createElement('canvas');
-                                combinedCanvas.width = imageBitmap.width;
-                                combinedCanvas.height = imageBitmap.height;
-                                const combinedCtx = combinedCanvas.getContext('2d');
+                            // const downloadImage = () => {
+                            //     const combinedCanvas = document.createElement('canvas');
+                            //     combinedCanvas.width = imageBitmap.width;
+                            //     combinedCanvas.height = imageBitmap.height;
+                            //     const combinedCtx = combinedCanvas.getContext('2d');
 
-                                // Draw the screen capture onto the combined canvas
-                                combinedCtx.drawImage(imageBitmap, 0, 0);
+                            //     // Draw the screen capture onto the combined canvas
+                            //     combinedCtx.drawImage(imageBitmap, 0, 0);
 
-                                // Create a new image element for the drawing canvas
-                                const drawImage = new Image();
-                                drawImage.src = drawCanvas.toDataURL('image/jpg');
+                            //     // Create a new image element for the drawing canvas
+                            //     const drawImage = new Image();
+                            //     drawImage.src = drawCanvas.toDataURL('image/jpg');
 
-                                // When the drawing canvas image is fully loaded, render it onto the combined canvas
-                                drawImage.onload = () => {
-                                    combinedCtx.drawImage(drawImage, 0, 0);
+                            //     // When the drawing canvas image is fully loaded, render it onto the combined canvas
+                            //     drawImage.onload = () => {
+                            //         combinedCtx.drawImage(drawImage, 0, 0);
 
-                                    // Get the combined canvas data URL and create a download link
-                                    const combinedDataURL = combinedCanvas.toDataURL('image/jpg');
-                                    const a = document.createElement('a');
-                                    a.href = combinedDataURL;
-                                    a.download = 'Reporte ' + dateHour +'.jpg';
-                                    a.click();
-                                };
-                            };    
-                            // button with the id "downloadButton"
-                            const downloadButton = document.getElementById('downloadButton');
-                            // Add click event listener to the download button
-                            downloadButton.addEventListener('click', downloadImage);
+                            //         // Get the combined canvas data URL and create a download link
+                            //         const combinedDataURL = combinedCanvas.toDataURL('image/jpg');
+                            //         const a = document.createElement('a');
+                            //         a.href = combinedDataURL;
+                            //         a.download = 'Reporte.jpg';
+                            //         a.click();
+                            //     };
+                            // };    
+                            // // button with the id "downloadButton"
+                            // const downloadButton = document.getElementById('downloadButton');
+                            // // Add click event listener to the download button
+                            // downloadButton.addEventListener('click', downloadImage);
                         };
                     }).catch(error => {
                         console.error('Error grabbing frame:', error);
@@ -533,12 +605,34 @@
 
     {{-- BUTTONS --}}
     <script>
+        document.getElementById('formReport').addEventListener('submit', function(e) {
+            let downloadButton = document.getElementById('downloadVideoButton');
+
+            if (downloadButton.href) {
+                setTimeout(function() {
+                    downloadButton.click();
+                }, 100);
+            }
+        });
+
         //screenshotButton
         document.getElementById('screenshotButton').addEventListener('click', function() {
+            document.getElementById('rightBar').style.display = 'none';
+            document.getElementById('artboard').style.display = 'block';
+
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('shotMenu').style.display = 'flex';
         });
-        //returnButton from screen Shot
+        //Save combined screenshot-canvas button
+        document.getElementById('downloadShot').addEventListener('click', function() {
+            document.getElementById('rightBar').style.display = 'block';
+            document.getElementById('artboard').style.display = 'none';
+
+            document.getElementById('viewPhoto').style.display = 'block';
+            document.getElementById('viewFile').style.display = 'none';
+            document.getElementById('viewText').style.display = 'none';
+        });
+        //returnButton from screenshot
         document.getElementById('returnButton').addEventListener('click', function() {
             // Reiniciar el div donde se muestra la captura de pantalla
             const capturedImageContainer = document.getElementById('capturedImageContainer');
@@ -557,63 +651,25 @@
             renderedCanvas.innerHTML = '';
 
             // Mostrar el div principal y ocultar otros elementos
-            document.getElementById('rightBar').style.display = 'none';
-            document.getElementById('viewPhoto').style.display = 'none';
-            document.getElementById('viewVideo').style.display = 'none';
-            document.getElementById('mainMenu').style.display = 'flex';
-            document.getElementById('shotMenu').style.display = 'none';
-            cleanForm();
-        });
-        //start recording video button
-        document.getElementById('startButton').addEventListener('click', function() {
-            document.getElementById('mainMenu').style.display = 'none';
-            document.getElementById('videoMenu').style.display = 'flex';
-        });
-        //text button
-        document.getElementById('textButton').addEventListener('click', function() {
-            let idProject = @json($project_id);
-            let user = @json($user);
+            document.getElementById('rightBar').style.display = 'block';
+            document.getElementById('artboard').style.display = 'none';
 
-            document.getElementById('rightBar').style.display = 'flex';
-            document.getElementById('textMenu').style.display = 'flex';
-            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('viewPhoto').style.display = 'none';
+            document.getElementById('viewFile').style.display = 'block';
             document.getElementById('viewText').style.display = 'block';
 
-            document.getElementById("project_id").value = idProject;
-            document.getElementById("user_id").value = user.id;;
-        });
-        //returnButtonText from text
-        document.getElementById('returnButtonText').addEventListener('click', function() {
-            document.getElementById('rightBar').style.display = 'none';
-            document.getElementById('viewPhoto').style.display = 'none';
-            document.getElementById('viewVideo').style.display = 'none';
             document.getElementById('mainMenu').style.display = 'flex';
-            document.getElementById('textMenu').style.display = 'none';
-            document.getElementById('viewText').style.display = 'none';
-            cleanForm();
-        });
-        //stop recording button
-        document.getElementById('stopButton').addEventListener('click', function() {
-            document.getElementById('rightBar').style.display = 'flex';
-            document.getElementById('viewVideo').style.display = 'block';
-        });
-        //Save combined screenshot-canvas button
-        document.getElementById('downloadShot').addEventListener('click', function() {
-            document.getElementById('rightBar').style.display = 'flex';
-            document.getElementById('viewPhoto').style.display = 'block';
+            document.getElementById('shotMenu').style.display = 'none';
         });
 
-        function cleanForm() {
-            const formulario = document.getElementById('formReport'); 
-            const elementosFormulario = formulario.querySelectorAll('input, textarea');
+        //start recording video button
+        document.getElementById('startButton').addEventListener('click', function() {
+            document.getElementById('videoMenu').style.display = 'flex';
+            document.getElementById('mainMenu').style.display = 'none';
 
-            // Establece los valores de los elementos en vacío
-            elementosFormulario.forEach(elemento => {
-                if (elemento.type !== 'button' && elemento.type !== 'submit') {
-                    elemento.value = '';
-                }
-            });
-        }
+            document.getElementById('rightBar').style.display = 'none';
+            document.getElementById('artboard').style.display = 'block';
+        });
     </script>
 </body>
 </html>

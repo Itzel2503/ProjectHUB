@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Users;
 
 use App\Models\Area;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
@@ -16,7 +15,7 @@ class TableUsers extends Component
     public $showUpdate = false, $showDelete = false, $showRestore = false;
     // table, action's user
     public $search, $userEdit, $areaUser, $userDelete, $userRestore;
-    public $perPage = '25';
+    public $perPage = '10';
     public $rules = [], $allAreas = [];
     // inputs
     public $name, $lastname, $date_birthday, $curp, $rfc, $phone, $area, $email, $password, $password_confirmation;
@@ -43,7 +42,7 @@ class TableUsers extends Component
             'areas' => $areas,
         ]);
     }
-
+    // ACTIONS
     public function create()
     {
         $this->rules = [
@@ -148,7 +147,7 @@ class TableUsers extends Component
         $this->modalRestore = false;
         $this->emit('reloadPage');
     }
-
+    // INFO MODAL
     public function showDelete($id)
     {
         $this->showDelete = true;
@@ -194,8 +193,16 @@ class TableUsers extends Component
                 unset($this->allAreas[$key]);
             }
         }
-    }
 
+        $this->name = $this->userEdit->name;
+        $this->lastname = $this->userEdit->lastname;
+        $this->date_birthday = $this->userEdit->date_birthday;
+        $this->curp = $this->userEdit->curp;
+        $this->rfc = $this->userEdit->rfc;
+        $this->phone = $this->userEdit->phone;
+        $this->email = $this->userEdit->email;
+    }
+    // MODAL
     public function modalCreateEdit()
     {
         $this->showUpdate = false;
@@ -205,6 +212,7 @@ class TableUsers extends Component
         } else {
             $this->modalCreateEdit = true;
         }
+        $this->clearInputs();
     }
 
     public function modalDelete()
@@ -223,6 +231,17 @@ class TableUsers extends Component
         } else {
             $this->modalRestore = true;
         }
+    }
+    // EXTRAS
+    public function clearInputs()
+    {
+        $this->name = '';
+        $this->lastname = '';
+        $this->date_birthday = '';
+        $this->curp = '';
+        $this->rfc = '';
+        $this->phone = '';
+        $this->email = '';
     }
 
     public function reloadPage()

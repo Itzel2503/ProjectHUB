@@ -27,7 +27,7 @@
             </div>
             <!-- BTN NEW -->
             <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
-                <button wire:click="modalCreateEdit()" class="px-2 py-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
+                <button wire:click="modalCreateEdit()" class="p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
                     Nuevo Usuario
                 </button>
             </div>
@@ -120,7 +120,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Nombre @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='name' @if(!$showUpdate) required @endif type="text" placeholder="{{ ($showUpdate) ? $userEdit->name : 'Nombre/s' }}" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='name' @if(!$showUpdate) required @endif type="text" placeholder="Nombre/s" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('name')
@@ -135,7 +135,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Apellidos @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='lastname' @if(!$showUpdate) required @endif type="text" placeholder="{{ ($showUpdate) ? $userEdit->lastname : 'Apellido materno y apellido paterno' }}" name="lastname" id="lastname" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='lastname' @if(!$showUpdate) required @endif type="text" placeholder="Apellido materno y apellido paterno" name="lastname" id="lastname" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('lastname')
@@ -153,10 +153,7 @@
                                     Fecha de nacimiento @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                <div class="relative z-0 w-full group flex justify-between items-center">
-                                    <label class="text-sm inline-flex font-semibold w-1/4">{{ $userEdit->date_birthday }}</label>
-                                    <input wire:model='date_birthday' type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                </div>
+                                <input wire:model='date_birthday' type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 @else
                                 <input wire:model='date_birthday' required type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 @endif
@@ -174,7 +171,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     CURP
                                 </h5>
-                                <input wire:model='curp' type="text" maxlength="18" placeholder="{{ ($showUpdate) ? $userEdit->curp : 'CURP' }}" name="curp" id="curp" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='curp' type="text" maxlength="18" placeholder="CURP" name="curp" id="curp" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('curp')
@@ -191,7 +188,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     RFC
                                 </h5>
-                                <input wire:model='rfc' type="text" maxlength="13" placeholder="{{ ($showUpdate) ? $userEdit->rfc : 'RFC' }}" name="rfc" id="rfc" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='rfc' type="text" maxlength="13" placeholder="RFC" name="rfc" id="rfc" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('rfc')
@@ -206,7 +203,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Número de teléfono @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='phone' @if(!$showUpdate) required @endif type="text" placeholder="{{ ($showUpdate) ? $userEdit->phone : 'Número de teléfono' }}" name="phone" id="phone" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='phone' @if(!$showUpdate) required @endif type="text" placeholder="Número de teléfono" name="phone" id="phone" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('phone')
@@ -224,14 +221,14 @@
                                     Área @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                <select wire:model='area' name="area" id="area" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <select wire:model.defer='area' name="area" id="area" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                     <option selected value="{{ $areaUser->id }}">{{ $areaUser->name }}</option>
                                     @foreach ($allAreas as $allArea)
                                     <option value="{{ $allArea->id }}">{{ $allArea->name }}</option>
                                     @endforeach
                                 </select>
                                 @else
-                                <select wire:model='area' required name="area" id="area" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <select wire:model.defer='area' required name="area" id="area" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                     <option selected>Selecciona...</option>
                                     @foreach ($areas as $area)
                                     <option value="{{ $area->id }}">{{ $area->name }}</option>
@@ -252,7 +249,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Correo electrónico: @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='email' @if(!$showUpdate) required @endif type="text" placeholder="{{ ($showUpdate) ? $userEdit->email : 'Correo electrónico' }}" name="email" id="email" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='email' @if(!$showUpdate) required @endif type="text" placeholder="Correo electrónico" name="email" id="email" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('email')
@@ -269,7 +266,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Contraseña @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
-                                <input wire:model='password' @if(!$showUpdate) required @endif type="text" placeholder="Contraseña" name="password" id="password" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='password' @if(!$showUpdate) required @endif type="text" placeholder="Nueva contraseña" name="password" id="password" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('password')

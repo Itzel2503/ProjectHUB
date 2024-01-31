@@ -42,7 +42,7 @@ class Projects extends Component
             'leaders' => $leaders,
         ]);
     }
-
+    // ACTIONS
     public function create()
     {
         $this->rules = [
@@ -144,7 +144,7 @@ class Projects extends Component
         $this->modalRestore = false;
         $this->emit('reloadPage');
     }
-
+    // INFO MODAL
     public function showDelete($id)
     {
         $this->showDelete = true;
@@ -157,7 +157,7 @@ class Projects extends Component
 
         $this->projectDelete = Project::find($id);
     }
-
+    
     public function showRestore($id)
     {
         $this->showRestore = true;
@@ -187,13 +187,13 @@ class Projects extends Component
 
         $this->allCustomers = Customer::all();
         $this->projectCustomer = $this->allCustomers->find($this->projectEdit->customer_id);
-
+        // CUSTOMERS
         foreach ($this->allCustomers as $key => $oneCustomer) {
             if ($oneCustomer->name === $this->projectCustomer->name) {
                 unset($this->allCustomers[$key]);
             }
         }
-
+        // TYPE PROJECT
         $filteredTypes = array_filter($this->allType, function ($type) {
             return $type === $this->projectEdit->type;
         });
@@ -205,13 +205,16 @@ class Projects extends Component
                 unset($this->allType[$key]);
             }
         }
-    }
 
-    public function showReports($project_id)
-    {
-        return redirect()->route('projects.reports.index', ['project' => $project_id]);
+        // Inicializar selectedLeaders
+        $this->selectedLeaders = [];
+        foreach ($this->projectEdit->users as $user) {
+            if ($user->pivot->leader) {
+                $this->selectedLeaders[$user->id] = true;
+            }
+        }
     }
-
+    // MODAL
     public function modalCreateEdit()
     {
         $this->showUpdate = false;
@@ -240,6 +243,11 @@ class Projects extends Component
         } else {
             $this->modalRestore = true;
         }
+    }
+    // EXTRAS
+    public function showReports($project_id)
+    {
+        return redirect()->route('projects.reports.index', ['project' => $project_id]);
     }
 
     public function clearInputs()

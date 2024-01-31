@@ -13,7 +13,7 @@ class TableCustomers extends Component
     public $showUpdate = false;
     // table, action's user
     public $search, $customerEdit;
-    public $perPage = '25';
+    public $perPage = '10';
     public $rules = [];
     // inputs
     public $name;
@@ -25,13 +25,15 @@ class TableCustomers extends Component
         $customers = Customer::where(function ($query) {
             $query->where('name', 'like', '%' . $this->search . '%');
         })
-            ->paginate($this->perPage);
+        ->orderBy('name', 'asc')
+        ->paginate($this->perPage);
+    
 
         return view('livewire.customers.table-customers', [
             'customers' => $customers,
         ]);
     }
-
+    // ACTIONS
     public function create()
     {
         $this->rules = [
@@ -61,7 +63,7 @@ class TableCustomers extends Component
         $this->modalCreateEdit = false;
         $this->emit('reloadPage');
     }
-
+    // INFO MODAL
     public function showUpdate($id)
     {
         $this->showUpdate = true;
@@ -75,7 +77,7 @@ class TableCustomers extends Component
         $this->customerEdit = Customer::find($id);
         $this->name = $this->customerEdit->name;
     }
-
+    // MODAL
     public function modalCreateEdit()
     {
         $this->showUpdate = false;
@@ -85,6 +87,13 @@ class TableCustomers extends Component
         } else {
             $this->modalCreateEdit = true;
         }
+
+        $this->clearInputs();
+    }
+    // EXTRAS
+    public function clearInputs()
+    {
+        $this->name = '';
     }
 
     public function reloadPage()

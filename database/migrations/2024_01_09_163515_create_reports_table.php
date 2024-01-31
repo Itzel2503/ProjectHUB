@@ -28,6 +28,8 @@ class CreateReportsTable extends Migration
             $table->unsignedBigInteger('resolved_id')->nullable();
             $table->foreign('resolved_id')->references('id')->on('users')->onDelete('cascade');
 
+            $table->unsignedBigInteger('report_id')->nullable();
+
             $table->string('title');
             $table->text('content')->nullable();
             $table->boolean('image');
@@ -37,6 +39,8 @@ class CreateReportsTable extends Migration
             $table->integer('value')->default('0');
             $table->string('url')->nullable();
             $table->boolean('repeat')->default(false);
+
+            $table->dateTime('progress')->nullable();
 
             $table->softDeletes();
             $table->timestamps();

@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Projects;
 use App\Models\Project;
 use App\Models\Report;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -17,8 +18,8 @@ class TableReports extends Component
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
     public $modalShow = false, $modalEdit = false;
-
     public $showReport = false, $showEdit = false;
+
     // table, action's reports
     public $leader = false;
     public $search, $project, $reportShow, $reportEdit;
@@ -26,8 +27,9 @@ class TableReports extends Component
     public $sortField = 'updated_at'; // La columna por defecto por la que se ordenará
     public $sortAsc = true; // Dirección del ordenamiento
     public $rules = [], $usersFiltered = [];
+
     // inputs
-    public $name, $type, $priority, $customer, $file;
+    public $name, $type, $priority, $customer, $file, $comment;
 
     public function render()
     {
@@ -52,12 +54,21 @@ class TableReports extends Component
                 break;
             }
         }
-
+        
+        // ADD ATRIBUTES
         foreach ($reports as $report) {
+            // ACTIONS
             $report->filteredActions = $this->getFilteredActions($report->state);
+            // DELEGATE
             $report->usersFiltered = $allUsers->reject(function ($user) use ($report) {
                 return $user->id === $report->delegate_id;
             })->values();
+            // PROGRESS
+            if ($report->progress && $report->updated_at) {
+                $report->timeDifference = Carbon::parse($report->progress)->diffForHumans($report->updated_at, null, false, 2);
+            } else {
+                $report->timeDifference = null;
+            }
         }
 
         return view('livewire.projects.table-reports', [
@@ -70,16 +81,15 @@ class TableReports extends Component
         return redirect()->route('projects.reports.create', ['project' => $project_id]);
     }
 
-    public function show($report_id)
-    {
-        return redirect()->route('reports.show', ['project_id' => $this->project->id, 'report_id' => $report_id]);
-    }
-
     public function updateState($id, $state)
     {
         $report = Report::find($id);
         if ($report) {
             $report->state = $state;
+
+            if ($state == 'Proceso' || $state == 'Conflicto') {
+                $report->progress = Carbon::now();
+            }
 
             if ($state == 'Resuelto') {
                 $report->resolved_id = Auth::id();
@@ -145,7 +155,8 @@ class TableReports extends Component
                 $report->image = false;
                 $report->video = false;
             }
-
+            
+            $report->comment = $this->comment;
             $report->content = $fullNewFilePath;
             $report->save();
 
@@ -173,6 +184,7 @@ class TableReports extends Component
 
         if ($this->reportShow && $this->reportShow->delegate_id == $user->id && $this->reportShow->state != 'Resuelto') {
             $this->reportShow->state = 'Proceso';
+            $this->reportShow->progress = Carbon::now();
             $this->reportShow->save();
         }
     }
@@ -188,6 +200,7 @@ class TableReports extends Component
         }
 
         $this->reportEdit = Report::find($id);
+        $this->comment = $this->reportEdit->comment;
     }
     // MODAL
     public function modalShow()
@@ -210,20 +223,30 @@ class TableReports extends Component
         }
     }
     // EXTRAS
+    public function reportRepeat($project_id, $report_id)
+    {
+        return redirect()->route('projects.reports.show', ['project' => $project_id, 'report' => $report_id]);
+    }
+
     protected function getFilteredActions($currentState)
     {
         $actions = ['Abierto', 'Proceso', 'Resuelto', 'Conflicto'];
 
-        if (in_array($currentState, ['Resuelto', 'Conflicto'])) {
+        if ($currentState == 'Conflicto') {
+            return ['Resuelto'];
+        }
+    
+        if ($currentState == 'Resuelto') {
             return [];
         }
-
+    
         if ($currentState == 'Proceso') {
             return array_filter($actions, function ($action) {
                 return !in_array($action, ['Abierto', 'Proceso']);
             });
         }
-
+    
+        // En cualquier otro caso, elimina el estado actual del arreglo
         return array_filter($actions, function ($action) use ($currentState) {
             return $action != $currentState;
         });

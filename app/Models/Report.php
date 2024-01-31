@@ -10,6 +10,8 @@ class Report extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $dates = ['progress', 'created_at', 'updated_at'];
+
     public function user()
     {
         return $this->belongsTo(User::class);

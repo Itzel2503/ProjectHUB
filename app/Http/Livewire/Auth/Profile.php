@@ -33,13 +33,23 @@ class Profile extends Component
         ]);
     }
 
-    public function edit()
+    public function edit($id)
     {
         if ($this->editing == true) {
             $this->editing = false;
         } else {
             $this->editing = true;
         }
+
+        $user = User::find($id);
+
+        $this->name = $user->name;
+        $this->lastname = $user->lastname;
+        $this->phone = $user->phone;
+        $this->curp = $user->curp;
+        $this->rfc = $user->rfc;
+        $this->date_birthday = $user->date_birthday;
+        $this->email = $user->email;
     }
 
     public function update($id)

@@ -27,7 +27,7 @@
             </div>
             <!-- BTN NEW -->
             <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
-                <button wire:click="modalCreateEdit()" class="px-2 py-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
+                <button wire:click="modalCreateEdit()" class="p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
                     Nuevo Cliente
                 </button>
             </div>

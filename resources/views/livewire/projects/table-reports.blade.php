@@ -26,9 +26,9 @@
                 </select>
             </div>
             <!-- BTN NEW -->
-            @if ($leader)
+            @if ($leader || Auth::user()->type_user == 1)
             <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
-                <button wire:click="create({{ $project->id }})" class="px-2 py-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
+                <button wire:click="create({{ $project->id }})" class="p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
                     Nuevo Reporte
                 </button>
             </div>
@@ -58,7 +58,20 @@
                     <tr class="border-white text-sm">
                         <td class="px-4 py-2">
                             <div wire:click="showReport({{$report->id}})" class="flex flex-col items-center text-center cursor-pointer">
-                                <img class="h-20 w-20 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="file" />
+                                @if (!empty($report->content))
+                                    @if ($report->image == true)
+                                        <img src="{{ asset('reportes/' . $report->content) }}" alt="Report Image" class="h-20 w-20 rounded-full object-cover mx-auto">
+                                    @endif
+                                    @if ($report->video == true)
+                                        @if (strpos($report->content, "Reporte") === 0)
+                                            <p class="text-red my-5">Falta subir '{{ $report->content }}'</p>
+                                        @else
+                                            <video src="{{ asset('reportes/' . $report->content) }}" loop autoplay alt="Report Video" loop autoplay class="h-20 w-20 rounded-full object-cover mx-auto"></video>
+                                        @endif
+                                    @endif
+                                @else
+                                    <p class="text-red my-5">Sin archivo</p>
+                                @endif
                                 <p class="text-xs">Creado por {{ $report->user->name }} {{ $report->user->lastname }}</p>
                             </div>
                         </td>
@@ -72,32 +85,64 @@
                             </select>
                         </td>
 
-                        <td class="px-4 py-2">{{ $report->title }}</td>
                         <td class="px-4 py-2">
-                            @if($report->created_at != $report->updated_at)
-                                Actualizado {{ $report->updated_at->diffForHumans(null, false, false, 2) }}
+                            @if ($report->repeat)
+                                <p class="text-red">Clonacion</p> {{ $report->title }}
                             @else
-                                Creado {{ $report->created_at->diffForHumans(null, false, false, 2) }}
+                                {{ $report->title }}
                             @endif
                         </td>
-                        <td class="px-4 py-2 flex justify-center items-center">
-                            @if ($report->user->id == Auth::id())
-                                <button wire:click="showEdit({{$report->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
-                                        <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
-                                        <path d="M16 5l3 3"></path>
-                                    </svg>
-                                </button>
+                        <td class="px-4 py-2">
+                            @if($report->state == "Proceso" || $report->state == "Conflicto")
+                                Progreso {{ $report->progress->diffForHumans(null, false, false, 2) }}
+                            @else
+                                @if ($report->state == "Resuelto")
+                                    Tiempo transcurrido: {{ $report->timeDifference }}
+                                @else
+                                    Creado {{ $report->created_at->diffForHumans(null, false, false, 2) }}
+                                @endif
                             @endif
-                            <select wire:change='updateState({{ $report->id }}, $event.target.value)' name="state" id="state" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                <option selected value={{ $report->state }}>{{ $report->state }}</option>
-                                @foreach ($report->filteredActions as $action)
-                                    <option value="{{ $action }}">{{ $action }}</option>
-                                @endforeach
-                            </select>
                         </td>
+                        @if ($report->user->id == Auth::id() || $report->delegate->id == Auth::id())
+                            <td class="px-4 py-2 flex flex-col justify-center items-center">
+                                @if ($report->state != 'Resuelto')
+                                    <div class="flex justify-center items-center">
+                                        <button wire:click="showEdit({{$report->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                                <path d="M16 5l3 3"></path>
+                                            </svg>
+                                        </button>
+                                        <select wire:change='updateState({{ $report->id }}, $event.target.value)' name="state" id="state" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                            <option selected value={{ $report->state }}>{{ $report->state }}</option>
+                                            @foreach ($report->filteredActions as $action)
+                                                <option value="{{ $action }}">{{ $action }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @if ($report->state == 'Conflicto')
+                                        <button wire:click="reportRepeat({{ $project->id }}, {{$report->id}})" class="m-2 p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full">
+                                            Repetición
+                                        </button>
+                                    @endif
+                                @else
+                                    @if ($report->resolved_id != null && $report->report_id != null && $report->repeat == true)
+                                        <p>{{ $report->state }}</p>
+                                    @else
+                                        <p>{{ $report->state }}</p>
+                                        <button wire:click="reportRepeat({{ $project->id }}, {{$report->id}})" class="m-2 p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full">
+                                            Repetición
+                                        </button>
+                                    @endif
+                                @endif
+                            </td>
+                        @else
+                            <td class="px-4 py-2 text-center">
+                                <p>{{ $report->state }}</p>
+                            </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>
@@ -130,9 +175,9 @@
                             </div>
                         @endif
                         @if ($reportShow->video == true)
-                            @if ($reportShow->content == 'Falta video grabado')
+                            @if (strpos($reportShow->content, "Reporte") === 0)
                                 <div class="w-full my-5 text-lg text-center">
-                                    <p class="text-red">Subir video</p>
+                                    <p class="text-red my-5">Falta subir '{{ $reportShow->content }}'</p>
                                 </div>
                             @else
                                 <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
@@ -140,6 +185,10 @@
                                 </div>
                             @endif
                         @endif
+                    @else
+                        <div class="w-full my-5 text-lg text-center">
+                            <p class="text-red my-5">Sin archivo</p>
+                        </div>
                     @endif
 
                     <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
@@ -171,16 +220,21 @@
                     </svg>
                 </div>
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
-                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                        <div class="-mx-3 md:flex">
-                            <div class="md:w-1/2 flex flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="name">
-                                    Selecciona un archivo
-                                </h5>
-                                <input wire:model='file' type="file" name="file" id="file" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                            </div>
+                    <div class="-mx-3 md:flex mb-6">
+                        <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                            <h5 class="inline-flex font-semibold" for="name">
+                                Seleccionar archivo
+                            </h5>
+                            <input wire:model='file' type="file" name="file" id="file" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                        </div>
+                        <div class="md:w-1/2 flex flex-col px-3 ">
+                            <h5 class="inline-flex font-semibold" for="name">
+                                Descripción del reporte
+                            </h5>
+                            <textarea wire:model='comment' type="text" rows="10" placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" class="fields1 leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto"></textarea>
                         </div>
                     </div>
+                    
                 </div>
                 <div class="flex justify-center items-center py-6 bg-main-fund">
                     @if($modalEdit)
@@ -191,9 +245,4 @@
         </div>
     </div>
     {{-- END MODAL EDIT --}}
-    <script>
-        window.addEventListener('swal:modal', event => {
-            toastr[event.detail.type](event.detail.text, event.detail.title);
-        });
-    </script>
 </div>

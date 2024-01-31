@@ -26,11 +26,13 @@
                 </select>
             </div>
             <!-- BTN NEW -->
-            <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
-                <button wire:click="modalCreateEdit()" class="px-2 py-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
-                    Nuevo Proyecto
-                </button>
-            </div>
+            @if (Auth::user()->type_user == 1)
+                <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
+                    <button wire:click="modalCreateEdit()" class="p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
+                        Nuevo Proyecto
+                    </button>
+                </div>
+            @endif
         </div>
         {{-- END NAVEGADOR --}}
 
@@ -76,24 +78,26 @@
                                     <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
                                 </svg>
                             </button>
-                            <button wire:click="showUpdate({{$project->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
-                                    <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
-                                    <path d="M16 5l3 3"></path>
-                                </svg>
-                            </button>
-                            <button wire:click="showDelete({{$project->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M4 7l16 0"></path>
-                                    <path d="M10 11l0 6"></path>
-                                    <path d="M14 11l0 6"></path>
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                </svg>
-                            </button>
+                            @if (Auth::user()->type_user == 1)
+                                <button wire:click="showUpdate({{$project->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                        <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                        <path d="M16 5l3 3"></path>
+                                    </svg>
+                                </button>
+                                <button wire:click="showDelete({{$project->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M4 7l16 0"></path>
+                                        <path d="M10 11l0 6"></path>
+                                        <path d="M14 11l0 6"></path>
+                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                    </svg>
+                                </button>
+                            @endif
                             @endif
                         </td>
                     </tr>
@@ -223,14 +227,10 @@
                                     Líder/es @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                    <label class="my-2 text-xs text-red">Para elegir nuevos líderes y mantener a los existentes, selecciónalos incluso si ya están asignados. Si no los seleccionas, se eliminarán como líderes.</label>
                                     @foreach ($leaders as $leader)
                                         <div class="relative z-0 w-full group flex mb-2">
-                                            <input wire:model="selectedLeaders.{{ $leader->id }}" type="checkbox" name="leader_{{ $leader->id }}" id="leader_{{ $leader->id }}" class="filled-in chk-col-green form-control border border-gray-400 rounded w-5 h-5 mr-3"
-                                                @if($projectEdit->users->contains($leader->id) && $projectEdit->users->where('id', $leader->id)->first()->pivot->leader)
-                                                    value="true"
-                                                    checked
-                                                @endif>
+                                            <input wire:model="selectedLeaders.{{ $leader->id }}" type="checkbox" name="leader_{{ $leader->id }}" id="leader_{{ $leader->id }}" class="filled-in chk-col-green form-control border border-gray-400 rounded w-5 h-5 mr-3">
+                                            
                                             <label for="leader_{{ $leader->id }}" class="text-sm inline-flex w-1/4">
                                                 {{ $leader->name }} {{ $leader->lastname }}
                                                 @if($projectEdit->users->contains($leader->id) && $projectEdit->users->where('id', $leader->id)->first()->pivot->leader)

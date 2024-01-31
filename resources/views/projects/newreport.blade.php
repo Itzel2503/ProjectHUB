@@ -313,8 +313,8 @@
                 mediaRecorder.stop();  // Detener la grabación si el stream se vuelve inactivo
 
                 inputUser.value = user.id;
-                downloadVideoButton.download = 'Reporte ' + fechaEnFormato + ',' + project.name;
-                inputVideo.value = 'Reporte ' + fechaEnFormato + ',' + project.name;
+                downloadVideoButton.download = 'Reporte ' + fechaEnFormato + ', ' + project.name;
+                inputVideo.value = 'Reporte ' + fechaEnFormato + ', ' + project.name;
 
                 document.getElementById('rightBar').style.display = 'flex';
                 document.getElementById('viewVideo').style.display = 'block';
@@ -352,7 +352,7 @@
                 let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
                 recording.src = URL.createObjectURL(recordedBlob);
                 downloadVideoButton.href = recording.src;
-                downloadVideoButton.download = 'Reporte ' + fechaEnFormato + ',' + project.name;
+                downloadVideoButton.download = 'Reporte ' + fechaEnFormato + ', ' + project.name;
             })
             /* .catch(log); */
         }, false);
