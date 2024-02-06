@@ -72,7 +72,6 @@ class TableReports extends Component
                 ELSE 6 
             END")
             ->paginate($this->perPage);
-
         } else {
             $reports = Report::where('project_id', $this->project->id)
                 ->where(function ($query) {
