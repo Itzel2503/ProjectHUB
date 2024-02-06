@@ -54,38 +54,11 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Administrador',
             'lastname' => 'Arten',
-            'email' => 'admin@arten.com',
+            'email' => 'admin@kircof.com',
             'password' => Hash::make('Arten.123!'),
             'type_user' => '1',
             'date_birthday' => Carbon::now(),
             'area_id' => '1',
-        ]);
-        User::create([
-            'name' => 'Itzel',
-            'lastname' => 'De La Cruz',
-            'email' => 'itzel@artendigital.mx',
-            'password' => Hash::make('Arten.123!'),
-            'type_user' => '2',
-            'date_birthday' => Carbon::now(),
-            'area_id' => '3',
-        ]);
-        User::create([
-            'name' => 'Jonathan',
-            'lastname' => 'Quistiano',
-            'email' => 'jonathan@artendigital.mx',
-            'password' => Hash::make('Arten.123!'),
-            'type_user' => '2',
-            'date_birthday' => Carbon::now(),
-            'area_id' => '3',
-        ]);
-        User::create([
-            'name' => 'Mayte',
-            'lastname' => 'del Ángel',
-            'email' => 'mayte@artendigital.mx',
-            'password' => Hash::make('Arten.123!'),
-            'type_user' => '2',
-            'date_birthday' => Carbon::now(),
-            'area_id' => '2',
         ]);
     }
 }
