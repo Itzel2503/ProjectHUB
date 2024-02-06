@@ -17,7 +17,7 @@ class Project extends Controller
     {
         if (Auth::check()) {
             return view('projects.projects');
-        } else {
+        } else { 
             return redirect('/login');
         }
     }
