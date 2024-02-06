@@ -15,11 +15,7 @@
 
                         <div class="col-span-6 sm:col-span-3 mt-9">
                             <h5 class="mb-2 w-3/4 mx-auto">Número de teléfono:</h5>
-                            @if(!$editing)
                             <p class="mb-2 w-3/4 mx-auto">{{ ($user->phone) ? "$user->phone" : 'Sin registro' }}</p>
-                            @else
-                            <input wire:model='phone' require type="text" placeholder="{{ $user->phone }}" name="phone" id="phone" pattern="[0-9]+" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                            @endif
                         </div>
                         <div class="col-span-6 sm:col-span-3 mt-9">
                             <h5 class="mb-2 w-3/4 mx-auto">CURP:</h5>

@@ -12,7 +12,21 @@ class Project extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withTimestamps()->withPivot('leader');
+        return $this->belongsToMany(User::class, 'project_user')->withTimestamps()->withPivot(['leader', 'programmer']);
+    }
+
+    // La relación para obtener solo el líder del proyecto.
+    public function leader()
+    {
+        return $this->belongsToMany(User::class, 'project_user')
+                    ->wherePivot('leader', true);
+    }
+
+    // La relación para obtener solo el programador del proyecto.
+    public function programmer()
+    {
+        return $this->belongsToMany(User::class, 'project_user')
+                    ->wherePivot('programmer', true);
     }
 
     public function reports()

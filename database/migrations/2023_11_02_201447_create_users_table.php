@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
             $table->date('date_birthday');
             $table->bigInteger('phone')->nullable();
 
-            $table->integer('area_id')->unsigned();            
+            $table->unsignedBigInteger('area_id')->unsigned();            
             $table->foreign('area_id')->references('id')->on('areas');
 
             $table->rememberToken();

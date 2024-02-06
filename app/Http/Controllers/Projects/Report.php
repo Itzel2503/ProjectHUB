@@ -7,7 +7,6 @@ use App\Models\Project;
 use App\Models\Report as ModelsReport;
 use App\Models\User;
 use Carbon\Carbon;
-use FFMpeg\FFMpeg;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -73,6 +72,20 @@ class Report extends Controller
             $dateString = $now->format("Y-m-d H_i_s");
 
             if ($project && $report) {
+                try {
+                    // Validación de los campos
+                    $validatedData = $request->validate([
+                        'title' => 'required',
+                        'comment' => 'required',
+                        'delegate' => 'required|not_in:0',
+                    ]);
+                    // Aquí puedes continuar con tu lógica después de la validación exitosa
+                } catch (\Illuminate\Validation\ValidationException $e) {
+                    return redirect()->back()->with('error', 'Faltan campos o campos incorrectos');
+
+                    throw $e;
+                }
+
                 if (isset($request->video)) {
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
@@ -92,7 +105,7 @@ class Report extends Controller
                     list(, $data)      = explode(',', $data);
                     $imageData = base64_decode($data);
     
-                    $fileName = 'Reporte ' . $dateString . '.jpg';
+                    $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.jpg';
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, $imageData);
     
@@ -114,7 +127,8 @@ class Report extends Controller
                     $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
                     
                     $file = $request->file('file');
-                    $fileName = $file->getClientOriginalName();
+                    $fileExtension = $file->extension();
+                    $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, file_get_contents($file));
     
@@ -222,12 +236,27 @@ class Report extends Controller
             $dateString = $now->format("Y-m-d H_i_s");
 
             if ($project && $report) {
+                try {
+                    // Validación de los campos
+                    $validatedData = $request->validate([
+                        'comment' => 'required',
+                        'delegate' => 'required|not_in:0',
+                    ]);
+                    // Aquí puedes continuar con tu lógica después de la validación exitosa
+                } catch (\Illuminate\Validation\ValidationException $e) {
+                    return redirect()->back()->with('error', 'Faltan campos o campos incorrectos');
+
+                    throw $e;
+                }
                 if ($report->report_id == null) {
                     $report->resolved_id = $request->user_id;
                     $report->report_id = $id;
                     $report->state = "Resuelto";
                     $report->save();
                 }
+
+                $report->repeat = false;
+                $report->save();
     
                 if (isset($request->video)) {
                     $reportNew->project_id = $project_id;
@@ -250,7 +279,7 @@ class Report extends Controller
                     list(, $data)      = explode(',', $data);
                     $imageData = base64_decode($data);
     
-                    $fileName = 'Reporte ' . $dateString . '.jpg';
+                    $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.jpg';
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, $imageData);
     
@@ -275,7 +304,7 @@ class Report extends Controller
                     
                     $file = $request->file('file');
                     $fileExtension = $file->extension();
-                    $fileName = 'Reporte ' . $dateString . '.' . $fileExtension;
+                    $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.' .$fileExtension;
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, file_get_contents($file));
     
@@ -300,6 +329,13 @@ class Report extends Controller
                     }
                     $reportNew->state = "Abierto";
                     $reportNew->comment = $request->comment;
+                    dd($report->count == null);
+                    if ($report->count == null) {
+                        $reportNew->count = 1;
+                    } else {
+                        $reportNew->count = $report->count + 1;
+                    }
+                    
                     $reportNew->repeat = true;
                     $reportNew->save();
                 }
@@ -316,7 +352,6 @@ class Report extends Controller
                     $startsWithReporte = strpos($report->content, "Reporte") === 0;
     
                     if ($startsWithYear) {
-                        
                         // $report->content comienza con el año actual
                         $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
                         $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
@@ -325,7 +360,7 @@ class Report extends Controller
                         $pathInfo = pathinfo($sourcePath); // Obtener información sobre la ruta del archivo
                         $fileExtension = $pathInfo['extension']; // Obtener la extensión del archivo
     
-                        $fileName = 'Reporte ' . $dateString . '.' . $fileExtension;
+                        $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
                         $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                         
                         $destinationPath = public_path('reportes/' . $filePath); // Ruta donde se guardará la copia
@@ -362,6 +397,12 @@ class Report extends Controller
                     
                     $reportNew->state = "Abierto";
                     $reportNew->comment = $request->comment;
+                    
+                    if ($report->count == null) {
+                        $reportNew->count = 1;
+                    } else {
+                        $reportNew->count = $report->count + 1;
+                    }
                     $reportNew->repeat = true; 
                     $reportNew->save();
                 }

@@ -4,15 +4,19 @@ namespace App\Http\Livewire\Customers;
 
 use App\Models\Customer;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class TableCustomers extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'tailwind';
+
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
-    public $modalCreateEdit = false;
-    public $showUpdate = false;
+    public $modalCreateEdit = false, $modalDelete = false, $modalRestore = false;
+    public $showUpdate = false, $showDelete = false, $showRestore = false;
     // table, action's user
-    public $search, $customerEdit;
+    public $search, $customerEdit, $customerDelete, $customerRestore;
     public $perPage = '10';
     public $rules = [];
     // inputs
@@ -22,12 +26,13 @@ class TableCustomers extends Component
     {
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
 
-        $customers = Customer::where(function ($query) {
-            $query->where('name', 'like', '%' . $this->search . '%');
-        })
-        ->orderBy('name', 'asc')
-        ->paginate($this->perPage);
-    
+        
+        $customers = Customer::withTrashed()
+            ->where(function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->orderBy('name', 'asc')
+            ->paginate($this->perPage);
 
         return view('livewire.customers.table-customers', [
             'customers' => $customers,
@@ -36,32 +41,104 @@ class TableCustomers extends Component
     // ACTIONS
     public function create()
     {
-        $this->rules = [
-            'name' => 'required|max:255',
-        ];
-        $this->validate();
+        try {
+            $this->validate([
+                'name' => 'required|max:255',
+            ]);
+            // Aquí puedes continuar con tu lógica después de la validación exitosa
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Faltan campos o campos incorrectos',
+            ]);
+            throw $e;
+        }
 
         $customer = new Customer();
         $customer->name = $this->name;
         
         $customer->save();
         $this->modalCreateEdit = false;
-        $this->emit('reloadPage');
+
+        // Emitir un evento de navegador
+        $this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'success',
+            'title' => 'Cliente creado',
+        ]);
     }
 
     public function update($id)
     {
-        $this->rules = [
-            'name' => 'max:255',
-        ];
-        $this->validateOnly($id, $this->rules);
+        try {
+            $this->validate([
+                'name' => 'required|max:255',
+            ]);
+            // Aquí puedes continuar con tu lógica después de la validación exitosa
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Faltan campos o campos incorrectos',
+            ]);
+            throw $e;
+        }
 
         $customer = Customer::find($id);
         $customer->name = $this->name ?? $customer->name;
         
         $customer->save();
         $this->modalCreateEdit = false;
-        $this->emit('reloadPage');
+
+        // Emitir un evento de navegador
+        $this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'success',
+            'title' => 'Cliente actualizado',
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $customer = Customer::find($id);
+
+        if ($customer) {
+            $customer->delete();
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Cliente eliminado',
+            ]);
+        } else {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Cliente no existe',
+            ]);
+        }
+
+        $this->modalDelete = false;
+    }
+
+    public function restore($id)
+    {
+        $customer = Customer::withTrashed()->find($id);
+
+        if ($customer) {
+            $customer->restore();
+            // Emitir un evento de navegador
+        $this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'success',
+            'title' => 'Cliente restaurado',
+        ]);
+        } else {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Cliente no existe',
+            ]);
+        }
+
+        $this->modalRestore = false;
     }
     // INFO MODAL
     public function showUpdate($id)
@@ -77,6 +154,33 @@ class TableCustomers extends Component
         $this->customerEdit = Customer::find($id);
         $this->name = $this->customerEdit->name;
     }
+
+    public function showDelete($id)
+    {
+        $this->showDelete = true;
+
+        if ($this->modalDelete == true) {
+            $this->modalDelete = false;
+        } else {
+            $this->modalDelete = true;
+        }
+
+        $this->customerDelete = Customer::find($id);
+    }
+
+    public function showRestore($id)
+    {
+        $this->showRestore = true;
+
+        if ($this->modalRestore == true) {
+            $this->modalRestore = false;
+        } else {
+            $this->modalRestore = true;
+        }
+
+        $this->customerRestore = Customer::withTrashed()->find($id);
+    }
+
     // MODAL
     public function modalCreateEdit()
     {
@@ -89,6 +193,26 @@ class TableCustomers extends Component
         }
 
         $this->clearInputs();
+        $this->resetErrorBag();
+    }
+
+    public function modalDelete()
+    {
+        if ($this->modalDelete == true) {
+            $this->modalDelete = false;
+        } else {
+            $this->modalDelete = true;
+        }
+    }
+
+    public function modalRestore()
+    {
+        if ($this->modalRestore == true) {
+            $this->modalRestore = false;
+        } else {
+            $this->modalRestore = true;
+        }
+        $this->resetErrorBag();
     }
     // EXTRAS
     public function clearInputs()

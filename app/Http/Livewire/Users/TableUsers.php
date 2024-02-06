@@ -5,10 +5,15 @@ namespace App\Http\Livewire\Users;
 use App\Models\Area;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Validator;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class TableUsers extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'tailwind';
+    
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
     public $modalCreateEdit = false, $modalDelete = false, $modalRestore = false;
@@ -18,23 +23,29 @@ class TableUsers extends Component
     public $perPage = '10';
     public $rules = [], $allAreas = [];
     // inputs
-    public $name, $lastname, $date_birthday, $curp, $rfc, $phone, $area, $email, $password, $password_confirmation;
+    public $name, $lastname, $date_birthday, $curp, $rfc, $phone, $area, $email, $password;
 
     public function render()
     {
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
 
         $areas = Area::all();
-        
 
         $users = User::onlyTrashed()
-            ->select('users.*', 'areas.name as area_name') // Selecciona todos los campos de users y el campo name de areas
-            ->leftJoin('areas', 'users.area_id', '=', 'areas.id') // Realiza una left join con la tabla "areas"
-            ->where('users.type_user', 'ilike', '%' . $this->search . '%')
-            ->orwhere('users.name', 'ilike', '%' . $this->search . '%')
-            ->orWhere('users.lastname', 'ilike', '%' . $this->search . '%')
-            ->orWhere('users.email', 'ilike', '%' . $this->search . '%')
-            ->orWhere('areas.name', 'ilike', '%' . $this->search . '%') 
+            ->select('users.*', 'areas.name as area_name')
+            ->leftJoin('areas', 'users.area_id', '=', 'areas.id')
+            ->where(function($query) {
+                if ($this->search == 'Administrador' || $this->search == 'administrador') {
+                    $query->orWhere('users.type_user', 1);
+                } elseif ($this->search == 'Usuario' || $this->search == 'usuario') {
+                    $query->orWhere('users.type_user', 2);
+                }
+            })
+            ->orWhere('users.name', 'like', '%' . $this->search . '%') 
+            ->orWhere('users.lastname', 'like', '%' . $this->search . '%')
+            ->orWhere('users.email', 'like', '%' . $this->search . '%') 
+            ->orWhere('areas.name', 'like', '%' . $this->search . '%')
+            ->orderBy('created_at', 'desc')
             ->paginate($this->perPage);
 
         return view('livewire.users.table-users', [
@@ -45,19 +56,35 @@ class TableUsers extends Component
     // ACTIONS
     public function create()
     {
-        $this->rules = [
-            'name' => 'required|max:255',
-            'lastname' => 'required|max:255',
-            'date_birthday' => 'required|date|max:255',
-            'curp' => 'max:18',
-            'rfc' => 'max:13',
-            'phone' => 'required|numeric',
-            'area' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8',
-        ];
-        $this->validate();
-
+        try {
+            $this->validate([
+                'name' => 'required|max:255',
+                'lastname' => 'required|max:255',
+                'date_birthday' => 'required|date|max:255',
+                'curp' => 'max:18',
+                'rfc' => 'max:13',
+                'phone' => 'required|numeric',
+                'area' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:8',
+            ]);
+            // Aquí puedes continuar con tu lógica después de la validación exitosa
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Faltan campos o campos incorrectos',
+            ]);
+            throw $e;
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Captura excepciones específicas de la base de datos si es necesario
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Error al crear el usuario',
+                'text' => 'El correo electrónico ya está registrado.',
+            ]);
+        }
+        
         $user = new User();
         $user->name = $this->name;
         $user->lastname = $this->lastname;
@@ -80,22 +107,35 @@ class TableUsers extends Component
 
         $user->save();
         $this->modalCreateEdit = false;
-        $this->emit('reloadPage');
+
+        // Emitir un evento de navegador
+        $this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'success',
+            'title' => 'Usuario creado',
+        ]);
     }
 
     public function update($id)
     {
-        $this->rules = [
-            'name' => 'max:255',
-            'lastname' => 'max:255',
-            'date_birthday' => 'date|max:255',
-            'curp' => 'max:18',
-            'rfc' => 'max:13',
-            'phone' => 'numeric',
-            'email' => 'email',
-            'password' => 'min:8',
-        ];
-        $this->validateOnly($id, $this->rules);
+        try {
+            $this->validate([
+                'name' => 'required|max:255',
+                'lastname' => 'required|max:255',
+                'date_birthday' => 'required|date|max:255',
+                'curp' => 'max:18',
+                'rfc' => 'max:13',
+                'phone' => 'required|numeric',
+                'email' => 'required|email|unique:users,email,' . $id,
+            ]);
+            // Aquí puedes continuar con tu lógica después de la validación exitosa
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Faltan campos o campos incorrectos',
+            ]);
+            throw $e;
+        }
 
         $user = User::find($id);
         $user->name = $this->name ?? $user->name;
@@ -121,7 +161,12 @@ class TableUsers extends Component
 
         $user->save();
         $this->modalCreateEdit = false;
-        $this->emit('reloadPage');
+        
+        // Emitir un evento de navegador
+        $this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'success',
+            'title' => 'Usuario actualizado',
+        ]);
     }
 
     public function destroy($id)
@@ -130,10 +175,20 @@ class TableUsers extends Component
 
         if ($user) {
             $user->delete();
-        } 
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Usuario eliminado',
+            ]);
+        } else {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Usuario no existe',
+            ]);
+        }
 
         $this->modalDelete = false;
-        $this->emit('reloadPage');
     }
 
     public function restore($id)
@@ -142,10 +197,20 @@ class TableUsers extends Component
 
         if ($user) {
             $user->restore();
-        } 
+            // Emitir un evento de navegador
+        $this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'success',
+            'title' => 'Usuario restaurado',
+        ]);
+        } else {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Usuario no existe',
+            ]);
+        }
 
         $this->modalRestore = false;
-        $this->emit('reloadPage');
     }
     // INFO MODAL
     public function showDelete($id)
@@ -213,6 +278,7 @@ class TableUsers extends Component
             $this->modalCreateEdit = true;
         }
         $this->clearInputs();
+        $this->resetErrorBag();
     }
 
     public function modalDelete()
@@ -231,6 +297,7 @@ class TableUsers extends Component
         } else {
             $this->modalRestore = true;
         }
+        $this->resetErrorBag();
     }
     // EXTRAS
     public function clearInputs()
@@ -241,7 +308,9 @@ class TableUsers extends Component
         $this->curp = '';
         $this->rfc = '';
         $this->phone = '';
+        $this->area = '';
         $this->email = '';
+        $this->password = '';
     }
 
     public function reloadPage()

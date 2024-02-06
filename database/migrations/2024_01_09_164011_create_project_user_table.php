@@ -23,6 +23,7 @@ class CreateProjectUserTable extends Migration
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
 
             $table->boolean('leader');
+            $table->boolean('programmer');
 
             $table->timestamps();
         });

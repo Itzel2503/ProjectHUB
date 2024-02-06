@@ -11,10 +11,13 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
 class TableReports extends Component
 {
     use WithFileUploads;
+    use WithPagination;
+    protected $paginationTheme = 'tailwind';
 
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
@@ -36,29 +39,72 @@ class TableReports extends Component
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
 
         $user = Auth::user();
+        $user_id = $user->id;
         $allUsers = User::all();
 
-        $reports = Report::where('project_id', $this->project->id)
+        if (Auth::user()->type_user == 1) {
+            $reports = Report::where('project_id', $this->project->id)
             ->where(function ($query) {
                 $query->where('title', 'like', '%' . $this->search . '%')
                     ->orWhere('comment', 'like', '%' . $this->search . '%')
                     ->orWhere('state', 'like', '%' . $this->search . '%')
                     ->orWhereHas('delegate', function ($subQuery) {
                         $subQuery->where('name', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhereHas('user', function ($subQuery) {
+                        $subQuery->where('name', 'like', '%' . $this->search . '%');
                     });
                 // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
                 if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
-                    $query->orWhere('repeat', true);
+                    $query->orWhereNotNull('count');
                 }
             })
             ->when($this->selectedState, function ($query) {
                 $query->where('state', $this->selectedState);
             })
             ->with(['user', 'delegate'])
+            ->orderByRaw("CASE 
+                WHEN state = 'Abierto' THEN 1 
+                WHEN state = 'Proceso' THEN 2 
+                WHEN state = 'Conflicto' THEN 3 
+                WHEN state = 'Resuelto' AND repeat = true THEN 4
+                WHEN state = 'Resuelto' THEN 5 
+                ELSE 6 
+            END")
             ->paginate($this->perPage);
 
-        // REICIDENCIAS
-        $reincidenceCounters = [];
+        } else {
+            $reports = Report::where('project_id', $this->project->id)
+                ->where(function ($query) {
+                    $query->where('title', 'like', '%' . $this->search . '%')
+                        ->orWhere('comment', 'like', '%' . $this->search . '%')
+                        ->orWhere('state', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('delegate', function ($subQuery) {
+                            $subQuery->where('name', 'like', '%' . $this->search . '%');
+                        });
+                    if (strtolower($this->search) === 'reincidencia') {
+                        $query->orWhereNotNull('count');
+                    }
+                })
+                ->where(function($query) use ($user_id) {
+                    // Filtrar por user_id o delegate_id
+                    $query->where('delegate_id', $user_id)
+                        ->orWhere('video', true);
+                })
+                ->when($this->selectedState, function ($query) {
+                    $query->where('state', $this->selectedState);
+                })
+                ->with(['user', 'delegate'])
+                ->orderByRaw("CASE 
+                    WHEN state = 'Abierto' THEN 1 
+                    WHEN state = 'Proceso' THEN 2 
+                    WHEN state = 'Conflicto' THEN 3 
+                    WHEN state = 'Resuelto' AND repeat = true THEN 4
+                    WHEN state = 'Resuelto' THEN 5 
+                    ELSE 6 
+                END")            
+                ->paginate($this->perPage);
+        }
 
         // LEADER TABLE
         foreach ($this->project->users as $projectUser) {
@@ -104,18 +150,6 @@ class TableReports extends Component
             } else {
                 $report->timeDifference = null;
             }
-            // REICIDENCIAS
-            if ($report->repeat && isset($report->report_id)) {
-                // Inicializar el contador para este report_id si aún no se ha hecho
-                if (!isset($reincidenceCounters[$report->report_id])) {
-                    $reincidenceCounters[$report->report_id] = 0;
-                }
-                // Incrementar el contador para este report_id y asignarlo al reporte
-                $reincidenceCounters[$report->report_id]++;
-                $report->reincidenceNumber = $reincidenceCounters[$report->report_id];
-            } else {
-                $report->reincidenceNumber = null;
-            }
         }
 
         return view('livewire.projects.table-reports', [
@@ -136,11 +170,14 @@ class TableReports extends Component
             $report->state = $state;
 
             if ($state == 'Proceso' || $state == 'Conflicto') {
-                $report->progress = Carbon::now();
+                if ($report->progress == null) {
+                    $report->progress = Carbon::now();
+                }
             }
 
             if ($state == 'Resuelto') {
                 $report->resolved_id = Auth::id();
+                $report->repeat = true;
             }
 
             $report->save();

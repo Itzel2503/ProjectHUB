@@ -20,9 +20,10 @@
             <!-- COUNT -->
             <div class="inline-flex w-1/4 h-12 mx-3 bg-transparent mb-2">
                 <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
-                    <option value="5"> 25 por Página</option>
-                    <option value="50"> 50 por Página</option>
-                    <option value="100"> 100 por Página</option>
+                    <option value="10"> 10 por página</option>
+                    <option value="25"> 25 por página</option>
+                    <option value="50"> 50 por página</option>
+                    <option value="100"> 100 por página</option>
                 </select>
             </div>
             <!-- BTN NEW -->
@@ -38,7 +39,7 @@
         <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs mt-4">
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 bg-secondary-fund">
-                    <tr class="font-semibold tracking-wide text-center text-white text-base">
+                    <tr class="font-semibold tracking-wide text-left text-white text-base">
                         <th class="px-4 py-3">Nombre</th>
                         <th class="px-4 py-3">Acciones</th>
                     </tr>
@@ -47,7 +48,16 @@
                     @foreach($customers as $customer)
                     <tr class="border-white text-sm">
                         <td class="px-4 py-2">{{ $customer->name }}</td>
-                        <td class="px-4 py-2 flex justify-center">
+                        <td class="px-4 py-2 flex justify-start">
+                            @if($customer->deleted_at != null)
+                            <button wire:click="showRestore({{$customer->id}})" class="bg-secondary-fund text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-reload" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747"></path>
+                                    <path d="M20 4v5h-5"></path>
+                                </svg>
+                            </button>
+                            @else
                             <button wire:click="showUpdate({{$customer->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -56,6 +66,19 @@
                                     <path d="M16 5l3 3"></path>
                                 </svg>
                             </button>
+                            <button wire:click="showDelete({{$customer->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M4 7l16 0"></path>
+                                    <path d="M10 11l0 6"></path>
+                                    <path d="M14 11l0 6"></path>
+                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                </svg>
+                            </button>
+                            @endif
+
+                            
                         </td>
                     </tr>
                     @endforeach
@@ -63,7 +86,7 @@
             </table>
         </div>
         <div class="py-5">
-            {{ $customers->links()}}
+            {{ $customers->links() }}
         </div>
     </div>
     {{-- END TABLE --}}
@@ -89,9 +112,9 @@
                         <div class="-mx-3 md:flex">
                             <div class="md:w-1/2 flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Nombre @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                    Nombre<p class="text-red">*</p>
                                 </h5>
-                                <input wire:model='name' @if(!$showUpdate) required @endif type="text" placeholder="Nombre" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='name' required type="text" placeholder="Nombre" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('name')
@@ -116,6 +139,64 @@
         </div>
     </div>
     {{-- END MODAL EDIT / CREATE --}}
+    {{-- MODAL DELETE --}}
+    <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalDelete) block  @else hidden @endif">
+        <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
+        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
+            <div class="flex flex-col w-2/6 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+                <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
+                    <svg wire:click="modalDelete" wire:loading.remove wire:target="modalDelete" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                @if($showDelete)
+                <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
+                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                        <div class="text-lg md:flex mb-6 text-center">
+                            <h2 class="text-red font-semibold">¿Esta seguro de eliminar a {{$customerDelete->name}}?</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center py-6 px-10 bg-main-fund">
+                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="modalDelete()" wire:loading.remove wire:target="modalDelete()">Cancelar</button>
+                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-red rounded cursor-pointer" wire:click="destroy({{$customerDelete->id}})" wire:loading.remove wire:target="destroy({{$customerDelete->id}})">Eliminar</button>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL DELETE --}}
+    {{-- MODAL RESTORE --}}
+    <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalRestore) block  @else hidden @endif">
+        <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
+        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
+            <div class="flex flex-col w-2/6 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+                <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
+                    <svg wire:click="modalRestore" wire:loading.remove wire:target="modalRestore" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                @if($showRestore)
+                <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
+                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                        <div class="text-lg md:flex mb-6 text-center">
+                            <h2 class="font-semibold">¿Quieres restaurar a {{$customerRestore->name}}?</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center py-6 px-10 bg-main-fund">
+                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="modalRestore()" wire:loading.remove wire:target="modalRestore()">Cancelar</button>
+                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="restore({{$customerRestore->id}})" wire:loading.remove wire:target="restore({{$customerRestore->id}})">Restaurar</button>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL DELETE --}}
     <script>
         window.addEventListener('swal:modal', event => {
             toastr[event.detail.type](event.detail.text, event.detail.title);

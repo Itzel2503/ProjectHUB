@@ -19,6 +19,7 @@ class CreateProjectsTable extends Migration
             $table->unsignedBigInteger('customer_id');
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
 
+            $table->string('code');
             $table->string('type');
             $table->string('name');
             $table->integer('priority');

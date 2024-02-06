@@ -20,19 +20,18 @@
             <!-- COUNT -->
             <div class="inline-flex w-1/4 h-12 mx-3 bg-transparent mb-2">
                 <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
-                    <option value="25"> 25 por Página</option>
-                    <option value="50"> 50 por Página</option>
-                    <option value="100"> 100 por Página</option>
+                    <option value="10"> 10 por página</option>
+                    <option value="25"> 25 por página</option>
+                    <option value="50"> 50 por página</option>
+                    <option value="100"> 100 por página</option>
                 </select>
             </div>
             <!-- BTN NEW -->
-            @if ($leader || Auth::user()->type_user == 1)
             <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
                 <button wire:click="create({{ $project->id }})" class="p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
-                    Nuevo Reporte
+                    Nuevo reporte
                 </button>
             </div>
-            @endif
         </div>
         {{-- END NAVEGADOR --}}
 
@@ -65,27 +64,27 @@
                             <div wire:click="showReport({{$report->id}})" class="flex flex-col items-center text-center cursor-pointer">
                                 @if (!empty($report->content))
                                     @if ($report->image == true)
-                                        <img src="{{ asset('reportes/' . $report->content) }}" alt="Report Image" class="h-20 w-20 rounded-full object-cover mx-auto">
+                                        <img src="{{ asset('reportes/' . $report->content) }}" alt="Report Image" class="h-20 w-20 object-cover mx-auto">
                                     @endif
                                     @if ($report->video == true)
                                         @if (strpos($report->content, "Reporte") === 0)
                                             <p class="text-red my-5">Falta subir '{{ $report->content }}'</p>
                                         @else
-                                            <video src="{{ asset('reportes/' . $report->content) }}" loop autoplay alt="Report Video" loop autoplay class="h-20 w-20 rounded-full object-cover mx-auto"></video>
+                                            <video src="{{ asset('reportes/' . $report->content) }}" loop autoplay alt="Report Video" loop autoplay class="h-20 w-20 object-cover mx-auto"></video>
                                         @endif
                                     @endif
                                     @if ($report->file == true)
                                         <p class="my-3 text-secondary font-semibold">Documento</p>
                                     @endif
                                 @else
-                                    <p class="text-red my-5">Sin archivo</p>
+                                    <p class="text-red"></p>
                                 @endif
                                 <p class="text-xs">Creado por {{ $report->user->name }} {{ $report->user->lastname }}</p>
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            @if ($report->reincidenceNumber)
-                                <p class="text-red">Reincidencia {{ $report->reincidenceNumber }}</p> 
+                            @if ($report->count)
+                                <p class="text-red">Reincidencia {{ $report->count }}</p> 
                                 {{ $report->title }}
                             @else
                                 {{ $report->title }}
@@ -95,7 +94,7 @@
                         <td class="px-4 py-2">{{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</td>
 
                         <td class="px-4 py-2">
-                            <p class="@if($report->state == 'Resuelto') @else hidden @endif">{{ $report->delegate->name }}</p>
+                            <p class="@if($report->state == 'Resuelto') @else hidden @endif">{{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
                             <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'  name="delegate" id="delegate" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto @if($report->state == 'Resuelto') hidden @endif">
                                 <option selected value={{ $report->delegate->id }}>{{ $report->delegate->name }} {{ $report->delegate->lastname }}</option>
                                 @foreach ($report->usersFiltered as $userFiltered)
@@ -119,43 +118,37 @@
                                 @endif
                             @endif
                         </td>
-                        @if ($report->user->id == Auth::id() || $report->delegate->id == Auth::id())
+                        @if ($report->user->id == Auth::id() || $report->delegate->id == Auth::id() || Auth::user()->type_user == 1)
                             <td class="px-4 py-2 flex flex-col justify-start items-start">
-                                @if ($report->state == 'Resuelto')
-                                    <div class="flex justify-center items-center">
-                                        <p>{{ $report->state }}</p>
-                                        <button wire:click="reportRepeat({{ $project->id }}, {{$report->id}})" class="m-2 p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full">
-                                            Reincidencia
-                                        </button>
-                                    </div>
-                                @else
-                                    <div class="flex justify-center items-center">
-                                        <button wire:click="showEdit({{$report->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
-                                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
-                                                <path d="M16 5l3 3"></path>
-                                            </svg>
-                                        </button>
-                                        <button wire:click="showDelete({{$report->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg @if($report->state != 'Abierto') hidden @endif">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                <path d="M4 7l16 0"></path>
-                                                <path d="M10 11l0 6"></path>
-                                                <path d="M14 11l0 6"></path>
-                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                            </svg>
-                                        </button>
-                                        <select wire:change='updateState({{ $report->id }}, $event.target.value)' name="state" id="state" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                            <option selected value={{ $report->state }}>{{ $report->state }}</option>
-                                            @foreach ($report->filteredActions as $action)
-                                                <option value="{{ $action }}">{{ $action }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
+                                <div class="flex justify-center items-center">
+                                    <button wire:click="showEdit({{$report->id}})" class="@if($report->state == 'Resuelto') hidden @endif bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                            <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                            <path d="M16 5l3 3"></path>
+                                        </svg>
+                                    </button>
+                                    <button wire:click="showDelete({{$report->id}})" class="@if($report->state != 'Abierto') hidden @endif bg-red text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M4 7l16 0"></path>
+                                            <path d="M10 11l0 6"></path>
+                                            <path d="M14 11l0 6"></path>
+                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                        </svg>
+                                    </button>
+                                    <select wire:change='updateState({{ $report->id }}, $event.target.value)' name="state" id="state" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                        <option selected value={{ $report->state }}>{{ $report->state }}</option>
+                                        @foreach ($report->filteredActions as $action)
+                                            <option value="{{ $action }}">{{ $action }}</option>
+                                        @endforeach
+                                    </select>
+                                    <button wire:click="reportRepeat({{ $project->id }}, {{$report->id}})" class="@if($report->repeat != false && $report->state == 'Resuelto')  @else hidden @endif m-2 p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full">
+                                        Reincidencia
+                                    </button>
+                                </div>
                             </td>
                         @else
                             <td class="px-4 py-2 text-center">
@@ -243,7 +236,11 @@
                     
                 @if($showReport)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
-
+                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                        <div class="text-2xl md:flex text-justify">
+                            {!! nl2br(e($reportShow->comment)) !!}
+                        </div>
+                    </div>
                     @if (!empty($reportShow->content))
                         @if ($reportShow->image == true)
                             <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
@@ -271,12 +268,6 @@
                             <p class="text-red my-5">Sin archivo</p>
                         </div>
                     @endif
-
-                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                        <div class="text-lg md:flex mb-6 text-justify">
-                            {!! nl2br(e($reportShow->comment)) !!}
-                        </div>
-                    </div>
                 </div>
 
                 <div class="flex justify-center items-center py-6 px-10 bg-main-fund">

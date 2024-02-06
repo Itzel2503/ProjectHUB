@@ -32,13 +32,14 @@ class CreateReportsTable extends Migration
 
             $table->string('title');
             $table->text('content')->nullable();
+            $table->integer('value')->default('0');
+
             $table->boolean('image');
             $table->boolean('video');
             $table->boolean('file');
             $table->string('state');
             $table->string('comment');
-            $table->integer('value')->default('0');
-            $table->string('url')->nullable();
+            $table->string('count')->nullable();
             $table->boolean('repeat')->default(false);
 
             $table->dateTime('progress')->nullable();

@@ -23,6 +23,10 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
+    <!-- Toastr -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
     <style>
         .scrollEdit::-webkit-scrollbar {
             width: 6px;
@@ -190,12 +194,22 @@
                             Título del reporte
                         </h5>
                         <input required type="text" name="title" id="title" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                        @if ($errors->has('title'))
+                            <span class="text-red text-xs italic pl-2">
+                                    {{ $errors->first('title') }}
+                            </span>
+                        @endif
                     </div>
                     <div class="md:w-1/2 flex flex-col px-3">
                         <h5 class="inline-flex font-semibold" for="name">
                             Descripción del reporte
                         </h5>
                         <textarea required type="text" rows="10" placeholder="Describa la observación y especifique el objetivo a cumplir." name="comment" id="report" class="fields1 leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto"></textarea> 
+                        @if ($errors->has('comment'))
+                            <span class="text-red text-xs italic pl-2">
+                                    {{ $errors->first('comment') }}
+                            </span>
+                        @endif
                     </div>
                 </div>
 
@@ -210,6 +224,11 @@
                                 <option value="{{ $allUser->id }}">{{ $allUser->name }} {{ $allUser->lastname }}</option>
                             @endforeach
                         </select>
+                        @if ($errors->has('delegate'))
+                            <span class="text-red text-xs italic pl-2">
+                                    {{ $errors->first('delegate') }}
+                            </span>
+                        @endif
                     </div>
                 </div>
 
@@ -232,6 +251,12 @@
     
         <video id="preview" width="100%" height="auto" autoplay muted class="mt-2"></video>
     </div>
+
+    @if(session('error'))
+    <script>
+        toastr['error']("{{ session('error') }}", "Error");
+    </script>
+    @endif
 
     {{-- RECORDING --}}
     <script>
@@ -260,7 +285,7 @@
         let horas = ("0" + fechaActual.getHours()).slice(-2);
         let minutos = ("0" + fechaActual.getMinutes()).slice(-2);
         let segundos = ("0" + fechaActual.getSeconds()).slice(-2);
-        let fechaEnFormato = dia + '-' + mes + '-' + año + ' ' + horas + '_' + minutos + '_' + segundos;
+        let fechaEnFormato = año + '-' + mes + '-' + dia + ' ' + horas + '_' + minutos + '_' + segundos;
 
         // Ayudante para la duración; no ayuda en nada pero muestra algo informativo
         const secondsOnTime = numeroDeSegundos => {
@@ -313,8 +338,8 @@
                 mediaRecorder.stop();  // Detener la grabación si el stream se vuelve inactivo
 
                 inputUser.value = user.id;
-                downloadVideoButton.download = 'Reporte ' + fechaEnFormato + ', ' + project.name;
-                inputVideo.value = 'Reporte ' + fechaEnFormato + ', ' + project.name;
+                downloadVideoButton.download = 'Reporte ' + project.name + ', ' + fechaEnFormato;
+                inputVideo.value = 'Reporte ' + project.name + ', ' + fechaEnFormato;
 
                 document.getElementById('rightBar').style.display = 'flex';
                 document.getElementById('viewVideo').style.display = 'block';
@@ -352,7 +377,7 @@
                 let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
                 recording.src = URL.createObjectURL(recordedBlob);
                 downloadVideoButton.href = recording.src;
-                downloadVideoButton.download = 'Reporte ' + fechaEnFormato + ', ' + project.name;
+                downloadVideoButton.download = 'Reporte ' + project.name + ', ' + fechaEnFormato;
             })
             /* .catch(log); */
         }, false);

@@ -20,9 +20,10 @@
             <!-- COUNT -->
             <div class="inline-flex w-1/4 h-12 mx-3 bg-transparent mb-2">
                 <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
-                    <option value="5"> 25 por Página</option>
-                    <option value="50"> 50 por Página</option>
-                    <option value="100"> 100 por Página</option>
+                    <option value="10"> 10 por página</option>
+                    <option value="25"> 25 por página</option>
+                    <option value="50"> 50 por página</option>
+                    <option value="100"> 100 por página</option>
                 </select>
             </div>
             <!-- BTN NEW -->
@@ -38,7 +39,7 @@
         <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs mt-4">
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 bg-secondary-fund">
-                    <tr class="font-semibold tracking-wide text-center text-white text-base">
+                    <tr class="font-semibold tracking-wide text-left text-white text-base">
                         <th class=" px-4 py-3">Nombre</th>
                         <th class=" px-4 py-3">Apellidos </th>
                         <th class=" px-4 py-3">Correo Electronico</th>
@@ -55,7 +56,7 @@
                         <td class="px-4 py-2">{{$user->email}}</td>
                         <td class="px-4 py-2">{{$user->area_name}}</td>
                         <td class="px-4 py-2">{{($user->type_user == 1 ) ? 'Administrador' : 'Usuario'}}</td>
-                        <td class="px-4 py-2 flex justify-center">
+                        <td class="px-4 py-2 flex justify-start">
                             @if($user->deleted_at != null)
                             <button wire:click="showRestore({{$user->id}})" class="bg-secondary-fund text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-reload" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -91,7 +92,7 @@
             </table>
         </div>
         <div class="py-5">
-            {{ $users->links()}}
+            {{ $users->links() }}
         </div>
     </div>
     {{-- END TABLE --}}
@@ -107,6 +108,7 @@
                     @else
                     <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Crear usuario</h2>
                     @endif
+                    
                     <svg wire:click="modalCreateEdit" wire:loading.remove wire:target="modalCreateEdit" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M18 6l-12 12"></path>
@@ -118,9 +120,9 @@
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Nombre @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                    Nombre <p class="text-red">*</p>
                                 </h5>
-                                <input wire:model='name' @if(!$showUpdate) required @endif type="text" placeholder="Nombre/s" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='name' required type="text" placeholder="Nombre/s" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('name')
@@ -133,9 +135,9 @@
                             </div>
                             <div class="md:w-1/2 flex flex-col px-3 ">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Apellidos @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                    Apellidos <p class="text-red">*</p>
                                 </h5>
-                                <input wire:model='lastname' @if(!$showUpdate) required @endif type="text" placeholder="Apellido materno y apellido paterno" name="lastname" id="lastname" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='lastname' required type="text" placeholder="Apellido materno y apellido paterno" name="lastname" id="lastname" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('lastname')
@@ -150,13 +152,9 @@
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Fecha de nacimiento @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                    Fecha de nacimiento<p class="text-red">*</p>
                                 </h5>
-                                @if($showUpdate)
-                                <input wire:model='date_birthday' type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                @else
                                 <input wire:model='date_birthday' required type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                @endif
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('date_birthday')
@@ -201,9 +199,9 @@
                             </div>
                             <div class="md:w-1/2 flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Número de teléfono @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                    Número de teléfono <p class="text-red">*</p>
                                 </h5>
-                                <input wire:model='phone' @if(!$showUpdate) required @endif type="text" placeholder="Número de teléfono" name="phone" id="phone" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='phone' required type="number" placeholder="Número de teléfono" name="phone" id="phone" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('phone')
@@ -218,7 +216,7 @@
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Área @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                    Área <p class="text-red">*</p>
                                 </h5>
                                 @if($showUpdate)
                                 <select wire:model.defer='area' name="area" id="area" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
@@ -247,9 +245,9 @@
                             </div>
                             <div class="md:w-1/2 flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Correo electrónico: @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                    Correo electrónico:<p class="text-red">*</p>
                                 </h5>
-                                <input wire:model='email' @if(!$showUpdate) required @endif type="text" placeholder="Correo electrónico" name="email" id="email" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='email' required type="email" placeholder="Correo electrónico" name="email" id="email" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('email')

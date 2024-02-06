@@ -20,9 +20,10 @@
             <!-- COUNT -->
             <div class="inline-flex w-1/4 h-12 mx-3 bg-transparent mb-2">
                 <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
-                    <option value="5"> 25 por Página</option>
-                    <option value="50"> 50 por Página</option>
-                    <option value="100"> 100 por Página</option>
+                    <option value="10"> 10 por página</option>
+                    <option value="25"> 25 por página</option>
+                    <option value="50"> 50 por página</option>
+                    <option value="100"> 100 por página</option>
                 </select>
             </div>
             <!-- BTN NEW -->
@@ -42,27 +43,28 @@
                 <thead class="border-0 bg-secondary-fund">
                     <tr class="font-semibold tracking-wide text-left text-white text-base">
                         {{-- <th class="px-4 py-3"></th> LOGO --}}
+                        <th class="px-4 py-3">Código</th>
                         <th class="px-4 py-3">Proyecto</th>
                         <th class="px-4 py-3">Cliente</th>
                         <th class="px-4 py-3">Tipo</th>
                         <th class="px-4 py-3">Prioridad</th>
-                        <th class="px-4 py-3">Líder/es</th>
-                        <th class="text-center px-4 py-2">Acciones</th>
+                        <th class="px-4 py-3">Líder y Scrum Master</th>
+                        <th class="px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($projects as $project)
                     <tr class="border-white text-sm">
+                        <td class="px-4 py-2">{{ $project->code }}</td>
                         <td class="px-4 py-2">{{ $project->name }}</td>
                         <td class="px-4 py-2">{{ $project->customer_name }}</td>
                         <td class="px-4 py-2">{{ $project->type }}</td>
                         <td class="px-4 py-2">K{{ $project->priority }}</td>
                         <td class="px-4 py-2">
-                            @foreach ($project->users as $user) 
-                                - {{ $user->name }} {{ $user->lastname }} <br>
-                            @endforeach
+                                - {{ $project->leader->name }} {{ $project->leader->lastname }} <br>
+                                - {{ $project->programmer->name }} {{ $project->programmer->lastname }}
                         </td>
-                        <td class="px-4 py-2 flex justify-center">
+                        <td class="px-4 py-2 flex justify-start">
                             @if($project->deleted_at != null)
                             <button wire:click="showRestore({{$project->id}})" class="bg-secondary-fund text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-reload" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -132,10 +134,25 @@
                     <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
-                                <h5 class="inline-flex font-semibold" for="name">
-                                    Nombre @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                <h5 class="inline-flex font-semibold" for="code">
+                                    Código <p class="text-red">*</p>
                                 </h5>
-                                <input wire:model='name' @if(!$showUpdate) required @endif type="text" placeholder="Nombre" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='code' required type="number" placeholder="Código" name="code" id="code" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('code')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="md:w-1/2 flex flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Nombre<p class="text-red">*</p>
+                                </h5>
+                                <input wire:model='name' required type="text" placeholder="Nombre" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('name')
@@ -146,19 +163,20 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="md:w-1/2 flex flex-col px-3 ">
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Tipo @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                    <select wire:model.defer='type' required name="type" id="type" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                        <option selected>{{ $filteredType }}</option>
-                                        @foreach ($allType as $typeOption)
-                                            <option value='{{ $typeOption }}'>{{ $typeOption }}</option>
+                                    <select wire:model='type' required name="type" id="type" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                        @foreach ($allType as $type)
+                                            <option value='{{ $type }}'>{{ $type }}</option>
                                         @endforeach
                                     </select>
                                 @else
-                                    <select wire:model.defer='type' required name="type" id="type" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <select wire:model='type' required name="type" id="type" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                         <option selected>Selecciona...</option>
                                         @foreach ($allType as $type)
                                             <option value='{{ $type }}'>{{ $type }}</option>
@@ -175,13 +193,11 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                            <div class="md:w-1/2 flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Prioridad @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                    Prioridad <p class="text-red">*</p>
                                 </h5>
-                                <input wire:model='priority' @if(!$showUpdate) required @endif type="number" placeholder="0 - 99" min="0" max="99" name="priority" id="priority" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='priority' required type="number" placeholder="0 - 99" min="0" max="99" name="priority" id="priority" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
                                     <span class="text-red text-xs italic">
                                         @error('priority')
@@ -192,22 +208,23 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="md:w-1/2 flex flex-col px-3">
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Cliente @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                <select wire:model.defer='customer' name="customer" id="customer" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                    <option selected value="{{ $projectCustomer->id }}">{{ $projectCustomer->name }}</option>
-                                    @foreach ($allCustomers as $allCustomer)
-                                        <option value="{{ $allCustomer->id }}">{{ $allCustomer->name }}</option>
+                                <select wire:model='customer' name="customer" id="customer" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    @foreach ($allCustomers as $customer)
+                                        <option value="{{ $customer->id }}" >{{ $customer->name }}</option>
                                     @endforeach
                                 </select>
                                 @else
-                                <select wire:model.defer='customer' required name="customer" id="customer" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <select wire:model='customer' required name="customer" id="customer" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                     <option selected>Selecciona...</option>
-                                    @foreach ($customers as $customer)
-                                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                    @foreach ($allCustomers as $allCustomer)
+                                        <option value="{{ $allCustomer->id }}">{{ $allCustomer->name }}</option>
                                     @endforeach
                                 </select>
                                 @endif
@@ -221,38 +238,58 @@
                                     </span>
                                 </div>
                             </div>
+
+                            <div class="md:w-1/2 flex flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Líder @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                </h5>
+                                @if($showUpdate)
+                                    <select wire:model='leader' required name="leader" id="leader" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                        @foreach ($allUsers as $user)
+                                            <option value="{{ $user->id }}" @if($user->id == $leader) selected @endif>{{ $user->name }} {{ $user->lastname }}</option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <select wire:model='leader' required name="leader" id="leader" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                        <option selected>Selecciona...</option>
+                                        @foreach ($allUsers as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }} {{ $user->lastname }}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('leader')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-1/2 flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Líder/es @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                    Scrum Master @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                    @foreach ($leaders as $leader)
-                                        <div class="relative z-0 w-full group flex mb-2">
-                                            <input wire:model="selectedLeaders.{{ $leader->id }}" type="checkbox" name="leader_{{ $leader->id }}" id="leader_{{ $leader->id }}" class="filled-in chk-col-green form-control border border-gray-400 rounded w-5 h-5 mr-3">
-                                            
-                                            <label for="leader_{{ $leader->id }}" class="text-sm inline-flex w-1/4">
-                                                {{ $leader->name }} {{ $leader->lastname }}
-                                                @if($projectEdit->users->contains($leader->id) && $projectEdit->users->where('id', $leader->id)->first()->pivot->leader)
-                                                    <p class="text-main">(Líder)</p>
-                                                @else
-                                                    <p class="text-secondary-fund">(No Líder)</p>
-                                                @endif
-                                            </label>
-                                        </div>
-                                    @endforeach
+                                    <select wire:model='programmer' required name="programmer" id="programmer" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                        @foreach ($allUsers as $user)
+                                            <option value="{{ $user->id }}" @if($user->id == $programmer) selected @endif>{{ $user->name }} {{ $user->lastname }}</option>
+                                        @endforeach
+                                    </select>
                                 @else
-                                @foreach ($leaders as $leader)
-                                    <div class="relative z-0 w-full group flex mb-2">
-                                        <input wire:model="selectedLeaders.{{ $leader->id }}" type="checkbox" name="leader_{{ $leader->id }}" id="leader_{{ $leader->id }}" class="border border-gray-400 rounded w-5 h-5 mr-3">
-                                        <label for="leader_{{ $leader->id }}" class="text-sm inline-flex w-1/4">{{ $leader->name }} {{ $leader->lastname }}</label>
-                                    </div>
-                                @endforeach
+                                    <select wire:model='programmer' required name="programmer" id="programmer" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                        <option selected>Selecciona...</option>
+                                        @foreach ($allUsers as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }} {{ $user->lastname }}</option>
+                                        @endforeach
+                                    </select>
                                 @endif
                                 <div>
                                     <span class="text-red text-xs italic">
-                                        @error('selectedLeaders')
+                                        @error('programmer')
                                         <span class="pl-2 text-red-500 text-xs italic">
                                             {{$message}}
                                         </span>
@@ -332,4 +369,9 @@
         </div>
     </div>
     {{-- END MODAL DELETE --}}
+    <script>
+        window.addEventListener('swal:modal', event => {
+            toastr[event.detail.type](event.detail.text, event.detail.title);
+        });
+    </script>
 </div>
