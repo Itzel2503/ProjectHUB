@@ -245,6 +245,35 @@
                             </div>
                             <div class="md:w-1/2 flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
+                                    Tipo de usuario <p class="text-red">*</p>
+                                </h5>
+                                @if($showUpdate)
+                                    <select wire:model.defer='type_user' name="type_user" id="type_user" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                        @foreach ($allTypes as $allType)
+                                            <option value="{{ $allType }}">{{($allType== 1 ) ? 'Administrador' : 'Usuario'}}</option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                <select wire:model.defer='type_user' required name="type_user" id="type_user" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <option selected>Selecciona...</option>
+                                    <option value="1">Administrador</option>
+                                    <option value="2">Usuario</option>
+                                </select>
+                                @endif
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('type_user')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                                <h5 class="inline-flex font-semibold" for="name">
                                     Correo electrónico:<p class="text-red">*</p>
                                 </h5>
                                 <input wire:model='email' required type="email" placeholder="Correo electrónico" name="email" id="email" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
@@ -258,8 +287,6 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-1/2 flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Contraseña @if(!$showUpdate)<p class="text-red">*</p>@endif

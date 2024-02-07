@@ -21,9 +21,9 @@ class TableUsers extends Component
     // table, action's user
     public $search, $userEdit, $areaUser, $userDelete, $userRestore;
     public $perPage = '10';
-    public $rules = [], $allAreas = [];
+    public $rules = [], $allAreas = [], $allTypes = [1, 2];
     // inputs
-    public $name, $lastname, $date_birthday, $curp, $rfc, $phone, $area, $email, $password;
+    public $name, $lastname, $date_birthday, $curp, $rfc, $phone, $area, $type_user, $email, $password;
 
     public function render()
     {
@@ -65,6 +65,7 @@ class TableUsers extends Component
                 'rfc' => 'max:13',
                 'phone' => 'required|numeric',
                 'area' => 'required',
+                'type_user' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:8',
             ]);
@@ -94,18 +95,14 @@ class TableUsers extends Component
         $user->date_birthday = $this->date_birthday;
         $user->email = $this->email;
         $user->area_id = $this->area;
-
-        if ($this->area == 1) {
-            $user->type_user = 1;
-        } else {
-            $user->type_user = 2;
-        }
+        $user->type_user = $this->type_user;
 
         if ($this->password) {
             $user->password = Hash::make($this->password);
         }
 
         $user->save();
+        $this->clearInputs();
         $this->modalCreateEdit = false;
 
         // Emitir un evento de navegador
@@ -145,21 +142,19 @@ class TableUsers extends Component
         $user->rfc = $this->rfc ?? $user->rfc;
         $user->date_birthday = $this->date_birthday ?? $user->date_birthday;
         $user->email = $this->email ?? $user->email;
-        $user->area_id = $this->area ?? $user->area_id;
 
-        if ($this->area == 1) {        
-            $user->type_user = 1;
-        } else if ($this->area == null) {
-            $user->type_user = $user->type_user;
-        } else {
-            $user->type_user = 2;
+        if (!empty($this->area)) {
+            $user->area_id = $this->area;
         }
+        
+        $user->type_user = $this->type_user ?? $user->type_user;
 
         if ($this->password) {
             $user->password = Hash::make($this->password);
         }
 
         $user->save();
+        $this->clearInputs();
         $this->modalCreateEdit = false;
         
         // Emitir un evento de navegador
@@ -187,7 +182,7 @@ class TableUsers extends Component
                 'title' => 'Usuario no existe',
             ]);
         }
-
+        $this->emit('reloadPage');
         $this->modalDelete = false;
     }
 
@@ -250,7 +245,9 @@ class TableUsers extends Component
         }
 
         $this->userEdit = User::find($id);
+        
         $this->allAreas = Area::all();
+
         $this->areaUser = $this->allAreas->find($this->userEdit->area_id);
 
         foreach ($this->allAreas as $key => $oneArea) {
@@ -259,6 +256,7 @@ class TableUsers extends Component
             }
         }
 
+        $this->type_user = $this->userEdit ? $this->userEdit->type_user : null;
         $this->name = $this->userEdit->name;
         $this->lastname = $this->userEdit->lastname;
         $this->date_birthday = $this->userEdit->date_birthday;
@@ -309,6 +307,7 @@ class TableUsers extends Component
         $this->rfc = '';
         $this->phone = '';
         $this->area = '';
+        $this->type_user = '';
         $this->email = '';
         $this->password = '';
     }

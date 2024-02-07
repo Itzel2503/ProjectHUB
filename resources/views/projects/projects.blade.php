@@ -9,6 +9,7 @@ text-yellow
 @endsection
 
 @section('content')
+@livewireScripts
 <div class="mt-8">
     <div class=" w-full mx-auto">
         <div class="mt-5 md:mt-0 md:col-span-1">

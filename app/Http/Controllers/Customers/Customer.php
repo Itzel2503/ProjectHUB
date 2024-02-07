@@ -16,7 +16,11 @@ class Customer extends Controller
     public function index()
     {
         if (Auth::check()) {
-            return view('customers.customers');
+            if (Auth::user()->type_user == 1) {
+                return view('customers.customers');
+            } else {
+                return back();
+            }
         } else {
             return redirect('/login');
         }

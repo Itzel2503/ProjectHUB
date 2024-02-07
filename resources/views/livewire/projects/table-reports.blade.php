@@ -129,7 +129,7 @@
                                             <path d="M16 5l3 3"></path>
                                         </svg>
                                     </button>
-                                    <button wire:click="showDelete({{$report->id}})" class="@if($report->state != 'Abierto') hidden @endif bg-red text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                    <button wire:click="showDelete({{$report->id}}, {{$project->id}})" class="@if($report->state != 'Abierto') hidden @endif bg-red text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                             <path d="M4 7l16 0"></path>
@@ -340,7 +340,11 @@
                 </div>
                 <div class="flex justify-between items-center py-6 px-10 bg-main-fund">
                     <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="modalDelete()" wire:loading.remove wire:target="modalDelete()">Cancelar</button>
-                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-red rounded cursor-pointer" wire:click="destroy({{$reportDelete->id}})" wire:loading.remove wire:target="destroy({{$reportDelete->id}})">Eliminar</button>
+                    <form method="POST" action="{{ route('projects.reports.destroy', ['project' => $reportDelete->project_id, 'report' => $reportDelete->id]) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-red rounded cursor-pointer">Eliminar</button>
+                    </form>
                 </div>
                 @endif
             </div>

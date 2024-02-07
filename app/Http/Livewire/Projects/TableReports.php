@@ -160,7 +160,7 @@ class TableReports extends Component
     // ACTIONS
     public function create($project_id)
     {
-        return redirect()->route('projects.reports.create', ['project' => $project_id]);
+        $this->redirectRoute('projects.reports.create', ['project' => $project_id]);
     }
 
     public function updateState($id, $state)
@@ -260,24 +260,6 @@ class TableReports extends Component
         
     }
 
-    public function destroy($id)
-    {
-        $report = Report::find($id);
-
-        if ($report) {
-            if ($report->content) {
-                $contentPath = 'reportes/' . $report->content;
-                $fullPath = public_path($contentPath);
-                if (File::exists($fullPath)) {
-                    File::delete($fullPath);
-                }
-            }
-            $report->delete();
-        }
-
-        $this->modalDelete = false;
-        $this->emit('reloadPage');
-    }
     // INFO MODAL
     public function showReport($id)
     {
@@ -320,7 +302,7 @@ class TableReports extends Component
     }
 
     // INFO MODAL
-    public function showDelete($id)
+    public function showDelete($id, $project_id)
     {
         $this->showDelete = true;
 
@@ -330,7 +312,10 @@ class TableReports extends Component
             $this->modalDelete = true;
         }
 
-        $this->reportDelete = Report::find($id);
+        $project = Project::find($project_id);
+        $report = Report::find($id);
+        $report->project_id = $project->id;
+        $this->reportDelete = $report;
     }
     // MODAL
     public function modalShow()
