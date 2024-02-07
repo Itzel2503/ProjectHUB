@@ -53,8 +53,8 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'Administrador',
-            'lastname' => 'Arten',
-            'email' => 'admin@kircof.com',
+            'lastname' => 'Arten/Kircof',
+            'email' => 'admin@artendigital.mx',
             'password' => Hash::make('Arten.123!'),
             'type_user' => '1',
             'date_birthday' => Carbon::now(),

@@ -63,6 +63,7 @@ class TableReports extends Component
                 $query->where('state', $this->selectedState);
             })
             ->with(['user', 'delegate'])
+            // ->orderByRaw("FIELD(state, 'Abierto', 'Proceso', 'Conflicto', 'Resuelto') ASC, (state = 'Resuelto' AND repeat = true) DESC")
             ->orderByRaw("CASE 
                 WHEN state = 'Abierto' THEN 1 
                 WHEN state = 'Proceso' THEN 2 
@@ -94,6 +95,7 @@ class TableReports extends Component
                     $query->where('state', $this->selectedState);
                 })
                 ->with(['user', 'delegate'])
+                // ->orderByRaw("FIELD(state, 'Abierto', 'Proceso', 'Conflicto', 'Resuelto') ASC, (state = 'Resuelto' AND repeat = true) DESC")
                 ->orderByRaw("CASE 
                     WHEN state = 'Abierto' THEN 1 
                     WHEN state = 'Proceso' THEN 2 
