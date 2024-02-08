@@ -32,7 +32,7 @@ class CreateReportsTable extends Migration
 
             $table->string('title');
             $table->text('content')->nullable();
-            $table->integer('value')->default('0');
+            $table->string('value');
 
             $table->boolean('image');
             $table->boolean('video');

@@ -79,11 +79,18 @@ class Report extends Controller
                         'title' => 'required',
                         'comment' => 'required',
                         'delegate' => 'required|not_in:0',
+                        'priority' => [
+                            'required',
+                            function($attribute, $value, $fail) {
+                                if (is_array($value) && count($value) == 0) {
+                                    return redirect()->back()->with('error', 'Selecciona una prioridad');
+                                }
+                            },
+                        ],
                     ]);
                     // Aquí puedes continuar con tu lógica después de la validación exitosa
                 } catch (\Illuminate\Validation\ValidationException $e) {
                     return redirect()->back()->with('error', 'Faltan campos o campos incorrectos');
-
                     throw $e;
                 }
 
@@ -92,6 +99,16 @@ class Report extends Controller
                     $report->user_id = $request->user_id;
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
+
+                    if ($request->priority1) {
+                        $report->value = 'Alto';
+                    } else if ($request->priority2) {
+                        $report->value = 'Medio';
+                    } else {
+                        $report->value = 'Bajo';
+                    }
+                    
+                    $report->value = $request->title;
                     $report->content = $request->video;
                     $report->image = false;
                     $report->video = true;
@@ -114,6 +131,15 @@ class Report extends Controller
                     $report->user_id = $request->user_id;
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
+
+                    if ($request->priority1) {
+                        $report->value = 'Alto';
+                    } else if ($request->priority2) {
+                        $report->value = 'Medio';
+                    } else {
+                        $report->value = 'Bajo';
+                    }
+
                     $report->content = $filePath;
                     $report->image = true;
                     $report->video = false;
@@ -138,6 +164,14 @@ class Report extends Controller
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
                     $report->content = $filePath;
+
+                    if ($request->priority1) {
+                        $report->value = 'Alto';
+                    } else if ($request->priority2) {
+                        $report->value = 'Medio';
+                    } else {
+                        $report->value = 'Bajo';
+                    }
     
                     if (in_array($file->extension(), $extensionesImagen)) {
                         $report->image = true;
@@ -163,6 +197,15 @@ class Report extends Controller
                     $report->user_id = $request->user_id;
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
+
+                    if ($request->priority1) {
+                        $report->value = 'Alto';
+                    } else if ($request->priority2) {
+                        $report->value = 'Medio';
+                    } else {
+                        $report->value = 'Bajo';
+                    }
+
                     $report->image = false;
                     $report->video = false;
                     $report->file = false;
@@ -266,6 +309,15 @@ class Report extends Controller
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $request->video;
+
+                    if ($request->priority1) {
+                        $reportNew->value = 'Alto';
+                    } else if ($request->priority2) {
+                        $reportNew->value = 'Medio';
+                    } else {
+                        $reportNew->value = 'Bajo';
+                    }
+
                     $reportNew->image = false;
                     $reportNew->video = true;
                     $reportNew->file = false;
@@ -290,6 +342,15 @@ class Report extends Controller
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $filePath;
+
+                    if ($request->priority1) {
+                        $reportNew->value = 'Alto';
+                    } else if ($request->priority2) {
+                        $reportNew->value = 'Medio';
+                    } else {
+                        $reportNew->value = 'Bajo';
+                    }
+
                     $reportNew->image = true;
                     $reportNew->video = false;
                     $reportNew->file = false;
@@ -315,6 +376,15 @@ class Report extends Controller
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $filePath;
+
+                    if ($request->priority1) {
+                        $reportNew->value = 'Alto';
+                    } else if ($request->priority2) {
+                        $reportNew->value = 'Medio';
+                    } else {
+                        $reportNew->value = 'Bajo';
+                    }
+
                     if (in_array($fileExtension, $extensionesImagen)) {
                         $reportNew->image = true;
                         $reportNew->video = false;
@@ -394,6 +464,14 @@ class Report extends Controller
                         $reportNew->image = false;
                         $reportNew->video = false;
                         $reportNew->file = false;
+                    }
+
+                    if ($request->priority1) {
+                        $reportNew->value = 'Alto';
+                    } else if ($request->priority2) {
+                        $reportNew->value = 'Medio';
+                    } else {
+                        $reportNew->value = 'Bajo';
                     }
                     
                     $reportNew->state = "Abierto";

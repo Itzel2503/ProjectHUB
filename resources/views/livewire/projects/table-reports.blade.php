@@ -84,9 +84,21 @@
                         </td>
                         <td class="px-4 py-2">
                             @if ($report->count)
+                                <div class="my-2 font-semibold text-center
+                                    @if($report->value == 'Alto') bg-red text-white @endif
+                                    @if($report->value == 'Medio') bg-yellow @endif
+                                    @if($report->value == 'Bajo') bg-secondary text-white @endif">
+                                    {{ $report->value }}
+                                </div> 
                                 <p class="text-red">Reincidencia {{ $report->count }}</p> 
                                 {{ $report->title }}
                             @else
+                                <div class="my-2 font-semibold text-center
+                                    @if($report->value == 'Alto') bg-red text-white @endif
+                                    @if($report->value == 'Medio') bg-yellow @endif
+                                    @if($report->value == 'Bajo') bg-secondary text-white @endif">
+                                    {{ $report->value }}
+                                </div> 
                                 {{ $report->title }}
                             @endif
                         </td>

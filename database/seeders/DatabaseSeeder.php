@@ -20,9 +20,6 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
         Area::create([
-            'name' => 'Administrador'
-        ]);
-        Area::create([
             'name' => 'Administración'
         ]);
         Area::create([
