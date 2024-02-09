@@ -715,17 +715,12 @@
 
         document.getElementById('formReport').addEventListener('submit', function(e) {
             let downloadButton = document.getElementById('downloadVideoButton');
-            let delegate = document.getElementById('delegate');
 
             const checkboxes = document.querySelectorAll('.priority-checkbox');
             const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
 
-            if (delegate.value === '0' || !isChecked) {
-                if (delegate.value === '0') {
-                    toastr['error']("Selecciona un delegado");
-                } else if (!isChecked) {
-                    toastr['error']("Selecciona la prioridad");
-                }
+            if (!isChecked) {
+                toastr['error']("Selecciona la prioridad");
                 
                 e.preventDefault();
                 return; 
