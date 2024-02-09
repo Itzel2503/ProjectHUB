@@ -63,7 +63,7 @@ class TableReports extends Component
                 $query->where('state', $this->selectedState);
             })
             ->with(['user', 'delegate'])
-            
+            ->orderBy('created_at', 'desc')
             ->paginate($this->perPage);
         } else {
             $reports = Report::where('project_id', $this->project->id)
@@ -87,7 +87,7 @@ class TableReports extends Component
                     $query->where('state', $this->selectedState);
                 })
                 ->with(['user', 'delegate'])
-                
+                ->orderBy('created_at', 'desc')
                 ->paginate($this->perPage);
         }
 

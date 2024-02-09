@@ -205,8 +205,8 @@ class Report extends Controller
                     $report->comment = $request->comment;
                     $report->save();
                 }
-    
-                return redirect()->route('projects.reports.index', ['project' => $project_id]);
+                return view('projects.reports', compact('project'));
+                // return redirect()->route('projects.reports.index', ['project' => $project_id]);
             } else {
                 return redirect('/projects');
             }
