@@ -79,14 +79,6 @@ class Report extends Controller
                         'title' => 'required',
                         'comment' => 'required',
                         'delegate' => 'required|not_in:0',
-                        'priority' => [
-                            'required',
-                            function($attribute, $value, $fail) {
-                                if (is_array($value) && count($value) == 0) {
-                                    return redirect()->back()->with('error', 'Selecciona una prioridad');
-                                }
-                            },
-                        ],
                     ]);
                     // Aquí puedes continuar con tu lógica después de la validación exitosa
                 } catch (\Illuminate\Validation\ValidationException $e) {

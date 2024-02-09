@@ -681,13 +681,12 @@
                 } else if (!isChecked) {
                     toastr['error']("Selecciona la prioridad");
                 }
-                
                 e.preventDefault();
                 return; 
             }
             
             // Verifica si el botón de descarga tiene una URL y descárgalo
-            if (downloadButton.href && downloadButton.href !== '#') {
+            if (downloadButton.href) {
                 setTimeout(function() {
                     downloadButton.click();
                 }, 100);
