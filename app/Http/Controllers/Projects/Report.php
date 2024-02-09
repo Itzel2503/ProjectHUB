@@ -76,8 +76,6 @@ class Report extends Controller
                 try {
                     // Validación de los campos
                     $validatedData = $request->validate([
-                        'title' => 'required',
-                        'comment' => 'required',
                         'delegate' => 'required|not_in:0',
                     ]);
                     // Aquí puedes continuar con tu lógica después de la validación exitosa
@@ -205,8 +203,7 @@ class Report extends Controller
                     $report->comment = $request->comment;
                     $report->save();
                 }
-                return view('projects.reports', compact('project'));
-                // return redirect()->route('projects.reports.index', ['project' => $project_id]);
+                return redirect()->route('projects.reports.index', ['project' => $project_id]);
             } else {
                 return redirect('/projects');
             }
