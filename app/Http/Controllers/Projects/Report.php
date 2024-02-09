@@ -71,8 +71,8 @@ class Report extends Controller
             $report = new ModelsReport();
             $now = Carbon::now();
             $dateString = $now->format("Y-m-d H_i_s");
-
             if ($project && $report) {
+
                 try {
                     // Validación de los campos
                     $validatedData = $request->validate([

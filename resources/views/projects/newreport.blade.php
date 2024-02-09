@@ -117,13 +117,11 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
             </svg>              
         </button>
-        <button id="refreshCanva" class="ml-5 w-12 h-12 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-refresh w-12 h-12 text-main hover:text-secondary" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
-                <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
-            </svg>            
-        </button>
+        {{-- <button class="ml-5 w-10 h-10 flex justify-center items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-red">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+            </svg>              
+        </button> --}}
 
         <input min="1" max="20" value="10" type="range" id="lineWidthSlider" class="mt-5 mx-5">
         
@@ -301,8 +299,6 @@
         let user = @json($user);
         let project = @json($project);
 
-        let isManuallyStopped = false; // Variable de control
-
         // variables "globales"
         let startTime, intervalId, mediaRecorder;
 
@@ -362,21 +358,16 @@
 
             // Manejar el evento oninactive del MediaStream
             stream.oninactive = () => {
-                if (!isManuallyStopped) { // Ejecutar solo si no se ha detenido manualmente
-                    log("Grabación finalizada.");
-                    stopCounting();
-                    mediaRecorder.stop();  // Detener la grabación si el stream se vuelve inactivo
+                log("Grabación finalizada.");
+                stopCounting();
+                mediaRecorder.stop();  // Detener la grabación si el stream se vuelve inactivo
 
-                    inputUser.value = user.id;
-                    downloadVideoButton.download = 'Reporte ' + project.name + ', ' + fechaEnFormato;
-                    inputVideo.value = 'Reporte ' + project.name + ', ' + fechaEnFormato;
+                inputUser.value = user.id;
+                downloadVideoButton.download = 'Reporte ' + project.name + ', ' + fechaEnFormato;
+                inputVideo.value = 'Reporte ' + project.name + ', ' + fechaEnFormato;
 
-                    document.getElementById('rightBar').style.display = 'flex';
-                    document.getElementById('viewVideo').style.display = 'block';
-                } else {
-                    // Posiblemente reiniciar isManuallyStopped para futuras grabaciones
-                    isManuallyStopped = false;
-                }
+                document.getElementById('rightBar').style.display = 'flex';
+                document.getElementById('viewVideo').style.display = 'block';
             };
 
             mediaRecorder.start();
@@ -418,25 +409,16 @@
 
         // returnButton from Video
         document.getElementById('returnButtonVideo').addEventListener('click', function() {
-            isManuallyStopped = true; // Indica que la detención es manual
-
             // Detener el video
             preview.pause();
-            if (preview.srcObject) {
-                let tracks = preview.srcObject.getTracks();
-                tracks.forEach(track => track.stop()); // Detiene todas las pistas del stream
-                preview.srcObject = null;
-            }
+            preview.srcObject = null;
 
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            if (mediaRecorder) {
                 mediaRecorder.stop();
             }
-
             log('');
-            stopCounting();
             preview.src = '';
             downloadVideoButton.href = '';
-            inputVideo.value= '';
 
             // Mostrar el div principal y ocultar otros elementos
             document.getElementById('rightBar').style.display = 'none';
@@ -500,10 +482,9 @@
 
                     imageCapture.grabFrame().then(imageBitmap => {
                         const canvas = document.createElement('canvas');
+                        canvas.width = imageBitmap.width;
+                        canvas.height = imageBitmap.height;
                         const ctx = canvas.getContext('2d');
-
-                        canvas.width = Math.round(imageBitmap.width);
-                        canvas.height = Math.round(imageBitmap.height);
                         ctx.drawImage(imageBitmap, 0, 0);
 
                         // Create an image element and set the source to the captured image
@@ -520,12 +501,12 @@
                             capturedImageContainer.appendChild(capturedImage);
 
                             const drawCanvas = document.createElement('canvas');
-                            drawCanvas.width = canvas.width; // Usa el ancho de la imagen capturada
-                            drawCanvas.height = canvas.height; // Usa el alto de la imagen capturada
+                            drawCanvas.width = canvas.width; // Use the width of the captured image
+                            drawCanvas.height = canvas.height; // Use the height of the captured image
                             drawCanvas.style.position = 'absolute';
                             drawCanvas.style.top = '0';
                             drawCanvas.style.left = '0';
-                            // Agrega el canvas de dibujo al contenedor, encima de la imagen capturada
+                            // Append the drawing canvas to the document
                             capturedImageContainer.appendChild(drawCanvas);
 
                             // Function to get the canvas context for drawing
@@ -541,9 +522,9 @@
 
                             // letiables to store previous coordinates
                             let prevX, prevY;
+
                             // Event listeners to handle drawing on mouse interactions
                             let isDrawing = false;
-
                             drawCanvas.addEventListener('mousedown', e => {
                                 isDrawing = true;
                                 const rect = drawCanvas.getBoundingClientRect();
@@ -584,34 +565,29 @@
 
                             // button with the id "downloadShot"
                             const downloadShotButton = document.getElementById('downloadShot');
+
                             // Add click event listener to the downloadShot button
                             downloadShotButton.addEventListener('click', () => {
                                 const combinedCanvas = document.createElement('canvas');
                                 combinedCanvas.width = imageBitmap.width;
                                 combinedCanvas.height = imageBitmap.height;
                                 const combinedCtx = combinedCanvas.getContext('2d');
+
                                 // Draw the screen capture onto the combined canvas
                                 combinedCtx.drawImage(imageBitmap, 0, 0);
+
                                 // Create a new image element for the drawing canvas
                                 const drawImage = new Image();
                                 drawImage.src = drawCanvas.toDataURL('image/jpg');
+
                                 // When the drawing canvas image is fully loaded, render it onto the combined canvas
                                 drawImage.onload = () => {
                                     combinedCtx.drawImage(drawImage, 0, 0);
+
                                     // Get the combined canvas data URL and render the image for preview
                                     const combinedDataURL = combinedCanvas.toDataURL('image/jpg');
                                     renderCombinedImage(combinedDataURL);
                                 };
-                            });
-
-                            // button with the id "refreshCanva"
-                            const refreshCanvaButton = document.getElementById('refreshCanva');
-                            // Add click event listener to the refreshCanva button
-                            refreshCanvaButton.addEventListener('click', () => {
-                                // Obtiene el contexto del canvas de dibujo
-                                const drawCtx = drawCanvas.getContext('2d');
-                                // Limpia todo el canvas
-                                drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
                             });
 
                             // Function to handle the download
@@ -667,21 +643,10 @@
                 checkbox.checked = true;
             });
         });
-    
+
         document.getElementById('formReport').addEventListener('submit', function(e) {
             let downloadButton = document.getElementById('downloadVideoButton');
-            
-            const checkboxes = document.querySelectorAll('.priority-checkbox');
-            const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
 
-            if (!isChecked) {
-                toastr['error']("Selecciona la prioridad");
-                
-                e.preventDefault();
-                return; 
-            }
-            
-            // Verifica si el botón de descarga tiene una URL y descárgalo
             if (downloadButton.href) {
                 setTimeout(function() {
                     downloadButton.click();
@@ -691,16 +656,8 @@
 
         //screenshotButton
         document.getElementById('screenshotButton').addEventListener('click', function() {
-            document.getElementById("log").innerHTML = '';
-            document.getElementById("recording").src = '';
-            document.getElementById('downloadVideoButton').href = '';
-            document.getElementById("inputVideo").value = '';
-
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById('shotMenu').style.display = 'flex';
-
-            document.getElementById('capturedImageContainer').style.display = 'block';
-            document.getElementById('preview').style.display = 'none';
         });
         //Save combined screenshot-canvas button
         document.getElementById('downloadShot').addEventListener('click', function() {
@@ -736,27 +693,13 @@
 
         //start recording video button
         document.getElementById('startButton').addEventListener('click', function() {
-            document.getElementById("inputPhoto").value = '';
-            document.getElementById('renderedCanvas').innerHTML = '';
-
             document.getElementById('videoMenu').style.display = 'flex';
             document.getElementById('mainMenu').style.display = 'none';
-
-            document.getElementById('capturedImageContainer').style.display = 'none';
-            document.getElementById('preview').style.display = 'block';
         });
         
         //text button
         document.getElementById('textButton').addEventListener('click', function() {
             let user = @json($user);
-
-            document.getElementById("log").innerHTML = '';
-            document.getElementById("recording").src = '';
-            document.getElementById('downloadVideoButton').href = '';
-            document.getElementById("inputVideo").value = '';
-
-            document.getElementById("inputPhoto").value = '';
-            document.getElementById('renderedCanvas').innerHTML = '';
 
             document.getElementById('rightBar').style.display = 'flex';
             document.getElementById('textMenu').style.display = 'flex';
@@ -780,7 +723,6 @@
             const formulario = document.getElementById('formReport');
             const elementosFormulario = formulario.querySelectorAll('input, textarea');
             const selectores = formulario.querySelectorAll('select');
-            const checkboxes = formulario.querySelectorAll('input[type=checkbox]');
 
             // Establece los valores de los elementos input y textarea en vacío
             elementosFormulario.forEach(elemento => {
@@ -792,11 +734,6 @@
             // Establece el valor de todos los elementos select en '0'
             selectores.forEach(select => {
                 select.value = '0';
-            });
-
-            // Desmarca todos los checkboxes
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
             });
         }
     </script>
