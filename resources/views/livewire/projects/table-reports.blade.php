@@ -183,7 +183,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalShow) block  @else hidden @endif">
         <div class="flex justify-center h-full items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-full items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col w-full md:w-3/4  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col  md:w-3/4  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
                     @if (!empty($reportShow->content))
                         @if ($reportShow->image == true)
                         <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
@@ -296,7 +296,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalEdit) block  @else hidden @endif">
         <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full  fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col w-full md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Editar reporte</h2>
                     <svg wire:click="modalEdit" wire:loading.remove wire:target="modalEdit" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

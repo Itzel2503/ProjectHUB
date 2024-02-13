@@ -1,7 +1,7 @@
 <div>
     <div class="mt-8">
         <div class="md:grid md:grid-cols-1 md:m-auto w-full mx-auto justify-items-center">
-            <div class="mt-5 md:col-span-1 bg-main-fund items-center md:w-2/4">
+            <div class="mt-5 md:col-span-1 bg-main-fund items-center w-1/4">
                 <div class="shadow rounded-md sm:overflow-hidden">
                     <div class="px-4 py-5 space-y-6 sm:p-6 w-full">
                         <div class="flex col-span-6 sm:col-span-3 mt-4 justify-center justify-items-center">
