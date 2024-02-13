@@ -96,48 +96,36 @@
 </head>
 
 <body>
-    <div id="mainMenu" class="flex flex-col sm:flex-row items-center justify-center p-5 bg-main-fund">
-        <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}" class="mx-5 w-auto h-14 flex justify-center items-center text-xl">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-back-up w-14 h-14 text-main hover:text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M9 14l-4 -4l4 -4" />
-                <path d="M5 10h11a4 4 0 1 1 0 8h-1" />
-            </svg>    
+    <div id="mainMenu" class="flex flex-row items-center justify-center rounded-md p-5 bg-main-fund">
+        <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}" class="mx-5 w-auto h-12 flex justify-center items-center text-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mr-2 text-main hover:text-secondary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>     
             Regresar            
         </a>
-        <button id="screenshotButton" class="mx-5 w-14 h-14 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-camera w-14 h-14 text-main hover:text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
-                <path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-            </svg>             
+        <button id="screenshotButton" class="mx-5 w-12 h-12 flex justify-center items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+            </svg>              
         </button>
-        <button id="startButton" class="mx-5 w-14 h-14 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-video w-14 h-14 text-main hover:text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" />
-                <path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
-            </svg>        
+        <button id="startButton" class="mx-5 w-12 h-12 flex justify-center items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+            </svg>              
         </button>
-        <button id="textButton" class="mx-5 w-14 h-14 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-text w-14 h-14 text-main hover:text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                <path d="M9 9l1 0" />
-                <path d="M9 13l6 0" />
-                <path d="M9 17l6 0" />
-            </svg>                    
+        <button id="textButton" class="mx-5 w-12 h-12 flex justify-center items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            </svg>                       
         </button>
     </div>
     
     <div id="shotMenu" class="flex flex-row items-center justify-center rounded-md p-5 bg-main-fund" style="display: none;">
         <button id="returnButton" class="mx-5 w-12 h-12 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-back-up w-12 h-12 text-main hover:text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M9 14l-4 -4l4 -4" />
-                <path d="M5 10h11a4 4 0 1 1 0 8h-1" />
-            </svg>               
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>              
         </button>
         <button id="refreshCanva" class="ml-5 w-10 h-10 flex justify-center items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-repeat w-12 h-12 text-main hover:text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -146,16 +134,12 @@
                 <path d="M20 12v3a3 3 0 0 1 -3 3h-13m3 3l-3 -3l3 -3" />
             </svg>             
         </button>
-
         <input min="1" max="20" value="10" type="range" id="lineWidthSlider" class="mt-5 mx-5">
         
         <button id="downloadShot" class="mx-5 w-12 h-12 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download w-12 h-12 text-main hover:text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                <path d="M7 11l5 5l5 -5" />
-                <path d="M12 4l0 12" />
-            </svg>             
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>              
         </button>
     </div>
 
@@ -175,15 +159,13 @@
 
     <div id="textMenu" class="flex flex-row items-center justify-center rounded-md p-5 bg-main-fund" style="display: none;">
         <button id="returnButtonText" class="mx-5 w-12 h-12 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-back-up w-14 h-14 text-main hover:text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M9 14l-4 -4l4 -4" />
-                <path d="M5 10h11a4 4 0 1 1 0 8h-1" />
-            </svg>    
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg> 
         </button>
     </div>
 
-    <div id="rightBar" class="fixed pb-20 top-20 md:top-0 right-0 h-full w-full md:w-1/3 z-5 overflow-y-auto bg-main-fund" style="display: none;">
+    <div id="rightBar" class="fixed pb-20 top-0 right-0 h-full w-1/3 z-5 overflow-y-auto scrollEdit bg-main-fund" style="display: none;">
         <div class="px-4 pb-4 pt-10  h-full w-full">
             <div id="viewPhoto" style="display: none;">
                 <h2 class="inline-flex font-semibold">
@@ -244,31 +226,6 @@
 
                 <div class="-mx-3 md:flex mb-6">
                     <div class="w-full flex flex-col px-3 mb-6 md:mb-0">
-                        <h5 class="inline-flex font-semibold" for="name">
-                            Prioridad
-                        </h5>
-                        <div class="flex justify-center gap-16">
-                            <div class="flex flex-col items-center">
-                                <input type="checkbox" name="priority1" id="priority1" class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(221 66 49); accent-color: #dd4231;" />
-                                <label for="priority1" class="mt-2">Alto</label>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <input type="checkbox" name="priority2" id="priority2" class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(246 192 62); accent-color: #f6c03e;" />
-                                <label for="priority2" class="mt-2">Medio</label>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <input type="checkbox" name="priority3" id="priority3" class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(0 98 204); accent-color: #0062cc;" />
-                                <label for="priority3" class="mt-2">Bajo</label>
-                            </div>                            
-                        </div>
-                        
-                        @if ($errors->has('priority'))
-                            <span class="text-red text-xs italic pl-2">
-                                    {{ $errors->first('priority') }}
-                            </span>
-                        @endif
-                    </div>
-                    <div class="w-full flex flex-col px-3">
                         <h5 class="inline-flex font-semibold" for="name">
                             Delegar
                         </h5>
