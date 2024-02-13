@@ -126,7 +126,12 @@
                                         Tiempo de desarrollo {{ $report->timeDifference }}
                                     @endif
                                 @else
-                                    Creado {{ $report->created_at->diffForHumans(null, false, false, 2) }}
+                                    @if ($report->look == true)
+                                        Visto {{ $report->progress->diffForHumans(null, false, false, 2) }}
+                                    @else
+                                        Creado {{ $report->created_at->diffForHumans(null, false, false, 2) }}
+                                    @endif
+                                    
                                 @endif
                             @endif
                         </td>

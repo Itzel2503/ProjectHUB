@@ -33,6 +33,7 @@ class CreateReportsTable extends Migration
             $table->string('title');
             $table->text('content')->nullable();
             $table->string('value');
+            $table->boolean('look')->default(false);
 
             $table->boolean('image');
             $table->boolean('video');

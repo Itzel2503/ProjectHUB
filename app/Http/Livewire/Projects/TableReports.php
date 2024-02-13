@@ -160,6 +160,7 @@ class TableReports extends Component
             if ($state == 'Proceso' || $state == 'Conflicto') {
                 if ($report->progress == null) {
                     $report->progress = Carbon::now();
+                    $report->look = false;
                 }
             }
 
@@ -260,8 +261,8 @@ class TableReports extends Component
         $user = Auth::user();
 
         if ($this->reportShow && $this->reportShow->delegate_id == $user->id && $this->reportShow->state == 'Abierto') {
-            $this->reportShow->state = 'Proceso';
             $this->reportShow->progress = Carbon::now();
+            $this->reportShow->look = true;
             $this->reportShow->save();
 
             // Emitir un evento de navegador
