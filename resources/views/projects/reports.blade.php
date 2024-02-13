@@ -9,6 +9,13 @@ text-yellow
 @endsection
 
 @section('content')
+<style>
+    @media (max-width: 1378px) {
+        .divSelect {
+            flex-direction: column;
+        }
+    }
+</style>
 <div class="mt-8">
     <div class=" w-full mx-auto">
         <div class="mt-5 md:mt-0 md:col-span-1">

@@ -2,9 +2,9 @@
     {{--Tabla usuarios--}}
     <div class="shadow-xl sm:rounded-lg px-4 py-4">
         {{-- NAVEGADOR --}}
-        <div class="flex justify-between text-sm lg:text-xs lg:text-base">
+        <div class="flex justify-between text-sm lg:text-base">
             <!-- SEARCH -->
-            <div class="inline-flex w-3/4 h-12 bg-transparent mb-2">
+            <div class="inline-flex sm:w-3/4 h-12 mb-2 bg-transparent">
                 <div class="flex w-full h-full relative">
                     <div class="flex">
                         <span class="flex items-center leading-normal bg-transparent rounded-lg  border-0  border-none lg:px-3 p-2 whitespace-no-wrap">
@@ -18,7 +18,7 @@
                 </div>
             </div>
             <!-- COUNT -->
-            <div class="inline-flex w-1/4 h-12 mx-3 bg-transparent mb-2">
+            <div class="inline-flex w-1/3 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
                 <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
                     <option value="10"> 10 por página</option>
                     <option value="25"> 25 por página</option>
@@ -28,7 +28,7 @@
             </div>
             <!-- BTN NEW -->
             <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
-                <button wire:click="modalCreateEdit()" class="p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
+                <button wire:click="modalCreateEdit()" class="p-auto text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
                     Nuevo Cliente
                 </button>
             </div>
@@ -39,16 +39,16 @@
         <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs mt-4">
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 bg-secondary-fund">
-                    <tr class="font-semibold tracking-wide text-left text-white text-base">
+                    <tr class="font-semibold tracking-wide text-center text-white text-base">
                         <th class="px-4 py-3">Nombre</th>
                         <th class="px-4 py-3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($customers as $customer)
-                    <tr class="border-white text-sm">
+                    <tr class="border-white text-sm text-center">
                         <td class="px-4 py-2">{{ $customer->name }}</td>
-                        <td class="px-4 py-2 flex justify-start">
+                        <td class="px-4 py-2 flex justify-center">
                             @if($customer->deleted_at != null)
                             <button wire:click="showRestore({{$customer->id}})" class="bg-secondary-fund text-white font-bold py-1 px-2 mt-1 sm:mt-0 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-reload" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -94,7 +94,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalCreateEdit) block  @else hidden @endif">
         <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full h-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full h-full fixed">
-            <div class="flex flex-col w-2/4 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col w-full md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     @if($showUpdate)
                     <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Editar cliente</h2>
@@ -110,7 +110,7 @@
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
                     <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
                         <div class="-mx-3 md:flex">
-                            <div class="md:w-1/2 flex flex-col px-3">
+                            <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Nombre<p class="text-red">*</p>
                                 </h5>
@@ -143,7 +143,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalDelete) block  @else hidden @endif">
         <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col w-2/6 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col w-full md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <svg wire:click="modalDelete" wire:loading.remove wire:target="modalDelete" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -153,8 +153,8 @@
                 </div>
                 @if($showDelete)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
-                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                        <div class="text-lg md:flex mb-6 text-center">
+                    <div class="w-full md-3/4 flex flex-col">
+                        <div class="text-lg md:flex text-center">
                             <h2 class="text-red font-semibold">¿Esta seguro de eliminar a {{$customerDelete->name}}?</h2>
                         </div>
                     </div>
@@ -172,7 +172,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalRestore) block  @else hidden @endif">
         <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col w-2/6 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col w-full md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <svg wire:click="modalRestore" wire:loading.remove wire:target="modalRestore" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -182,8 +182,8 @@
                 </div>
                 @if($showRestore)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
-                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                        <div class="text-lg md:flex mb-6 text-center">
+                    <div class="w-full md-3/4 flex flex-col">
+                        <div class="text-lg md:flex text-center">
                             <h2 class="font-semibold">¿Quieres restaurar a {{$customerRestore->name}}?</h2>
                         </div>
                     </div>

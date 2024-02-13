@@ -86,7 +86,7 @@
     </style>
 
 <body>
-    <div id="mainMenu" class="flex flex-row items-center justify-center rounded-md p-5 bg-main-fund">
+    <div id="mainMenu" class="flex flex-col sm:flex-row items-center justify-center p-5 bg-main-fund">
         <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}" class="mx-5 w-auto h-12 flex justify-center items-center text-xl">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mr-2 text-main hover:text-secondary">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
@@ -154,7 +154,7 @@
         </button>
     </div>
 
-    <div id="rightBar" class="fixed pb-20 top-0 right-0 h-full w-1/3 z-5 overflow-y-auto scrollEdit bg-main-fund" style="display: none;">
+    <div id="rightBar" class="fixed pb-20 top-20 md:top-0 right-0 h-full w-full md:w-1/3 z-5 overflow-y-auto scrollEdit bg-main-fund" style="display: none;">
         <div class="px-4 pb-4 pt-10  h-full w-full">
             <div id="viewPhoto" style="display: none;">
                 <h2 class="inline-flex font-semibold">
@@ -180,7 +180,7 @@
                 <input hidden type="text" id="inputVideo" name="video">
 
                 <div id="viewText" class="-mx-3 md:flex mb-6" style="display: none;">
-                    <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                    <div class="w-full flex flex-col px-3 mb-6 md:mb-0">
                         <h5 class="inline-flex font-semibold" for="name">
                             Selecciona un archivo
                         </h5>
@@ -189,7 +189,7 @@
                 </div>
 
                 <div class="-mx-3 md:flex mb-6 bg-main-fund">
-                    <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                    <div class="w-full flex flex-col px-3 mb-6 md:mb-0">
                         <h5 class="inline-flex font-semibold" for="name">
                             Título del reporte
                         </h5>
@@ -200,7 +200,7 @@
                             </span>
                         @endif
                     </div>
-                    <div class="md:w-1/2 flex flex-col px-3">
+                    <div class="w-full flex flex-col px-3">
                         <h5 class="inline-flex font-semibold" for="name">
                             Descripción del reporte
                         </h5>
@@ -214,7 +214,7 @@
                 </div>
 
                 <div class="-mx-3 md:flex mb-6">
-                    <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                    <div class="w-full flex flex-col px-3 mb-6 md:mb-0">
                         <h5 class="inline-flex font-semibold" for="name">
                             Prioridad
                         </h5>
@@ -239,7 +239,7 @@
                             </span>
                         @endif
                     </div>
-                    <div class="md:w-1/2 flex flex-col px-3">
+                    <div class="w-full flex flex-col px-3">
                         <h5 class="inline-flex font-semibold" for="name">
                             Delegar
                         </h5>

@@ -4,7 +4,7 @@
         {{-- NAVEGADOR --}}
         <div class="flex justify-between text-sm lg:text-base">
             <!-- SEARCH -->
-            <div class="inline-flex w-3/4 h-12 bg-transparent mb-2">
+            <div class="inline-flex sm:w-3/4 h-12 mb-2 bg-transparent">
                 <div class="flex w-full h-full relative">
                     <div class="flex">
                         <span class="flex items-center leading-normal bg-transparent rounded-lg  border-0  border-none lg:px-3 p-2 whitespace-no-wrap">
@@ -18,7 +18,7 @@
                 </div>
             </div>
             <!-- COUNT -->
-            <div class="inline-flex w-1/4 h-12 mx-3 bg-transparent mb-2">
+            <div class="inline-flex w-1/3 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
                 <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
                     <option value="10"> 10 por página</option>
                     <option value="25"> 25 por página</option>
@@ -28,7 +28,7 @@
             </div>
             <!-- BTN NEW -->
             <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
-                <button wire:click="create({{ $project->id }})" class="p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
+                <button wire:click="create({{ $project->id }})" class="p-auto text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
                     Nuevo reporte
                 </button>
             </div>
@@ -39,13 +39,13 @@
         <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs mt-4">
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 bg-secondary-fund">
-                    <tr class="font-semibold tracking-wide text-left text-white text-base">
+                    <tr class="font-semibold tracking-wide text-center text-white text-base">
                         <th class=" px-4 py-3">Reporte</th>
-                        <th class=" px-4 py-3">Título</th>
+                        <th class=" px-4 py-3 w-1/5">Título</th>
                         <th class=" px-4 py-3">Creado</th>
-                        <th class=" px-4 py-3">Delegado a</th>
+                        <th class=" px-4 py-3 w-1/5">Delegado a</th>
                         <th class=" px-4 py-3">Duración</th>
-                        <th class=" px-4 py-3">
+                        <th class="px-4 py-3 w-1/6">
                             Acciones / Estado
                             <select wire:model="selectedState" class="mx-2 leading-snug border border-gray-400 appearance-none bg-white text-gray-700 rounded">
                                 <option value="">Todos</option>
@@ -131,8 +131,8 @@
                             @endif
                         </td>
                         @if ($report->user->id == Auth::id() || $report->delegate->id == Auth::id() || Auth::user()->type_user == 1)
-                            <td class="px-4 py-2 flex flex-col justify-start items-start">
-                                <div class="flex justify-center items-center">
+                            <td class="px-4 py-2 flex flex-col justify-center items-center lg:flex-row lg:flex-wrap">
+                                <div class="flex justify-center items-center flex-wrap">
                                     <button wire:click="showEdit({{$report->id}})" class="@if($report->state == 'Resuelto') hidden @endif bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -151,15 +151,17 @@
                                             <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                                         </svg>
                                     </button>
-                                    <select wire:change='updateState({{ $report->id }}, $event.target.value)' name="state" id="state" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                        <option selected value={{ $report->state }}>{{ $report->state }}</option>
-                                        @foreach ($report->filteredActions as $action)
-                                            <option value="{{ $action }}">{{ $action }}</option>
-                                        @endforeach
-                                    </select>
-                                    <button wire:click="reportRepeat({{ $project->id }}, {{$report->id}})" class="@if($report->repeat != false && $report->state == 'Resuelto')  @else hidden @endif m-2 p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full">
-                                        Reincidencia
-                                    </button>
+                                    <div class="@if($report->repeat != false && $report->state == 'Resuelto') divSelect @else @endif flex flex-col lg:flex-row mt-3 lg:mt-0 lg:justify-between">
+                                        <select wire:change='updateState({{ $report->id }}, $event.target.value)' name="state" id="state" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                            <option selected value={{ $report->state }}>{{ $report->state }}</option>
+                                            @foreach ($report->filteredActions as $action)
+                                                <option value="{{ $action }}">{{ $action }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button wire:click="reportRepeat({{ $project->id }}, {{$report->id}})" class="@if($report->repeat != false && $report->state == 'Resuelto')  @else hidden @endif m-2 p-2 text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full">
+                                            Reincidencia
+                                        </button>
+                                    </div>
                                 </div>
                             </td>
                         @else
@@ -181,7 +183,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalShow) block  @else hidden @endif">
         <div class="flex justify-center h-full items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-full items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col w-2/6 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col w-full md:w-3/4  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
                     @if (!empty($reportShow->content))
                         @if ($reportShow->image == true)
                         <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
@@ -247,7 +249,7 @@
 
                     
                 @if($showReport)
-                <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
+                <div class="flex flex-col px-6 py-2 bg-main-fund overflow-y-auto text-sm">
                     <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
                         <div class="text-2xl md:flex text-justify">
                             {!! nl2br(e($reportShow->comment)) !!}
@@ -292,9 +294,9 @@
     {{-- END MODAL SHOW --}}
     {{-- MODAL EDIT --}}
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalEdit) block  @else hidden @endif">
-        <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full h-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
-        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full h-full fixed">
-            <div class="flex flex-col w-2/4 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+        <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full  fixed bg-no-repeat bg-cover bg-gray-500"></div>
+        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
+            <div class="flex flex-col w-full md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Editar reporte</h2>
                     <svg wire:click="modalEdit" wire:loading.remove wire:target="modalEdit" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -303,15 +305,15 @@
                         <path d="M6 6l12 12"></path>
                     </svg>
                 </div>
-                <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
+                <div class="flex flex-col px-6 py-2 bg-main-fund overflow-y-auto text-sm">
                     <div class="-mx-3 md:flex mb-6">
-                        <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
+                        <div class="w-full flex flex-col px-3 mb-6 mb-0">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Seleccionar archivo
                             </h5>
                             <input wire:model='file' type="file" name="file" id="file" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                         </div>
-                        <div class="md:w-1/2 flex flex-col px-3 ">
+                        <div class="w-full flex flex-col px-3 ">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Descripción del reporte
                             </h5>
@@ -333,7 +335,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalDelete) block  @else hidden @endif">
         <div class="flex justify-center h-full items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-full items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col w-2/6 sm:w-5/6 lg:w-3/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col w-full md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <svg wire:click="modalDelete" wire:loading.remove wire:target="modalDelete" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -343,8 +345,8 @@
                 </div>
                 @if($showDelete)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
-                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                        <div class="text-lg md:flex mb-6 text-center">
+                    <div class="w-full md-3/4 flex flex-col">
+                        <div class="text-lg md:flex text-center">
                             <h2 class="text-red font-semibold">¿Esta seguro de eliminar el reporte {{$reportDelete->title}}?</h2>
                             <p class="mt-3">{{$reportDelete->comment}}</p>
                         </div>

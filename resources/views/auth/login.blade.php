@@ -7,7 +7,7 @@
 </style>
 <div class="bg-no-repeat bg-cover py-0 m-auto h-screen w-full absolute opacity-80 ">
 </div>
-<div class="relative min-h-screen flex flex-col sm:justify-center items-center">
+<div class="relative min-h-screen flex flex-col justify-center items-center">
     <div class="relative sm:max-w-sm w-full">
         <div class="relative w-full rounded-lg px-6 py-4 bg-main-fund shadow-md">
             <!-- <img src="{{ asset('img/SAGACE_logo_v4_white-02.png')}}" alt="" class="mx-auto w-1/2 my-5"> -->
@@ -52,7 +52,7 @@
                     </p>
                     @enderror
                 </div>
-                <div class="mt-14 mb-16">
+                <div class="my-14">
                     <button type="submit" class="bg-main w-full py-3 rounded-xl text-white font-bold shadow-xl hover:shadow-scale-110 hover:bg-secondary transition">
                         Ingresar
                     </button>
@@ -64,13 +64,13 @@
                         </a>
                     </div>
                 </div> --}}
-                <div class="m-7 flex">
+                {{-- <div class="m-7 flex">
                     <div class="w-full text-center font-bold">
                         <a class="underline text-sm hover:text-secondary" href="{{ route('password.request') }}">
                             ¿Olvidó su contraseña?
                         </a>
                     </div>
-                </div>
+                </div> --}}
             </form>
         </div>
     </div>
