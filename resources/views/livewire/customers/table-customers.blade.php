@@ -14,7 +14,7 @@
                             </svg>
                         </span>
                     </div>
-                    <input wire:model="search" type="text" placeholder="Buscar" class="flex w-full border-0 border-yellow border-b-2 rounded rounded-l-none relative focus:outline-none text-xxs lg:text-xs lg:text-base text-gray-500 font-thin">
+                    <input wire:model="search" type="text" placeholder="Buscar" class="flex w-full border-0 border-yellow border-b-2 rounded rounded-l-none relative focus:outline-none text-xxs lg:text-base text-gray-500 font-thin">
                 </div>
             </div>
             <!-- COUNT -->
@@ -92,8 +92,8 @@
     {{-- END TABLE --}}
     {{-- MODAL EDIT / CREATE --}}
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalCreateEdit) block  @else hidden @endif">
-        <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full h-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
-        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full h-full fixed">
+        <div class="flex justify-center items-center top-0 opacity-80 left-0 z-30 w-full h-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
+        <div class="flex text:md justify-center items-center top-0 left-0 z-40 w-full h-full fixed">
             <div class="flex flex-col w-full md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     @if($showUpdate)
@@ -130,9 +130,9 @@
                 </div>
                 <div class="flex justify-center items-center py-6 bg-main-fund">
                     @if($showUpdate)
-                    <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="update({{$customerEdit->id}})" wire:loading.remove wire:target="update({{$customerEdit->id}})"> Guardar </button>
+                    <button class="px-4 py-2 font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="update({{$customerEdit->id}})" wire:loading.remove wire:target="update({{$customerEdit->id}})"> Guardar </button>
                     @else
-                    <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="create" wire:loading.remove wire:target="create"> Guardar </button>
+                    <button class="px-4 py-2 font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="create" wire:loading.remove wire:target="create"> Guardar </button>
                     @endif
                 </div>
             </div>

@@ -98,7 +98,6 @@ class Report extends Controller
                         $report->value = 'Bajo';
                     }
                     
-                    $report->value = $request->title;
                     $report->content = $request->video;
                     $report->image = false;
                     $report->video = true;
@@ -389,7 +388,7 @@ class Report extends Controller
                     }
                     $reportNew->state = "Abierto";
                     $reportNew->comment = $request->comment;
-                    dd($report->count == null);
+                    
                     if ($report->count == null) {
                         $reportNew->count = 1;
                     } else {

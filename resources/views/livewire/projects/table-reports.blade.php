@@ -324,7 +324,7 @@
                 </div>
                 <div class="flex justify-center items-center py-6 bg-main-fund">
                     @if($modalEdit)
-                        <button class="px-4 py-2 text-white font-semibold text-white bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="update({{ $reportEdit->id }}, {{ $project->id }})"> Guardar </button>
+                        <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="update({{ $reportEdit->id }}, {{ $project->id }})"> Guardar </button>
                     @endif
                 </div>
             </div>
