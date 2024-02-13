@@ -201,11 +201,10 @@ class TableReports extends Component
             if ($this->file) {
                 $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
                 $fileName = $this->file->getClientOriginalName();
-
                 $fullNewFilePath = $filePath . '/' . $fileName;
 
                 // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-                if ($report->content && Storage::disk('reports')->exists($report->content)) {
+                if ($report->content || Storage::disk('reports')->exists($report->content)) {
                     $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
 
                     if ($existingFilePath == $filePath) {
@@ -235,7 +234,6 @@ class TableReports extends Component
             
             $report->comment = $this->comment;
             $report->save();
-
             
             $this->modalEdit = false;
 
