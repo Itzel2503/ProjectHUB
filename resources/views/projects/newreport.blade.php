@@ -227,6 +227,31 @@
                 <div class="-mx-3 md:flex mb-6">
                     <div class="w-full flex flex-col px-3 mb-6 md:mb-0">
                         <h5 class="inline-flex font-semibold" for="name">
+                            Prioridad
+                        </h5>
+                        <div class="flex justify-center gap-20">
+                            <div class="flex flex-col items-center">
+                                <input type="checkbox" name="priority1" id="priority1" class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(221 66 49); accent-color: #dd4231;" />
+                                <label for="priority1" class="mt-2">Alto</label>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <input type="checkbox" name="priority2" id="priority2" class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(246 192 62); accent-color: #f6c03e;" />
+                                <label for="priority2" class="mt-2">Medio</label>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <input type="checkbox" name="priority3" id="priority3" class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(0 98 204); accent-color: #0062cc;" />
+                                <label for="priority3" class="mt-2">Bajo</label>
+                            </div>                            
+                        </div>
+                        
+                        @if ($errors->has('priority'))
+                            <span class="text-red text-xs italic pl-2">
+                                    {{ $errors->first('priority') }}
+                            </span>
+                        @endif
+                    </div>
+                    <div class="w-full flex flex-col px-3">
+                        <h5 class="inline-flex font-semibold" for="name">
                             Delegar
                         </h5>
                         <select required name="delegate" id="delegate" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">

@@ -205,7 +205,7 @@ class TableReports extends Component
                 $fullNewFilePath = $filePath . '/' . $fileName;
 
                 // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-                if ($report->content || Storage::disk('reports')->exists($report->content)) {
+                if ($report->content && Storage::disk('reports')->exists($report->content)) {
                     $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
 
                     if ($existingFilePath == $filePath) {
