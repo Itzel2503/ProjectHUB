@@ -212,22 +212,26 @@ class TableReports extends Component
                         Storage::disk('reports')->delete($report->content);
                     }
                 }
+
                 // Guardar el archivo en el disco 'reports'
                 $this->file->storeAs($filePath, $fileName, 'reports');
 
                 $extension = $this->file->extension();
                 $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];
+                $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
 
                 if (in_array($extension, $extensionesImagen)) {
                     $report->image = true;
                     $report->video = false;
+                    $report->file = false;
                 } elseif (in_array($extension, $extensionesVideo)) {
                     $report->image = false;
                     $report->video = true;
+                    $report->file = false;
                 } else {
                     $report->image = false;
                     $report->video = false;
+                    $report->file = true;
                 }
 
                 $report->content = $fullNewFilePath;
