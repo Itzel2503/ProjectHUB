@@ -25,4 +25,9 @@ class Report extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    public function evidence()
+    {
+        return $this->hasOne(Evidence::class);
+    }
 }

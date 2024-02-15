@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Projects;
 
+use App\Models\Evidence;
 use App\Models\Project;
 use App\Models\Report;
 use App\Models\User;
@@ -21,18 +22,18 @@ class TableReports extends Component
 
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
-    public $modalShow = false, $modalEdit = false, $modalDelete = false;
-    public $showReport = false, $showEdit = false, $showDelete = false;
+    public $modalShow = false, $modalEdit = false, $modalDelete = false, $modalEvidence = false;
+    public $showReport = false, $showEdit = false, $showDelete = false, $showEvidence = false;
 
     // table, action's reports
     public $leader = false;
-    public $search, $project, $reportShow, $reportEdit, $reportDelete;
+    public $search, $project, $reportShow, $reportEdit, $reportDelete, $reportEvidence, $evidenceShow;
     public $perPage = '10';
     public $selectedState = '';
     public $rules = [], $usersFiltered = [];
 
     // inputs
-    public $name, $type, $priority, $customer, $file, $comment;
+    public $name, $type, $priority, $customer, $file, $comment, $evidence;
 
     public function render()
     {
@@ -150,32 +151,38 @@ class TableReports extends Component
         $this->redirectRoute('projects.reports.create', ['project' => $project_id]);
     }
 
-    public function updateState($id, $state)
+    public function updateState($id, $project_id, $state)
     {
         $report = Report::find($id);
 
         if ($report) {
-            $report->state = $state;
-
             if ($state == 'Proceso' || $state == 'Conflicto') {
-                if ($report->look = true) {
+                if ($report->progress == null && $report->look == false && $report->state == 'Abierto') {
+                    $report->progress = Carbon::now();
+                    $report->look = true;
+                }
+                if ($report->progress != null && $report->look == true && $report->state == 'Abierto') {
                     $report->progress = Carbon::now();
                     $report->look = false;
                 }
+                
+                $report->state = $state;
+                $report->save();
+
+                // Emitir un evento de navegador
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Estado actualizado',
+                ]);
             }
 
             if ($state == 'Resuelto') {
-                $report->resolved_id = Auth::id();
-                $report->repeat = true;
+                $this->modalEvidence = true;
+                
+                $project = Project::find($project_id);
+                $report->project_id = $project->id;
+                $this->reportEvidence = $report;
             }
-
-            $report->save();
-
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Estado actualizado',
-            ]);
         }
     }
 
@@ -190,6 +197,64 @@ class TableReports extends Component
                 'type' => 'success',
                 'title' => 'Delegado actualizado',
             ]);
+        }
+    }
+
+    public function updateEvidence($id, $project_id)
+    {
+        $report = Report::find($id);
+        $project = Project::find($project_id);
+
+        if ($report) {
+            if ($this->evidence) {
+                $now = Carbon::now();
+                $dateString = $now->format("Y-m-d H_i_s");
+                
+                $fileExtension = $this->evidence->extension();
+                $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
+                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                $fullNewFilePath = $filePath . '/' . $fileName;
+                $this->evidence->storeAs($filePath, $fileName, 'evidence');
+
+                $evidence = new Evidence;
+
+                $evidence->report_id = $report->id;
+                $evidence->content = $fullNewFilePath;
+
+                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+                if (in_array($fileExtension, $extensionesImagen)) {
+                    $evidence->image = true;
+                    $evidence->video = false;
+                    $evidence->file = false;
+                } elseif (in_array($fileExtension, $extensionesVideo)) {
+                    $evidence->image = false;
+                    $evidence->video = true;
+                    $evidence->file = false;
+                } else {
+                    $evidence->image = false;
+                    $evidence->video = false;
+                    $evidence->file = true;
+                }
+
+                $evidence->save();
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Evidencia actualizada',
+                ]);
+
+                $report->state = 'Resuelto';
+                $report->repeat = true;
+                $report->save();
+
+                $this->modalEvidence = false;
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Selecciona un archivo',
+                ]);
+            }
         }
     }
 
@@ -249,7 +314,6 @@ class TableReports extends Component
         }
         
     }
-
     // INFO MODAL
     public function showReport($id)
     {
@@ -262,18 +326,18 @@ class TableReports extends Component
         }
 
         $this->reportShow = Report::find($id);
+        $this->evidenceShow = Evidence::where('report_id', $this->reportShow->id)->first();
+        
+        if ($this->evidenceShow) {
+            $this->showEvidence = true;
+        } 
+
         $user = Auth::user();
 
         if ($this->reportShow && $this->reportShow->delegate_id == $user->id && $this->reportShow->state == 'Abierto' && $this->reportShow->progress == null) {
             $this->reportShow->progress = Carbon::now();
             $this->reportShow->look = true;
             $this->reportShow->save();
-
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Estado actualizado',
-            ]);
         }
     }
 
@@ -291,7 +355,6 @@ class TableReports extends Component
         $this->comment = $this->reportEdit->comment;
     }
 
-    // INFO MODAL
     public function showDelete($id, $project_id)
     {
         $this->showDelete = true;
@@ -336,13 +399,22 @@ class TableReports extends Component
             $this->modalDelete = true;
         }
     }
+
+    public function modalEvidence()
+    {
+        if ($this->modalEvidence == true) {
+            $this->modalEvidence = false;
+        } else {
+            $this->modalEvidence = true;
+        }
+    }
     // EXTRAS
     public function reportRepeat($project_id, $report_id)
     {
         return redirect()->route('projects.reports.show', ['project' => $project_id, 'report' => $report_id]);
     }
 
-    protected function getFilteredActions($currentState)
+    public function getFilteredActions($currentState)
     {
         $actions = ['Abierto', 'Proceso', 'Resuelto', 'Conflicto'];
 

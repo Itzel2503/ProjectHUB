@@ -29,7 +29,6 @@ class CreateReportsTable extends Migration
 
             $table->string('title');
             $table->text('content')->nullable();
-            $table->text('evidence')->nullable();
             $table->string('value');
             $table->string('state');
             $table->longText('comment');

@@ -140,7 +140,7 @@ class Report extends Controller
     
                 if (isset($request->file)) {
                     $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
+                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];   
                     
                     $file = $request->file('file');
                     $fileExtension = $file->extension();
@@ -350,7 +350,7 @@ class Report extends Controller
     
                 if (isset($request->file)) {
                     $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
+                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
                     
                     $file = $request->file('file');
                     $fileExtension = $file->extension();
@@ -413,7 +413,7 @@ class Report extends Controller
                     if ($startsWithYear) {
                         // $report->content comienza con el año actual
                         $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                        $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
+                        $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];   
     
                         $sourcePath = public_path('reportes/'.$report->content); // Ruta del archivo existente
                         $pathInfo = pathinfo($sourcePath); // Obtener información sobre la ruta del archivo
