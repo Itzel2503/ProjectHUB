@@ -57,5 +57,9 @@ class DatabaseSeeder extends Seeder
             'date_birthday' => Carbon::now(),
             'area_id' => '1',
         ]);
+
+        $this->call(UsersTableSeeder::class,);
+        $this->call(CustomerTableSeeder::class,);
+        $this->call(ProjectTableSeeder::class,);
     }
 }

@@ -158,7 +158,7 @@ class TableReports extends Component
             $report->state = $state;
 
             if ($state == 'Proceso' || $state == 'Conflicto') {
-                if ($report->progress == null) {
+                if ($report->look = true) {
                     $report->progress = Carbon::now();
                     $report->look = false;
                 }
@@ -264,7 +264,7 @@ class TableReports extends Component
         $this->reportShow = Report::find($id);
         $user = Auth::user();
 
-        if ($this->reportShow && $this->reportShow->delegate_id == $user->id && $this->reportShow->state == 'Abierto') {
+        if ($this->reportShow && $this->reportShow->delegate_id == $user->id && $this->reportShow->state == 'Abierto' && $this->reportShow->progress == null) {
             $this->reportShow->progress = Carbon::now();
             $this->reportShow->look = true;
             $this->reportShow->save();
@@ -345,6 +345,10 @@ class TableReports extends Component
     protected function getFilteredActions($currentState)
     {
         $actions = ['Abierto', 'Proceso', 'Resuelto', 'Conflicto'];
+
+        if ($currentState == 'Abierto') {
+            return ['Proceso', 'Conflicto'];
+        }
 
         if ($currentState == 'Conflicto') {
             return ['Resuelto'];

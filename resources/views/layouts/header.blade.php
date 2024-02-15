@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'ARTEN/KIRCOF') }}</title>
+    <title>ARTEN/KIRCOF</title>
 
     @livewireStyles
     <!-- Scripts -->
@@ -206,7 +206,7 @@
         <!-- Mobile sidebar -->
         <!-- Backdrop -->
         <div x-data="{ open: false }" class="md:hidden block bg-secondary-fund">
-            <div class="p-4 flex justify-end">
+            <div class="p-4 flex justify-between">
                 @if(Route::currentRouteName() == 'projects.reports.index')
                     <a class="text-white inline-flex items-center w-full text-base font-semibold transition-colors duration-150 hover:text-yellow"  href="{{ route('projects.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-back-up" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
