@@ -327,7 +327,7 @@ class TableReports extends Component
 
         $this->reportShow = Report::find($id);
         $this->evidenceShow = Evidence::where('report_id', $this->reportShow->id)->first();
-        
+
         if ($this->evidenceShow) {
             $this->showEvidence = true;
         } 

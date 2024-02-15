@@ -51,7 +51,7 @@ return [
 
         'evidence' => [
             'driver' => 'local',
-            'root' => 'evidencia',
+            'root' => 'evidence',
             'url' => '',
             'visibility' => 'public',
         ],
