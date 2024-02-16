@@ -59,8 +59,17 @@
                 </thead>
                 <tbody>
                     @foreach($reports as $report)
-                    <tr class="border-white text-sm text-center" style="@if($report->state == 'Resuelto') background: #a3cfd1  @endif">
-                        <td class="px-4 py-2">
+                    <tr class="border-white text-sm text-center">
+                        <td class="px-4 py-2 @if($report->state == 'Resuelto') flex flex-row @endif">
+                            @if($report->state == 'Resuelto') 
+                            <div class="flex justify-center items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-checkbox text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M9 11l3 3l8 -8" />
+                                    <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
+                                </svg>
+                            </div>
+                            @endif
                             <div wire:click="showReport({{$report->id}})" class="flex flex-col items-center text-center cursor-pointer">
                                 @if (!empty($report->content))
                                     @if ($report->image == true)
