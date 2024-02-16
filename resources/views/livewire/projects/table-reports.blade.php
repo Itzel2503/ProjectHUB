@@ -423,7 +423,7 @@
                             <h5 class="inline-flex font-semibold mb-3" for="name">
                                 Para completar tu reporte, por favor, sube el archivo de evidencia.
                             </h5>
-                            <input wire:model='file' type="file" name="file" id="file" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                            <input wire:model='evidence' type="file" name="evidence" id="evidence" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                         </div>
                     </div>
                 </div>

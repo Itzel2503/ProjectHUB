@@ -206,11 +206,11 @@ class TableReports extends Component
         $project = Project::find($project_id);
 
         if ($report) {
-            if ($this->file) {
+            if ($this->evidence) {
                 $now = Carbon::now();
                 $dateString = $now->format("Y-m-d H_i_s");
                 
-                $fileExtension = $this->file->extension();
+                $fileExtension = $this->evidence->extension();
                 $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
                 $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
                 $fullNewFilePath = $filePath . '/' . $fileName;
@@ -221,7 +221,7 @@ class TableReports extends Component
                 }
 
                 // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
-                $this->file->storeAs($filePath, $fileName, 'evidence');
+                $this->evidence->storeAs($filePath, $fileName, 'evidence');
 
                 $evidence = new Evidence;
 
