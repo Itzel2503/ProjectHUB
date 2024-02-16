@@ -214,6 +214,13 @@ class TableReports extends Component
                 $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
                 $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
                 $fullNewFilePath = $filePath . '/' . $fileName;
+
+                // Verificar si la ruta existe, si no, crearla
+                if (!Storage::disk('evidence')->exists($filePath)) {
+                    Storage::disk('evidence')->makeDirectory($filePath);
+                }
+
+                // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
                 $this->evidence->storeAs($filePath, $fileName, 'evidence');
 
                 $evidence = new Evidence;
