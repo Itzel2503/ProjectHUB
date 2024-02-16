@@ -256,11 +256,6 @@ class TableReports extends Component
                 $report->save();
 
                 $this->modalEvidence = false;
-            } else {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'Selecciona un archivo',
-                ]);
             }
         }
     }

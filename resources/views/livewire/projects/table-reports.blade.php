@@ -300,17 +300,17 @@
                     @if (!empty($evidenceShow->content))
                         @if ($evidenceShow->image == true)
                             <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                                <img src="{{ asset('evidencia/' . $evidenceShow->content) }}" alt="Report Image">
+                                <img src="{{ asset('evidence/' . $evidenceShow->content) }}" alt="Report Image">
                             </div>
                         @endif
                         @if ($evidenceShow->video == true)
                             <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                                <video src="{{ asset('evidencia/' . $evidenceShow->content) }}" loop autoplay alt="Report Video"></video>
+                                <video src="{{ asset('evidence/' . $evidenceShow->content) }}" loop autoplay alt="Report Video"></video>
                             </div>
                         @endif
                         @if ($evidenceShow->file == true)
                             <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                                <iframe src="{{ asset('evidencia/' . $evidenceShow->content) }}" width="auto" height="800"></iframe>
+                                <iframe src="{{ asset('evidence/' . $evidenceShow->content) }}" width="auto" height="800"></iframe>
                             </div>
                         @endif
                     @else
