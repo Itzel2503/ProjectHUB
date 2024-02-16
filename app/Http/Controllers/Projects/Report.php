@@ -71,8 +71,8 @@ class Report extends Controller
             $report = new ModelsReport();
             $now = Carbon::now();
             $dateString = $now->format("Y-m-d H_i_s");
-            if ($project && $report) {
 
+            if ($project && $report) {
                 try {
                     // Validación de los campos
                     $validatedData = $request->validate([
@@ -89,6 +89,7 @@ class Report extends Controller
                     $report->user_id = $request->user_id;
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
+                    $report->content = $request->video;
 
                     if ($request->priority1) {
                         $report->value = 'Alto';
@@ -98,12 +99,12 @@ class Report extends Controller
                         $report->value = 'Bajo';
                     }
                     
-                    $report->content = $request->video;
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->evidence = ($request->evidence) ? true : false ;
                     $report->image = false;
                     $report->video = true;
                     $report->file = false;
-                    $report->state = "Abierto";
-                    $report->comment = $request->comment;
                     $report->save();
                 }
     
@@ -120,6 +121,7 @@ class Report extends Controller
                     $report->user_id = $request->user_id;
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
+                    $report->content = $filePath;
 
                     if ($request->priority1) {
                         $report->value = 'Alto';
@@ -129,12 +131,12 @@ class Report extends Controller
                         $report->value = 'Bajo';
                     }
 
-                    $report->content = $filePath;
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->evidence = ($request->evidence) ? true : false ;
                     $report->image = true;
                     $report->video = false;
                     $report->file = false;
-                    $report->state = "Abierto";
-                    $report->comment = $request->comment;
                     $report->save();
                 }
     
@@ -161,7 +163,11 @@ class Report extends Controller
                     } else {
                         $report->value = 'Bajo';
                     }
-    
+
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->evidence = ($request->evidence) ? true : false ;
+
                     if (in_array($file->extension(), $extensionesImagen)) {
                         $report->image = true;
                         $report->video = false;
@@ -176,8 +182,6 @@ class Report extends Controller
                         $report->file = true;
                     }
                     
-                    $report->state = "Abierto";
-                    $report->comment = $request->comment;
                     $report->save();
                 }
     
@@ -195,11 +199,12 @@ class Report extends Controller
                         $report->value = 'Bajo';
                     }
 
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->evidence = ($request->evidence) ? true : false ;
                     $report->image = false;
                     $report->video = false;
                     $report->file = false;
-                    $report->state = "Abierto";
-                    $report->comment = $request->comment;
                     $report->save();
                 }
                 return redirect()->route('projects.reports.index', ['project' => $project_id]);

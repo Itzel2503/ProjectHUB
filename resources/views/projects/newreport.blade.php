@@ -211,7 +211,7 @@
                             </span>
                         @endif
                     </div>
-                    <div class="w-full flex flex-col px-3">
+                    <div class="w-full flex flex-col px-3 mt-3">
                         <h5 class="inline-flex font-semibold" for="name">
                             Descripción del reporte
                         </h5>
@@ -250,7 +250,7 @@
                             </span>
                         @endif
                     </div>
-                    <div class="w-full flex flex-col px-3">
+                    <div class="w-full flex flex-col px-3 mt-3">
                         <h5 class="inline-flex font-semibold" for="name">
                             Delegar
                         </h5>
@@ -265,6 +265,15 @@
                                     {{ $errors->first('delegate') }}
                             </span>
                         @endif
+                    </div>
+                </div>
+
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="w-full flex flex-row px-3 mb-6 md:mb-0">
+                        <h5 class="inline-flex font-semibold mr-5" for="name">
+                            Evidencia
+                        </h5>
+                        <input type="checkbox" name="evidence" id="evidence" style="height: 24px; width: 24px; border-color: rgb(); accent-color: " />
                     </div>
                 </div>
 

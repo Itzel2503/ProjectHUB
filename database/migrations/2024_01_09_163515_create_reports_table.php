@@ -32,6 +32,7 @@ class CreateReportsTable extends Migration
             $table->string('value');
             $table->string('state');
             $table->longText('comment');
+            $table->boolean('evidence');
 
             $table->boolean('look')->default(false);
             $table->boolean('image');

@@ -177,11 +177,23 @@ class TableReports extends Component
             }
 
             if ($state == 'Resuelto') {
-                $this->modalEvidence = true;
+                if ($report->evidence == true) {
+                    $this->modalEvidence = true;
                 
-                $project = Project::find($project_id);
-                $report->project_id = $project->id;
-                $this->reportEvidence = $report;
+                    $project = Project::find($project_id);
+                    $report->project_id = $project->id;
+                    $this->reportEvidence = $report;
+                } else {
+                    $report->state = $state;
+                    $report->repeat = true;
+                    $report->save();
+
+                    // Emitir un evento de navegador
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Estado actualizado',
+                    ]);
+                }
             }
         }
     }
