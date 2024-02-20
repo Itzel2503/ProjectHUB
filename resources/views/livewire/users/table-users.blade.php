@@ -40,6 +40,8 @@
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 bg-secondary-fund">
                     <tr class="font-semibold tracking-wide text-center text-white text-base">
+                        <th>
+                        </th>
                         <th class=" px-4 py-3">Nombre</th>
                         <th class=" px-4 py-3">Apellidos </th>
                         <th class=" px-4 py-3">Correo Electronico</th>
@@ -51,6 +53,13 @@
                 <tbody>
                     @foreach($users as $user)
                     <tr class="border-white text-sm text-center">
+                        <td class="px-4 py-2 flex justify-center">
+                            @if ($user->profile_photo)
+                                <img class="h-14 w-14 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ asset('usuarios/' . $user->profile_photo) }}" alt="Avatar" />
+                            @else
+                                <img class="h-14 w-14 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ Avatar::create($user->name)->toBase64() }}" alt="Avatar" />
+                            @endif
+                        </td>
                         <td class="px-4 py-2">{{$user->name}}</td>
                         <td class="px-4 py-2">{{$user->lastname}}</td>
                         <td class="px-4 py-2">{{$user->email}}</td>
@@ -101,7 +110,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalCreateEdit) block  @else hidden @endif">
         <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col md:w-2/5 mx-auto rounded-lg shadow-xl overflow-y-auto">
+            <div class="flex flex-col md:w-2/5 md:h-4/5 mx-auto rounded-lg shadow-xl overflow-y-auto">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     @if($showUpdate)
                     <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Editar usuario</h2>
@@ -119,6 +128,21 @@
                     <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
                         <div class="-mx-3 md:flex mb-6">
                             <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                                <h5 class="inline-flex font-semibold" for="file">
+                                    Foto de perfil
+                                </h5>
+                                <input wire:model='file' type="file" name="file" id="file" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <div>
+                                    <span class="text-red text-xs italic">
+                                        @error('file')
+                                        <span class="pl-2 text-red-500 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Nombre <p class="text-red">*</p>
                                 </h5>
@@ -133,7 +157,9 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="w-full flex flex-col px-3 ">
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Apellidos <p class="text-red">*</p>
                                 </h5>
@@ -148,9 +174,7 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                            <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Fecha de nacimiento<p class="text-red">*</p>
                                 </h5>
@@ -165,7 +189,9 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="w-full flex flex-col px-3">
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     CURP
                                 </h5>
@@ -180,9 +206,7 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                            <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     RFC
                                 </h5>
@@ -197,7 +221,9 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="w-full flex flex-col px-3">
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Número de teléfono <p class="text-red">*</p>
                                 </h5>
@@ -212,9 +238,7 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                            <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Área <p class="text-red">*</p>
                                 </h5>
@@ -243,7 +267,9 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="w-full flex flex-col px-3">
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Tipo de usuario <p class="text-red">*</p>
                                 </h5>
@@ -270,9 +296,7 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                            <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Correo electrónico:<p class="text-red">*</p>
                                 </h5>
@@ -287,7 +311,9 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="w-full flex flex-col px-3">
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Contraseña @if(!$showUpdate)<p class="text-red">*</p>@endif
                                 </h5>

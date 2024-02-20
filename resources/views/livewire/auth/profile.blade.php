@@ -6,7 +6,11 @@
                     <div class="px-4 py-5 space-y-6 sm:p-6 w-full">
                         <div class="flex col-span-6 sm:col-span-3 mt-4 justify-center justify-items-center">
                             <div class="relative h-32 w-32 shadow-xl mx-auto border-yellow rounded-full overflow-hidden border-4 mb-4">
-                                <img class="h-32 w-32 rounded-full object-cover" src="{{ Avatar::create($user->name)->toBase64() }}" alt="profile" />
+                                @if (Auth::user()->profile_photo)
+                                    <img class="h-32 w-32 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}" alt="profile" />
+                                @else
+                                    <img class="h-32 w-32 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="profile" />
+                                @endif
                             </div>
                         </div>
                         <div class="col-span-6 sm:col-span-3 mt-4">

@@ -5,12 +5,15 @@ namespace App\Http\Livewire\Users;
 use App\Models\Area;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Validator;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class TableUsers extends Component
 {
+    use WithFileUploads;
     use WithPagination;
     protected $paginationTheme = 'tailwind';
     
@@ -23,7 +26,7 @@ class TableUsers extends Component
     public $perPage = '10';
     public $rules = [], $allAreas = [], $allTypes = [1, 2];
     // inputs
-    public $name, $lastname, $date_birthday, $curp, $rfc, $phone, $area, $type_user, $email, $password;
+    public $file, $name, $lastname, $date_birthday, $curp, $rfc, $phone, $area, $type_user, $email, $password;
 
     public function render()
     {
@@ -87,6 +90,28 @@ class TableUsers extends Component
         }
         
         $user = new User();
+        
+        if ($this->file) {
+            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+            if (in_array($this->file->extension(), $extensionesImagen)) {
+        
+                $fileExtension = $this->file->extension();
+                $fileName = $this->name . ' ' . $this->lastname . '.' . $fileExtension;
+                $filePath = $fileName;
+
+                if (!Storage::disk('users')->exists($filePath)) {
+                    // Guardar el archivo en el disco 'users', en la raíz de dicho disco
+                    $this->file->storeAs('/', $filePath, 'users');
+                } 
+
+                $user->profile_photo = $fileName;
+            }
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Archivo incorrecto',
+            ]);
+        }
+
         $user->name = $this->name;
         $user->lastname = $this->lastname;
         $user->phone = $this->phone ?? null;
@@ -135,6 +160,31 @@ class TableUsers extends Component
         }
 
         $user = User::find($id);
+
+        if ($this->file) {
+            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+            if (in_array($this->file->extension(), $extensionesImagen)) {
+
+                $name = $this->name ?? $user->name;
+                $lastname = $this->lastname ?? $user->lastname;
+
+                $fileExtension = $this->file->extension();
+                $fileName = $name . ' ' . $lastname . '.' . $fileExtension;
+                $filePath = $fileName;
+
+                if (Storage::disk('users')->exists($user->profile_photo)) {
+                    Storage::disk('users')->delete($user->profile_photo);
+                }
+
+                $this->file->storeAs('/', $filePath, 'users');
+                $user->profile_photo = $fileName;
+            }
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Archivo incorrecto',
+            ]);
+        }
+
         $user->name = $this->name ?? $user->name;
         $user->lastname = $this->lastname ?? $user->lastname;
         $user->phone = $this->phone ?? $user->phone;

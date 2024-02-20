@@ -84,7 +84,11 @@
                 
                 @if (Auth::user())
                 <div class="mt-5 flex justify-center justify-items-center">
-                    <img class="h-20 w-20 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar" />
+                    @if (Auth::user()->profile_photo)
+                        <img class="h-20 w-20 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}" alt="Avatar" />
+                    @else
+                        <img class="h-20 w-20 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar" />
+                    @endif
                 </div>
                 <div class="text-white pt-2 mb-10 w-full text-center text-base">{{ Auth::user()->name }}</div>
                 @endif
