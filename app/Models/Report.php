@@ -30,4 +30,9 @@ class Report extends Model
     {
         return $this->hasOne(Evidence::class);
     }
+
+    public function chatMessages()
+    {
+        return $this->hasMany(ChatReports::class);
+    }
 }

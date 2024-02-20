@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Projects;
 
+use App\Models\ChatReports;
 use App\Models\Evidence;
 use App\Models\Project;
 use App\Models\Report;
@@ -23,7 +24,8 @@ class TableReports extends Component
     public $listeners = ['reloadPage' => 'reloadPage'];
     // modal
     public $modalShow = false, $modalEdit = false, $modalDelete = false, $modalEvidence = false;
-    public $showReport = false, $showEdit = false, $showDelete = false, $showEvidence = false;
+    public $showReport = false, $showEdit = false, $showDelete = false, $showEvidence = false, $showChat = false;
+    public $messages;
 
     // table, action's reports
     public $leader = false;
@@ -33,7 +35,7 @@ class TableReports extends Component
     public $rules = [], $usersFiltered = [];
 
     // inputs
-    public $name, $type, $priority, $customer, $file, $comment, $evidence;
+    public $name, $type, $priority, $customer, $file, $comment, $evidence, $message;
 
     public function render()
     {
@@ -139,6 +141,14 @@ class TableReports extends Component
             } else {
                 $report->timeDifference = null;
             }
+            // CHAT
+            $messages = ChatReports::where('report_id', $report->id)->get();
+            // Verificar si la colección tiene al menos un mensaje
+            if ($messages->isNotEmpty()) {
+                $lastMessage = $messages->last();
+                $report->user_chat = $lastMessage->user_id;
+            }
+            $report->messages_count = $messages->where('look', false)->count();
         }
 
         return view('livewire.projects.table-reports', [
@@ -209,6 +219,29 @@ class TableReports extends Component
                 'type' => 'success',
                 'title' => 'Delegado actualizado',
             ]);
+        }
+    }
+
+    public function updateChat($id) 
+    {
+        $report = Report::find($id);
+        $user = Auth::user();
+
+        if ($report) {
+            $chat = new ChatReports();
+            $chat->report_id = $report->id;
+            $chat->user_id = $user->id;
+            $chat->message = $this->message;
+            $chat->look = false;
+            $chat->save();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Mensaje enviado',
+            ]);
+
+            $this->message = '';
+            $this->modalShow = false;
         }
     }
 
@@ -331,7 +364,6 @@ class TableReports extends Component
                 'title' => 'Guardado exitoso',
             ]);
         }
-        
     }
     // INFO MODAL
     public function showReport($id)
@@ -346,6 +378,22 @@ class TableReports extends Component
 
         $this->reportShow = Report::find($id);
         $this->evidenceShow = Evidence::where('report_id', $this->reportShow->id)->first();
+        $this->messages = ChatReports::where('report_id', $this->reportShow->id)->get();
+
+        // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
+        $lastMessage = ChatReports::where('report_id', $this->reportShow->id)
+            ->where('user_id', '!=', Auth::id())
+            ->where('look', false)
+            ->latest()
+            ->first();
+        if ($lastMessage) {
+            $lastMessage->look = true;
+            $lastMessage->save();
+        }
+        
+        if($this->messages) {
+            $this->showChat = true;
+        }
 
         if ($this->evidenceShow) {
             $this->showEvidence = true;

@@ -34,7 +34,7 @@
             </div>
         </div>
         {{-- END NAVEGADOR --}}
-
+        
         {{-- TABLE --}}
         <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs mt-4">
             <table class="w-full whitespace-no-wrap table table-hover ">
@@ -47,7 +47,7 @@
                         <th class=" px-4 py-3">Duración</th>
                         <th class="px-4 py-3 w-1/6">
                             Acciones / Estado
-                            <select wire:model="selectedState" class="mx-2 leading-snug border border-gray-400 appearance-none bg-white text-gray-700 rounded">
+                            <select wire:model.lazy="selectedState" class="mx-2 leading-snug border border-gray-400 appearance-none bg-white text-gray-700 rounded">
                                 <option value="">Todos</option>
                                 <option value="Abierto">Abierto</option>
                                 <option value="Proceso">Proceso</option>
@@ -60,7 +60,7 @@
                 <tbody>
                     @foreach($reports as $report)
                     <tr class="border-white text-sm text-center">
-                        <td class="px-4 py-2 @if($report->state == 'Resuelto') flex flex-row @endif">
+                        <td class="px-4 py-2 @if($report->state == 'Resuelto' || $report->messages_count >= 1) flex flex-row @endif">
                             @if($report->state == 'Resuelto') 
                             <div class="flex justify-center items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-checkbox text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -90,6 +90,15 @@
                                 @endif
                                 <p class="text-xs">Creado por {{ $report->user->name }} {{ $report->user->lastname }}</p>
                             </div>
+                            @if($report->messages_count >= 1 && $report->user_chat != Auth::id())
+                            <div class="flex justify-center items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-report text-secondary" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                    <path d="M12 8v3" />
+                                    <path d="M12 14v.01" />
+                                </svg>
+                            @endif
                         </td>
                         <td class="px-4 py-2">
                             @if ($report->count)
@@ -263,13 +272,25 @@
             
             @if($showReport)
             <div class="flex @if($evidenceShow) flex-row @else flex-col @endif px-6 py-2 bg-main-fund overflow-y-auto text-sm">
-
                 <div class="@if($evidenceShow) flex flex-col w-3/6 @endif">
-                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                        <div class="text-2xl md:flex text-justify">
-                            {!! nl2br(e($reportShow->comment)) !!}
+                    <div class="w-full md-3/4 mb-5 mt-3 flex flex-col">
+                        <div class="text-xl md:flex text-justify">
+                            <h2 class="font-bold">Descripción</h2>
+                            {!! nl2br(e($reportShow->comment)) !!}<br><br>
+                            @if ($showChat)
+                                @foreach ($messages as $message)
+                                <div class="inline-flex">
+                                    <h5 class="text-lg pr-1 font-bold text-black">{{ $message->transmitter->name }}:</h5><p class="text-lg">{{ $message->message }}</p>
+                                </div>
+                                @endforeach
+                            @endif
+                        </div>
+                        <div class="w-auto flex flex-row mx-3 my-6">
+                            <input wire:model='message' type="text" name="message" id="message" placeholder="Mensaje a los administradores"class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full mr-5 rounded mx-auto">
+                            <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="updateChat({{ $reportShow->id }})">Enviar</button>
                         </div>
                     </div>
+
                     @if (!empty($reportShow->content))
                         @if ($reportShow->image == true)
                             <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
@@ -344,7 +365,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalEdit) block  @else hidden @endif">
         <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full  fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col md:w-4/3 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Editar reporte</h2>
                     <svg wire:click="modalEdit" wire:loading.remove wire:target="modalEdit" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -368,7 +389,6 @@
                             <textarea wire:model='comment' type="text" rows="10" placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" class="fields1 leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto"></textarea>
                         </div>
                     </div>
-                    
                 </div>
                 <div class="flex justify-center items-center py-6 bg-main-fund">
                     @if($modalEdit)
