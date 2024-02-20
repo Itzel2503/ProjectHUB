@@ -282,6 +282,7 @@
                                 <div class="inline-flex">
                                     <h5 class="text-lg pr-1 font-bold text-black">{{ $message->transmitter->name }}:</h5><p class="text-lg">{{ $message->message }}</p>
                                 </div>
+                                <br>
                                 @endforeach
                             @endif
                         </div>
