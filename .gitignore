@@ -3,6 +3,7 @@
 /public/storage
 /public/reportes
 /public/evidence
+/public/usuarios
 /storage/*.key
 /vendor
 .env
