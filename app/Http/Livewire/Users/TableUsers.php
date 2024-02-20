@@ -90,26 +90,17 @@ class TableUsers extends Component
         }
         
         $user = new User();
-        
+
         if ($this->file) {
             $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
             if (in_array($this->file->extension(), $extensionesImagen)) {
-        
                 $fileExtension = $this->file->extension();
                 $fileName = $this->name . ' ' . $this->lastname . '.' . $fileExtension;
                 $filePath = $fileName;
-
-                if (!Storage::disk('users')->exists($filePath)) {
-                    // Guardar el archivo en el disco 'users', en la raíz de dicho disco
-                    $this->file->storeAs('/', $filePath, 'users');
-                } 
+                $this->file->storeAs('/', $filePath, 'users');
 
                 $user->profile_photo = $fileName;
             }
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Archivo incorrecto',
-            ]);
         }
 
         $user->name = $this->name;
@@ -129,6 +120,10 @@ class TableUsers extends Component
         $user->save();
         $this->clearInputs();
         $this->modalCreateEdit = false;
+
+        if ($this->file) {
+            $this->refreshPage();
+        }
 
         // Emitir un evento de navegador
         $this->dispatchBrowserEvent('swal:modal', [
@@ -164,25 +159,19 @@ class TableUsers extends Component
         if ($this->file) {
             $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
             if (in_array($this->file->extension(), $extensionesImagen)) {
-
                 $name = $this->name ?? $user->name;
                 $lastname = $this->lastname ?? $user->lastname;
 
                 $fileExtension = $this->file->extension();
                 $fileName = $name . ' ' . $lastname . '.' . $fileExtension;
                 $filePath = $fileName;
-
                 if (Storage::disk('users')->exists($user->profile_photo)) {
                     Storage::disk('users')->delete($user->profile_photo);
                 }
-
                 $this->file->storeAs('/', $filePath, 'users');
+
                 $user->profile_photo = $fileName;
             }
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Archivo incorrecto',
-            ]);
         }
 
         $user->name = $this->name ?? $user->name;
@@ -201,6 +190,10 @@ class TableUsers extends Component
 
         if ($this->password) {
             $user->password = Hash::make($this->password);
+        }
+
+        if ($this->file) {
+            $this->refreshPage();
         }
 
         $user->save();
@@ -327,6 +320,7 @@ class TableUsers extends Component
         }
         $this->clearInputs();
         $this->resetErrorBag();
+        $this->dispatchBrowserEvent('file-reset');
     }
 
     public function modalDelete()
@@ -366,5 +360,10 @@ class TableUsers extends Component
     {
         $this->reset();
         $this->render();
+    }
+
+    public function refreshPage()
+    {
+        $this->dispatchBrowserEvent('refresh');
     }
 }

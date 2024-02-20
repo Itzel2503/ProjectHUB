@@ -404,5 +404,15 @@
         window.addEventListener('swal:modal', event => {
             toastr[event.detail.type](event.detail.text, event.detail.title);
         });
+
+        window.addEventListener('refresh', () => {
+            setInterval(function() {
+                location.reload();
+            }, 1000);
+        });
+
+        window.addEventListener('file-reset', () => {
+            document.getElementById('file').value = null;
+        });
     </script>
 </div>
