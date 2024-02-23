@@ -29,14 +29,104 @@
                 </div>
                 <!-- STATE -->
                 <div class="inline-flex md:w-1/5 h-12 md:mx-3 mb-2 bg-transparent">
-                    <select wire:model.lazy="selectedState" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
-                        <option value="">Estados</option>
-                        <option value="Abierto">Abierto</option>
-                        <option value="Proceso">Proceso</option>
-                        <option value="Resuelto">Resuelto</option>
-                        <option value="Conflicto">Conflicto</option>
-                    </select>
-                </div>
+                    <div class="flex justify-center w-full">
+                        <div
+                            x-data="{
+                                state: false,
+                                toggle() {
+                                    if (this.state) {
+                                        return this.close()
+                                    }
+                                    this.$refs.button.focus()
+                                    this.state = true
+                                },
+                                close(focusAfter) {
+                                    if (! this.state) return
+                                    this.state = false
+                                    focusAfter && focusAfter.focus()
+                                }
+                            }"
+                            x-on:keydown.escape.prevent.stop="close($refs.button)"
+                            x-on:focusin.window="! $refs.panel.contains($event.target) && close()"
+                            x-id="['dropdown-button']"
+                            class="relative w-full"
+                        >
+                            <!-- Button -->
+                            <button
+                                x-ref="button"
+                                x-on:click="toggle()"
+                                :aria-expanded="state"
+                                :aria-controls="$id('dropdown-button')"
+                                type="button"
+                                class="flex items-center justify-between w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none"
+                            >
+                                <span>Estados</span>
+                                <!-- Heroicon: chevron-down -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-down w-3 h-3" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M6 9l6 6l6 -6" />
+                                </svg>
+                                {{-- <svg xmlns="http://www.w3.org/2000/svg" class="" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg> --}}
+                            </button>
+                    
+                            <!-- Panel -->
+                            <div
+                                x-ref="panel"
+                                x-show="state"
+                                x-on:click.outside="close($refs.button)"
+                                :id="$id('dropdown-button')"
+                                style="display: none;"
+                                class="absolute left-0 mt-2 w-full rounded-md bg-white shadow-md"
+                            >
+                                <label class="block px-4 py-2">
+                                    <input type="checkbox" wire:model="selectedStates" value="Abierto" class="mr-2">
+                                    Abierto
+                                </label>
+                                <label class="block px-4 py-2">
+                                    <input type="checkbox" wire:model="selectedStates" value="Proceso" class="mr-2">
+                                    Proceso
+                                </label>
+                                <label class="block px-4 py-2">
+                                    <input type="checkbox" wire:model="selectedStates" value="Resuelto" class="mr-2">
+                                    Resuelto
+                                </label>
+                                <label class="block px-4 py-2">
+                                    <input type="checkbox" wire:model="selectedStates" value="Conflicto" class="mr-2">
+                                    Conflicto
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+                <!-- En tu HTML Blade o Livewire Blade -->
+                {{-- <div class="inline-flex md:w-1/5 h-12 md:mx-3 mb-2 bg-transparent">
+                    <div class="relative">
+                        <button type="button" @click="isOpen = !isOpen" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
+                            Estados
+                        </button>
+                        <div x-show="isOpen" @click.away="isOpen = false" class="absolute top-full left-0 w-full bg-white shadow-lg mt-1 rounded-lg">
+                            <label class="block px-4 py-2">
+                                <input type="checkbox" wire:model="selectedStates" value="Abierto">
+                                Abierto
+                            </label>
+                            <label class="block px-4 py-2">
+                                <input type="checkbox" wire:model="selectedStates" value="Proceso">
+                                Proceso
+                            </label>
+                            <label class="block px-4 py-2">
+                                <input type="checkbox" wire:model="selectedStates" value="Resuelto">
+                                Resuelto
+                            </label>
+                            <label class="block px-4 py-2">
+                                <input type="checkbox" wire:model="selectedStates" value="Conflicto">
+                                Conflicto
+                            </label>
+                        </div>
+                    </div>
+                </div> --}}
+
                 <!-- COUNT -->
                 {{-- <div class="inline-flex w-1/3 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
                     <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">

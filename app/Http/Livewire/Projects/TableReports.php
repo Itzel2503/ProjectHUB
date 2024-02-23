@@ -31,8 +31,8 @@ class TableReports extends Component
     public $leader = false;
     public $search, $project, $reportShow, $reportEdit, $reportDelete, $reportEvidence, $evidenceShow;
     public $perPage = '10';
-    public $selectedState = '', $selectedDelegate = '', $priorityOrder = 'Bajo', $datesOrder = '', $progressOrder = '', $expectedOrder = '', $createdOrder = '';
-    public $rules = [], $usersFiltered = [], $allUsersFiltered = [];
+    public $selectedDelegate = '', $priorityOrder = '', $datesOrder = '', $progressOrder = '', $expectedOrder = '', $createdOrder = '';
+    public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
     public $priorityFiltered = false, $progressFiltered = false, $expectedFiltered = false, $createdFiltered = false;
 
     // inputs
@@ -62,11 +62,14 @@ class TableReports extends Component
                 if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
                     $query->orWhereNotNull('count');
                 }
-                
             })
-            ->when($this->selectedState, function ($query) {
-                $query->where('state', $this->selectedState);
+            ->when(!empty($this->selectedStates), function ($query) {
+                $query->whereIn('state', $this->selectedStates);
             })
+    
+            // ->when($this->selectedState, function ($query) {
+            //     $query->where('state', $this->selectedState);
+            // })
             ->when($this->selectedDelegate, function ($query) {
                 $query->where('delegate_id', $this->selectedDelegate);
             })
