@@ -110,12 +110,9 @@ class TableReports extends Component
                                     ->where('video', true);
                         });
                 })
-                ->when($this->selectedState, function ($query) {
-                    $query->where('state', $this->selectedState);
-                })
-                ->when($this->selectedState, function ($query) {
-                    $query->where('state', $this->selectedState);
-                })
+                ->when(!empty($this->selectedStates), function ($query) {
+                    $query->whereIn('state', $this->selectedStates);
+                }) 
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
