@@ -66,10 +66,6 @@ class TableReports extends Component
             ->when(!empty($this->selectedStates), function ($query) {
                 $query->whereIn('state', $this->selectedStates);
             })
-    
-            // ->when($this->selectedState, function ($query) {
-            //     $query->where('state', $this->selectedState);
-            // })
             ->when($this->selectedDelegate, function ($query) {
                 $query->where('delegate_id', $this->selectedDelegate);
             })
