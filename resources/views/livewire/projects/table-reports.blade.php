@@ -99,34 +99,7 @@
                             </div>
                         </div>
                     </div>
-                </div>                
-                <!-- En tu HTML Blade o Livewire Blade -->
-                {{-- <div class="inline-flex md:w-1/5 h-12 md:mx-3 mb-2 bg-transparent">
-                    <div class="relative">
-                        <button type="button" @click="isOpen = !isOpen" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
-                            Estados
-                        </button>
-                        <div x-show="isOpen" @click.away="isOpen = false" class="absolute top-full left-0 w-full bg-white shadow-lg mt-1 rounded-lg">
-                            <label class="block px-4 py-2">
-                                <input type="checkbox" wire:model="selectedStates" value="Abierto">
-                                Abierto
-                            </label>
-                            <label class="block px-4 py-2">
-                                <input type="checkbox" wire:model="selectedStates" value="Proceso">
-                                Proceso
-                            </label>
-                            <label class="block px-4 py-2">
-                                <input type="checkbox" wire:model="selectedStates" value="Resuelto">
-                                Resuelto
-                            </label>
-                            <label class="block px-4 py-2">
-                                <input type="checkbox" wire:model="selectedStates" value="Conflicto">
-                                Conflicto
-                            </label>
-                        </div>
-                    </div>
-                </div> --}}
-
+                </div>
                 <!-- COUNT -->
                 {{-- <div class="inline-flex w-1/3 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
                     <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
