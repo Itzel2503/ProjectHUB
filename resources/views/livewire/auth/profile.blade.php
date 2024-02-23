@@ -5,7 +5,7 @@
                 <div class="shadow rounded-md sm:overflow-hidden w-2/3 bg-main-fund">
                     <div class="px-4 py-5 space-y-6 sm:p-6 w-full">
                         <div class="flex col-span-6 sm:col-span-3 mt-4 justify-center justify-items-center">
-                            <div class="relative h-32 w-32 shadow-xl mx-auto border-yellow rounded-full overflow-hidden border-4 mb-4">
+                            <div class="relative h-32 w-32 shadow-xl mx-auto border-yellow-400 rounded-full overflow-hidden border-4 mb-4">
                                 @if (Auth::user()->profile_photo)
                                     <img class="h-32 w-32 rounded-full object-cover mx-auto" aria-hidden="true" src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}" alt="profile" />
                                 @else
@@ -26,7 +26,7 @@
                             @if(!$editing)
                             <p class="mb-2 mx-auto w-full text-center">{{ ($user->curp) ? "$user->curp" : 'Sin registro' }}</p>
                             @else
-                            <input wire:model='curp' require maxlength="18" placeholder="{{ $user->curp }}" type="text" name="curp" id="curp" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                            <input wire:model='curp' require maxlength="18" placeholder="{{ $user->curp }}" type="text" name="curp" id="curp" class="leading-snug border border-none block w-3/4 appearance-none bg-white text-gray-700 text-center py-1 px-4 rounded mx-auto">
                             @endif
                         </div>
                         <div class="col-span-6 sm:col-span-3 mt-9">
@@ -34,7 +34,7 @@
                             @if(!$editing)
                             <p class="mb-2 mx-auto w-full text-center">{{ ($user->rfc) ? "$user->rfc" : 'Sin registro' }}</p>
                             @else
-                            <input wire:model='rfc' require maxlength="13" placeholder="{{ $user->rfc }}" type="text" name="rfc" id="rfc" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                            <input wire:model='rfc' require maxlength="13" placeholder="{{ $user->rfc }}" type="text" name="rfc" id="rfc" class="leading-snug border border-none block w-3/4 appearance-none bg-white text-gray-700 text-center py-1 px-4 rounded mx-auto">
                             @endif
                         </div>
                         <div class="col-span-6 sm:col-span-3 mt-9">
@@ -52,18 +52,18 @@
                         @if($editing)
                         <div class="col-span-6 sm:col-span-3 mt-9">
                             <h5 class="mb-2 mx-auto w-full text-center">Cambiar contraseña:</h5>
-                            <input wire:model.def='password' name="password" id="password" type="text" class="leading-snug border border-gray-400 block w-3/4 appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                            <input wire:model.def='password' name="password" id="password" type="text" class="leading-snug border border-none block w-3/4 appearance-none bg-white text-gray-700 text-center py-1 px-4 rounded mx-auto">
                         </div>
                         @endif
                         @if(!$editing)
                         <div class="px-4 py-4 mt-5 text-center sm:px-6">
-                            <button wire:click="edit({{ $user->id }})" id="edit" type="button" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-main  hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-lg">Editar</button>
+                            <button wire:click="edit({{ $user->id }})" id="edit" type="button" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-main  hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Editar</button>
                         </div>
                         @else
                         <div class="flex justify-between px-4 py-5 mt-5 text-center sm:px-6">
-                            <button wire:click="update({{$user->id}})" wire:loading.attr="disabled" wire:target="update({{ $user->id }})" id="save" type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-main  hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-lg">Guardar</button>
+                            <button wire:click="update({{$user->id}})" wire:loading.attr="disabled" wire:target="update({{ $user->id }})" id="save" type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-main  hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Guardar</button>
                             <span wire:loading wire:target="update({{ $user->id }})">Loading...</span>
-                            <button wire:click="edit({{$user->id}})" id="cancel" type="button" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-main  hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-lg">Cancelar</button>
+                            <button wire:click="edit({{$user->id}})" id="cancel" type="button" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-main  hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancelar</button>
                         </div>
                         @endif
                     </div>

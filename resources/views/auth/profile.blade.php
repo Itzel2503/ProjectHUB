@@ -5,7 +5,7 @@
 @endsection
 
 @section('black1')
-text-yellow
+text-yellow-400
 @endsection
 
 @section('content')

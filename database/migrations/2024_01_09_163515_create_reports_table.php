@@ -29,7 +29,7 @@ class CreateReportsTable extends Migration
 
             $table->string('title');
             $table->text('content')->nullable();
-            $table->string('value');
+            $table->string('priority');
             $table->string('state');
             $table->longText('comment');
             $table->boolean('evidence');
@@ -42,6 +42,9 @@ class CreateReportsTable extends Migration
             $table->boolean('repeat')->default(false);
 
             $table->integer('hours_quote')->nullable();
+
+            $table->dateTime('delegated_date');
+            $table->dateTime('expected_date');
             $table->dateTime('progress')->nullable();
 
             $table->timestamps();

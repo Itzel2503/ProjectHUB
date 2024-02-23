@@ -97,8 +97,8 @@
 
 <body>
     <div id="mainMenu" class="flex flex-row items-center justify-center rounded-md p-5 bg-main-fund">
-        <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}" class="mx-5 w-auto h-12 flex justify-center items-center text-xl">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mr-2 text-main hover:text-secondary">
+        <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}" class="mx-5 w-auto h-12 flex justify-center items-center text-xl text-main hover:text-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mr-2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
             </svg>     
             Regresar            
@@ -165,7 +165,7 @@
         </button>
     </div>
 
-    <div id="rightBar" class="fixed pb-20 top-0 right-0 h-full w-1/3 z-5 overflow-y-auto scrollEdit bg-main-fund" style="display: none;">
+    <div id="rightBar" class="fixed pb-20 top-0 right-0 h-full w-1/3 z-5 overflow-y-auto scrollEdit bg-main-fund z-20" style="display: none;">
         <div class="px-4 pb-4 pt-10  h-full w-full">
             <div id="viewPhoto" style="display: none;">
                 <h2 class="inline-flex font-semibold">
@@ -190,21 +190,21 @@
                 <input hidden type="text" id="inputPhoto" name="photo">
                 <input hidden type="text" id="inputVideo" name="video">
 
-                <div id="viewText" class="-mx-3 md:flex mb-6" style="display: none;">
-                    <div class="w-full flex flex-col px-3 mb-6 md:mb-0">
+                <div id="viewText" class=" md:flex mb-6" style="display: none;">
+                    <div class="w-full flex flex-col px-3 mb-6">
                         <h5 class="inline-flex font-semibold" for="name">
                             Selecciona un archivo
                         </h5>
-                        <input type="file" name="file" id="file" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                        <input type="file" name="file" id="file" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                     </div>
                 </div>
 
-                <div class="-mx-3 md:flex mb-6 bg-main-fund">
-                    <div class="w-full flex flex-col px-3 mb-6 md:mb-0">
+                <div class=" mb-6 bg-main-fund">
+                    <div class="w-full flex flex-col px-3 mb-6">
                         <h5 class="inline-flex font-semibold" for="name">
                             Título del reporte
                         </h5>
-                        <input required type="text" name="title" id="title" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                        <input required type="text" name="title" id="title" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                         @if ($errors->has('title'))
                             <span class="text-red text-xs italic pl-2">
                                     {{ $errors->first('title') }}
@@ -215,7 +215,7 @@
                         <h5 class="inline-flex font-semibold" for="name">
                             Descripción del reporte
                         </h5>
-                        <textarea required type="text" rows="10" placeholder="Describa la observación y especifique el objetivo a cumplir." name="comment" id="report" class="fields1 leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto"></textarea> 
+                        <textarea required type="text" rows="10" placeholder="Describa la observación y especifique el objetivo a cumplir." name="comment" id="report" class="fields1 leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto"></textarea> 
                         @if ($errors->has('comment'))
                             <span class="text-red text-xs italic pl-2">
                                     {{ $errors->first('comment') }}
@@ -224,22 +224,22 @@
                     </div>
                 </div>
 
-                <div class="-mx-3 md:flex mb-6">
-                    <div class="w-full flex flex-col px-3 mb-6 md:mb-0">
+                <div class="mb-6">
+                    <div class="w-full flex flex-col px-3 mb-6">
                         <h5 class="inline-flex font-semibold" for="name">
                             Prioridad
                         </h5>
                         <div class="flex justify-center gap-20">
                             <div class="flex flex-col items-center">
-                                <input type="checkbox" name="priority1" id="priority1" class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(221 66 49); accent-color: #dd4231;" />
+                                <input type="checkbox" name="priority1" id="priority1" class="priority-checkbox border-red-600 bg-red-600" style="height: 24px; width: 24px; accent-color: #dd4231;" />
                                 <label for="priority1" class="mt-2">Alto</label>
                             </div>
                             <div class="flex flex-col items-center">
-                                <input type="checkbox" name="priority2" id="priority2" class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(246 192 62); accent-color: #f6c03e;" />
+                                <input type="checkbox" name="priority2" id="priority2" class="priority-checkbox border-yellow-400 bg-yellow-400" style="height: 24px; width: 24px; accent-color: #f6c03e;" />
                                 <label for="priority2" class="mt-2">Medio</label>
                             </div>
                             <div class="flex flex-col items-center">
-                                <input type="checkbox" name="priority3" id="priority3" class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(0 98 204); accent-color: #0062cc;" />
+                                <input type="checkbox" name="priority3" id="priority3" class="priority-checkbox border-secondary bg-secondary" style="height: 24px; width: 24px; accent-color: #0062cc;" />
                                 <label for="priority3" class="mt-2">Bajo</label>
                             </div>                            
                         </div>
@@ -254,7 +254,7 @@
                         <h5 class="inline-flex font-semibold" for="name">
                             Delegar
                         </h5>
-                        <select required name="delegate" id="delegate" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                        <select required name="delegate" id="delegate" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                             <option value="0" selected>Selecciona...</option>
                             @foreach ($allUsers as $allUser)
                                 <option value="{{ $allUser->id }}">{{ $allUser->name }} {{ $allUser->lastname }}</option>
@@ -268,9 +268,15 @@
                     </div>
                 </div>
 
-                <div class="-mx-3 md:flex mb-6">
-                    <div class="w-full flex flex-row px-3 mb-6 md:mb-0">
-                        <h5 class="inline-flex font-semibold mr-5" for="name">
+                <div class="mb-6">
+                    <div class="w-full flex flex-col px-3 mb-6">
+                        <h5 class="inline-flex font-semibold" for="name">
+                            Fecha esperada
+                        </h5>
+                        <input required type="date" name="expected_date" id="expected_date" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                    </div>
+                    <div class="w-full flex flex-row px-3 mt-3">
+                        <h5 class="inline-flex font-semibold mr-5" for="evidence">
                             Evidencia
                         </h5>
                         <input type="checkbox" name="evidence" id="evidence" style="height: 24px; width: 24px; border-color: rgb(); accent-color: " />
@@ -285,10 +291,10 @@
     </div>
 
     <div id="artboard" class="w-full">
-        <h2 class="top-10 left-10 px-2 py-4 font-semibold text-3xl">Previsualización</h2>
+        <h3 class="top-10 left-10 px-2 py-4 font-semibold text-3xl text-secondary">Previsualización</h3>
         <div class="w-full flex justify-center items-center">
-            <p id="log" class="text-xl font-semibold text-red"></p>
-            <p id="time" class="mx-3 text-xl font-semibold text-red"></p>
+            <p id="log" class="text-xl font-semibold text-red-600"></p>
+            <p id="time" class="mx-3 text-xl font-semibold text-red-600"></p>
         </div>
 
         <div id="capturedImageContainer" class="flex items-center justify-center"></div>

@@ -7,46 +7,14 @@ module.exports = {
     './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
   ],
   theme: {
-    screens: {
-      sm: '480px',
-      md: '768px',
-      lg: '976px',
-      xl: '1440px',
-    },
-    spacing: {
-      '1': '8px',
-      '2': '12px',
-      '3': '16px',
-      '4': '24px',
-      '5': '32px',
-      '6': '48px',
-    },
-    /*fontFamily: {
-      sans: ['Graphik', 'sans-serif'],
-      serif: ['Merriweather', 'serif'],
-    }, */
     extend: {
-      spacing: {
-        '13': '3.25rem',
-        '15': '3.75rem',
-        '128': '32rem',
-        '144': '36rem',
-      },
-      borderRadius: {
-        '4xl': '2rem',
-      },
       colors: {
-        'white': '#ffffff',
-        'black': '#000000',
         'main': '#4faead',
         'main-fund': '#dff1f2',
         'secondary': '#0062cc',
         'secondary-fund': '#324d57',
-        'yellow': '#f6c03e',
-        'red': '#dd4231',
-        'gray-500': '#6b7280',
       },
-    }
+    },
   },
   plugins: [
     require('@tailwindcss/typography'),
@@ -55,3 +23,4 @@ module.exports = {
     require('@tailwindcss/container-queries'),
   ],
 }
+

@@ -92,11 +92,11 @@ class Report extends Controller
                     $report->content = $request->video;
 
                     if ($request->priority1) {
-                        $report->value = 'Alto';
+                        $report->priority = 'Alto';
                     } else if ($request->priority2) {
-                        $report->value = 'Medio';
+                        $report->priority = 'Medio';
                     } else {
-                        $report->value = 'Bajo';
+                        $report->priority = 'Bajo';
                     }
                     
                     $report->state = "Abierto";
@@ -105,6 +105,8 @@ class Report extends Controller
                     $report->image = false;
                     $report->video = true;
                     $report->file = false;
+                    $report->delegated_date = Carbon::now();
+                    $report->expected_date = $request->expected_date;
                     $report->save();
                 }
     
@@ -124,11 +126,11 @@ class Report extends Controller
                     $report->content = $filePath;
 
                     if ($request->priority1) {
-                        $report->value = 'Alto';
+                        $report->priority = 'Alto';
                     } else if ($request->priority2) {
-                        $report->value = 'Medio';
+                        $report->priority = 'Medio';
                     } else {
-                        $report->value = 'Bajo';
+                        $report->priority = 'Bajo';
                     }
 
                     $report->state = "Abierto";
@@ -137,6 +139,8 @@ class Report extends Controller
                     $report->image = true;
                     $report->video = false;
                     $report->file = false;
+                    $report->delegated_date = Carbon::now();
+                    $report->expected_date = $request->expected_date;
                     $report->save();
                 }
     
@@ -157,11 +161,11 @@ class Report extends Controller
                     $report->content = $filePath;
 
                     if ($request->priority1) {
-                        $report->value = 'Alto';
+                        $report->priority = 'Alto';
                     } else if ($request->priority2) {
-                        $report->value = 'Medio';
+                        $report->priority = 'Medio';
                     } else {
-                        $report->value = 'Bajo';
+                        $report->priority = 'Bajo';
                     }
 
                     $report->state = "Abierto";
@@ -181,7 +185,9 @@ class Report extends Controller
                         $report->video = false;
                         $report->file = true;
                     }
-                    
+
+                    $report->delegated_date = Carbon::now();
+                    $report->expected_date = $request->expected_date;
                     $report->save();
                 }
     
@@ -192,11 +198,11 @@ class Report extends Controller
                     $report->title = $request->title;
 
                     if ($request->priority1) {
-                        $report->value = 'Alto';
+                        $report->priority = 'Alto';
                     } else if ($request->priority2) {
-                        $report->value = 'Medio';
+                        $report->priority = 'Medio';
                     } else {
-                        $report->value = 'Bajo';
+                        $report->priority = 'Bajo';
                     }
 
                     $report->state = "Abierto";
@@ -205,6 +211,8 @@ class Report extends Controller
                     $report->image = false;
                     $report->video = false;
                     $report->file = false;
+                    $report->delegated_date = Carbon::now();
+                    $report->expected_date = $request->expected_date;
                     $report->save();
                 }
                 return redirect()->route('projects.reports.index', ['project' => $project_id]);
@@ -304,11 +312,11 @@ class Report extends Controller
                     $reportNew->content = $request->video;
 
                     if ($request->priority1) {
-                        $reportNew->value = 'Alto';
+                        $reportNew->priority = 'Alto';
                     } else if ($request->priority2) {
-                        $reportNew->value = 'Medio';
+                        $reportNew->priority = 'Medio';
                     } else {
-                        $reportNew->value = 'Bajo';
+                        $reportNew->priority = 'Bajo';
                     }
 
                     $reportNew->image = false;
@@ -337,11 +345,11 @@ class Report extends Controller
                     $reportNew->content = $filePath;
 
                     if ($request->priority1) {
-                        $reportNew->value = 'Alto';
+                        $reportNew->priority = 'Alto';
                     } else if ($request->priority2) {
-                        $reportNew->value = 'Medio';
+                        $reportNew->priority = 'Medio';
                     } else {
-                        $reportNew->value = 'Bajo';
+                        $reportNew->priority = 'Bajo';
                     }
 
                     $reportNew->image = true;
@@ -371,11 +379,11 @@ class Report extends Controller
                     $reportNew->content = $filePath;
 
                     if ($request->priority1) {
-                        $reportNew->value = 'Alto';
+                        $reportNew->priority = 'Alto';
                     } else if ($request->priority2) {
-                        $reportNew->value = 'Medio';
+                        $reportNew->priority = 'Medio';
                     } else {
-                        $reportNew->value = 'Bajo';
+                        $reportNew->priority = 'Bajo';
                     }
 
                     if (in_array($fileExtension, $extensionesImagen)) {
@@ -460,11 +468,11 @@ class Report extends Controller
                     }
 
                     if ($request->priority1) {
-                        $reportNew->value = 'Alto';
+                        $reportNew->priority = 'Alto';
                     } else if ($request->priority2) {
-                        $reportNew->value = 'Medio';
+                        $reportNew->priority = 'Medio';
                     } else {
-                        $reportNew->value = 'Bajo';
+                        $reportNew->priority = 'Bajo';
                     }
                     
                     $reportNew->state = "Abierto";

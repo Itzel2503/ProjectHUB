@@ -14,7 +14,7 @@
                             </svg>
                         </span>
                     </div>
-                    <input wire:model="search" type="text" placeholder="Buscar" class="flex w-full border-0 border-yellow border-b-2 rounded rounded-l-none relative focus:outline-none text-xxs lg:text-base  text-gray-500 font-thin">
+                    <input wire:model="search" type="text" placeholder="Buscar" class="flex appearance-none w-full border-0 border-yellow-400 border-b-2 rounded rounded-l-none relative focus:outline-none text-xxs lg:text-base text-gray-500 font-thin">
                 </div>
             </div>
             <!-- COUNT -->
@@ -75,7 +75,7 @@
                                 </svg>
                             </button>
                             @else
-                            <button wire:click="showUpdate({{$user->id}})" class="bg-yellow text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                            <button wire:click="showUpdate({{$user->id}})" class="bg-yellow-400 text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
@@ -83,7 +83,7 @@
                                     <path d="M16 5l3 3"></path>
                                 </svg>
                             </button>
-                            <button wire:click="showDelete({{$user->id}})" class="bg-red text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                            <button wire:click="showDelete({{$user->id}})" class="bg-red-600 text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <path d="M4 7l16 0"></path>
@@ -113,12 +113,12 @@
             <div class="flex flex-col md:w-2/5 md:h-4/5 mx-auto rounded-lg shadow-xl overflow-y-auto">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     @if($showUpdate)
-                    <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Editar usuario</h2>
+                    <h3 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary pl-4 py-2">Editar usuario</h3>
                     @else
-                    <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Crear usuario</h2>
+                    <h3 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary pl-4 py-2">Crear usuario</h3>
                     @endif
                     
-                    <svg wire:click="modalCreateEdit" wire:loading.remove wire:target="modalCreateEdit" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg wire:click="modalCreateEdit" wire:loading.remove wire:target="modalCreateEdit" class="w-6 h-6 my-2 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M18 6l-12 12"></path>
                         <path d="M6 6l12 12"></path>
@@ -126,16 +126,16 @@
                 </div>
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
                     <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                        <div class="-mx-3 mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6">
                                 <h5 class="inline-flex font-semibold" for="file">
                                     Foto de perfil
                                 </h5>
-                                <input wire:model='file' type="file" name="file" id="file" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='file' type="file" name="file" id="file" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600 text-xs italic">
                                         @error('file')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -144,13 +144,13 @@
                             </div>
                             <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Nombre <p class="text-red">*</p>
+                                    Nombre <p class="text-red-600 ">*</p>
                                 </h5>
-                                <input wire:model='name' required type="text" placeholder="Nombre/s" name="name" id="name" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='name' required type="text" placeholder="Nombre/s" name="name" id="name" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600  text-xs italic">
                                         @error('name')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -158,16 +158,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                        <div class="-mx-3  mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Apellidos <p class="text-red">*</p>
+                                    Apellidos <p class="text-red-600 ">*</p>
                                 </h5>
-                                <input wire:model='lastname' required type="text" placeholder="Apellido materno y apellido paterno" name="lastname" id="lastname" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='lastname' required type="text" placeholder="Apellido materno y apellido paterno" name="lastname" id="lastname" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600  text-xs italic">
                                         @error('lastname')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -176,13 +176,13 @@
                             </div>
                             <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Fecha de nacimiento<p class="text-red">*</p>
+                                    Fecha de nacimiento<p class="text-red-600 ">*</p>
                                 </h5>
-                                <input wire:model='date_birthday' required type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='date_birthday' required type="date" name="date_birthday" id="date_birthday" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600  text-xs italic">
                                         @error('date_birthday')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -190,16 +190,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                        <div class="-mx-3  mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     CURP
                                 </h5>
-                                <input wire:model='curp' type="text" maxlength="18" placeholder="CURP" name="curp" id="curp" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='curp' type="text" maxlength="18" placeholder="CURP" name="curp" id="curp" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600  text-xs italic">
                                         @error('curp')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -210,11 +210,11 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     RFC
                                 </h5>
-                                <input wire:model='rfc' type="text" maxlength="13" placeholder="RFC" name="rfc" id="rfc" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='rfc' type="text" maxlength="13" placeholder="RFC" name="rfc" id="rfc" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600  text-xs italic">
                                         @error('rfc')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -222,16 +222,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                        <div class="-mx-3  mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Número de teléfono <p class="text-red">*</p>
+                                    Número de teléfono <p class="text-red-600 ">*</p>
                                 </h5>
-                                <input wire:model='phone' required type="number" placeholder="Número de teléfono" name="phone" id="phone" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='phone' required type="number" placeholder="Número de teléfono" name="phone" id="phone" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600  text-xs italic">
                                         @error('phone')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -240,17 +240,17 @@
                             </div>
                             <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Área <p class="text-red">*</p>
+                                    Área <p class="text-red-600 ">*</p>
                                 </h5>
                                 @if($showUpdate)
-                                <select wire:model.defer='area' name="area" id="area" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <select wire:model.defer='area' name="area" id="area" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                     <option selected value="{{ $areaUser->id }}">{{ $areaUser->name }}</option>
                                     @foreach ($allAreas as $allArea)
                                     <option value="{{ $allArea->id }}">{{ $allArea->name }}</option>
                                     @endforeach
                                 </select>
                                 @else
-                                <select wire:model.defer='area' required name="area" id="area" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <select wire:model.defer='area' required name="area" id="area" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                     <option selected>Selecciona...</option>
                                     @foreach ($areas as $area)
                                     <option value="{{ $area->id }}">{{ $area->name }}</option>
@@ -258,9 +258,9 @@
                                 </select>
                                 @endif
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600  text-xs italic">
                                         @error('area')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -268,28 +268,28 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                        <div class="-mx-3  mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Tipo de usuario <p class="text-red">*</p>
+                                    Tipo de usuario <p class="text-red-600 ">*</p>
                                 </h5>
                                 @if($showUpdate)
-                                    <select wire:model.defer='type_user' name="type_user" id="type_user" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <select wire:model.defer='type_user' name="type_user" id="type_user" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                         @foreach ($allTypes as $allType)
                                             <option value="{{ $allType }}">{{($allType== 1 ) ? 'Administrador' : 'Usuario'}}</option>
                                         @endforeach
                                     </select>
                                 @else
-                                <select wire:model.defer='type_user' required name="type_user" id="type_user" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <select wire:model.defer='type_user' required name="type_user" id="type_user" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                     <option selected>Selecciona...</option>
                                     <option value="1">Administrador</option>
                                     <option value="2">Usuario</option>
                                 </select>
                                 @endif
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600  text-xs italic">
                                         @error('type_user')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -298,13 +298,13 @@
                             </div>
                             <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Correo electrónico:<p class="text-red">*</p>
+                                    Correo electrónico:<p class="text-red-600 ">*</p>
                                 </h5>
-                                <input wire:model='email' required type="email" placeholder="Correo electrónico" name="email" id="email" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='email' required type="email" placeholder="Correo electrónico" name="email" id="email" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600  text-xs italic">
                                         @error('email')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -312,16 +312,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6 mb-0">
+                        <div class="-mx-3">
+                            <div class="w-full flex flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Contraseña @if(!$showUpdate)<p class="text-red">*</p>@endif
+                                    Contraseña @if(!$showUpdate)<p class="text-red-600 ">*</p>@endif
                                 </h5>
-                                <input wire:model='password' @if(!$showUpdate) required @endif type="text" placeholder="Nueva contraseña" name="password" id="password" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='password' @if(!$showUpdate) required @endif type="text" placeholder="Nueva contraseña" name="password" id="password" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
                                 <div>
-                                    <span class="text-red text-xs italic">
+                                    <span class="text-red-600  text-xs italic">
                                         @error('password')
-                                        <span class="pl-2 text-red-500 text-xs italic">
+                                        <span class="pl-2 text-red-600  text-xs italic">
                                             {{$message}}
                                         </span>
                                         @enderror
@@ -357,14 +357,14 @@
                 @if($showDelete)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
                     <div class="w-full md-3/4 flex flex-col">
-                        <div class="text-lg md:flex text-center">
-                            <h2 class="text-red font-semibold">¿Esta seguro de eliminar a {{$userDelete->name}} {{$userDelete->lastname}}?</h2>
+                        <div class="text-lg text-center">
+                            <label class="text-red-600 font-semibold">¿Esta seguro de eliminar a {{$userDelete->name}} {{$userDelete->lastname}}?</label>
                         </div>
                     </div>
                 </div>
                 <div class="flex justify-between items-center py-6 px-10 bg-main-fund">
                     <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="modalDelete()" wire:loading.remove wire:target="modalDelete()">Cancelar</button>
-                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-red rounded cursor-pointer" wire:click="destroy({{$userDelete->id}})" wire:loading.remove wire:target="destroy({{$userDelete->id}})">Eliminar</button>
+                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-red-600 rounded cursor-pointer" wire:click="destroy({{$userDelete->id}})" wire:loading.remove wire:target="destroy({{$userDelete->id}})">Eliminar</button>
                 </div>
                 @endif
             </div>
@@ -386,8 +386,8 @@
                 @if($showRestore)
                 <div class="flex flex-col sm:flex-row px-6 py-2 bg-main-fund overflow-y-auto text-sm">
                     <div class="w-full md-3/4 flex flex-col">
-                        <div class="text-lg md:flex text-center">
-                            <h2 class="font-semibold">¿Quieres restaurar a {{$userRestore->name}} {{$userRestore->lastname}}?</h2>
+                        <div class="text-lg text-center">
+                            <label class="font-semibold">¿Quieres restaurar a {{$userRestore->name}} {{$userRestore->lastname}}?</label>
                         </div>
                     </div>
                 </div>
