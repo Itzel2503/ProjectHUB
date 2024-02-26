@@ -6,7 +6,7 @@ use App\Models\Area;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Validator;
+use Intervention\Image\ImageManager;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -157,6 +157,10 @@ class TableUsers extends Component
         $user = User::find($id);
 
         if ($this->file) {
+
+            // create new image instance
+            $image = ImageManager::imagick()->read('images/example.jpg');
+
             $originalFileName = $this->file->getClientOriginalName();
             $filePath = $originalFileName;
 
