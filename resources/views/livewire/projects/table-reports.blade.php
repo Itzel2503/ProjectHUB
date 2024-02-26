@@ -15,12 +15,13 @@
                                 </svg>
                             </span>
                         </div>
-                        <input wire:model="search" type="text" placeholder="Buscar" class="flex w-full border-0 border-yellow-400 border-b-2 rounded rounded-l-none relative focus:outline-none text-xxs lg:text-base text-gray-500 font-thin">
+                        <input wire:model="search" type="text" placeholder="Buscar" class="inputs">
                     </div>
                 </div>
+                
                 <!-- DELEGATE -->
                 <div class="inline-flex md:w-1/5 h-12 md:mx-3 mb-2 bg-transparent">
-                    <select wire:model.lazy="selectedDelegate" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
+                    <select wire:model.lazy="selectedDelegate" class="inputs">
                         <option value="">Delegados</option>
                         @foreach ($allUsersFiltered as $key => $userFiltered)
                             <option value="{{ $key }}">{{ $userFiltered }}</option>
@@ -58,7 +59,7 @@
                                 :aria-expanded="state"
                                 :aria-controls="$id('dropdown-button')"
                                 type="button"
-                                class="flex items-center justify-between w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none"
+                                class="flex items-center justify-between inputs h-12"
                             >
                                 <span>Estados</span>
                                 <!-- Heroicon: chevron-down -->
@@ -102,10 +103,10 @@
                 </div>
                 <!-- COUNT -->
                 {{-- <div class="inline-flex w-1/3 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
-                    <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
+                    <select wire:model="perPage" id="" class="inputs">
                         <option value="10"> 10 por página</option>
                         <option value="25"> 25 por página</option>
-                        <option value="50"> 50 por página</option>
+                        <option value="50"> 50 por página</option>busc
                         <option value="100"> 100 por página</option>
                     </select>
                 </div> --}}
@@ -120,7 +121,7 @@
         {{-- END NAVEGADOR --}}
         
         {{-- TABLE --}}
-        <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs my-4">
+        <div class="tableStyle">
             <table class="w-full whitespace-no-wrap table table-hover">
                 <thead class="border-0 bg-secondary-fund">
                     <tr class="font-semibold tracking-wide text-center text-white text-base">

@@ -60,7 +60,7 @@
             </div>
         </nav>
     </div> -->
-    <main class="">
+    <main class="  ">
         @yield('content')
     </main>
     </div>
