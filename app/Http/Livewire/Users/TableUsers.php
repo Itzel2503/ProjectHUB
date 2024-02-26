@@ -157,21 +157,16 @@ class TableUsers extends Component
         $user = User::find($id);
 
         if ($this->file) {
-            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-            if (in_array($this->file->extension(), $extensionesImagen)) {
-                $name = $this->name ?? $user->name;
-                $lastname = $this->lastname ?? $user->lastname;
+            $originalFileName = $this->file->getClientOriginalName();
+            $filePath = $originalFileName;
 
-                $fileExtension = $this->file->extension();
-                $fileName = $name . ' ' . $lastname . '.' . $fileExtension;
-                $filePath = $fileName;
-                if (Storage::disk('users')->exists($user->profile_photo)) {
-                    Storage::disk('users')->delete($user->profile_photo);
-                }
-                $this->file->storeAs('/', $filePath, 'users');
-
-                $user->profile_photo = $fileName;
+            if (Storage::disk('users')->exists($user->profile_photo)) {
+                Storage::disk('users')->delete($user->profile_photo);
             }
+            $this->file->storeAs('/', $filePath, 'users');
+
+            $user->profile_photo = $originalFileName;
+            
         }
 
         $user->name = $this->name ?? $user->name;

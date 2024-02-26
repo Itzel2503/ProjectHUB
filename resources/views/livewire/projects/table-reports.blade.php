@@ -253,13 +253,13 @@
                                 <div class="relative h-22 w-full px-3 pt-2">
                                     @if (!empty($report->content))
                                         @if ($report->image == true)
-                                            <img src="{{ asset('reportes/' . $report->content) }}" alt="Report Image" class="h-20 w-full object-cover mx-auto">
+                                            <img src="{{ asset('reportes/' . $report->content) }}" alt="Report Image" class="h-20 w-32 object-cover mx-auto">
                                         @endif
                                         @if ($report->video == true)
                                             @if (strpos($report->content, "Reporte") === 0)
                                                 <p class="text-red-600 my-3">Falta subir '{{ $report->content }}'</p>
                                             @else
-                                                <video src="{{ asset('reportes/' . $report->content) }}" alt="Report Video" class="h-20 w-full object-cover mx-auto"></video>
+                                                <video src="{{ asset('reportes/' . $report->content) }}" alt="Report Video" class="h-20 w-32 object-cover mx-auto"></video>
                                             @endif
                                         @endif
                                         @if ($report->file == true)
@@ -278,7 +278,7 @@
                                     @endif
                                 </div>
                                 
-                                <div class="my-2 w-full font-semibold text-center rounded-md px-3
+                                <div class="my-2 w-32 font-semibold text-center rounded-md px-3
                                     @if($report->priority == 'Alto') bg-red-600 text-white @endif
                                     @if($report->priority == 'Medio') bg-yellow-400 @endif
                                     @if($report->priority == 'Bajo') bg-secondary text-white @endif">
@@ -325,7 +325,7 @@
                                 @endforeach
                             </select>
                             @if ($report->count)
-                                <p class="text-red text-xs">Reincidencia {{ $report->count }}</p> 
+                                <p class="text-red-600 text-xs">Reincidencia {{ $report->count }}</p> 
                             @endif
                         </td>
                         <td class="px-4 py-2">
