@@ -120,8 +120,8 @@
         {{-- END NAVEGADOR --}}
         
         {{-- TABLE --}}
-        <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs mt-4">
-            <table class="w-full whitespace-no-wrap table table-hover ">
+        <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs my-4">
+            <table class="w-full whitespace-no-wrap table table-hover">
                 <thead class="border-0 bg-secondary-fund">
                     <tr class="font-semibold tracking-wide text-center text-white text-base">
                         <th class="px-4 py-3 w-1/5">
@@ -193,7 +193,7 @@
                                 </svg> --}}
                             </div>
                         </th>
-                        <th class="px-4 py-3">
+                        <th class="px-4 py-3 w-auto">
                             <div @if($expectedFiltered) wire:click="orderByLowDates('expected_date')" @else wire:click="orderByHighDates('expected_date')" @endif class="justify-center inline-flex">
                                 Fecha
                                 @if ($expectedFiltered)
@@ -217,7 +217,7 @@
                                 @endif
                             </div>
                         </th>
-                        <th class="px-4 py-3">
+                        <th class="px-4 py-3 w-auto">
                             <div @if($createdFiltered) wire:click="orderByLowDates('created_at')" @else wire:click="orderByHighDates('created_at')" @endif class="justify-center inline-flex">
                                 Creado
                                 @if ($createdFiltered)
@@ -241,7 +241,7 @@
                                 @endif
                             </div>
                         </th>
-                        <th class="px-4 py-3 w-1/6">Acciones</th>
+                        <th class="px-4 py-3 w-auto">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
