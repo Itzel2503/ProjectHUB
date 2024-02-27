@@ -16,10 +16,15 @@ class UserCatalog extends Controller
     public function index()
     {
         if (Auth::check()) {
-            return view('users/user-catalog');
+            if (Auth::user()->type_user == 1) {
+                return view('users/user-catalog');
+            } else {
+                return back();
+            }
         } else {
             return redirect('/login');
         }
+        
     }
 
     /**

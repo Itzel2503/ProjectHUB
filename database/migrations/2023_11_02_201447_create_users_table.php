@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('rfc')->nullable();
             $table->date('date_birthday');
             $table->bigInteger('phone')->nullable();
+            $table->string('profile_photo')->nullable();
 
             $table->unsignedBigInteger('area_id')->unsigned();            
             $table->foreign('area_id')->references('id')->on('areas');

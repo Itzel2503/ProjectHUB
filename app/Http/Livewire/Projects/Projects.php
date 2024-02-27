@@ -183,7 +183,7 @@ class Projects extends Component
         } else {
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
+                'type' => 'error',
                 'title' => 'Proyecto no existe',
             ]);
         }

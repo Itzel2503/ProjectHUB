@@ -49,6 +49,18 @@ return [
             'visibility' => 'public',
         ],
 
+        'evidence' => [
+            'driver' => 'local',
+            'root' => 'evidence',
+            'visibility' => 'public',
+        ],
+
+        'users' => [
+            'driver' => 'local',
+            'root' => 'usuarios',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

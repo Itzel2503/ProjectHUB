@@ -25,23 +25,26 @@ class CreateReportsTable extends Migration
             $table->unsignedBigInteger('delegate_id');
             $table->foreign('delegate_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->unsignedBigInteger('resolved_id')->nullable();
-            $table->foreign('resolved_id')->references('id')->on('users')->onDelete('cascade');
-
             $table->unsignedBigInteger('report_id')->nullable();
 
             $table->string('title');
             $table->text('content')->nullable();
-            $table->integer('value')->default('0');
+            $table->string('priority');
+            $table->string('state');
+            $table->longText('comment');
+            $table->boolean('evidence');
 
+            $table->boolean('look')->default(false);
             $table->boolean('image');
             $table->boolean('video');
             $table->boolean('file');
-            $table->string('state');
-            $table->string('comment');
             $table->string('count')->nullable();
             $table->boolean('repeat')->default(false);
 
+            $table->integer('hours_quote')->nullable();
+
+            $table->dateTime('delegated_date');
+            $table->dateTime('expected_date');
             $table->dateTime('progress')->nullable();
 
             $table->timestamps();

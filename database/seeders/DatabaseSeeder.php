@@ -20,9 +20,6 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
         Area::create([
-            'name' => 'Administrador'
-        ]);
-        Area::create([
             'name' => 'Administración'
         ]);
         Area::create([
@@ -53,12 +50,16 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'Administrador',
-            'lastname' => 'Arten',
-            'email' => 'admin@kircof.com',
+            'lastname' => 'Arten/Kircof',
+            'email' => 'admin@artendigital.mx',
             'password' => Hash::make('Arten.123!'),
             'type_user' => '1',
             'date_birthday' => Carbon::now(),
             'area_id' => '1',
         ]);
+
+        $this->call(UsersTableSeeder::class,);
+        $this->call(CustomerTableSeeder::class,);
+        $this->call(ProjectTableSeeder::class,);
     }
 }

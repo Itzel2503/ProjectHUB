@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>ARTEN/KIRCOF</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -104,6 +104,11 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
             </svg>              
         </button>
+        <button id="textButton" class="mx-5 w-12 h-12 flex justify-center items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-main hover:text-secondary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            </svg>                       
+        </button>
     </div>
     
     <div id="shotMenu" class="flex flex-row items-center justify-center rounded-md p-5 bg-main-fund" style="display: none;">
@@ -112,11 +117,13 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
             </svg>              
         </button>
-        {{-- <button class="ml-5 w-10 h-10 flex justify-center items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-red">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-            </svg>              
-        </button> --}}
+        <button id="refreshCanva" class="ml-5 w-12 h-12 flex justify-center items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-refresh w-12 h-12 text-main hover:text-secondary" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+                <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+            </svg>            
+        </button>
 
         <input min="1" max="20" value="10" type="range" id="lineWidthSlider" class="mt-5 mx-5">
         
@@ -163,6 +170,9 @@
                 </div>
                 
                 <div id="viewVideo" style="display: none;">
+                    <h2 class="inline-flex font-semibold">
+                        Video capturado
+                    </h2>
                     <video id="recording" width="300" height="200" loop autoplay class="my-8 w-full h-2/5"></video>
                     <div class="flex justify-center items-center py-6 hidden">
                         <a id="downloadVideoButton" class="px-4 py-2 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">Descargar video</a>
@@ -254,6 +264,31 @@
                     <div class="-mx-3 md:flex mb-6">
                         <div class="md:w-1/2 flex flex-col px-3 mb-6 md:mb-0">
                             <h5 class="inline-flex font-semibold" for="name">
+                                Prioridad
+                            </h5>
+                            <div class="flex justify-center gap-20">
+                                <div class="flex flex-col items-center">
+                                    <input type="checkbox" name="priority1" id="priority1" {{ $report->value == 'Alto' ? 'checked' : '' }}  class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(221 66 49); accent-color: #dd4231;" />
+                                    <label for="priority1" class="mt-2">Alto</label>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <input type="checkbox" name="priority2" id="priority2" {{ $report->value == 'Medio' ? 'checked' : '' }} class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(246 192 62); accent-color: #f6c03e;" />
+                                    <label for="priority2" class="mt-2">Medio</label>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <input type="checkbox" name="priority3" id="priority3" {{ $report->value == 'Bajo' ? 'checked' : '' }} class="priority-checkbox" style="height: 24px; width: 24px; border-color: rgb(0 98 204); accent-color: #0062cc;" />
+                                    <label for="priority3" class="mt-2">Bajo</label>
+                                </div>                            
+                            </div>
+                            
+                            @if ($errors->has('priority'))
+                                <span class="text-red text-xs italic pl-2">
+                                        {{ $errors->first('priority') }}
+                                </span>
+                            @endif
+                        </div>
+                        <div class="md:w-1/2 flex flex-col px-3">
+                            <h5 class="inline-flex font-semibold" for="name">
                                 Delegar
                             </h5>
                             <select required name="delegate" id="delegate" class="leading-snug border border-gray-400 block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
@@ -285,10 +320,10 @@
             <p id="time" class="mx-3 text-xl font-semibold text-red"></p>
         </div>
 
-        <div id="capturedImageContainer" class="flex items-center justify-center"></div>
+        <div id="capturedImageContainer" class="flex items-center justify-center" style="display: none;"></div>
         <div id="renderCombinedImage"></div>
     
-        <video id="preview" width="100%" height="auto" autoplay muted class="mt-2"></video>
+        <video id="preview" width="100%" height="auto" autoplay muted class="mt-2" style="display: none;"></video>
     </div>
 
     @if(session('error'))
@@ -312,6 +347,8 @@
 
         let user = @json($user);
         let project = @json($project);
+
+        let isManuallyStopped = false; // Variable de control
 
         // variables "globales"
         let startTime, intervalId, mediaRecorder;
@@ -372,20 +409,29 @@
 
             // Manejar el evento oninactive del MediaStream
             stream.oninactive = () => {
-                log("Grabación finalizada.");
-                stopCounting();
-                mediaRecorder.stop();  // Detener la grabación si el stream se vuelve inactivo
+                if (!isManuallyStopped) { // Ejecutar solo si no se ha detenido manualmente
+                    log("Grabación finalizada.");
+                    stopCounting();
+                    mediaRecorder.stop();  // Detener la grabación si el stream se vuelve inactivo
 
-                inputUser.value = user.id;
-                downloadVideoButton.download = 'Reporte ' + project.name + ', ' + fechaEnFormato;
-                inputVideo.value = 'Reporte ' + project.name + ', ' + fechaEnFormato;
+                    inputUser.value = user.id;
+                    downloadVideoButton.download = 'Reporte ' + project.name + ', ' + fechaEnFormato;
+                    inputVideo.value = 'Reporte ' + project.name + ', ' + fechaEnFormato;
 
-                document.getElementById('rightBar').style.display = 'block';
-                document.getElementById('artboard').style.display = 'none';
+                    document.getElementById('rightBar').style.display = 'block';
+                    document.getElementById('artboard').style.display = 'none';
 
-                document.getElementById('viewVideo').style.display = 'block';
-                document.getElementById('viewFile').style.display = 'none';
-                document.getElementById('viewText').style.display = 'none';
+                    document.getElementById('mainMenu').style.display = 'flex';
+                    document.getElementById('videoMenu').style.display = 'none';
+
+                    document.getElementById('viewPhoto').style.display = 'none';
+                    document.getElementById('viewVideo').style.display = 'block';
+                    document.getElementById('viewFile').style.display = 'none';
+                    document.getElementById('viewText').style.display = 'none';
+                } else {
+                    // Posiblemente reiniciar isManuallyStopped para futuras grabaciones
+                    isManuallyStopped = false;
+                }
             };
 
             mediaRecorder.start();
@@ -427,17 +473,25 @@
 
         // returnButton from Video
         document.getElementById('returnButtonVideo').addEventListener('click', function() {
+            isManuallyStopped = true; // Indica que la detención es manual
+
             // Detener el video
             preview.pause();
-            preview.srcObject = null;
+            if (preview.srcObject) {
+                let tracks = preview.srcObject.getTracks();
+                tracks.forEach(track => track.stop()); // Detiene todas las pistas del stream
+                preview.srcObject = null;
+            }
 
-            if (mediaRecorder) {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 mediaRecorder.stop();
             }
+
             log('');
+            stopCounting();
             preview.src = '';
             downloadVideoButton.href = '';
-            inputVideo.value = '';
+            inputVideo.value= '';
 
             // Mostrar el div principal y ocultar otros elementos
             document.getElementById('rightBar').style.display = 'block';
@@ -485,9 +539,10 @@
 
                     imageCapture.grabFrame().then(imageBitmap => {
                         const canvas = document.createElement('canvas');
-                        canvas.width = imageBitmap.width;
-                        canvas.height = imageBitmap.height;
                         const ctx = canvas.getContext('2d');
+
+                        canvas.width = Math.round(imageBitmap.width);
+                        canvas.height = Math.round(imageBitmap.height);
                         ctx.drawImage(imageBitmap, 0, 0);
 
                         // Create an image element and set the source to the captured image
@@ -496,21 +551,21 @@
 
                         capturedImage.onload = () => {
                             capturedImageContainer.innerHTML = ''; // Clear previous content
+                            // Asegúrate de que capturedImageContainer tenga una posición relativa
+                            capturedImageContainer.style.position = 'relative';
+                            capturedImageContainer.style.width = `${canvas.width}px`;
+                            capturedImageContainer.style.height = `${canvas.height}px`;
+                            capturedImage.style.position = 'relative';
                             capturedImageContainer.appendChild(capturedImage);
 
-                            // Retrieve the dimensions and position of the captured image
-                            const imageRect = capturedImage.getBoundingClientRect();
-
-                            // Create a drawing canvas for overlay
                             const drawCanvas = document.createElement('canvas');
-                            drawCanvas.width = imageRect.width; // Use the width of the captured image
-                            drawCanvas.height = imageRect.height; // Use the height of the captured image
+                            drawCanvas.width = canvas.width; // Usa el ancho de la imagen capturada
+                            drawCanvas.height = canvas.height; // Usa el alto de la imagen capturada
                             drawCanvas.style.position = 'absolute';
-                            drawCanvas.style.top = `${imageRect.top}px`; // Position the canvas at the same top position as the image
-                            drawCanvas.style.left = `${imageRect.left}px`; // Position the canvas at the same left position as the image
-
-                            // Append the drawing canvas to the document
-                            document.body.appendChild(drawCanvas);
+                            drawCanvas.style.top = '0';
+                            drawCanvas.style.left = '0';
+                            // Agrega el canvas de dibujo al contenedor, encima de la imagen capturada
+                            capturedImageContainer.appendChild(drawCanvas);
 
                             // Function to get the canvas context for drawing
                             const getDrawContext = () => drawCanvas.getContext('2d');
@@ -594,6 +649,16 @@
                                 drawCanvas.hidden = true;
                             });
 
+                            // button with the id "refreshCanva"
+                            const refreshCanvaButton = document.getElementById('refreshCanva');
+                            // Add click event listener to the refreshCanva button
+                            refreshCanvaButton.addEventListener('click', () => {
+                                // Obtiene el contexto del canvas de dibujo
+                                const drawCtx = drawCanvas.getContext('2d');
+                                // Limpia todo el canvas
+                                drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+                            });
+
                             // Function to handle the download
                             // const downloadImage = () => {
                             //     const combinedCanvas = document.createElement('canvas');
@@ -637,9 +702,31 @@
 
     {{-- BUTTONS --}}
     <script>
+        document.querySelectorAll('.priority-checkbox').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                // Desmarcar todos los checkboxes
+                document.querySelectorAll('.priority-checkbox').forEach(function(input) {
+                    input.checked = false;
+                });
+                // Marcar el checkbox seleccionado
+                checkbox.checked = true;
+            });
+        });
+
         document.getElementById('formReport').addEventListener('submit', function(e) {
             let downloadButton = document.getElementById('downloadVideoButton');
 
+            const checkboxes = document.querySelectorAll('.priority-checkbox');
+            const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+
+            if (!isChecked) {
+                toastr['error']("Selecciona la prioridad");
+                
+                e.preventDefault();
+                return; 
+            }
+            
+            // Verifica si el botón de descarga tiene una URL y descárgalo
             if (downloadButton.href) {
                 setTimeout(function() {
                     downloadButton.click();
@@ -647,8 +734,18 @@
             }
         });
 
+
+
         //screenshotButton
         document.getElementById('screenshotButton').addEventListener('click', function() {
+            document.getElementById("log").innerHTML = '';
+            document.getElementById("recording").src = '';
+            document.getElementById('downloadVideoButton').href = '';
+            document.getElementById("inputVideo").value = '';
+
+            document.getElementById('capturedImageContainer').style.display = 'block';
+            document.getElementById('preview').style.display = 'none';
+
             document.getElementById('rightBar').style.display = 'none';
             document.getElementById('artboard').style.display = 'block';
 
@@ -660,7 +757,11 @@
             document.getElementById('rightBar').style.display = 'block';
             document.getElementById('artboard').style.display = 'none';
 
+            document.getElementById('mainMenu').style.display = 'flex';
+            document.getElementById('shotMenu').style.display = 'none';
+
             document.getElementById('viewPhoto').style.display = 'block';
+            document.getElementById('viewVideo').style.display = 'none';
             document.getElementById('viewFile').style.display = 'none';
             document.getElementById('viewText').style.display = 'none';
         });
@@ -696,11 +797,31 @@
 
         //start recording video button
         document.getElementById('startButton').addEventListener('click', function() {
+            document.getElementById("inputPhoto").value = '';
+            document.getElementById('renderedCanvas').innerHTML = '';
+
+            document.getElementById('capturedImageContainer').style.display = 'none';
+            document.getElementById('preview').style.display = 'block';
+
             document.getElementById('videoMenu').style.display = 'flex';
             document.getElementById('mainMenu').style.display = 'none';
 
             document.getElementById('rightBar').style.display = 'none';
             document.getElementById('artboard').style.display = 'block';
+        });
+
+        document.getElementById('textButton').addEventListener('click', function() {
+            document.getElementById("log").innerHTML = '';
+            document.getElementById("recording").src = '';
+            document.getElementById('downloadVideoButton').href = '';
+            document.getElementById("inputVideo").value = '';
+
+            document.getElementById("inputPhoto").value = '';
+            document.getElementById('renderedCanvas').innerHTML = '';
+
+            document.getElementById('viewPhoto').style.display = 'none';
+            document.getElementById('viewVideo').style.display = 'none';
+            document.getElementById('viewFile').style.display = 'block';
         });
     </script>
 </body>

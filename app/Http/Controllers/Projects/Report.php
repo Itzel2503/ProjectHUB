@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Ui\Presets\React;
 
 class Report extends Controller
 {
@@ -75,14 +76,11 @@ class Report extends Controller
                 try {
                     // Validación de los campos
                     $validatedData = $request->validate([
-                        'title' => 'required',
-                        'comment' => 'required',
                         'delegate' => 'required|not_in:0',
                     ]);
                     // Aquí puedes continuar con tu lógica después de la validación exitosa
                 } catch (\Illuminate\Validation\ValidationException $e) {
                     return redirect()->back()->with('error', 'Faltan campos o campos incorrectos');
-
                     throw $e;
                 }
 
@@ -92,11 +90,23 @@ class Report extends Controller
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
                     $report->content = $request->video;
+
+                    if ($request->priority1) {
+                        $report->priority = 'Alto';
+                    } else if ($request->priority2) {
+                        $report->priority = 'Medio';
+                    } else {
+                        $report->priority = 'Bajo';
+                    }
+                    
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->evidence = ($request->evidence) ? true : false ;
                     $report->image = false;
                     $report->video = true;
                     $report->file = false;
-                    $report->state = "Abierto";
-                    $report->comment = $request->comment;
+                    $report->delegated_date = Carbon::now();
+                    $report->expected_date = $request->expected_date;
                     $report->save();
                 }
     
@@ -114,17 +124,29 @@ class Report extends Controller
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
                     $report->content = $filePath;
+
+                    if ($request->priority1) {
+                        $report->priority = 'Alto';
+                    } else if ($request->priority2) {
+                        $report->priority = 'Medio';
+                    } else {
+                        $report->priority = 'Bajo';
+                    }
+
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->evidence = ($request->evidence) ? true : false ;
                     $report->image = true;
                     $report->video = false;
                     $report->file = false;
-                    $report->state = "Abierto";
-                    $report->comment = $request->comment;
+                    $report->delegated_date = Carbon::now();
+                    $report->expected_date = $request->expected_date;
                     $report->save();
                 }
     
                 if (isset($request->file)) {
                     $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
+                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];   
                     
                     $file = $request->file('file');
                     $fileExtension = $file->extension();
@@ -137,7 +159,19 @@ class Report extends Controller
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
                     $report->content = $filePath;
-    
+
+                    if ($request->priority1) {
+                        $report->priority = 'Alto';
+                    } else if ($request->priority2) {
+                        $report->priority = 'Medio';
+                    } else {
+                        $report->priority = 'Bajo';
+                    }
+
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->evidence = ($request->evidence) ? true : false ;
+
                     if (in_array($file->extension(), $extensionesImagen)) {
                         $report->image = true;
                         $report->video = false;
@@ -151,9 +185,9 @@ class Report extends Controller
                         $report->video = false;
                         $report->file = true;
                     }
-                    
-                    $report->state = "Abierto";
-                    $report->comment = $request->comment;
+
+                    $report->delegated_date = Carbon::now();
+                    $report->expected_date = $request->expected_date;
                     $report->save();
                 }
     
@@ -162,14 +196,25 @@ class Report extends Controller
                     $report->user_id = $request->user_id;
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
+
+                    if ($request->priority1) {
+                        $report->priority = 'Alto';
+                    } else if ($request->priority2) {
+                        $report->priority = 'Medio';
+                    } else {
+                        $report->priority = 'Bajo';
+                    }
+
+                    $report->state = "Abierto";
+                    $report->comment = $request->comment;
+                    $report->evidence = ($request->evidence) ? true : false ;
                     $report->image = false;
                     $report->video = false;
                     $report->file = false;
-                    $report->state = "Abierto";
-                    $report->comment = $request->comment;
+                    $report->delegated_date = Carbon::now();
+                    $report->expected_date = $request->expected_date;
                     $report->save();
                 }
-    
                 return redirect()->route('projects.reports.index', ['project' => $project_id]);
             } else {
                 return redirect('/projects');
@@ -265,6 +310,15 @@ class Report extends Controller
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $request->video;
+
+                    if ($request->priority1) {
+                        $reportNew->priority = 'Alto';
+                    } else if ($request->priority2) {
+                        $reportNew->priority = 'Medio';
+                    } else {
+                        $reportNew->priority = 'Bajo';
+                    }
+
                     $reportNew->image = false;
                     $reportNew->video = true;
                     $reportNew->file = false;
@@ -289,6 +343,15 @@ class Report extends Controller
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $filePath;
+
+                    if ($request->priority1) {
+                        $reportNew->priority = 'Alto';
+                    } else if ($request->priority2) {
+                        $reportNew->priority = 'Medio';
+                    } else {
+                        $reportNew->priority = 'Bajo';
+                    }
+
                     $reportNew->image = true;
                     $reportNew->video = false;
                     $reportNew->file = false;
@@ -300,7 +363,7 @@ class Report extends Controller
     
                 if (isset($request->file)) {
                     $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
+                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
                     
                     $file = $request->file('file');
                     $fileExtension = $file->extension();
@@ -314,6 +377,15 @@ class Report extends Controller
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $filePath;
+
+                    if ($request->priority1) {
+                        $reportNew->priority = 'Alto';
+                    } else if ($request->priority2) {
+                        $reportNew->priority = 'Medio';
+                    } else {
+                        $reportNew->priority = 'Bajo';
+                    }
+
                     if (in_array($fileExtension, $extensionesImagen)) {
                         $reportNew->image = true;
                         $reportNew->video = false;
@@ -329,7 +401,7 @@ class Report extends Controller
                     }
                     $reportNew->state = "Abierto";
                     $reportNew->comment = $request->comment;
-                    dd($report->count == null);
+                    
                     if ($report->count == null) {
                         $reportNew->count = 1;
                     } else {
@@ -354,7 +426,7 @@ class Report extends Controller
                     if ($startsWithYear) {
                         // $report->content comienza con el año actual
                         $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                        $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv'];   
+                        $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];   
     
                         $sourcePath = public_path('reportes/'.$report->content); // Ruta del archivo existente
                         $pathInfo = pathinfo($sourcePath); // Obtener información sobre la ruta del archivo
@@ -394,6 +466,14 @@ class Report extends Controller
                         $reportNew->video = false;
                         $reportNew->file = false;
                     }
+
+                    if ($request->priority1) {
+                        $reportNew->priority = 'Alto';
+                    } else if ($request->priority2) {
+                        $reportNew->priority = 'Medio';
+                    } else {
+                        $reportNew->priority = 'Bajo';
+                    }
                     
                     $reportNew->state = "Abierto";
                     $reportNew->comment = $request->comment;
@@ -422,8 +502,31 @@ class Report extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($project_id, $id)
     {
-        //
+        if (Auth::check()) {
+            
+            $project = Project::find($project_id);
+            $report = ModelsReport::find($id);
+
+            if ($report) {
+                if ($report->content) {
+                    $contentPath = 'reportes/' . $report->content;
+                    $fullPath = public_path($contentPath);
+                    
+                    if (File::exists($fullPath)) {
+                        File::delete($fullPath);
+                    }
+                }
+                $report->delete();
+            
+                return redirect()->route('projects.reports.index', ['project' => $project_id]);
+            } else {
+                return redirect('/projects');
+            }
+
+        } else {
+            return redirect('/login');
+        }
     }
 }

@@ -24,6 +24,13 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect('/profile');
+    }
+    return view('auth.login');
+});
+
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['web', 'auth'])->group(function () {
     // USER
