@@ -31,7 +31,7 @@ class TableReports extends Component
     public $leader = false;
     public $search, $project, $reportShow, $reportEdit, $reportDelete, $reportEvidence, $evidenceShow;
     public $perPage = '10';
-    public $selectedDelegate = '', $priorityOrder = 'Bajo', $datesOrder = '', $progressOrder = '', $expectedOrder = '', $createdOrder = '';
+    public $selectedDelegate = '', $priorityOrder = 'Bajo', $datesOrder = 'created_at', $progressOrder = '', $expectedOrder = '', $createdOrder = 'desc';
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
     public $priorityFiltered = false, $progressFiltered = false, $expectedFiltered = false, $createdFiltered = false;
 
