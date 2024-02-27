@@ -149,6 +149,7 @@
                                 @endif
                             </div>
                         </th>
+
                         <th class="px-4 py-3 w-1/6">
                             <div @if($progressFiltered) wire:click="orderByLowDates('progress')" @else wire:click="orderByHighDates('progress')" @endif class="justify-center inline-flex">
                                 Delegado
