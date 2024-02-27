@@ -366,7 +366,7 @@
             </div>
         </div>
         <div class="flex flex-col flex-1 w-full overflow-x-auto">
-            <main class="container mx-auto h-full overflow-y-auto pb-20 scrollEdit">
+            <main class="container mx-auto h-full  pb-20 scrollEdit">
                 @yield('content')
             </main>
         </div>
