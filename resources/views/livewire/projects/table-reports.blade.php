@@ -126,7 +126,7 @@
                 <thead class="border-0 bg-secondary-fund">
                     <tr class="font-semibold tracking-wide text-center text-white text-base">
                         <th class="px-4 py-3 w-1/5">
-                            <div @if($priorityFiltered) wire:click="orderByLowPriority()" @else wire:click="orderByHighPriority()" @endif class="justify-center inline-flex cursor-pointer">
+                            <div @if($priorityFiltered) wire:click="orderByLowPriority()" @else wire:click="orderByHighPriority()" @endif class="justify- inline-flex cursor-pointer">
                                 Reporte 
                                 @if ($priorityFiltered)
                                     <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 icon icon-tabler icon-tabler-sort-descending" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -247,7 +247,7 @@
                 </thead>
                 <tbody>
                     @foreach($reports as $report)
-                    <tr class="border-white text-sm text-center">
+                    <tr class="text-sm text-center border-b pt-1">
                         <td class="px-4 py-2">
                             <div wire:click="showReport({{$report->id}})" class="flex flex-col items-center text-center cursor-pointer">
                                 <p class="text-xs mb-2">{{ $report->title }}</p>
@@ -289,7 +289,7 @@
                         </td>
                         <td class="px-4 py-2">
                             <p class="@if($report->state == 'Resuelto') font-semibold @else hidden @endif">{{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
-                            <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'  name="delegate" id="delegate" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto @if($report->state == 'Resuelto') hidden @endif">
+                            <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'  name="delegate" id="delegate" class="inputs @if($report->state == 'Resuelto') hidden @endif">
                                 <option selected value={{ $report->delegate->id }}>{{ $report->delegate->name }} {{ $report->delegate->lastname }}</option>
                                 @foreach ($report->usersFiltered as $userFiltered)
                                     <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }} {{ $userFiltered->lastname }}</option>
@@ -315,7 +315,7 @@
                         </td>
                         <td class="px-4 py-2">
                             <select wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)' name="state" id="state" 
-                                class="leading-snug border border-none block appearance-none py-1 px-4 w-full rounded mx-auto
+                                class="inputs
                                 @if($report->state == 'Abierto' && $report->state == 'Proceso') bg-white @endif
                                 @if($report->state == 'Resuelto') bg-lime-500 @endif
                                 @if($report->state == 'Conflicto') bg-red-600 text-white @endif
@@ -369,13 +369,19 @@
                                         </svg>
                                     </button>
                                     <!-- Panel -->
-                                    <div x-ref="panel" x-show="open" x-on:click.outside="close($refs.button)" :id="$id('dropdown-button')" style="display: none;" class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-white shadow-md" >
+                                    <div x-ref="panel" x-show="open" x-on:click.outside="close($refs.button)" :id="$id('dropdown-button')" style="display: none;" class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200 shadow-md" >
                                         <!-- Botón Editar -->
-                                        <a wire:click="showEdit({{$report->id}})" class="@if($report->state == 'Resuelto') hidden @endif block px-4 py-2 text-sm text-black cursor-pointer">Editar</a>
+                                        <div wire:click="showEdit({{$report->id}})" class="@if($report->state == 'Resuelto') hidden @endif flex px-4 py-2 text-sm text-black cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
+                                            Editar</div>
                                         <!-- Botón Eliminar -->
-                                        <a wire:click="showDelete({{$report->id}}, {{$project->id}})" class="@if($report->state != 'Abierto') hidden @endif block px-4 py-2 text-sm text-red-600 cursor-pointer">Eliminar</a>
+                                        <div wire:click="showDelete({{$report->id}}, {{$project->id}})" class="@if($report->state != 'Abierto') hidden @endif flex px-4 py-2 text-sm text-red-600 cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg> 
+                                            Eliminar</div>
                                         <!-- Botón Reincidencia -->
-                                        <a wire:click="reportRepeat({{ $project->id }}, {{$report->id}})" class="@if($report->repeat != false && $report->state == 'Resuelto')  @else hidden @endif block px-4 py-2 text-sm text-black cursor-pointer">Reincidencia</a>
+                                        <div wire:click="reportRepeat({{ $project->id }}, {{$report->id}})" class="@if($report->repeat != false && $report->state == 'Resuelto')  @else hidden @endif flex px-4 py-2 text-sm text-black cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-bug-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 4a4 4 0 0 1 3.995 3.8l.005 .2a1 1 0 0 1 .428 .096l3.033 -1.938a1 1 0 1 1 1.078 1.684l-3.015 1.931a7.17 7.17 0 0 1 .476 2.227h3a1 1 0 0 1 0 2h-3v1a6.01 6.01 0 0 1 -.195 1.525l2.708 1.616a1 1 0 1 1 -1.026 1.718l-2.514 -1.501a6.002 6.002 0 0 1 -3.973 2.56v-5.918a1 1 0 0 0 -2 0v5.917a6.002 6.002 0 0 1 -3.973 -2.56l-2.514 1.503a1 1 0 1 1 -1.026 -1.718l2.708 -1.616a6.01 6.01 0 0 1 -.195 -1.526v-1h-3a1 1 0 0 1 0 -2h3.001v-.055a7 7 0 0 1 .474 -2.173l-3.014 -1.93a1 1 0 1 1 1.078 -1.684l3.032 1.939l.024 -.012l.068 -.027l.019 -.005l.016 -.006l.032 -.008l.04 -.013l.034 -.007l.034 -.004l.045 -.008l.015 -.001l.015 -.002l.087 -.004a4 4 0 0 1 4 -4zm0 2a2 2 0 0 0 -2 2h4a2 2 0 0 0 -2 -2z" stroke-width="0" fill="currentColor" /></svg>
+                                            Reincidencia</div>
                                     </div>
                                 </div>
                             </div>
