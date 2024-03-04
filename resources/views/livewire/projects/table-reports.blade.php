@@ -1,6 +1,6 @@
 <div>
     {{--Tabla usuarios--}}
-    <div class="shadow-xl sm:rounded-lg px-4 py-4">
+    <div class="l sm:rounded-lg px-4 py-4">
         {{-- NAVEGADOR --}}
         <div class="flex justify-between text-sm lg:text-base">
             <!-- SEARCH -->
@@ -79,7 +79,7 @@
                                 x-on:click.outside="close($refs.button)"
                                 :id="$id('dropdown-button')"
                                 style="display: none;"
-                                class="absolute left-0 mt-2 w-full rounded-md bg-white shadow-md"
+                                class="absolute left-0 mt-2 w-full rounded-md bg-white "
                             >
                                 <label class="block px-4 py-2">
                                     <input type="checkbox" wire:model="selectedStates" value="Abierto" class="mr-2">
@@ -251,7 +251,7 @@
                     <tr class="text-sm text-center border-b pt-1">
                         <td class="px-4 py-2">
                             <div wire:click="showReport({{$report->id}})" class="flex flex-col items-center text-center cursor-pointer">
-                                <p class="text-xs mb-2">{{ $report->title }}</p>
+                                <p class="text-xs mb-2 text-justify">{{ $report->title }}</p>
                                 <div class="relative h-22 w-full px-3 pt-2">
                                     @if (!empty($report->content))
                                         @if ($report->image == true)
@@ -290,7 +290,7 @@
                         </td>
                         <td class="px-4 py-2">
                             <p class="@if($report->state == 'Resuelto') font-semibold @else hidden @endif">{{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
-                            <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'  name="delegate" id="delegate" class="inputs @if($report->state == 'Resuelto') hidden @endif">
+                            <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'  name="delegate" id="delegate" class="inpSelectTable w-min-full @if($report->state == 'Resuelto') hidden @endif">
                                 <option selected value={{ $report->delegate->id }}>{{ $report->delegate->name }} {{ $report->delegate->lastname }}</option>
                                 @foreach ($report->usersFiltered as $userFiltered)
                                     <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }} {{ $userFiltered->lastname }}</option>
@@ -316,7 +316,7 @@
                         </td>
                         <td class="px-4 py-2">
                             <select wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)' name="state" id="state" 
-                                class="inputs
+                                class="inpSelectTable w-28
                                 @if($report->state == 'Abierto' && $report->state == 'Proceso') bg-white @endif
                                 @if($report->state == 'Resuelto') bg-lime-500 @endif
                                 @if($report->state == 'Conflicto') bg-red-600 text-white @endif
@@ -330,14 +330,19 @@
                                 <p class="text-red-600 text-xs">Reincidencia {{ $report->count }}</p> 
                             @endif
                         </td>
-                        <td class="px-4 py-2">
-                            <p class="font-semibold inline-block">Para:</p> {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D [-] MMMM [-] YYYY') }}<br>
-                            <p class="font-semibold inline-block">Se delegó:</p> {{ \Carbon\Carbon::parse($report->delegated_date)->locale('es')->isoFormat('D [-] MMMM [-] YYYY') }}
+                        <td class="px-4 py-2 text-justify">
+                            <div class="w-fit mx-auto">
+                                <span class="font-semibold inline-block">Para:</span> {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
+                                <span class="font-semibold inline-block">Se delegó:</span> {{ \Carbon\Carbon::parse($report->delegated_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                            </div>
+                          
                         </td>
                         <td class="px-4 py-2">
-                            {{ $report->user->name }} {{ $report->user->lastname }} <br>
-                            {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D [-] MMMM [-] YYYY') }}<br>
-                            {{ $report->created_at->diffForHumans(null, false, false, 1) }}
+                            <div class="w-fit mx-auto text-justify">
+                                <span class=" font-semibold "> {{ $report->user->name }} {{ $report->user->lastname }}  </span> <br>
+                               <span class=" font-mono"> {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }} </span><br> 
+                               <span  class="italic"> {{ $report->created_at->diffForHumans(null, false, false, 1) }}  </span> 
+                            </div>
                         </td>
                         <td class="px-4 py-5">
                             <div class="flex justify-center">
@@ -370,7 +375,7 @@
                                         </svg>
                                     </button>
                                     <!-- Panel -->
-                                    <div x-ref="panel" x-show="open" x-on:click.outside="close($refs.button)" :id="$id('dropdown-button')" style="display: none;" class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200 shadow-md" >
+                                    <div x-ref="panel" x-show="open" x-on:click.outside="close($refs.button)" :id="$id('dropdown-button')" style="display: none;" class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200 " >
                                         <!-- Botón Editar -->
                                         <div wire:click="showEdit({{$report->id}})" class="@if($report->state == 'Resuelto') hidden @endif flex px-4 py-2 text-sm text-black cursor-pointer">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
@@ -401,7 +406,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalShow) block  @else hidden @endif">
         <div class="flex justify-center h-full items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-full items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col  @if($evidenceShow) md:w-4/5 @else md:w-3/4 @endif  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col  @if($evidenceShow) md:w-4/5 @else md:w-3/4 @endif  mx-auto rounded-lg   overflow-y-auto " style="max-height: 90%;">
             @if (!empty($reportShow->content))
                 @if ($reportShow->image == true)
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
@@ -568,7 +573,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalEdit) block  @else hidden @endif">
         <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full  fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col md:w-4/3 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col md:w-4/3 mx-auto rounded-lg   overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <h3 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary pl-4 py-2">Editar reporte</h3>
                     <svg wire:click="modalEdit" wire:loading.remove wire:target="modalEdit" class="w-6 h-6 my-2 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -616,7 +621,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalDelete) block  @else hidden @endif">
         <div class="flex justify-center h-full items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-full items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col  md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col  md:w-2/5 mx-auto rounded-lg overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <svg wire:click="modalDelete" wire:loading.remove wire:target="modalDelete" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -650,7 +655,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalEvidence) block  @else hidden @endif">
         <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full  fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col md:w-2/5 mx-auto rounded-lg   overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <h2 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary-fund pl-4 py-2">Evidencia</h2>
                     <svg id="modalEvidence" data-id="@if($modalEvidence){{ $reportEvidence->id }}@endif" data-project_id="@if($modalEvidence){{ $reportEvidence->project_id }}@endif" data-state="@if($modalEvidence){{ $reportEvidence->state }}@endif" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

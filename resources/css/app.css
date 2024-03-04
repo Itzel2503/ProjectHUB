@@ -5,4 +5,5 @@
 
 .tableStyle { @apply  align-middle inline-block w-full overflow-x-scroll border rounded-lg  mt-4  ;}
 .inputs{  @apply w-full border border-gray-300 rounded-lg px-3 py-1.5 relative focus:outline-none cursor-pointer ;}
+.inpSelectTable{  @apply  border border-gray-300 rounded-lg px-3 py-1.5 relative focus:outline-none cursor-pointer ;}
 .tiitleHeader{ @apply inline-flex w-auto text-xl text-secondary-fund font-bold  border-b-2 border-secondary-fund pb-1 ;}
