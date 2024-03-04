@@ -1424,9 +1424,6 @@ select {
 .p-5 {
   padding: 1.25rem;
 }
-.p-20 {
-  padding: 5rem;
-}
 .px-0 {
   padding-left: 0px;
   padding-right: 0px;
@@ -1499,9 +1496,6 @@ select {
 }
 .pb-4 {
   padding-bottom: 1rem;
-}
-.pl-10 {
-  padding-left: 2.5rem;
 }
 .pl-2 {
   padding-left: 0.5rem;
