@@ -1,12 +1,12 @@
 <div>
     {{--Tabla usuarios--}}
-    <div class="shadow-xl sm:rounded-lg px-4 py-4">
+    <div class="sm:rounded-lg px-4 py-4">
         {{-- NAVEGADOR --}}
         <div class="flex justify-between text-sm lg:text-base">
             <!-- SEARCH -->
-            <div class="inline-flex sm:w-3/4 h-12 mb-2 bg-transparent">
+            <div class="inline-flex md:w-2/5 h-12 mb-2 bg-transparent">
                 <div class="flex w-full h-full relative">
-                    <div class="flex">
+                    <div class="flex absolute z-10 mt-2">
                         <span class="flex items-center leading-normal bg-transparent rounded-lg  border-0  border-none lg:px-3 p-2 whitespace-no-wrap">
                             <svg width="18" height="18" class="w-4 lg:w-auto" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M8.11086 15.2217C12.0381 15.2217 15.2217 12.0381 15.2217 8.11086C15.2217 4.18364 12.0381 1 8.11086 1C4.18364 1 1 4.18364 1 8.11086C1 12.0381 4.18364 15.2217 8.11086 15.2217Z" stroke="#455A64" stroke-linecap="round" stroke-linejoin="round" />
@@ -14,12 +14,12 @@
                             </svg>
                         </span>
                     </div>
-                    <input wire:model="search" type="text" placeholder="Buscar" class="flex appearance-none w-full border-0 border-yellow-400 border-b-2 rounded rounded-l-none relative focus:outline-none text-xxs lg:text-base text-gray-500 font-thin">
+                    <input wire:model="search" type="text" placeholder="Buscar" class="inputs" style="padding-left: 3em;">
                 </div>
             </div>
             <!-- COUNT -->
             <div class="inline-flex w-1/3 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
-                <select wire:model="perPage" id="" class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
+                <select wire:model="perPage" id="" class="inputs">
                     <option value="10"> 10 por página</option>
                     <option value="25"> 25 por página</option>
                     <option value="50"> 50 por página</option>
@@ -29,7 +29,7 @@
             <!-- BTN NEW -->
             @if (Auth::user()->type_user == 1)
                 <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
-                    <button wire:click="modalCreateEdit()" class="p-auto text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
+                    <button wire:click="modalCreateEdit()" class="p-auto text-white font-semibold  bg-primaryColor hover:bg-secondary rounded-lg cursor-pointer w-full ">
                         Nuevo Proyecto
                     </button>
                 </div>
@@ -38,7 +38,7 @@
         {{-- END NAVEGADOR --}}
 
         {{-- TABLE --}}
-        <div class="align-middle inline-block w-full overflow-x-scroll bg-main-fund rounded-lg shadow-xs mt-4">
+        <div class="tableStyle">
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 bg-secondary-fund">
                     <tr class="font-semibold tracking-wide text-center text-white text-base">
@@ -46,8 +46,7 @@
                         <th class="px-4 py-3">Código</th>
                         <th class="px-4 py-3">Proyecto</th>
                         <th class="px-4 py-3">Cliente</th>
-                        <th class="px-4 py-3">Tipo</th>
-                        <th class="px-4 py-3">Prioridad</th>
+                  
                         <th class="px-4 py-3">Líder y Scrum Master</th>
                         <th class="px-4 py-2">Acciones</th>
                     </tr>
@@ -57,9 +56,11 @@
                     <tr class="border-white text-sm text-center">
                         <td class="px-4 py-2">{{ $project->code }}</td>
                         <td class="px-4 py-2">{{ $project->name }}</td>
-                        <td class="px-4 py-2">{{ $project->customer_name }}</td>
-                        <td class="px-4 py-2">{{ $project->type }}</td>
-                        <td class="px-4 py-2">K{{ $project->priority }}</td>
+                        <td class="px-4 py-2">{{ $project->customer_name }}<br>
+                                              {{ $project->type }}  - K{{ $project->priority }}
+                        </td>
+              
+                      
                         <td class="px-4 py-2">
                                 - {{ $project->leader->name }} {{ $project->leader->lastname }} <br>
                                 - {{ $project->programmer->name }} {{ $project->programmer->lastname }}
@@ -124,7 +125,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalCreateEdit) block  @else hidden @endif">
         <div class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col md:w-2/5 mx-auto rounded-lg   overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     @if($showUpdate)
                     <h3 class="text-xl text-secondary font-medium title-font  w-full border-l-4 border-secondary pl-4 py-2">Editar proyecto</h3>
@@ -144,7 +145,7 @@
                                 <h5 class="inline-flex font-semibold" for="code">
                                     Código <p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='code' required type="number" placeholder="Código" name="code" id="code" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='code' required type="number" placeholder="Código" name="code" id="code" class="inputs">
                                 <div>
                                     <span class="text-red-600 text-xs italic">
                                         @error('code')
@@ -159,7 +160,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Nombre<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='name' required type="text" placeholder="Nombre" name="name" id="name" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='name' required type="text" placeholder="Nombre" name="name" id="name" class="inputs">
                                 <div>
                                     <span class="text-red-600 text-xs italic">
                                         @error('name')
@@ -177,13 +178,13 @@
                                     Tipo @if(!$showUpdate)<p class="text-red-600">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                    <select wire:model='type' required name="type" id="type" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <select wire:model='type' required name="type" id="type" class="inputs">
                                         @foreach ($allType as $type)
                                             <option value='{{ $type }}'>{{ $type }}</option>
                                         @endforeach
                                     </select>
                                 @else
-                                    <select wire:model='type' required name="type" id="type" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <select wire:model='type' required name="type" id="type" class="inputs">
                                         <option selected>Selecciona...</option>
                                         @foreach ($allType as $type)
                                             <option value='{{ $type }}'>{{ $type }}</option>
@@ -204,7 +205,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Prioridad <p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='priority' required type="number" placeholder="0 - 99" min="0" max="99" name="priority" id="priority" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <input wire:model='priority' required type="number" placeholder="0 - 99" min="0" max="99" name="priority" id="priority" class="inputs">
                                 <div>
                                     <span class="text-red-600 text-xs italic">
                                         @error('priority')
@@ -222,13 +223,13 @@
                                     Cliente @if(!$showUpdate)<p class="text-red-600">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                <select wire:model='customer' name="customer" id="customer" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <select wire:model='customer' name="customer" id="customer" class="inputs">
                                     @foreach ($allCustomers as $customer)
                                         <option value="{{ $customer->id }}" >{{ $customer->name }}</option>
                                     @endforeach
                                 </select>
                                 @else
-                                <select wire:model='customer' required name="customer" id="customer" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                <select wire:model='customer' required name="customer" id="customer" class="inputs">
                                     <option selected>Selecciona...</option>
                                     @foreach ($allCustomers as $allCustomer)
                                         <option value="{{ $allCustomer->id }}">{{ $allCustomer->name }}</option>
@@ -251,13 +252,13 @@
                                     Líder @if(!$showUpdate)<p class="text-red-600">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                    <select wire:model='leader' required name="leader" id="leader" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <select wire:model='leader' required name="leader" id="leader" class="inputs">
                                         @foreach ($allUsers as $user)
                                             <option value="{{ $user->id }}" @if($user->id == $leader) selected @endif>{{ $user->name }} {{ $user->lastname }}</option>
                                         @endforeach
                                     </select>
                                 @else
-                                    <select wire:model='leader' required name="leader" id="leader" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <select wire:model='leader' required name="leader" id="leader" class="inputs">
                                         <option selected>Selecciona...</option>
                                         @foreach ($allUsers as $user)
                                             <option value="{{ $user->id }}">{{ $user->name }} {{ $user->lastname }}</option>
@@ -281,13 +282,13 @@
                                     Scrum Master @if(!$showUpdate)<p class="text-red-600">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
-                                    <select wire:model='programmer' required name="programmer" id="programmer" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <select wire:model='programmer' required name="programmer" id="programmer" class="inputs">
                                         @foreach ($allUsers as $user)
                                             <option value="{{ $user->id }}" @if($user->id == $programmer) selected @endif>{{ $user->name }} {{ $user->lastname }}</option>
                                         @endforeach
                                     </select>
                                 @else
-                                    <select wire:model='programmer' required name="programmer" id="programmer" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
+                                    <select wire:model='programmer' required name="programmer" id="programmer" class="inputs">
                                         <option selected>Selecciona...</option>
                                         @foreach ($allUsers as $user)
                                             <option value="{{ $user->id }}">{{ $user->name }} {{ $user->lastname }}</option>
@@ -322,7 +323,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalDelete) block  @else hidden @endif">
         <div class="flex justify-center h-full items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-full items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col md:w-2/5  mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col md:w-2/5  mx-auto rounded-lg   overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <svg wire:click="modalDelete" wire:loading.remove wire:target="modalDelete" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -351,7 +352,7 @@
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalRestore) block  @else hidden @endif">
         <div class="flex justify-center h-full items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
         <div class="flex text:md justify-center h-full items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col  md:w-2/5 mx-auto rounded-lg  shadow-xl overflow-y-auto " style="max-height: 90%;">
+            <div class="flex flex-col  md:w-2/5 mx-auto rounded-lg  overflow-y-auto " style="max-height: 90%;">
                 <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <svg wire:click="modalRestore" wire:loading.remove wire:target="modalRestore" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
