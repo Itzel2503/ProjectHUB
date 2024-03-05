@@ -113,7 +113,7 @@
             </div>
             <!-- BTN NEW -->
             <div class="inline-flex w-1/6 h-12 bg-transparent mb-2">
-                <button wire:click="create({{ $project->id }})" class="p-auto text-white font-semibold  bg-main hover:bg-secondary rounded-lg cursor-pointer w-full ">
+                <button wire:click="create({{ $project->id }})" class="btnNuevo">
                     Nuevo reporte
                 </button>
             </div>
@@ -123,8 +123,8 @@
         {{-- TABLE --}}
         <div class="tableStyle">
             <table class="w-full whitespace-no-wrap table table-hover">
-                <thead class="border-0 bg-secondary-fund">
-                    <tr class="font-semibold tracking-wide text-center text-white text-base">
+                <thead class="border-0 ">
+                    <tr class="trTable">
                         <th class="px-4 py-3 w-1/5">
                             <div @if($priorityFiltered) wire:click="orderByLowPriority()" @else wire:click="orderByHighPriority()" @endif class="justify- inline-flex cursor-pointer">
                                 Reporte 
@@ -409,9 +409,11 @@
             <div class="flex flex-col  @if($evidenceShow) md:w-4/5 @else md:w-3/4 @endif  mx-auto rounded-lg   overflow-y-auto " style="max-height: 90%;">
             @if (!empty($reportShow->content))
                 @if ($reportShow->image == true)
-                <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
+                <div class="modalHeader">
                     <div class="flex justify-center items-center">
-                        <a href="{{ asset('reportes/' . $reportShow->content) }}" download="{{ basename($reportShow->content) }}" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">
+                        <a href="{{ asset('reportes/' . $reportShow->content) }}" download="{{ basename($reportShow->content) }}" class="px-4 py-2  bg-orange-400 rounded-md btnIcon" style="color: white;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+                            &nbsp;
                             Descargar captura
                         </a>
                     </div>
@@ -434,7 +436,7 @@
                     @else
                     <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                         <div class="flex justify-center items-center">
-                            <a href="{{ asset('reportes/' . $reportShow->content) }}" download="{{ basename($reportShow->content) }}" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">
+                            <a href="{{ asset('reportes/' . $reportShow->content) }}" download="{{ basename($reportShow->content) }}" class="px-4 py-2 mt-5 font-semibold border-secundaryColor hover:bg-secondary rounded cursor-pointer" style="color: white;">
                                 Descargar video
                             </a>
                         </div>
@@ -449,7 +451,7 @@
                 @if ($reportShow->file == true)
                 <div class="flex flex-row justify-between px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <div class="flex justify-center items-center">
-                        <a href="{{ asset('reportes/' . $reportShow->content) }}" download="{{ basename($reportShow->content) }}" class="px-4 py-2 mt-5 font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" style="color: white;">
+                        <a href="{{ asset('reportes/' . $reportShow->content) }}" download="{{ basename($reportShow->content) }}" class="px-4 py-2 mt-5 font-semibold border-secundaryColor hover:bg-secondary rounded cursor-pointer" style="color: white;">
                             Descargar documento
                         </a>
                     </div>
@@ -471,8 +473,8 @@
             @endif
             
             @if($showReport)
-            <div class="flex @if($evidenceShow) flex-row @else flex-col @endif px-6 py-2 bg-main-fund overflow-y-auto text-sm">
-                <div class="@if($evidenceShow) flex flex-col w-3/6 @endif">
+            <div class="flex flex-col lg:flex-row items-stretch   px-6 py-2 bg-white overflow-y-auto text-sm">
+                {{-- <div class="@if($evidenceShow) flex flex-col w-3/6 @endif">
                     <div class="w-full md-3/4 mb-5 mt-3 flex flex-col">
                         <div class="text-xl text-justify">
                             <h3 class="font-bold text-secondary-fund">Descripción</h3>
@@ -495,7 +497,7 @@
                         </div>
                         <div class="w-auto flex flex-row mx-3 my-6">
                             <input wire:model='message' type="text" name="message" id="message" placeholder="Mensaje a los administradores"class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full mr-5 rounded mx-auto">
-                            <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="updateChat({{ $reportShow->id }})">Enviar</button>
+                            <button class="px-4 py-2 text-white font-semibold border-secundaryColor hover:bg-secondary rounded cursor-pointer" wire:click="updateChat({{ $reportShow->id }})">Enviar</button>
                         </div>
                     </div>
 
@@ -557,13 +559,110 @@
                         </div>
                     @endif
                 </div>
-                @endif
+                @endif --}}
+
+             
+                    <div class="w-full lg:w-1/2 md-3/4 mb-5 mt-3 flex flex-col justify-between">
+                        <div class="text-base text-justify">
+                            <h3 class="text-xl font-bold text-secondary-fund">Descripción</h3>
+                            {!! nl2br(e($reportShow->comment)) !!}<br><br>
+
+                            
+                            @if ($showChat)
+                                <h3 class="text-xl font-bold text-secondary-fund">Comentarios</h3>
+                                <div class="border-4 border-primaryColor rounded-br-lg mx-2 px-2 py-2">
+                                    @foreach ($messages as $message)
+                                    <div class="inline-flex">
+                                        @if($message->messages_count >= 1 && $reportShow->user_chat != Auth::id() && $message->look == false)
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-exclamation-mark text-red-600" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M12 19v.01" />
+                                                <path d="M12 15v-10" />
+                                            </svg>
+                                        @endif
+                                        <p class=" pr-1  text-black">  <span class="font-semibold"> {{ $message->transmitter->name }}: <span></span> <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>  </p>
+                                       
+                                    </div>
+                                    <br>
+                                    @endforeach
+
+                                </div>
+                               
+                            @endif
+                        </div>
+                        <div class="w-auto flex flex-row mx-3 my-6">
+                            <input wire:model='message' type="text" name="message" id="message" placeholder="Mensaje a los administradores"class="inputs">
+                            <button class="btnSave" wire:click="updateChat({{ $reportShow->id }})">Enviar</button>
+                        </div>
+                    </div>
+                <div class="photos w-full lg:w-1/2 px-5 ">
+                    @if (!empty($reportShow->content))
+                        @if ($reportShow->image == true)
+                            <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                                <img src="{{ asset('reportes/' . $reportShow->content) }}" alt="Report Image">
+                            </div>
+                        @endif
+                        @if ($reportShow->video == true)
+                            @if (strpos($reportShow->content, "Reporte") === 0)
+                                <div class="w-full my-5 text-lg text-center">
+                                    <p class="text-red my-5">Falta subir '{{ $reportShow->content }}'</p>
+                                </div>
+                            @else
+                                <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                                    <video src="{{ asset('reportes/' . $reportShow->content) }}" loop autoplay alt="Report Video"></video>
+                                </div>
+                            @endif
+                        @endif
+                        @if ($reportShow->file == true)
+                            <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                                <iframe src="{{ asset('reportes/' . $reportShow->content) }}" width="auto" height="800"></iframe>
+                            </div>
+                        @endif
+                    @else
+                        <div class="w-full my-5 text-lg text-center">
+                            <p class="text-red my-5">Sin archivo</p>
+                        </div>
+                    @endif
+
+                    @if($evidenceShow)
+                    <div class="flex flex-col w-3/6">
+                        <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                            <div class="text-2xl md:flex text-center">
+                                Evidencia
+                            </div>
+                        </div>
+                        @if (!empty($evidenceShow->content))
+                            @if ($evidenceShow->image == true)
+                                <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                                    <img src="{{ asset('evidence/' . $evidenceShow->content) }}" alt="Report Image">
+                                </div>
+                            @endif
+                            @if ($evidenceShow->video == true)
+                                <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                                    <video src="{{ asset('evidence/' . $evidenceShow->content) }}" loop autoplay alt="Report Video"></video>
+                                </div>
+                            @endif
+                            @if ($evidenceShow->file == true)
+                                <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                                    <iframe src="{{ asset('evidence/' . $evidenceShow->content) }}" width="auto" height="800"></iframe>
+                                </div>
+                            @endif
+                        @else
+                            <div class="w-full my-5 text-lg text-center">
+                                <p class="text-red my-5">Sin evidencia</p>
+                            </div>
+                        @endif
+                    </div>
+                    @endif
+                </div>
 
             </div>
 
-            <div class="flex justify-center items-center py-6 px-10 bg-main-fund">
-                <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="modalShow()" wire:loading.remove wire:target="modalShow()">Cerrar</button>
-            </div>
+            {{-- <div class="modalFooter hidden">
+                <button class="btnClose" wire:click="modalShow()" wire:loading.remove wire:target="modalShow()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-square-letter-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 3m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M10 8l4 8" /><path d="M10 16l4 -8" /></svg>  &nbsp;
+                    Cerrar</button>
+            </div> --}}
             @endif
             </div>
         </div>
@@ -610,7 +709,7 @@
                 </div>
                 <div class="flex justify-center items-center py-6 bg-main-fund">
                     @if($modalEdit)
-                        <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="update({{ $reportEdit->id }}, {{ $project->id }})"> Guardar </button>
+                        <button class="px-4 py-2 text-white font-semibold border-secundaryColor hover:bg-secondary rounded cursor-pointer" wire:click="update({{ $reportEdit->id }}, {{ $project->id }})"> Guardar </button>
                     @endif
                 </div>
             </div>
@@ -639,11 +738,11 @@
                     </div>
                 </div>
                 <div class="flex justify-between items-center py-6 px-10 bg-main-fund">
-                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="modalDelete()" wire:loading.remove wire:target="modalDelete()">Cancelar</button>
+                    <button class="px-4 py-2 text-white font-semibold border-secundaryColor hover:bg-secondary rounded cursor-pointer" wire:click="modalDelete()" wire:loading.remove wire:target="modalDelete()">Cancelar</button>
                     <form method="POST" action="{{ route('projects.reports.destroy', ['project' => $reportDelete->project_id, 'report' => $reportDelete->id]) }}">
                         @csrf
                         @method('DELETE')
-                        <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-red-600 rounded cursor-pointer">Eliminar</button>
+                        <button class="px-4 py-2 text-white font-semibold border-secundaryColor hover:bg-red-600 rounded cursor-pointer">Eliminar</button>
                     </form>
                 </div>
                 @endif
@@ -676,7 +775,7 @@
                 </div>
                 <div class="flex justify-center items-center py-6 bg-main-fund">
                     @if($modalEvidence)
-                        <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="updateEvidence({{ $reportEvidence->id }}, {{ $reportEvidence->project_id }})"> Guardar </button>
+                        <button class="px-4 py-2 text-white font-semibold border-secundaryColor hover:bg-secondary rounded cursor-pointer" wire:click="updateEvidence({{ $reportEvidence->id }}, {{ $reportEvidence->project_id }})"> Guardar </button>
                     @endif
                 </div>
             </div>

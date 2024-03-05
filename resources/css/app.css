@@ -3,7 +3,36 @@
 @tailwind utilities;
 
 
+/* header */
+.active{ @apply border-l-4  border-secundaryColor font-extrabold bg-slate-100}
+.menu{@apply relative px-6 py-2.5 hover:opacity-70}
+
+/* tablas */
 .tableStyle { @apply  align-middle inline-block w-full overflow-x-scroll border rounded-lg  mt-4  ;}
+.trTable{@apply font-semibold tracking-wide text-center text-text1 text-base bg-primaryColor}
+
+/* /inputs */
 .inputs{  @apply w-full border border-gray-300 rounded-lg px-3 py-1.5 relative focus:outline-none cursor-pointer ;}
 .inpSelectTable{  @apply  border border-gray-300 rounded-lg px-3 py-1.5 relative focus:outline-none cursor-pointer ;}
-.tiitleHeader{ @apply inline-flex w-auto text-xl text-secondary-fund font-bold  border-b-2 border-secondary-fund pb-1 ;}
+.tiitleHeader{ @apply inline-flex w-auto text-xl text-secundaryColor font-bold  border-b-2 border-secondary-fund pb-1 ;}
+
+
+
+/* botones nuevo editar eliminar  */
+.btnIcon{@apply flex flex-row justify-center items-center}
+.btnNuevo{ @apply  text-white font-semibold  bg-secundaryColor  rounded-lg cursor-pointer w-full btnIcon }
+.btnSave{ @apply  text-white font-semibold  bg-secundaryColor  rounded-lg cursor-pointer w-auto px-4 py-2 btnIcon }
+.btnClose{ @apply  text-white font-semibold  bg-red-500  rounded-lg cursor-pointer w-auto px-4 py-2 btnIcon }
+
+
+
+/* modal */
+.modalHeader{
+    @apply flex flex-row justify-between px-6 py-4 bg-gray-100 text-white rounded-tl-lg rounded-tr-lg;
+}
+.modalBody{
+    @apply flex flex-col sm:flex-row px-6 py-2 bg-white overflow-y-auto text-sm;
+}
+.modalFooter{
+    @apply flex justify-center items-center py-6 bg-white;
+}
