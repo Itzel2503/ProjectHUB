@@ -2,9 +2,9 @@
     {{--Tabla usuarios--}}
     <div class="sm:rounded-lg px-4 py-4">
         {{-- NAVEGADOR --}}
-        <div class="flex justify-between text-sm lg:text-base">
+        <div class="flex flex-wrap justify-between text-sm lg:text-base">
             <!-- SEARCH -->
-            <div class="inline-flex md:w-2/5 h-12 mb-2 bg-transparent">
+            <div class="inline-flex px-2 md:px-0  w-1/2 md:w-2/5 h-12 mb-2 bg-transparent">
                 <div class="flex w-full h-full relative">
                     <div class="flex absolute z-10 mt-2">
                         <span class="flex items-center leading-normal bg-transparent rounded-lg  border-0  border-none lg:px-3 p-2 whitespace-no-wrap">
@@ -18,7 +18,7 @@
                 </div>
             </div>
             <!-- COUNT -->
-            <div class="inline-flex w-1/3 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
+            <div class="inline-flex  px-2 md:px-0  w-1/2 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
                 <select wire:model="perPage" id="" class="inputs">
                     <option value="10"> 10 por página</option>
                     <option value="25"> 25 por página</option>
@@ -28,12 +28,12 @@
             </div>
             <!-- BTN NEW -->
             @if (Auth::user()->type_user == 1)
-                <div class="inline-flex w-1/4 h-12 bg-transparent mb-2">
+                <div class="inline-flex px-2 md:px-0  w-1/2 md:w-1/4 h-12 bg-transparent mb-2">
                     <button wire:click="modalCreateEdit()" class="btnNuevo   ">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
 
                         <span>
-                            Nuevo Proyecto
+                             Proyecto
                         </span>
                       
                     </button>
@@ -45,30 +45,49 @@
         {{-- TABLE --}}
         <div class="tableStyle">
             <table class="w-full whitespace-no-wrap table table-hover ">
-                <thead class="border-0 ">
-                    <tr class="trTable">
+                <thead class="border-0 headTable">
+                    <tr class="">
                         {{-- <th class="px-4 py-3"></th> LOGO --}}
+                        @if(Auth::user()->area_id == 1)
                         <th class="px-4 py-3">Código</th>
-                        <th class="px-4 py-3">Proyecto</th>
+                        @endif
                         <th class="px-4 py-3">Cliente</th>
+                        <th class="px-4 py-3">Proyecto</th>
+              
                   
                         <th class="px-4 py-3">Líder y Scrum Master</th>
                         <th class="px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
+                   
                     @foreach($projects as $project)
-                    <tr class="border-white text-sm text-center">
-                        <td class="px-4 py-2">{{ $project->code }}</td>
-                        <td class="px-4 py-2">{{ $project->name }}</td>
-                        <td class="px-4 py-2">{{ $project->customer_name }}<br>
-                                              {{ $project->type }}  - K{{ $project->priority }}
-                        </td>
-              
+                    <tr class="trTable">
+                      
+                        @if(Auth::user()->area_id == 1)
+                            <th class="px-4 py-2">{{ $project->code }}</th>
+                        @endif
+                       
                       
                         <td class="px-4 py-2">
+                            <div class="w-32 mx-auto text-justify">
+                                <span class="font-bold">{{ $project->customer_name }}</span><br>
+                            </div>
+                                              
+                        </td>
+              
+                        <td class="px-4 py-2">
+                            <div class="w-36 mx-auto text-justify">
+                                 <span class="font-semibold">{{ $project->name }} </span> <br>
+                            <span class="italic">{{ $project->type }}</span>  - K{{ $project->priority }}
+                            </div>
+                        </td>
+                      
+                        <td class="px-4 py-2">
+                            <div class="w-36 mx-auto text-justify">
                                 - {{ $project->leader->name }} {{ $project->leader->lastname }} <br>
                                 - {{ $project->programmer->name }} {{ $project->programmer->lastname }}
+                            </div>
                         </td>
                         <td class="px-4 py-2 flex justify-center">
                             <button wire:click="showReports({{$project->id}})" class="bg-red-500 text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
@@ -115,7 +134,7 @@
                             <!-- Panel -->
                             <div x-ref="panel" x-show="open" x-on:click.outside="close($refs.button)" :id="$id('dropdown-button')" style="display: none;" class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200 " >
                                  <!-- Botón Editar -->
-                                 <div  wire:click="showRestore({{$project->id}})" class="      @if($project->deleted_at == null) hidden @endif flex content-center px-4 py-2 text-sm text-black cursor-pointer">
+                                 <div  wire:click="$emit('restartItem',{{ $project->id }})" class="      @if($project->deleted_at == null) hidden @endif flex content-center px-4 py-2 text-sm text-black cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-reload mr-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                         <path d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747"></path>
@@ -132,7 +151,7 @@
                                     </svg>
                                     Editar</div>
                                 <!-- Botón Reincidencia -->
-                                <div wire:click="showDelete({{$project->id}})" class="@if (Auth::user()->type_user != 1) hidden @endif flex content-center px-4 py-2 text-sm text-red-600 cursor-pointer">
+                                <div wire:click="$emit('deleteItem',{{ $project->id }})" class="@if (Auth::user()->type_user != 1) hidden @endif flex content-center px-4 py-2 text-sm text-red-600 cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash mr-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                         <path d="M4 7l16 0"></path>
@@ -452,7 +471,7 @@
                 </div>
                 <div class="flex justify-between items-center py-6 px-10 bg-main-fund">
                     <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="modalRestore()" wire:loading.remove wire:target="modalRestore()">Cancelar</button>
-                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="restore({{$projectRestore->id}})" wire:loading.remove wire:target="restore({{$projectRestore->id}})">Restaurar</button>
+                    <button class="px-4 py-2 text-white font-semibold bg-secondary-fund hover:bg-secondary rounded cursor-pointer" wire:click="$emit('restartItem',{{ $projectRestore->id }})" wire:loading.remove wire:target="restore({{$projectRestore->id}})">Restaurar</button>
                 </div>
                 @endif
             </div>
@@ -464,4 +483,97 @@
             toastr[event.detail.type](event.detail.text, event.detail.title);
         });
     </script>
+
+
+<div class="absolute w-full h-screen z-50 top-0 left-0 " wire:loading >
+
+   
+    <div class="absolute w-full h-screen bg-gray-200 z-10 opacity-40">
+
+    </div>
+    <div class="loadingspinner relative top-1/3 z-20">
+        <div id="square1"></div>
+        <div id="square2"></div>
+        <div id="square3"></div>
+        <div id="square4"></div>
+        <div id="square5"></div>
+      </div>
+</div>
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+@push('js')
+<script>
+    Livewire.on('deleteItem', deletebyId => {
+                Swal.fire({
+                    title: '¿Seguro que deseas eliminar este elemento?',
+                    text: "Esta acción es irreversible",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#202a33',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Eliminar',
+                    calcelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.livewire.emit('destroy', deletebyId);
+                        // Swal.fire(
+                        //   '¡Eliminado!',
+                        //   'Tu elemento ha sido eliminado.',
+                        //   'Exito'
+                        // )
+                    }
+                })
+            });
+
+            Livewire.on('restartItem', restartbyId => {
+                Swal.fire({
+                    title: '¿Deseas restaurar este elemento?',
+                    text: "Esta acción es irreversible",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#202a33',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Restaurar',
+                    calcelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.livewire.emit('restore', restartbyId);
+                        // Swal.fire(
+                        //   '¡Eliminado!',
+                        //   'Tu elemento ha sido eliminado.',
+                        //   'Exito'
+                        // )
+                    }
+                })
+            });
+
+        document.addEventListener('livewire:load', function(){
+                $('.searchSelectCategory').select2();
+                $('.searchSelectCategory').on('change', function () {
+                    @this.set('id_category', this.value);
+                });
+
+                // $('.searchSelectUnit').select2();
+                // $('.searchSelectUnit').on('change', function () {
+                //     @this.set('id_unit', this.value);
+                // });
+            });
+
+
+        //  Livewire.on('setUnit', opcion => {
+        //    $('#id_unit').val(opcion).trigger('change.select2').trigger('select2:select');
+        // });
+
+        Livewire.on('setCategory', opcion => {
+           $('#id_category').val(opcion).trigger('change.select2').trigger('select2:select');
+        });
+</script>
+@endpush
 </div>

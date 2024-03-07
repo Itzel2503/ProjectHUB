@@ -19,7 +19,8 @@ module.exports = {
         thirdColor: '#37393a',       // amarillo kircof
         'primaryColor-light': '#3e6871',
         'primaryColor-dark': '#172833',  
-        'text1': '#2e4c5f' 
+        'text1': '#2e4c5f',
+        'text2': '#575454' 
       },
     },
   },

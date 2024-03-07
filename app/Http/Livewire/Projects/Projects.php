@@ -14,7 +14,7 @@ class Projects extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
     
-    public $listeners = ['reloadPage' => 'reloadPage'];
+    public $listeners = ['reloadPage' => 'reloadPage', 'destroy', 'restore'];
     // modal
     public $modalCreateEdit = false, $modalDelete = false, $modalRestore = false;
     public $showUpdate = false, $showDelete = false, $showRestore = false;

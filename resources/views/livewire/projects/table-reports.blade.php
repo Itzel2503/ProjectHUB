@@ -2,10 +2,10 @@
     {{--Tabla usuarios--}}
     <div class="l sm:rounded-lg px-4 py-4">
         {{-- NAVEGADOR --}}
-        <div class="flex justify-between text-sm lg:text-base">
+        <div class="flex flex-col gap-2 md:flex-row justify-between text-sm lg:text-base">
             <!-- SEARCH -->
-            <div class="inline-flex w-4/5">
-                <div class="inline-flex md:w-2/5 h-12 mb-2 bg-transparent">
+            <div class="flex flex-wrap  md:inline-flex md:flex-nowrap w-full md:w-4/5">
+                <div class="px-2 md:px-0 inline-flex  w-1/2 md:w-2/5 h-12 mb-2 bg-transparent">
                     <div class="flex w-full h-full relative">
                         <div class="flex absolute z-10 mt-2">
                             <span class="flex items-center leading-normal bg-transparent rounded-lg  border-0  border-none lg:px-3 p-2 whitespace-no-wrap">
@@ -20,7 +20,7 @@
                 </div>
                 
                 <!-- DELEGATE -->
-                <div class="inline-flex md:w-1/5 h-12 md:mx-3 mb-2 bg-transparent">
+                <div class="px-2 md:px-0 inline-flex w-1/2 md:w-1/5 h-12 md:mx-3 mb-2 bg-transparent">
                     <select wire:model.lazy="selectedDelegate" class="inputs">
                         <option value="">Delegados</option>
                         @foreach ($allUsersFiltered as $key => $userFiltered)
@@ -29,7 +29,7 @@
                     </select>
                 </div>
                 <!-- STATE -->
-                <div class="inline-flex md:w-1/5 h-12 md:mx-3 mb-2 bg-transparent">
+                <div class="px-2 md:px-0 inline-flex w-1/2 md:w-1/5 h-12 md:mx-3 mb-2 bg-transparent">
                     <div class="flex justify-center w-full">
                         <div
                             x-data="{
@@ -101,6 +101,14 @@
                         </div>
                     </div>
                 </div>
+
+
+                <div class="px-2 md:px-0 inline-flex w-1/2 md:hidden h-12 bg-transparent mb-2">
+                    <button wire:click="create({{ $project->id }})" class="btnNuevo">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                        Reporte
+                    </button>
+                </div>
                 <!-- COUNT -->
                 {{-- <div class="inline-flex w-1/3 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
                     <select wire:model="perPage" id="" class="inputs">
@@ -112,9 +120,10 @@
                 </div> --}}
             </div>
             <!-- BTN NEW -->
-            <div class="inline-flex w-1/6 h-12 bg-transparent mb-2">
+            <div class="hidden md:inline-flex w-1/6 h-12 bg-transparent mb-2">
                 <button wire:click="create({{ $project->id }})" class="btnNuevo">
-                    Nuevo reporte
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                    Reporte
                 </button>
             </div>
         </div>
@@ -123,8 +132,8 @@
         {{-- TABLE --}}
         <div class="tableStyle">
             <table class="w-full whitespace-no-wrap table table-hover">
-                <thead class="border-0 ">
-                    <tr class="trTable">
+                <thead class="border-0 headTable ">
+                    <tr class="">
                         <th class="px-4 py-3 w-1/5">
                             <div @if($priorityFiltered) wire:click="orderByLowPriority()" @else wire:click="orderByHighPriority()" @endif class="justify- inline-flex cursor-pointer">
                                 Reporte 
@@ -248,7 +257,7 @@
                 </thead>
                 <tbody>
                     @foreach($reports as $report)
-                    <tr class="text-sm text-center border-b pt-1">
+                    <tr class="trTable">
                         <td class="px-4 py-2">
                             <div wire:click="showReport({{$report->id}})" class="flex flex-col items-center text-center cursor-pointer">
                                 <p class="text-xs mb-2 text-justify">{{ $report->title }}</p>
@@ -265,7 +274,9 @@
                                             @endif
                                         @endif
                                         @if ($report->file == true)
-                                            <p class="my-3 text-secondary font-semibold">Documento</p>
+                                      
+                                        <img src="https://static.vecteezy.com/system/resources/previews/007/678/851/non_2x/documents-line-icon-vector.jpg" alt="Report Image" class="h-20 w-32 object-cover mx-auto">
+                                            {{-- <p class="my-3 text-secondary font-semibold"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /></svg></p> --}}
                                         @endif
                                     @else
                                         <p class=""></p>
@@ -280,45 +291,48 @@
                                     @endif
                                 </div>
                                 
-                                <div class="my-2 w-32 font-semibold text-center rounded-md px-3
-                                    @if($report->priority == 'Alto') bg-red-600 text-white @endif
-                                    @if($report->priority == 'Medio') bg-yellow-400 @endif
-                                    @if($report->priority == 'Bajo') bg-secondary text-white @endif">
+                                <div class="my-2 w-auto font-semibold text-center rounded-md px-3
+                                    @if($report->priority == 'Alto') bg-red-500 text-white @endif
+                                    @if($report->priority == 'Medio') bg-yellow-500 text-white @endif
+                                    @if($report->priority == 'Bajo') bg-blue-500 text-white  @endif">
                                     {{ $report->priority }}
                                 </div> 
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <p class="@if($report->state == 'Resuelto') font-semibold @else hidden @endif">{{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
-                            <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'  name="delegate" id="delegate" class="inpSelectTable w-min-full @if($report->state == 'Resuelto') hidden @endif">
-                                <option selected value={{ $report->delegate->id }}>{{ $report->delegate->name }} {{ $report->delegate->lastname }}</option>
-                                @foreach ($report->usersFiltered as $userFiltered)
-                                    <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }} {{ $userFiltered->lastname }}</option>
-                                @endforeach
-                            </select>
-                            <p class="text-xs">
-                            @if($report->state == "Proceso" || $report->state == "Conflicto")
-                                Progreso {{ $report->progress->diffForHumans(null, false, false, 1) }}
-                            @else
-                                @if ($report->state == "Resuelto")
-                                    @if ($report->progress == null)
-                                        Sin tiempo de desarrollo
-                                    @else
-                                        Tiempo de desarrollo {{ $report->timeDifference }}
-                                    @endif
+                            <div class="w-56 mx-auto text-justify ">
+                                <p class="@if($report->state == 'Resuelto') font-semibold @else hidden @endif">{{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
+                                <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'  name="delegate" id="delegate" class="w-full text-sm inpSelectTable w-min-full @if($report->state == 'Resuelto') hidden @endif">
+                                    <option selected value={{ $report->delegate->id }}>{{ $report->delegate->name }} </option>
+                                    @foreach ($report->usersFiltered as $userFiltered)
+                                        <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }} </option>
+                                    @endforeach
+                                </select>
+                                <p class="text-xs">
+                                @if($report->state == "Proceso" || $report->state == "Conflicto")
+                                    Progreso {{ $report->progress->diffForHumans(null, false, false, 1) }}
                                 @else
-                                    @if ($report->look == true)
-                                        Visto {{ $report->progress->diffForHumans(null, false, false, 1) }}
+                                    @if ($report->state == "Resuelto")
+                                        @if ($report->progress == null)
+                                            Sin tiempo de desarrollo
+                                        @else
+                                            Tiempo de desarrollo {{ $report->timeDifference }}
+                                        @endif
+                                    @else
+                                        @if ($report->look == true)
+                                            Visto {{ $report->progress->diffForHumans(null, false, false, 1) }}
+                                        @endif
                                     @endif
                                 @endif
-                            @endif
-                            </p>
+                                </p>
+                            </div>
+                            
                         </td>
                         <td class="px-4 py-2">
                             <select wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)' name="state" id="state" 
-                                class="inpSelectTable w-28
+                                class="inpSelectTable w-28 text-sm inpSelectTable font-semibold
                                 @if($report->state == 'Abierto' && $report->state == 'Proceso') bg-white @endif
-                                @if($report->state == 'Resuelto') bg-lime-500 @endif
+                                @if($report->state == 'Resuelto') bg-lime-700 text-white @endif
                                 @if($report->state == 'Conflicto') bg-red-600 text-white @endif
                                 ">
                                 <option selected value={{ $report->state }}>{{ $report->state }}</option>
@@ -331,14 +345,14 @@
                             @endif
                         </td>
                         <td class="px-4 py-2 text-justify">
-                            <div class="w-fit mx-auto">
+                            <div class="w-36 mx-auto">
                                 <span class="font-semibold inline-block">Para:</span> {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
                                 <span class="font-semibold inline-block">Se delegó:</span> {{ \Carbon\Carbon::parse($report->delegated_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                             </div>
                           
                         </td>
                         <td class="px-4 py-2">
-                            <div class="w-fit mx-auto text-justify">
+                            <div class="w-40 mx-auto text-justify">
                                 <span class=" font-semibold "> {{ $report->user->name }} {{ $report->user->lastname }}  </span> <br>
                                <span class=" font-mono"> {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }} </span><br> 
                                <span  class="italic"> {{ $report->created_at->diffForHumans(null, false, false, 1) }}  </span> 
@@ -405,26 +419,50 @@
     {{-- MODAL SHOW --}}
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalShow) block  @else hidden @endif">
         <div class="flex justify-center h-full items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500"></div>
-        <div class="flex text:md justify-center h-full items-center top-0 left-0 z-40 w-full fixed">
+        <div class="flex text:md justify-center h-full items-center top-0 left-0 z-40 w-full fixed px-2 smd:px-0">
             <div class="flex flex-col  @if($evidenceShow) md:w-4/5 @else md:w-3/4 @endif  mx-auto rounded-lg   overflow-y-auto " style="max-height: 90%;">
             @if (!empty($reportShow->content))
-                @if ($reportShow->image == true)
-                <div class="modalHeader">
-                    <div class="flex justify-center items-center">
-                        <a href="{{ asset('reportes/' . $reportShow->content) }}" download="{{ basename($reportShow->content) }}" class="px-4 py-2  bg-orange-400 rounded-md btnIcon" style="color: white;">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
-                            &nbsp;
-                            Descargar captura
-                        </a>
+               
+                {{-- @if ($reportShow->image == true)
+                <div class="flex justify-center items-center">
+                    <a href="{{ asset('reportes/' . $reportShow->content) }}" download="{{ basename($reportShow->content) }}" class="px-4 py-2  bg-orange-400 rounded-md btnIcon" style="color: white;">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+                        &nbsp;
+                        Descargar captura
+                    </a>
+                </div>
+                @endif --}}
+                {{-- <div class="flex flex-row  px-6 py-4 bg-gray-100 text-white rounded-tl-lg rounded-tr-lg justify-end">
+                    
+                    <div>
+                        <svg wire:click="modalShow"  wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M18 6l-12 12"></path>
+                            <path d="M6 6l12 12"></path>
+                        </svg>
                     </div>
-                    <svg wire:click="modalShow" wire:loading.remove wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                </div> --}}
+
+                <div class="flex flex-row justify-between px-6 py-4 bg-gray-100 text-white rounded-tl-lg rounded-tr-lg">
+             
+                    <h3 class="text-xl text-secundaryColor font-medium title-font  w-full border-l-4 border-secundaryColor pl-4 py-2">
+
+                        @php
+                           
+                            echo mb_substr( $reportShow->title, 0, 25) . " ...";
+                        
+                        @endphp
+                       
+                    </h3>
+          
+                    <svg wire:click="modalShow"  wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M18 6l-12 12"></path>
                         <path d="M6 6l12 12"></path>
                     </svg>
                 </div>
-                @endif
-                @if ($reportShow->video == true)
+             
+                {{-- @if ($reportShow->video == true)
                     @if (strpos($reportShow->content, "Reporte") === 0)
                     <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                         <svg wire:click="modalShow" wire:loading.remove wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -454,6 +492,8 @@
                         <a href="{{ asset('reportes/' . $reportShow->content) }}" download="{{ basename($reportShow->content) }}" class="px-4 py-2 mt-5 font-semibold border-secundaryColor hover:bg-secondary rounded cursor-pointer" style="color: white;">
                             Descargar documento
                         </a>
+
+                        
                     </div>
                     <svg wire:click="modalShow" wire:loading.remove wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -461,7 +501,7 @@
                         <path d="M6 6l12 12"></path>
                     </svg>
                 </div>
-                @endif
+                @endif --}}
             @else
                 <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
                     <svg wire:click="modalShow" wire:loading.remove wire:target="modalShow" class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -562,15 +602,15 @@
                 @endif --}}
 
              
-                    <div class="w-full lg:w-1/2 md-3/4 mb-5 mt-3 flex flex-col justify-between">
+                    <div class="w-full lg:w-1/2 md-3/4 mb-5 md:mb-0 mt-3 flex flex-col justify-between px-5 lg:border-r-2 border-gray-400">
                         <div class="text-base text-justify">
-                            <h3 class="text-xl font-bold text-secondary-fund">Descripción</h3>
+                            <h3 class="text-lg font-bold text-text2">Descripción</h3>
                             {!! nl2br(e($reportShow->comment)) !!}<br><br>
 
                             
                             @if ($showChat)
-                                <h3 class="text-xl font-bold text-secondary-fund">Comentarios</h3>
-                                <div class="border-4 border-primaryColor rounded-br-lg mx-2 px-2 py-2">
+                                <h3 class="text-base font-semibold text-text2">Comentarios</h3>
+                                <div class="border-4 border-primaryColor rounded-br-lg px-2 py-2  max-h-80 overflow-y-scroll">
                                     @foreach ($messages as $message)
                                     <div class="inline-flex">
                                         @if($message->messages_count >= 1 && $reportShow->user_chat != Auth::id() && $message->look == false)
@@ -580,7 +620,7 @@
                                                 <path d="M12 15v-10" />
                                             </svg>
                                         @endif
-                                        <p class=" pr-1  text-black">  <span class="font-semibold"> {{ $message->transmitter->name }}: <span></span> <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>  </p>
+                                        <p class=" pr-1 text-sm text-black">  <span class="font-semibold"> {{ $message->transmitter->name }}: <span></span> <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>  </p>
                                        
                                     </div>
                                     <br>
@@ -590,70 +630,128 @@
                                
                             @endif
                         </div>
-                        <div class="w-auto flex flex-row mx-3 my-6">
-                            <input wire:model='message' type="text" name="message" id="message" placeholder="Mensaje a los administradores"class="inputs">
-                            <button class="btnSave" wire:click="updateChat({{ $reportShow->id }})">Enviar</button>
+                        <div class="w-auto flex flex-row  my-6">
+                            <input wire:model.defer='message' type="text" name="message" id="message" placeholder="Mensaje a los administradores" class="inputs  "  style="border-radius: 0.5rem 0px 0px 0.5rem !important">
+                            <button class="btnSave"  style="border-radius: 0rem 0.5rem 0.5rem 0rem !important" wire:click="updateChat({{ $reportShow->id }})">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
+                                Comentar </button>
                         </div>
                     </div>
                 <div class="photos w-full lg:w-1/2 px-5 ">
                     @if (!empty($reportShow->content))
-                        @if ($reportShow->image == true)
-                            <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                                <img src="{{ asset('reportes/' . $reportShow->content) }}" alt="Report Image">
-                            </div>
-                        @endif
-                        @if ($reportShow->video == true)
-                            @if (strpos($reportShow->content, "Reporte") === 0)
-                                <div class="w-full my-5 text-lg text-center">
-                                    <p class="text-red my-5">Falta subir '{{ $reportShow->content }}'</p>
-                                </div>
-                            @else
-                                <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                                    <video src="{{ asset('reportes/' . $reportShow->content) }}" loop autoplay alt="Report Video"></video>
-                                </div>
-                            @endif
-                        @endif
-                        @if ($reportShow->file == true)
-                            <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                                <iframe src="{{ asset('reportes/' . $reportShow->content) }}" width="auto" height="800"></iframe>
-                            </div>
-                        @endif
-                    @else
-                        <div class="w-full my-5 text-lg text-center">
-                            <p class="text-red my-5">Sin archivo</p>
-                        </div>
-                    @endif
 
-                    @if($evidenceShow)
-                    <div class="flex flex-col w-3/6">
-                        <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                            <div class="text-2xl md:flex text-center">
-                                Evidencia
+                        
+
+                        <div id="example" class="w-auto  mb-6">
+                           
+                            <div class="w-full md-3/4 mb-5 mt-5 flex flex-row justify-between">
+                                <div class="text-xl md:flex text-center  font-semibold text-text2 ">
+                                    Detalle
+                                </div>
+
+                                @if($evidenceShow)
+                                <div class="font-semibold btnIcon cursor-pointer hover:text-blue-400 text-blue-500" onclick="toogleEvidence()" id="textToogle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+                                    &nbsp; Evidencia
+                                </div>
+                                @endif
                             </div>
-                        </div>
-                        @if (!empty($evidenceShow->content))
-                            @if ($evidenceShow->image == true)
-                                <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                                    <img src="{{ asset('evidence/' . $evidenceShow->content) }}" alt="Report Image">
+                          
+
+                            @if ($reportShow->image == true)
+                                <div class="w-full md-3/4 mb-5 mt-3 flex flex-col">
+                                    
+                                    <img src="{{ asset('reportes/' . $reportShow->content) }}" alt="Report Image">
                                 </div>
                             @endif
-                            @if ($evidenceShow->video == true)
-                                <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                                    <video src="{{ asset('evidence/' . $evidenceShow->content) }}" loop autoplay alt="Report Video"></video>
-                                </div>
+                            @if ($reportShow->video == true)
+                                @if (strpos($reportShow->content, "Reporte") === 0)
+                                    <div class="w-full my-5 text-lg text-center">
+                                        <p class="text-red my-5">Falta subir '{{ $reportShow->content }}'</p>
+                                    </div>
+                                @else
+                                    <div class="w-full md-3/4 mb-5 mt-3 flex flex-col">
+                                        <video src="{{ asset('reportes/' . $reportShow->content) }}" loop autoplay alt="Report Video"></video>
+                                    </div>
+                                @endif
                             @endif
-                            @if ($evidenceShow->file == true)
-                                <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                                    <iframe src="{{ asset('evidence/' . $evidenceShow->content) }}" width="auto" height="800"></iframe>
+                            @if ($reportShow->file == true)
+                                <div class="w-full md-3/4 mb-3 mt-5 flex flex-col">
+                                    <iframe src="{{ asset('reportes/' . $reportShow->content) }}" width="auto" height="600"></iframe>
                                 </div>
                             @endif
                         @else
                             <div class="w-full my-5 text-lg text-center">
-                                <p class="text-red my-5">Sin evidencia</p>
+                                <p class="text-red my-5">Sin archivo</p>
+                            </div>
+                        @endif
+                        @if ($reportShow->image == true || $reportShow->video == true || $reportShow->file == true)
+                        <div class="flex justify-center items-center">
+                            <a href="{{ asset('reportes/' . $reportShow->content) }}" download="{{ basename($reportShow->content) }}" class="btnSecondary" style="color: white;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+                                &nbsp;
+                                Descargar 
+                            </a>
+                        </div>
+                        @endif 
+
+                        </div>
+                        
+
+                    <div id="evidence" class="hidden">
+                        @if($evidenceShow)
+                     
+                        <div class="flex flex-col " >
+                           
+                                <div class="w-full md-3/4 mb-5 mt-5 flex flex-row justify-between">
+                                    <div class="text-xl md:flex text-center  font-semibold text-gray-700">
+                                        Evidencia
+                                    </div>
+    
+                                    <div class="font-semibold btnIcon cursor-pointer hover:text-red-500 text-red-500" onclick="toogleEvidence()" id="textToogle">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M13.048 17.942a9.298 9.298 0 0 1 -1.048 .058c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6a17.986 17.986 0 0 1 -1.362 1.975" /><path d="M22 22l-5 -5" /><path d="M17 22l5 -5" /></svg>                                        &nbsp; Evidencia
+                                    </div>
+                                </div>
+                 
+                            @if (!empty($evidenceShow->content))
+                                @if ($evidenceShow->image == true)
+                                 
+
+                                    <div class="w-full md-3/4 mb-5 mt-3 flex flex-col">
+                                    
+                                        <img src="{{ asset('evidence/' . $evidenceShow->content) }}" alt="Report Image">
+                                    </div>
+                                @endif
+                                @if ($evidenceShow->video == true)
+                                    <div class="w-full md-3/4 mb-5 mt-3 flex flex-col">
+                                        <video src="{{ asset('evidence/' . $evidenceShow->content) }}" loop autoplay alt="Report Video"></video>
+                                    </div>
+                                @endif
+                                @if ($evidenceShow->file == true)
+                                    <div class="w-full md-3/4 mb-5 mt-3 flex flex-col">
+                                        <iframe src="{{ asset('evidence/' . $evidenceShow->content) }}" width="auto" height="800"></iframe>
+                                    </div>
+                                @endif
+                            @else
+                                <div class="w-full my-5 text-lg text-center text-red-500">
+                                    <p class="text-red my-5">Sin evidencia</p>
+                                </div>
+                            @endif
+                        </div>
+
+                        @else
+                            <div class="w-full md-3/4 mb-5 mt-5 flex flex-row justify-end">
+                                
+                                <div class="font-semibold btnIcon cursor-pointer hover:text-red-500 text-red-500" onclick="toogleEvidence()" id="textToogle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M13.048 17.942a9.298 9.298 0 0 1 -1.048 .058c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6a17.986 17.986 0 0 1 -1.362 1.975" /><path d="M22 22l-5 -5" /><path d="M17 22l5 -5" /></svg>                                        &nbsp; Evidencia
+                                </div>
+                            </div>
+                            <div class="text-center text-2xl font-bold animate-bounce mt-10 text-red-500">
+                                Sin evidencia 
                             </div>
                         @endif
                     </div>
-                    @endif
+                   
                 </div>
 
             </div>
@@ -782,6 +880,21 @@
         </div>
     </div>
     {{-- END MODAL EVIDENCE --}}
+
+    <div class="absolute w-full h-screen z-50 top-0 left-0 " wire:loading >
+
+   
+        <div class="absolute w-full h-screen bg-gray-200 z-10 opacity-40">
+    
+        </div>
+        <div class="loadingspinner relative top-1/3 z-20">
+            <div id="square1"></div>
+            <div id="square2"></div>
+            <div id="square3"></div>
+            <div id="square4"></div>
+            <div id="square5"></div>
+          </div>
+    </div>
     <script>
         window.addEventListener('swal:modal', event => {
             toastr[event.detail.type](event.detail.text, event.detail.title);
@@ -811,5 +924,17 @@
                 }
             });
         });
+
+
+        let banEvidence = false;
+
+        function toogleEvidence(){
+            let evidence = document.getElementById('evidence');
+            let example = document.getElementById('example');
+            evidence.classList.toggle("hidden");
+            example.classList.toggle("hidden");
+         
+          
+        }
     </script>
 </div>

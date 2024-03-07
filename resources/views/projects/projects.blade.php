@@ -21,7 +21,15 @@ text-yellow-400
             <span class="ml-4 text-xl">Proyectos</span>
         </h1>
     </div>
-            <livewire:projects.projects/>
+
+    <livewire:projects.projects/>
+
+    @livewireScripts
+    @stack('js')
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('vendor/livewire-alert/livewire-alert.js') }}"></script>
+    
+    
     
 </div>
 @endsection
