@@ -14,7 +14,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
-
+ 
     <link rel="stylesheet" href="/css/introjs.css">
     <script src="/js/intro.js"></script>
 
