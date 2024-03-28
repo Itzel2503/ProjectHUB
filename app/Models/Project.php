@@ -12,7 +12,9 @@ class Project extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'project_user')->withTimestamps()->withPivot(['leader', 'programmer']);
+        return $this->belongsToMany(User::class, 'project_user')
+                    ->withTimestamps()
+                    ->withPivot(['leader', 'programmer']);
     }
 
     // La relación para obtener solo el líder del proyecto.
@@ -29,13 +31,18 @@ class Project extends Model
                     ->wherePivot('programmer', true);
     }
 
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
     public function reports()
     {
         return $this->hasMany(Report::class);
     }
 
-    public function customer()
+    public function backlog()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->hasOne(Backlog::class);
     }
 }

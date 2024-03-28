@@ -25,6 +25,7 @@
 .btnSave{ @apply  text-white font-semibold  bg-secundaryColor  rounded-lg cursor-pointer w-auto px-4 py-2 btnIcon }
 .btnClose{ @apply  text-white font-semibold  bg-red-500  rounded-lg cursor-pointer w-auto px-4 py-2 btnIcon }
 .btnSecondary{ @apply  text-white font-semibold  px-4 py-2 bg-blue-500  hover:bg-blue-400 rounded-lg  btnIcon }
+.btnDisabled{ @apply  text-white font-semibold  px-4 py-2 bg-gray-500  rounded-lg  btnIcon }
 
 
 /* modal */

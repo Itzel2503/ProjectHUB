@@ -67,9 +67,6 @@
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                     <path d="M6 9l6 6l6 -6" />
                                 </svg>
-                                {{-- <svg xmlns="http://www.w3.org/2000/svg" class="" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg> --}}
                             </button>
                     
                             <!-- Panel -->
@@ -109,15 +106,6 @@
                         Reporte
                     </button>
                 </div>
-                <!-- COUNT -->
-                {{-- <div class="inline-flex w-1/3 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
-                    <select wire:model="perPage" id="" class="inputs">
-                        <option value="10"> 10 por página</option>
-                        <option value="25"> 25 por página</option>
-                        <option value="50"> 50 por página</option>busc
-                        <option value="100"> 100 por página</option>
-                    </select>
-                </div> --}}
             </div>
             <!-- BTN NEW -->
             <div class="hidden md:inline-flex w-1/6 h-12 bg-transparent mb-2">
@@ -186,22 +174,6 @@
                         <th class="px-4 py-3">
                             <div class="justify-center inline-flex">
                                 Estado
-                                {{-- <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 icon icon-tabler icon-tabler-sort-ascending" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M4 6l7 0" />
-                                    <path d="M4 12l7 0" />
-                                    <path d="M4 18l9 0" />
-                                    <path d="M15 9l3 -3l3 3" />
-                                    <path d="M18 6l0 12" />
-                                </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sort-descending" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M4 6l9 0" />
-                                    <path d="M4 12l7 0" />
-                                    <path d="M4 18l7 0" />
-                                    <path d="M15 15l3 3l3 -3" />
-                                    <path d="M18 6l0 12" />
-                                </svg> --}}
                             </div>
                         </th>
                         <th class="px-4 py-3 w-auto">
@@ -274,9 +246,7 @@
                                             @endif
                                         @endif
                                         @if ($report->file == true)
-                                      
                                         <img src="https://static.vecteezy.com/system/resources/previews/007/678/851/non_2x/documents-line-icon-vector.jpg" alt="Report Image" class="h-20 w-32 object-cover mx-auto">
-                                            {{-- <p class="my-3 text-secondary font-semibold"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /></svg></p> --}}
                                         @endif
                                     @else
                                         <p class=""></p>

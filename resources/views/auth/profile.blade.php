@@ -11,6 +11,9 @@ text-yellow-400
 @section('content')
 <div>
     <livewire:auth.profile />
+
+    @livewireScripts
+    @stack('js')
 </div>
 
 @endsection

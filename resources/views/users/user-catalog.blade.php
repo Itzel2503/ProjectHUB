@@ -26,6 +26,10 @@ text-yellow-400
                     </h1>
                 </div>
                 <livewire:users.table-users/>
+
+                @livewireScripts
+                @stack('js')
+                <script src="{{ asset('vendor/livewire-alert/livewire-alert.js') }}"></script>
             </div>
         </div>
     </div>

@@ -14,6 +14,11 @@ class ChatReports extends Model
         return $this->belongsTo(Report::class);
     }
 
+    public function activity()
+    {
+        return $this->belongsTo(Activity::class);
+    }
+
     public function transmitter()
     {
         return $this->belongsTo(User::class, 'user_id');

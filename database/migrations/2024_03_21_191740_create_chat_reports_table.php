@@ -16,8 +16,11 @@ class CreateChatReportsTable extends Migration
         Schema::create('chat_reports', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('report_id');
+            $table->unsignedBigInteger('report_id')->nullable();
             $table->foreign('report_id')->references('id')->on('reports')->onDelete('cascade');
+
+            $table->unsignedBigInteger('activity_id')->nullable();
+            $table->foreign('activity_id')->references('id')->on('activities')->onDelete('cascade');
             
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

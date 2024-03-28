@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Projects\Activity;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Customers\Customer;
 use App\Http\Controllers\Permit;
@@ -19,10 +20,6 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('auth.login');
-});
 
 Route::get('/', function () {
     if (auth()->check()) {
@@ -45,6 +42,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     // PROJECTS
     Route::resource('/projects', Project::class);
     Route::resource('projects.reports', Report::class);
+    Route::resource('projects.activities', Activity::class);
     
     // PERMITS
     Route::resource('/permits', Permit::class);
