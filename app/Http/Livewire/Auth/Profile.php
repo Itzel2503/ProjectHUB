@@ -12,7 +12,7 @@ class Profile extends Component
 {
     public $listeners = ['reloadPage' => 'reloadPage'];
     public $editing = false;
-    public $name, $lastname, $phone, $curp, $rfc, $date_birthday, $area, $email, $password;
+    public $name, $lastname, $phone, $date_birthday, $area, $email, $password;
     
     public function render()
     {
@@ -46,8 +46,6 @@ class Profile extends Component
         $this->name = $user->name;
         $this->lastname = $user->lastname;
         $this->phone = $user->phone;
-        $this->curp = $user->curp;
-        $this->rfc = $user->rfc;
         $this->date_birthday = $user->date_birthday;
         $this->email = $user->email;
     }
@@ -58,8 +56,6 @@ class Profile extends Component
         $user->name = $this->name ?? $user->name;
         $user->lastname = $this->lastname ?? $user->lastname;
         $user->phone = $this->phone ?? $user->phone;
-        $user->curp = $this->curp ?? $user->curp;
-        $user->rfc = $this->rfc ?? $user->rfc;
         $user->date_birthday = $this->date_birthday ?? $user->date_birthday;
         $user->email = $this->email ?? $user->email;
         $user->area_id = $this->area ?? $user->area_id;

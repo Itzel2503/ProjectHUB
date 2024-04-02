@@ -193,38 +193,6 @@
                         <div class="-mx-3  mb-6">
                             <div class="w-full flex flex-col px-3 mb-6">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    CURP
-                                </h5>
-                                <input wire:model='curp' type="text" maxlength="18" placeholder="CURP" name="curp" id="curp" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                <div>
-                                    <span class="text-red-600  text-xs italic">
-                                        @error('curp')
-                                        <span class="pl-2 text-red-600  text-xs italic">
-                                            {{$message}}
-                                        </span>
-                                        @enderror
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="w-full flex flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="name">
-                                    RFC
-                                </h5>
-                                <input wire:model='rfc' type="text" maxlength="13" placeholder="RFC" name="rfc" id="rfc" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">
-                                <div>
-                                    <span class="text-red-600  text-xs italic">
-                                        @error('rfc')
-                                        <span class="pl-2 text-red-600  text-xs italic">
-                                            {{$message}}
-                                        </span>
-                                        @enderror
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="-mx-3  mb-6">
-                            <div class="w-full flex flex-col px-3 mb-6">
-                                <h5 class="inline-flex font-semibold" for="name">
                                     Número de teléfono <p class="text-red-600 ">*</p>
                                 </h5>
                                 <input wire:model='phone' required type="number" placeholder="Número de teléfono" name="phone" id="phone" class="leading-snug border border-none block appearance-none bg-white text-gray-700 py-1 px-4 w-full rounded mx-auto">

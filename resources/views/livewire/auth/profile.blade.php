@@ -22,22 +22,6 @@
                             <p class="mb-2 mx-auto w-full text-center">{{ ($user->phone) ? "$user->phone" : 'Sin registro' }}</p>
                         </div>
                         <div class="col-span-6 sm:col-span-3 mt-9">
-                            <h5 class="mb-2 mx-auto w-full text-center">CURP:</h5>
-                            @if(!$editing)
-                            <p class="mb-2 mx-auto w-full text-center">{{ ($user->curp) ? "$user->curp" : 'Sin registro' }}</p>
-                            @else
-                            <input wire:model='curp' require maxlength="18" placeholder="{{ $user->curp }}" type="text" name="curp" id="curp" class="leading-snug border border-none block w-3/4 appearance-none bg-white text-gray-700 text-center py-1 px-4 rounded mx-auto">
-                            @endif
-                        </div>
-                        <div class="col-span-6 sm:col-span-3 mt-9">
-                            <h5 class="mb-2 mx-auto w-full text-center">RFC:</h5>
-                            @if(!$editing)
-                            <p class="mb-2 mx-auto w-full text-center">{{ ($user->rfc) ? "$user->rfc" : 'Sin registro' }}</p>
-                            @else
-                            <input wire:model='rfc' require maxlength="13" placeholder="{{ $user->rfc }}" type="text" name="rfc" id="rfc" class="leading-snug border border-none block w-3/4 appearance-none bg-white text-gray-700 text-center py-1 px-4 rounded mx-auto">
-                            @endif
-                        </div>
-                        <div class="col-span-6 sm:col-span-3 mt-9">
                             <h5 class="mb-2 mx-auto w-full text-center">Fecha de nacimiento:</h5>
                             <p class="mb-2 mx-auto w-full text-center">{{ ($user->date_birthday) ? "$user->date_birthday" : 'Sin registro' }}</p>
                         </div>

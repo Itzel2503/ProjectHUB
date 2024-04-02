@@ -25,7 +25,7 @@ class TableUsers extends Component
     public $perPage = '10';
     public $rules = [], $allAreas = [], $allTypes = [1, 2];
     // inputs
-    public $file, $name, $lastname, $date_birthday, $curp, $rfc, $phone, $area, $type_user, $email, $password;
+    public $file, $name, $lastname, $date_birthday, $phone, $area, $type_user, $email, $password;
 
     public function render()
     {
@@ -63,8 +63,6 @@ class TableUsers extends Component
                 'name' => 'required|max:255',
                 'lastname' => 'required|max:255',
                 'date_birthday' => 'required|date|max:255',
-                'curp' => 'max:18',
-                'rfc' => 'max:13',
                 'phone' => 'required|numeric',
                 'area' => 'required',
                 'type_user' => 'required',
@@ -105,8 +103,6 @@ class TableUsers extends Component
         $user->name = $this->name;
         $user->lastname = $this->lastname;
         $user->phone = $this->phone ?? null;
-        $user->curp = $this->curp ?? null;
-        $user->rfc = $this->rfc ?? $user->rfc;
         $user->date_birthday = $this->date_birthday;
         $user->email = $this->email;
         $user->area_id = $this->area;
@@ -138,8 +134,6 @@ class TableUsers extends Component
                 'name' => 'required|max:255',
                 'lastname' => 'required|max:255',
                 'date_birthday' => 'required|date|max:255',
-                'curp' => 'max:18',
-                'rfc' => 'max:13',
                 'phone' => 'required|numeric',
                 'email' => 'required|email|unique:users,email,' . $id,
             ]);
@@ -171,8 +165,6 @@ class TableUsers extends Component
         $user->name = $this->name ?? $user->name;
         $user->lastname = $this->lastname ?? $user->lastname;
         $user->phone = $this->phone ?? $user->phone;
-        $user->curp = $this->curp ?? $user->curp;
-        $user->rfc = $this->rfc ?? $user->rfc;
         $user->date_birthday = $this->date_birthday ?? $user->date_birthday;
         $user->email = $this->email ?? $user->email;
 
@@ -297,8 +289,6 @@ class TableUsers extends Component
         $this->name = $this->userEdit->name;
         $this->lastname = $this->userEdit->lastname;
         $this->date_birthday = $this->userEdit->date_birthday;
-        $this->curp = $this->userEdit->curp;
-        $this->rfc = $this->userEdit->rfc;
         $this->phone = $this->userEdit->phone;
         $this->email = $this->userEdit->email;
     }
@@ -341,8 +331,6 @@ class TableUsers extends Component
         $this->name = '';
         $this->lastname = '';
         $this->date_birthday = '';
-        $this->curp = '';
-        $this->rfc = '';
         $this->phone = '';
         $this->area = '';
         $this->type_user = '';
