@@ -4,6 +4,8 @@
 /public/reportes
 /public/evidence
 /public/usuarios
+/public/activities
+/public/backlogs
 /storage/*.key
 /vendor
 .env

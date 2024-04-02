@@ -504,29 +504,6 @@ class Report extends Controller
      */
     public function destroy($project_id, $id)
     {
-        if (Auth::check()) {
-            
-            $project = Project::find($project_id);
-            $report = ModelsReport::find($id);
-
-            if ($report) {
-                if ($report->content) {
-                    $contentPath = 'reportes/' . $report->content;
-                    $fullPath = public_path($contentPath);
-                    
-                    if (File::exists($fullPath)) {
-                        File::delete($fullPath);
-                    }
-                }
-                $report->delete();
-            
-                return redirect()->route('projects.reports.index', ['project' => $project_id]);
-            } else {
-                return redirect('/projects');
-            }
-
-        } else {
-            return redirect('/login');
-        }
+        // 
     }
 }

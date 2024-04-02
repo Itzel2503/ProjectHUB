@@ -21,15 +21,15 @@ class TableReports extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['reloadPage' => 'reloadPage'];
+    public $listeners = ['reloadPage' => 'reloadPage', 'delete'];
     // modal
-    public $modalShow = false, $modalEdit = false, $modalDelete = false, $modalEvidence = false;
-    public $showReport = false, $showEdit = false, $showDelete = false, $showEvidence = false, $showChat = false;
+    public $modalShow = false, $modalEdit = false, $modalEvidence = false;
+    public $showReport = false, $showEdit = false, $showEvidence = false, $showChat = false;
     public $messages;
 
     // table, action's reports
     public $leader = false;
-    public $search, $project, $reportShow, $reportEdit, $reportDelete, $reportEvidence, $evidenceShow;
+    public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
     public $perPage = '10';
     public $selectedDelegate = '', $priorityOrder = 'Bajo', $datesOrder = 'created_at', $progressOrder = '', $expectedOrder = '', $createdOrder = 'desc';
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
@@ -415,6 +415,36 @@ class TableReports extends Component
             ]);
         }
     }
+
+    public function delete($id, $project_id)
+    {
+        $project = Project::find($project_id);
+        $report = Report::find($id);
+
+        if ($report) {
+            if ($report->content) {
+                $contentPath = 'reportes/' . $report->content;
+                $fullPath = public_path($contentPath);
+                
+                if (File::exists($fullPath)) {
+                    File::delete($fullPath);
+                }
+            }
+            $report->delete();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Reporte eliminado',
+            ]);
+
+            return redirect()->to('/projects/' . $project->id . '/reports');
+        } else {
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Reporte no encontrado',
+            ]);
+        }
+    }
     // INFO MODAL
     public function showReport($id)
     {
@@ -476,21 +506,6 @@ class TableReports extends Component
         $this->expected_date = $fecha->toDateString();;
     }
 
-    public function showDelete($id, $project_id)
-    {
-        $this->showDelete = true;
-
-        if ($this->modalDelete == true) {
-            $this->modalDelete = false;
-        } else {
-            $this->modalDelete = true;
-        }
-
-        $project = Project::find($project_id);
-        $report = Report::find($id);
-        $report->project_id = $project->id;
-        $this->reportDelete = $report;
-    }
     // MODAL
     public function modalShow()
     {
@@ -509,15 +524,6 @@ class TableReports extends Component
             $this->modalEdit = false;
         } else {
             $this->modalEdit = true;
-        }
-    }
-
-    public function modalDelete()
-    {
-        if ($this->modalDelete == true) {
-            $this->modalDelete = false;
-        } else {
-            $this->modalDelete = true;
         }
     }
 

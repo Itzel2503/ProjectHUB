@@ -44,7 +44,7 @@
                         </th>
                         <th class=" px-4 py-3">Nombre</th>
                         <th class=" px-4 py-3">Apellidos </th>
-                        <th class=" px-4 py-3">Correo Electronico</th>
+                        <th class=" px-4 py-3">Correo electónico</th>
                         <th class=" px-4 py-3">Área</th>
                         <th class=" px-4 py-3">Tipo Usuario</th>
                         <th class=" px-4 py-3">Acciones</th>
