@@ -243,6 +243,8 @@
                     </div>
                 </div>
                 <!-- BTN NEW -->
+                @if ($sprints->isEmpty()) @else
+                @if ($firstSprint->state != 'Cerrado')
                 <div class="px-2 md:px-0 inline-flex w-1/2 md:hidden h-12 bg-transparent mb-2">
                     <button wire:click="modalCreateActivity()" @if($firstSprint->state == 'Pendiente' &&
                         Auth::user()->type_user != 1 && Auth::user()->area_id != 1)disabled class="btnDisabled"@else
@@ -257,6 +259,8 @@
                         Actividad
                     </button>
                 </div>
+                @endif
+                @endif
             </div>
             <!-- BTN NEW -->
             @if ($sprints->isEmpty()) @else
@@ -394,8 +398,8 @@
                                 @if (!empty($activity->image))
                                 <div class="relative h-22 w-full px-3 pt-2">
                                     @if ($activity->image == true)
-                                    <img src="{{ asset('activities/' . $activity->image) }}" alt="Report Image"
-                                        class="h-20 w-32 object-cover mx-auto">
+                                    <img src="{{ asset('activities/' . $report->content) }}" alt="Activity Image"
+                                        class="mx-auto h-16 w-20 object-cover">
                                     @endif
                                 </div>
                                 @endif
