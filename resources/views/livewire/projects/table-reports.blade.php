@@ -347,7 +347,7 @@
                             <select
                                 wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)'
                                 name="state" id="state"
-                                class="inpSelectTable inpSelectTable @if ($report->state == 'Abierto' && $report->state == 'Proceso') bg-white @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-28 text-sm font-semibold">
+                                class="inpSelectTable @if ($report->state == 'Abierto' && $report->state == 'Proceso') bg-white @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-auto text-sm font-semibold">
                                 <option selected value={{ $report->state }}>{{ $report->state }}</option>
                                 @foreach ($report->filteredActions as $action)
                                 <option value="{{ $action }}">{{ $action }}</option>
