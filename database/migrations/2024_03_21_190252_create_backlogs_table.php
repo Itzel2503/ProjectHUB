@@ -22,7 +22,6 @@ class CreateBacklogsTable extends Migration
             $table->string('general_objective');
 
             $table->longtext('scopes')->nullable();
-            $table->string('file')->nullable();
             $table->longtext('passwords')->nullable();
 
             $table->dateTime('start_date');

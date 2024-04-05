@@ -4,9 +4,6 @@ namespace App\Http\Livewire\Projects;
 
 use App\Models\Activity;
 use App\Models\ChatReports;
-use App\Models\Evidence;
-use App\Models\Project;
-use App\Models\Report;
 use App\Models\Sprint;
 use App\Models\User;
 use Carbon\Carbon;
@@ -60,7 +57,7 @@ class TableActivities extends Component
         public function render()
         {
             $this->dispatchBrowserEvent('reloadModalAfterDelay');
-
+            
             // Obtener los sprints y ordenarlos por el número de sprint
             $backlog = $this->backlog;
             $this->sprints = $backlog->sprints->sortBy('number');

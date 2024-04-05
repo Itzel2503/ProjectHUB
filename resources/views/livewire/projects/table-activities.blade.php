@@ -398,7 +398,7 @@
                                 @if (!empty($activity->image))
                                 <div class="relative h-22 w-full px-3 pt-2">
                                     @if ($activity->image == true)
-                                    <img src="{{ asset('activities/' . $report->content) }}" alt="Activity Image"
+                                    <img src="{{ asset('activities/' . $activity->image) }}" alt="Activity Image"
                                         class="mx-auto h-16 w-20 object-cover">
                                     @endif
                                 </div>
@@ -582,18 +582,18 @@
     </div>
     {{-- END TABLE --}}
     {{-- MODAL SHOW BACKLOG --}}
-    <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalBacklog) block  @else hidden @endif">
+    <div class="@if ($modalBacklog) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
         <div
-            class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500">
+            class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
         </div>
-        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
-            <div class="flex flex-col md:w-2/5 mx-auto rounded-lg   overflow-y-auto " style="max-height: 90%;">
-                <div class="flex flex-row justify-between px-6 py-4 bg-gray-100 text-white rounded-tl-lg rounded-tr-lg">
+        <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
+            <div class="md:w-3/4 mx-auto flex flex-col overflow-y-auto rounded-lg" style="max-height: 90%;">
+                <div class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                     <h3
-                        class="text-xl text-secundaryColor font-medium title-font  w-full border-l-4 border-secundaryColor pl-4 py-2">
+                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
                         Backlog</h3>
-                    <svg wire:click="modalBacklog()" wire:loading.remove wire:target="modalBacklog()"
-                        class="w-6 h-6 my-2 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
+                    <svg wire:click="modalBacklog" wire:target="modalBacklog"
+                        class="h-6 w-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
                         class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -603,24 +603,24 @@
                     </svg>
                 </div>
                 <div class="modalBody">
-                    <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
+                    <div class="w-full lg:w-1/2 md-3/4 mb-5 md:mb-0 flex flex-col px-5 lg:border-r-2 border-gray-400">
                         <div class="-mx-3 mb-6 flex flex-row">
                             <div class="w-full flex flex-col px-3 mb-6">
-                                <h5 class="inline-flex font-semibold" for="start_date">
+                                <h5 class="text-text2 text- font-bold">
                                     Fecha de inicio
                                 </h5>
                                 <p>{{ $backlog->start_date }}</p>
                             </div>
                             <div class="w-full flex flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="end_date">
+                                <h5 class="text-text2 text-lg font-bold">
                                     Fecha de cierre
                                 </h5>
-                                <p>{{ $backlog->start_date }}</p>
+                                <p>{{ $backlog->closing_date }}</p>
                             </div>
                         </div>
                         <div class="-mx-3 mb-6">
                             <div class="w-full flex flex-col px-3 mb-6">
-                                <h5 class="inline-flex font-semibold" for="number">
+                                <h5 class="text-text2 text-lg font-bold">
                                     Objetivo generales
                                 </h5>
                                 <p>{{ $backlog->general_objective }}</p>
@@ -628,21 +628,7 @@
                         </div>
                         <div class="-mx-3 mb-6">
                             <div class="w-full flex flex-col px-3 mb-6">
-                                <h5 class="inline-flex font-semibold" for="number">
-                                    Alcances
-                                </h5>
-                                @if ($backlog->file)
-                                <img src="{{ asset('backlogs/' . $backlog->file) }}" alt="Backlog Image" class="mb-3">
-                                @endif
-                                @if ($backlog->scopes)
-                                <textarea required disabled type="text" rows="10" name="scopes" id="scopes"
-                                    class="inputs">{{ $backlog->scopes }}</textarea>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="-mx-3">
-                            <div class="w-full flex flex-col px-3 mb-6">
-                                <h5 class="inline-flex font-semibold" for="number">
+                                <h5 class="text-text2 text-lg font-bold">
                                     Claves de acceso
                                 </h5>
                                 <textarea required disabled type="text" rows="10" name="scopes" id="scopes"
@@ -650,10 +636,24 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modalFooter">
-                    <button class="btnSave" wire:click="modalBacklog()" wire:loading.remove
-                        wire:target="modalBacklog()"> Cerrar </button>
+                    <div class="w-full lg:w-1/2 px-5 ">
+                        <div class="-mx-3 mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6">
+                                <h5 class="text-text2 text-lg font-bold">
+                                    Alcances
+                                </h5>
+                                @if ($backlog->scopes)
+                                <textarea required disabled type="text" rows="10" name="scopes" id="scopes"
+                                    class="inputs">{{ $backlog->scopes }}</textarea>
+                                @endif
+                                @if ($backlog->files)
+                                @foreach ($backlog->files as $file)
+                                <img src="{{ asset('backlogs/' . $file->route) }}" alt="Backlog Image" class="mb-3">
+                                @endforeach
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -865,7 +865,7 @@
                             </div>
                             @if ($activityShow->image == true)
                             <div class="w-full md-3/4 mb-5 mt-3 flex flex-col">
-                                <img src="{{ asset('activities/' . $activityShow->image) }}" alt="Report Image">
+                                <img src="{{ asset('activities/' . $activityShow->image) }}" alt="Activity Image">
                             </div>
                             @endif
                             @else

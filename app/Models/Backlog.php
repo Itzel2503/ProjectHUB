@@ -18,4 +18,9 @@ class Backlog extends Model
     {
         return $this->hasMany(Sprint::class);
     }
+
+    public function files()
+    {
+        return $this->hasMany(BacklogFiles::class);
+    }
 }
