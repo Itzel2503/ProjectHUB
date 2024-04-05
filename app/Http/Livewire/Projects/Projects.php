@@ -273,7 +273,6 @@ class Projects extends Component
                 }
             }
             // true false
-            // true true
             $backlogFile = BacklogFiles::where('backlog_id', $backlog->id)->get();
             dd($backlogFile, $this);
             if (empty($this->files)) {
@@ -322,55 +321,6 @@ class Projects extends Component
                     }
                 }
             }
-
-
-
-
-
-            foreach ($backlogFile as $key => $file) {
-                
-            }
-            // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
-            foreach ($this->files as $index => $fileArray) {
-                // Verificar si $fileArray es null o está vacío
-                if (is_null($fileArray) || empty($fileArray)) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'info',
-                        'title' => 'No seleccionaste ninguna imagen nueva.',
-                    ]);
-                    continue; // Saltar al siguiente elemento del bucle si $fileArray es null o está vacío
-                }
-                // Accede al objeto TemporaryUploadedFile dentro del array
-                $file = $fileArray[0];
-                $fileExtension = $file->extension();
-                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                if (in_array($fileExtension, $extensionesImagen)) {
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                    $fileName = $file->getClientOriginalName();
-                    $fullNewFilePath = $filePath . '/' . $fileName;
-                    // Eliminar los archivos seleccionados
-                    if ($file && Storage::disk('backlogs')->exists($file)) {
-                        $existingFilePath = pathinfo($file, PATHINFO_DIRNAME);
-                        if ($existingFilePath == $filePath) {
-                            Storage::disk('backlogs')->delete($file);
-                        }
-                    }
-                    // Guardar el archivo en el disco 'backlogs'
-                    $file->storeAs($filePath, $fileName, 'backlogs');
-                    
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'success',
-                        'title' => 'Imagen guardada exitosamente.',
-                    ]);
-                } else {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'info',
-                        'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
-                        'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
-                    ]);
-                }
-            }
-            
 
             $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
             $backlog->scopes = $this->scopes ?? $backlog->scopes;
