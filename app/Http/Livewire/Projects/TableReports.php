@@ -519,68 +519,84 @@ class TableReports extends Component
         }
     }
     // FILTERED
-    public function orderByHighPriority()
+    public function orderByHigh($type)
     {
-        $this->Filtered = true;
-        $this->priorityOrder = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 END desc";
-        $this->stateOrder = "";
-        $this->datesOrder = '';
-        $this->progressOrder = '';
-    }
+        if ($type == 'priority') {
+            $this->priorityOrder = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 END desc";
+            $this->stateOrder = "";
+            $this->datesOrder = '';
+            $this->progressOrder = '';
+        }
 
-    public function orderByLowPriority()
-    {
-        $this->Filtered = false;
-        $this->priorityOrder = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 END asc";
-        $this->stateOrder = "";
-        $this->datesOrder = '';
-        $this->progressOrder = '';
-    }
+        if ($type == 'state') {
+            $this->priorityOrder = "";
+            $this->stateOrder = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END ASC";
+            $this->datesOrder = '';
+            $this->progressOrder = '';
+        }
 
-    public function orderByHighDates($type)
-    {
         if ($type == 'progress') {
+            $this->priorityOrder = "";
+            $this->stateOrder = "";
             $this->datesOrder = 'progress';
             $this->progressOrder = 'desc';
-            $this->stateOrder = "";
         }
 
         if ($type == 'expected_date') {
+            $this->priorityOrder = "";
+            $this->stateOrder = "";
             $this->datesOrder = 'expected_date';
             $this->progressOrder = 'desc';
-            $this->stateOrder = "";
         }
 
         if ($type == 'created_at') {
+            $this->priorityOrder = "";
+            $this->stateOrder = "";
             $this->datesOrder = 'created_at';
             $this->progressOrder = 'desc';
-            $this->stateOrder = "";
         }
 
-        $this->priorityOrder = "";
         $this->Filtered = true;
+        
     }
 
-    public function orderByLowDates($type)
+    public function orderByLow($type)
     {
+        if ($type == 'priority') {
+            $this->priorityOrder = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 END asc";
+            $this->stateOrder = "";
+            $this->datesOrder = '';
+            $this->progressOrder = '';
+        }
+
+        if ($type == 'state') {
+            $this->priorityOrder = "";
+            $this->stateOrder = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END ASC";
+            $this->datesOrder = '';
+            $this->progressOrder = '';
+        }
+
         if ($type == 'progress') {
+            $this->priorityOrder = "";
+            $this->stateOrder = "";
             $this->datesOrder = 'progress';
             $this->progressOrder = 'asc';
-            $this->stateOrder = "";
         }
 
         if ($type == 'expected_date') {
+            $this->priorityOrder = "";
+            $this->stateOrder = "";
             $this->datesOrder = 'expected_date';
             $this->progressOrder = 'asc';
-            $this->stateOrder = "";
         }
 
         if ($type == 'created_at') {
+            $this->priorityOrder = "";
+            $this->stateOrder = "";
             $this->datesOrder = 'created_at';
             $this->progressOrder = 'asc';
-            $this->stateOrder = "";
         }
-        $this->priorityOrder = "";
+
         $this->Filtered = false;
     }
     // EXTRAS
