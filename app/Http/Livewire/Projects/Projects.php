@@ -251,36 +251,67 @@ class Projects extends Component
         
         $backlog = Backlog::all()->where('project_id', $id)->first();
         if (isset($backlog)) {
+            $backlogFiles = BacklogFiles::where('backlog_id', $backlog->id)->get();
+            // Contar la cantidad de archivos restantes
+            $remainingFilesCount = $backlogFiles->count();
             // Eliminar los archivos seleccionados
             foreach ($this->selectedFiles as $fileId) {
-                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-                if ($fileId && Storage::disk('backlogs')->exists($fileId)) {
-                    $existingFilePath = pathinfo($fileId, PATHINFO_DIRNAME);
-                    if ($existingFilePath == $filePath) {
-                        Storage::disk('backlogs')->delete($fileId);
-
+                // Verificar si hay más de un archivo restante antes de eliminarlo
+                if ($remainingFilesCount > 1) {
+                    // Buscar el archivo en la colección de archivos
+                    $fileToDelete = $backlogFiles->where('id', $fileId)->first();
+                    // Verificar si se encontró el archivo
+                    if ($fileToDelete) {
+                        // Eliminar el archivo físico si existe en el disco
+                        if (Storage::disk('backlogs')->exists($fileToDelete->route)) {
+                            Storage::disk('backlogs')->delete($fileToDelete->route);
+                        }
+                        // Eliminar el archivo de la base de datos
+                        $fileToDelete->delete();
+                        // Disminuir el contador de archivos restantes
+                        $remainingFilesCount--;
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'success',
                             'title' => 'Imagen eliminada.',
                         ]);
+                    } else {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'No se encontró la imagen.',
+                        ]);
                     }
-                } else {
+                } else if(empty($this->scopes)) {
                     $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'No se encontro la imagen.',
+                        'type' => 'warning',
+                        'title' => 'Debe haber al menos un archivo asociado al backlog.',
                     ]);
+                } else {
+                    // Buscar el archivo en la colección de archivos
+                    $fileToDelete = $backlogFiles->where('id', $fileId)->first();
+                    // Verificar si se encontró el archivo
+                    if ($fileToDelete) {
+                        // Eliminar el archivo físico si existe en el disco
+                        if (Storage::disk('backlogs')->exists($fileToDelete->route)) {
+                            Storage::disk('backlogs')->delete($fileToDelete->route);
+                        }
+                        // Eliminar el archivo de la base de datos
+                        $fileToDelete->delete();
+                        // Disminuir el contador de archivos restantes
+                        $remainingFilesCount--;
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'success',
+                            'title' => 'Imagen eliminada.',
+                        ]);
+                    } else {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'No se encontró la imagen.',
+                        ]);
+                    }
                 }
             }
-            // true false
-            $backlogFile = BacklogFiles::where('backlog_id', $backlog->id)->get();
-            dd($backlogFile, $this);
+            
             if (empty($this->files)) {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'Se requiere seleccionar o cargar al menos una imagen.',
-                ]);
-                return;
             } else {
                 // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
                 foreach ($this->files as $index => $fileArray) {
@@ -302,15 +333,15 @@ class Projects extends Component
                         $fullNewFilePath = $filePath . '/' . $fileName;
                         // Guardar el archivo en el disco 'backlogs'
                         $file->storeAs($filePath, $fileName, 'backlogs');
-    
+
                         $files = new BacklogFiles();
                         $files->backlog_id = $backlog->id;
-                        $files->file = $fullNewFilePath;
+                        $files->route = $fullNewFilePath;
                         $files->save();
-    
+
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'success',
-                            'title' => 'Imagen guardada exitosamente.',
+                            'title' => 'Imagen guardada.',
                         ]);
                     } else {
                         $this->dispatchBrowserEvent('swal:modal', [
@@ -323,7 +354,14 @@ class Projects extends Component
             }
 
             $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
-            $backlog->scopes = $this->scopes ?? $backlog->scopes;
+            if(empty($this->scopes)) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'warning',
+                    'title' => 'Debe haber al menos un alcance en el backlog.',
+                ]);
+            } else {
+                $backlog->scopes = $this->scopes ?? $backlog->scopes;
+            }        
             $backlog->start_date = $this->start_date ?? $backlog->start_date;
             $backlog->closing_date = $this->closing_date ?? $backlog->closing_date;
             $backlog->passwords = $this->passwords ?? $backlog->passwords;
