@@ -327,7 +327,7 @@ class Projects extends Component
                     if (is_null($fileArray) || empty($fileArray)) {
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'info',
-                            'title' => 'Falta al menos un archivo.',
+                            'title' => 'Parece que no seleccionaste ningún archivo o faltó seleccionar alguno.',
                         ]);
                         continue; // Saltar al siguiente elemento del bucle si $fileArray es null o está vacío
                     }
