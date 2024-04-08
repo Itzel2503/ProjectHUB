@@ -270,6 +270,9 @@ class Projects extends Component
                         $fileToDelete->delete();
                         // Disminuir el contador de archivos restantes
                         $remainingFilesCount--;
+
+                        $backlog->scopes = $this->scopes ?? $backlog->scopes;
+
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'success',
                             'title' => 'Imagen eliminada.',
@@ -299,6 +302,9 @@ class Projects extends Component
                         $fileToDelete->delete();
                         // Disminuir el contador de archivos restantes
                         $remainingFilesCount--;
+
+                        $backlog->scopes = $this->scopes ?? $backlog->scopes;
+
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'success',
                             'title' => 'Imagen eliminada.',
@@ -313,6 +319,7 @@ class Projects extends Component
             }
             
             if (empty($this->files)) {
+                $backlog->scopes = $this->scopes ?? $backlog->scopes;
             } else {
                 // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
                 foreach ($this->files as $index => $fileArray) {
@@ -340,6 +347,8 @@ class Projects extends Component
                         $files->route = $fullNewFilePath;
                         $files->save();
 
+                        $backlog->scopes = $this->scopes ?? $backlog->scopes;
+
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'success',
                             'title' => 'Imagen guardada.',
@@ -355,15 +364,6 @@ class Projects extends Component
             }
 
             $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
-            if(empty($this->scopes)) {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'warning',
-                    'title' => 'El backlog debe incluir al menos un alcance.',
-                ]);
-                return;
-            } else {
-                $backlog->scopes = $this->scopes ?? $backlog->scopes;
-            }        
             $backlog->start_date = $this->start_date ?? $backlog->start_date;
             $backlog->closing_date = $this->closing_date ?? $backlog->closing_date;
             $backlog->passwords = $this->passwords ?? $backlog->passwords;
@@ -445,7 +445,7 @@ class Projects extends Component
         // Emitir un evento de navegador
         $this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',
-            'title' => 'Proyecto actualizado',
+            'title' => 'Proyecto actualizado.',
         ]);
     }
 
