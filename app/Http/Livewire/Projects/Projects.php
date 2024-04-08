@@ -187,7 +187,7 @@ class Projects extends Component
 
                     $files = new BacklogFiles();
                     $files->backlog_id = $backlog->id;
-                    $files->file = $fullNewFilePath;
+                    $files->route = $fullNewFilePath;
                     $files->save();
 
                     $this->dispatchBrowserEvent('swal:modal', [
@@ -285,6 +285,7 @@ class Projects extends Component
                         'type' => 'warning',
                         'title' => 'Debe haber al menos un archivo asociado al backlog.',
                     ]);
+                    return;
                 } else {
                     // Buscar el archivo en la colección de archivos
                     $fileToDelete = $backlogFiles->where('id', $fileId)->first();
@@ -357,8 +358,9 @@ class Projects extends Component
             if(empty($this->scopes)) {
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'warning',
-                    'title' => 'Debe haber al menos un alcance en el backlog.',
+                    'title' => 'El backlog debe incluir al menos un alcance.',
                 ]);
+                return;
             } else {
                 $backlog->scopes = $this->scopes ?? $backlog->scopes;
             }        
@@ -367,34 +369,74 @@ class Projects extends Component
             $backlog->passwords = $this->passwords ?? $backlog->passwords;
             $backlog->save();
         } else {
-            $backlog = new Backlog();
+            if (empty($this->files) && empty($this->scopes)) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El backlog debe incluir al menos un alcance.',
+                ]);
+                return;
+            } else {
+                $backlog = new Backlog();
+                $backlog->general_objective = $this->general_objective;
+                $backlog->scopes = $this->scopes;
+                $backlog->start_date = $this->start_date;
+                $backlog->closing_date = $this->closing_date;
+                $backlog->passwords = $this->passwords;
+                $backlog->project_id = $project->id;
 
-            // if ($this->file) {
-            //     $fileExtension = $this->file->extension();
-            //     $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-            //     if (in_array($fileExtension, $extensionesImagen)) {
-            //         $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-            //         $fileName = $this->file->getClientOriginalName();
-            //         $fullNewFilePath = $filePath . '/' . $fileName;
-            //         // Guardar el archivo en el disco 'activities'
-            //         $this->file->storeAs($filePath, $fileName, 'backlogs');
-            //         $backlog->file = $fullNewFilePath;
-            //     } else {
-            //         $this->dispatchBrowserEvent('swal:modal', [
-            //             'type' => 'error',
-            //             'title' => 'El archivo debe ser una imagen',
-            //         ]);
-            //         return;
-            //     }
-            // }
+                if(empty($this->scopes)) {
+                    if (empty(array_filter($this->files))) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Se requiere seleccionar o cargar al menos una imagen.',
+                        ]);
+                        return;
+                    } else {
+                        $backlog->save();
+                        // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
+                        foreach ($this->files as $index => $fileArray) {
+                            // Verificar si $fileArray es null o está vacío
+                            if (is_null($fileArray) || empty($fileArray)) {
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'info',
+                                    'title' => 'Falta al menos un archivo.',
+                                ]);
+                                continue; // Saltar al siguiente elemento del bucle si $fileArray es null o está vacío
+                            }
+                            // Accede al objeto TemporaryUploadedFile dentro del array
+                            $file = $fileArray[0];
+                            $fileExtension = $file->extension();
+                            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                            if (in_array($fileExtension, $extensionesImagen)) {
+                                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                                $fileName = $file->getClientOriginalName();
+                                $fullNewFilePath = $filePath . '/' . $fileName;
+                                // Guardar el archivo en el disco 'backlogs'
+                                $file->storeAs($filePath, $fileName, 'backlogs');
 
-            $backlog->general_objective = $this->general_objective;
-            $backlog->scopes = $this->scopes;
-            $backlog->start_date = $this->start_date;
-            $backlog->closing_date = $this->closing_date;
-            $backlog->passwords = $this->passwords;
-            $backlog->project_id = $project->id;
-            $backlog->save();
+                                $files = new BacklogFiles();
+                                $files->backlog_id = $backlog->id;
+                                $files->route = $fullNewFilePath;
+                                $files->save();
+
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'success',
+                                    'title' => 'Imagen guardada exitosamente.',
+                                ]);
+                            } else {
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'info',
+                                    'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
+                                    'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
+                                ]);
+                            }
+                        }
+                    }
+                } else {
+                    $backlog->scopes = $this->scopes;
+                    $backlog->save();
+                }
+            }
         }
 
         $this->modalCreateEdit = false;

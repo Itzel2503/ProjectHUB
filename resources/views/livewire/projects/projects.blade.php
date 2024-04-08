@@ -468,7 +468,7 @@
                                 <h5 class="inline-flex font-semibold" for="code">
                                     Alcances<p class="text-red-600">*</p>
                                 </h5>
-                                @if($showUpdate)
+                                @if($showUpdate && $backlogEdit)
                                 @foreach ($backlogEdit->files as $file)
                                 <div class="flex justify-end items-center center my-auto py-3">
                                     <label for="backlogFile{{ $file->id }}" class="text-red-600 mr-2">Eliminar</label>
