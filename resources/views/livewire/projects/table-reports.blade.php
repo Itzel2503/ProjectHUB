@@ -127,10 +127,10 @@
                 <thead class="headTable border-0">
                     <tr>
                         <th class="w-1/5 px-4 py-3">
-                            <div @if ($priorityFiltered) wire:click="orderByLowPriority()" @else
+                            <div @if ($Filtered) wire:click="orderByLowPriority()" @else
                                 wire:click="orderByHighPriority()" @endif class="justify- inline-flex cursor-pointer">
                                 Reporte
-                                @if ($priorityFiltered)
+                                @if ($Filtered)
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24" height="24"
                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
@@ -159,10 +159,10 @@
                         </th>
 
                         <th class="w-1/6 px-4 py-3">
-                            <div @if ($progressFiltered) wire:click="orderByLowDates('progress')" @else
+                            <div @if ($Filtered) wire:click="orderByLowDates('progress')" @else
                                 wire:click="orderByHighDates('progress')" @endif class="inline-flex justify-center">
                                 Delegado
-                                @if ($progressFiltered)
+                                @if ($Filtered)
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24" height="24"
                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
@@ -195,11 +195,11 @@
                             </div>
                         </th>
                         <th class="w-auto px-4 py-3">
-                            <div @if ($expectedFiltered) wire:click="orderByLowDates('expected_date')" @else
+                            <div @if ($Filtered) wire:click="orderByLowDates('expected_date')" @else
                                 wire:click="orderByHighDates('expected_date')" @endif
                                 class="inline-flex justify-center">
                                 Fecha
-                                @if ($expectedFiltered)
+                                @if ($Filtered)
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24" height="24"
                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
@@ -227,10 +227,10 @@
                             </div>
                         </th>
                         <th class="w-auto px-4 py-3">
-                            <div @if ($createdFiltered) wire:click="orderByLowDates('created_at')" @else
+                            <div @if ($Filtered) wire:click="orderByLowDates('created_at')" @else
                                 wire:click="orderByHighDates('created_at')" @endif class="inline-flex justify-center">
                                 Creado
-                                @if ($createdFiltered)
+                                @if ($Filtered)
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24" height="24"
                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"

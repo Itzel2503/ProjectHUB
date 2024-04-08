@@ -31,9 +31,10 @@ class TableReports extends Component
     public $leader = false;
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
     public $perPage = '10';
-    public $selectedDelegate = '', $priorityOrder = 'Bajo', $datesOrder = 'created_at', $progressOrder = '', $expectedOrder = '', $createdOrder = 'desc';
+    public $selectedDelegate = '', $priorityOrder = '', $datesOrder = 'updated_at', $progressOrder = 'desc';
+    public $stateOrder = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END ASC";
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
-    public $priorityFiltered = false, $progressFiltered = false, $expectedFiltered = false, $createdFiltered = false;
+    public $Filtered = false;
 
     // inputs
     public $name, $type, $customer, $file, $comment, $evidence, $message, $expected_date;
@@ -63,29 +64,20 @@ class TableReports extends Component
                     $query->orWhereNotNull('count');
                 }
             })
-            ->when(!empty($this->selectedStates), function ($query) {
+            ->when($this->stateOrder, function ($query) {
+                $query->orderByRaw($this->stateOrder);
+            })
+            ->when($this->selectedStates, function ($query) {
                 $query->whereIn('state', $this->selectedStates);
             }) 
             ->when($this->selectedDelegate, function ($query) {
                 $query->where('delegate_id', $this->selectedDelegate);
             })
             ->when($this->priorityOrder, function ($query) {
-                if ($this->priorityOrder == 'Alto') {
-                    $query->orderByRaw("CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 END desc");
-                } else {
-                    $query->orderByRaw("CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 END asc");
-                }
+                $query->orderByRaw($this->priorityOrder);
             })
             ->when($this->datesOrder, function ($query) {
-                if ($this->datesOrder == 'progress') {
-                    $query->orderBy('progress', $this->progressOrder);
-                } 
-                if ($this->datesOrder == 'expected_date') {
-                    $query->orderBy('expected_date', $this->expectedOrder);
-                } 
-                if ($this->datesOrder == 'created_at') {
-                    $query->orderBy('created_at', $this->createdOrder);
-                } 
+                $query->orderBy($this->datesOrder, $this->progressOrder);
             })
             ->with(['user', 'delegate'])
             ->paginate($this->perPage);
@@ -110,29 +102,20 @@ class TableReports extends Component
                                     ->where('video', true);
                         });
                 })
-                ->when(!empty($this->selectedStates), function ($query) {
+                ->when($this->stateOrder, function ($query) {
+                    $query->orderByRaw($this->stateOrder);
+                })
+                ->when($this->selectedStates, function ($query) {
                     $query->whereIn('state', $this->selectedStates);
                 }) 
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->when($this->priorityOrder, function ($query) {
-                    if ($this->priorityOrder == 'Alto') {
-                        $query->orderByRaw("CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 END desc");
-                    } else {
-                        $query->orderByRaw("CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 END asc");
-                    }
+                    $query->orderByRaw($this->priorityOrder);
                 })
                 ->when($this->datesOrder, function ($query) {
-                    if ($this->datesOrder == 'progress') {
-                        $query->orderBy('progress', $this->progressOrder);
-                    } 
-                    if ($this->datesOrder == 'expected_date') {
-                        $query->orderBy('expected_date', $this->expectedOrder);
-                    } 
-                    if ($this->datesOrder == 'created_at') {
-                        $query->orderBy('created_at', $this->createdOrder);
-                    } 
+                    $query->orderBy($this->datesOrder, $this->progressOrder);
                 })
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
@@ -538,56 +521,67 @@ class TableReports extends Component
     // FILTERED
     public function orderByHighPriority()
     {
-        $this->priorityFiltered = true;
-        $this->priorityOrder = 'Alto';
+        $this->Filtered = true;
+        $this->priorityOrder = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 END desc";
+        $this->stateOrder = "";
+        $this->datesOrder = '';
+        $this->progressOrder = '';
     }
 
     public function orderByLowPriority()
     {
-        $this->priorityFiltered = false;
-        $this->priorityOrder = 'Bajo';
+        $this->Filtered = false;
+        $this->priorityOrder = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 END asc";
+        $this->stateOrder = "";
+        $this->datesOrder = '';
+        $this->progressOrder = '';
     }
 
     public function orderByHighDates($type)
     {
         if ($type == 'progress') {
-            $this->progressFiltered = true;
             $this->datesOrder = 'progress';
             $this->progressOrder = 'desc';
+            $this->stateOrder = "";
         }
 
         if ($type == 'expected_date') {
-            $this->expectedFiltered = true;
             $this->datesOrder = 'expected_date';
-            $this->expectedOrder = 'desc';
+            $this->progressOrder = 'desc';
+            $this->stateOrder = "";
         }
 
         if ($type == 'created_at') {
-            $this->createdFiltered = true;
             $this->datesOrder = 'created_at';
-            $this->createdOrder = 'desc';
+            $this->progressOrder = 'desc';
+            $this->stateOrder = "";
         }
+
+        $this->priorityOrder = "";
+        $this->Filtered = true;
     }
 
     public function orderByLowDates($type)
     {
         if ($type == 'progress') {
-            $this->progressFiltered = false;
             $this->datesOrder = 'progress';
             $this->progressOrder = 'asc';
+            $this->stateOrder = "";
         }
 
         if ($type == 'expected_date') {
-            $this->expectedFiltered = false;
             $this->datesOrder = 'expected_date';
-            $this->expectedOrder = 'asc';
+            $this->progressOrder = 'asc';
+            $this->stateOrder = "";
         }
 
         if ($type == 'created_at') {
-            $this->createdFiltered = false;
             $this->datesOrder = 'created_at';
-            $this->createdOrder = 'asc';
+            $this->progressOrder = 'asc';
+            $this->stateOrder = "";
         }
+        $this->priorityOrder = "";
+        $this->Filtered = false;
     }
     // EXTRAS
     public function reportRepeat($project_id, $report_id)
