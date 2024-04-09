@@ -15,6 +15,8 @@ text-yellow-400
             flex-direction: column;
         }
     }
+
+    
 </style>
 
 <div class="mt-4 w-full mx-auto">

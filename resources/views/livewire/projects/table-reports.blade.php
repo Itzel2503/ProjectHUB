@@ -191,8 +191,7 @@
                         </th>
                         <th class="px-4 py-3">
                             <div @if ($Filtered) wire:click="orderByLow('state')" @else
-                                wire:click="orderByHigh('state')" @endif
-                                class="inline-flex justify-center">
+                                wire:click="orderByHigh('state')" @endif class="inline-flex justify-center">
                                 Estado
                                 @if ($Filtered)
                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -223,8 +222,7 @@
                         </th>
                         <th class="w-auto px-4 py-3">
                             <div @if ($Filtered) wire:click="orderByLow('expected_date')" @else
-                                wire:click="orderByHigh('expected_date')" @endif
-                                class="inline-flex justify-center">
+                                wire:click="orderByHigh('expected_date')" @endif class="inline-flex justify-center">
                                 Fecha
                                 @if ($Filtered)
                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -412,28 +410,9 @@
                         </td>
                         <td class="px-4 py-5">
                             <div class="flex justify-center">
-                                <div x-data="{
-                                        open: false,
-                                        toggle() {
-                                            if (this.open) {
-                                                return this.close()
-                                            }
-                                    
-                                            this.$refs.button.focus()
-                                            this.open = true
-                                        },
-                                    
-                                        close(focusAfter) {
-                                            if (!this.open) return
-                                            this.open = false
-                                            focusAfter && focusAfter.focus()
-                                        }
-                                    }" x-on:keydown.escape.prevent.stop="close($refs.button)"
-                                    x-id="['dropdown-button']" class="relative">
+                                <div id="dropdown-button-{{ $report->id }}" class="relative">
                                     <!-- Button -->
-                                    <button x-ref="button" x-on:click="toggle()" :aria-expanded="open"
-                                        :aria-controls="$id('dropdown-button')" type="button"
-                                        class="flex items-center px-5 py-2.5">
+                                    <button onclick="toggleDropdown('{{ $report->id }}')"  type="button" class="flex items-center px-5 py-2.5">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24"
                                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
@@ -445,8 +424,7 @@
                                         </svg>
                                     </button>
                                     <!-- Panel -->
-                                    <div x-ref="panel" x-show="open" x-on:click.outside="close($refs.button)"
-                                        :id="$id('dropdown-button')" style="display: none;"
+                                    <div id="dropdown-panel-{{ $report->id }}" style="display: none;"
                                         class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200">
                                         <!-- Botón Editar -->
                                         <div wire:click="showEdit({{ $report->id }})"
@@ -899,66 +877,82 @@
     {{-- END LOADING PAGE --}}
     @push('js')
     <script>
-        window.addEventListener('swal:modal', event => {
-        toastr[event.detail.type](event.detail.text, event.detail.title);
-    });
+        // Agrega event listeners para cada dropdown
+        function toggleDropdown(reportId) {
+            var panel = document.getElementById('dropdown-panel-' + reportId);
+            if (panel.style.display === 'none') {
+                // Oculta todos los paneles de dropdown
+                var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
+                allPanels.forEach(function(panel) {
+                    panel.style.display = 'none';
+                });
 
-    // MODALS
-    Livewire.on('deleteReport', (id, project_id) => {
-        Swal.fire({
-            title: '¿Seguro que deseas eliminar este elemento?',
-            text: "Esta acción es irreversible",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#202a33',
-            cancelButtonColor: '#ef4444',
-            confirmButtonText: 'Eliminar',
-            calcelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.livewire.emit('delete', id, project_id);
-                Swal.fire(
-                    '¡Eliminado!',
-                    'Reporte eliminado',
-                    'Exito'
-                )
-            }
-        })
-    });
-
-    let modalEvidence = document.getElementById('modalEvidence');
-    modalEvidence.addEventListener('click', function() {
-        let id = modalEvidence.getAttribute('data-id');
-        let project_id = modalEvidence.getAttribute('data-project_id');
-        let state = modalEvidence.getAttribute('data-state');
-        console.log(modalEvidence, id, project_id, state);
-
-        Swal.fire({
-            title: 'Confirmación de cierre',
-            text: "Si cierras sin subir evidencia, el reporte permanecerá sin actualizar. ¿Seguro que quieres continuar?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#4faead',
-            cancelButtonColor: '#0062cc',
-            confirmButtonText: 'Sí, cerrar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                location.reload();
+                panel.style.display = 'block';
             } else {
-
+                panel.style.display = 'none';
             }
+        }
+        // MODALS
+        window.addEventListener('swal:modal', event => {
+            toastr[event.detail.type](event.detail.text, event.detail.title);
         });
-    });
 
-    let banEvidence = false;
+        
+        Livewire.on('deleteReport', (id, project_id) => {
+            Swal.fire({
+                title: '¿Seguro que deseas eliminar este elemento?',
+                text: "Esta acción es irreversible",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#202a33',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Eliminar',
+                calcelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.livewire.emit('delete', id, project_id);
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'Reporte eliminado',
+                        'Exito'
+                    )
+                }
+            })
+        });
 
-    function toogleEvidence() {
-        let evidence = document.getElementById('evidence');
-        let example = document.getElementById('example');
-        evidence.classList.toggle("hidden");
-        example.classList.toggle("hidden");
-    }
+        let modalEvidence = document.getElementById('modalEvidence');
+        modalEvidence.addEventListener('click', function() {
+            let id = modalEvidence.getAttribute('data-id');
+            let project_id = modalEvidence.getAttribute('data-project_id');
+            let state = modalEvidence.getAttribute('data-state');
+            console.log(modalEvidence, id, project_id, state);
+
+            Swal.fire({
+                title: 'Confirmación de cierre',
+                text: "Si cierras sin subir evidencia, el reporte permanecerá sin actualizar. ¿Seguro que quieres continuar?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#4faead',
+                cancelButtonColor: '#0062cc',
+                confirmButtonText: 'Sí, cerrar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload();
+                } else {
+
+                }
+            });
+        });
+
+        let banEvidence = false;
+
+        function toogleEvidence() {
+            let evidence = document.getElementById('evidence');
+            let example = document.getElementById('example');
+            evidence.classList.toggle("hidden");
+            example.classList.toggle("hidden");
+        }
     </script>
     @endpush
 </div>
