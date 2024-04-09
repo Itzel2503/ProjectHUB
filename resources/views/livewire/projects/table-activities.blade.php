@@ -498,26 +498,8 @@
                         </td>
                         <td class="px-4 py-5">
                             <div class="flex justify-center">
-                                <div x-data="{
-                                    open: false,
-                                    toggle() {
-                                        if (this.open) {
-                                            return this.close()
-                                        }
-
-                                        this.$refs.button.focus()
-                                        this.open = true
-                                    },
-
-                                    close(focusAfter) {
-                                        if (! this.open) return
-                                        this.open = false
-                                        focusAfter && focusAfter.focus()
-                                    }
-                                }" x-on:keydown.escape.prevent.stop="close($refs.button)" x-id="['dropdown-button']"
-                                    class="relative">
-                                    <button x-ref="button" x-on:click="toggle()" :aria-expanded="open"
-                                        :aria-controls="$id('dropdown-button')" type="button"
+                                <div id="dropdown-button-{{ $activity->id }}" class="relative">
+                                    <button onclick="toggleDropdown('{{ $activity->id }}')" type="button"
                                         class="flex items-center px-5 py-2.5" @if($firstSprint->state == 'Pendiente' &&
                                         Auth::user()->type_user != 1 && Auth::user()->area_id != 1)disabled @endif>
                                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -531,8 +513,7 @@
                                         </svg>
                                     </button>
                                     <!-- Panel -->
-                                    <div x-ref="panel" x-show="open" x-on:click.outside="close($refs.button)"
-                                        :id="$id('dropdown-button')" style="display: none;"
+                                    <div id="dropdown-panel-{{ $activity->id }}" style="display: none;"
                                         class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200 z-10">
                                         <!-- Botón Editar -->
                                         <div wire:click="showEditActivity({{ $activity->id }})"
@@ -1120,14 +1101,30 @@
     {{-- END LOADING PAGE --}}
     @push('js')
     <script>
+        // DROPDOWN
+        function toggleDropdown(activityId) {
+            var panel = document.getElementById('dropdown-panel-' + activityId);
+            if (panel.style.display === 'none') {
+                // Oculta todos los paneles de dropdown
+                var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
+                allPanels.forEach(function(panel) {
+                    panel.style.display = 'none';
+                });
+
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
         window.addEventListener('file-reset', () => {
             document.getElementById('file').value = null;
         });
-
+        // MODALS
         window.addEventListener('swal:modal', event => {
             toastr[event.detail.type](event.detail.text, event.detail.title);
         });
-        // MODALS
+        
         Livewire.on('deleteActivity', deletebyId => {
             Swal.fire({
                 title: '¿Seguro que deseas eliminar este elemento?',

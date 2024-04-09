@@ -412,7 +412,7 @@
                             <div class="flex justify-center">
                                 <div id="dropdown-button-{{ $report->id }}" class="relative">
                                     <!-- Button -->
-                                    <button onclick="toggleDropdown('{{ $report->id }}')"  type="button" class="flex items-center px-5 py-2.5">
+                                    <button onclick="toggleDropdown('{{ $report->id }}')" type="button" class="flex items-center px-5 py-2.5">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24"
                                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
@@ -877,7 +877,7 @@
     {{-- END LOADING PAGE --}}
     @push('js')
     <script>
-        // Agrega event listeners para cada dropdown
+        // DROPDOWN
         function toggleDropdown(reportId) {
             var panel = document.getElementById('dropdown-panel-' + reportId);
             if (panel.style.display === 'none') {
@@ -892,11 +892,14 @@
                 panel.style.display = 'none';
             }
         }
+
+        window.addEventListener('file-reset', () => {
+            document.getElementById('file').value = null;
+        });
         // MODALS
         window.addEventListener('swal:modal', event => {
             toastr[event.detail.type](event.detail.text, event.detail.title);
         });
-
         
         Livewire.on('deleteReport', (id, project_id) => {
             Swal.fire({
