@@ -32,7 +32,7 @@ class TableReports extends Component
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
     public $perPage = '10';
     public $selectedDelegate = '', $priorityOrder = '', $datesOrder = 'updated_at', $progressOrder = 'desc';
-    public $stateOrder = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END ASC";
+    public $stateOrder = "CASE WHEN state = 'Proceso' THEN 1 WHEN state = 'Abierto' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END ASC";
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
     public $Filtered = false;
 
