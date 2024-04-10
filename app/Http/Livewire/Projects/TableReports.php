@@ -486,7 +486,7 @@ class TableReports extends Component
         $this->comment = $this->reportEdit->comment;
 
         $fecha = Carbon::parse($this->reportEdit->expected_date);
-        $this->expected_date = $fecha->toDateString();;
+        $this->expected_date = $fecha->toDateString();
     }
 
     // MODAL

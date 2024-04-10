@@ -46,13 +46,12 @@ class Report extends Controller
             $user = Auth::user();
             $allUsers = User::all();
             $project = Project::find($project_id);
-            
+
             if ($project) {
                 return view('projects.newreport', compact('project', 'user', 'allUsers'));
             } else {
                 return redirect('/projects');
             }
-
         } else {
             return redirect('/login');
         }
@@ -98,10 +97,10 @@ class Report extends Controller
                     } else {
                         $report->priority = 'Bajo';
                     }
-                    
+
                     $report->state = "Abierto";
                     $report->comment = $request->comment;
-                    $report->evidence = ($request->evidence) ? true : false ;
+                    $report->evidence = ($request->evidence) ? true : false;
                     $report->image = false;
                     $report->video = true;
                     $report->file = false;
@@ -109,16 +108,16 @@ class Report extends Controller
                     $report->expected_date = $request->expected_date;
                     $report->save();
                 }
-    
+
                 if (isset($request->photo)) {
                     list($type, $data) = explode(';', $request->photo);
                     list(, $data)      = explode(',', $data);
                     $imageData = base64_decode($data);
-    
+
                     $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.jpg';
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, $imageData);
-    
+
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
                     $report->delegate_id = $request->delegate;
@@ -135,7 +134,7 @@ class Report extends Controller
 
                     $report->state = "Abierto";
                     $report->comment = $request->comment;
-                    $report->evidence = ($request->evidence) ? true : false ;
+                    $report->evidence = ($request->evidence) ? true : false;
                     $report->image = true;
                     $report->video = false;
                     $report->file = false;
@@ -143,17 +142,17 @@ class Report extends Controller
                     $report->expected_date = $request->expected_date;
                     $report->save();
                 }
-    
+
                 if (isset($request->file)) {
                     $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];   
-                    
+                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+
                     $file = $request->file('file');
                     $fileExtension = $file->extension();
                     $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, file_get_contents($file));
-    
+
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
                     $report->delegate_id = $request->delegate;
@@ -170,7 +169,7 @@ class Report extends Controller
 
                     $report->state = "Abierto";
                     $report->comment = $request->comment;
-                    $report->evidence = ($request->evidence) ? true : false ;
+                    $report->evidence = ($request->evidence) ? true : false;
 
                     if (in_array($file->extension(), $extensionesImagen)) {
                         $report->image = true;
@@ -190,7 +189,7 @@ class Report extends Controller
                     $report->expected_date = $request->expected_date;
                     $report->save();
                 }
-    
+
                 if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
@@ -207,7 +206,7 @@ class Report extends Controller
 
                     $report->state = "Abierto";
                     $report->comment = $request->comment;
-                    $report->evidence = ($request->evidence) ? true : false ;
+                    $report->evidence = ($request->evidence) ? true : false;
                     $report->image = false;
                     $report->video = false;
                     $report->file = false;
@@ -243,8 +242,9 @@ class Report extends Controller
                 $filteredUsers = $allUsers->reject(function ($user) use ($report) {
                     return $user->id == $report->delegate_id;
                 });
-
-                return view('projects.clonereport', compact('project', 'user', 'filteredUsers', 'report'));
+                $expectedDate = Carbon::parse($report->expected_date)->toDateString();
+                
+                return view('projects.clonereport', compact('project', 'user', 'filteredUsers', 'report', 'expectedDate'));
             } else {
                 return redirect('/projects');
             }
@@ -279,13 +279,12 @@ class Report extends Controller
             $reportNew = new ModelsReport();
             $now = Carbon::now();
             $dateString = $now->format("Y-m-d H_i_s");
-
+            
             if ($project && $report) {
                 try {
                     // Validación de los campos
                     $validatedData = $request->validate([
                         'comment' => 'required',
-                        'delegate' => 'required|not_in:0',
                     ]);
                     // Aquí puedes continuar con tu lógica después de la validación exitosa
                 } catch (\Illuminate\Validation\ValidationException $e) {
@@ -294,15 +293,12 @@ class Report extends Controller
                     throw $e;
                 }
                 if ($report->report_id == null) {
-                    $report->resolved_id = $request->user_id;
                     $report->report_id = $id;
                     $report->state = "Resuelto";
                     $report->save();
                 }
-
                 $report->repeat = false;
                 $report->save();
-    
                 if (isset($request->video)) {
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
@@ -310,7 +306,6 @@ class Report extends Controller
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $request->video;
-
                     if ($request->priority1) {
                         $reportNew->priority = 'Alto';
                     } else if ($request->priority2) {
@@ -318,32 +313,38 @@ class Report extends Controller
                     } else {
                         $reportNew->priority = 'Bajo';
                     }
-
+                    $reportNew->state = "Abierto";
+                    $reportNew->comment = $request->comment;
+                    $reportNew->evidence = $request->evidence ?? $report->evidence;
                     $reportNew->image = false;
                     $reportNew->video = true;
                     $reportNew->file = false;
-                    $reportNew->state = "Abierto";
-                    $reportNew->comment = $request->comment;
+                    if ($reportNew->count == null) {
+                        $reportNew->count = 1;
+                    } else {
+                        $reportNew->count = $report->count + 1;
+                    }
                     $reportNew->repeat = true;
+                    $reportNew->delegated_date = Carbon::now();
+                    $reportNew->expected_date = $request->expected_date;
                     $reportNew->save();
                 }
-    
+
                 if (isset($request->photo)) {
                     list($type, $data) = explode(';', $request->photo);
                     list(, $data)      = explode(',', $data);
                     $imageData = base64_decode($data);
-    
+
                     $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.jpg';
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, $imageData);
-    
+
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
                     $reportNew->delegate_id = $request->delegate;
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $filePath;
-
                     if ($request->priority1) {
                         $reportNew->priority = 'Alto';
                     } else if ($request->priority2) {
@@ -351,33 +352,39 @@ class Report extends Controller
                     } else {
                         $reportNew->priority = 'Bajo';
                     }
-
+                    $reportNew->state = "Abierto";
+                    $reportNew->comment = $request->comment;
+                    $reportNew->evidence = $request->evidence ?? $report->evidence;
                     $reportNew->image = true;
                     $reportNew->video = false;
                     $reportNew->file = false;
-                    $reportNew->state = "Abierto";
-                    $reportNew->comment = $request->comment;
+                    if ($reportNew->count == null) {
+                        $reportNew->count = 1;
+                    } else {
+                        $reportNew->count = $report->count + 1;
+                    }
                     $reportNew->repeat = true;
+                    $reportNew->delegated_date = Carbon::now();
+                    $reportNew->expected_date = $request->expected_date;
                     $reportNew->save();
                 }
-    
+
                 if (isset($request->file)) {
                     $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
                     $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
-                    
+
                     $file = $request->file('file');
                     $fileExtension = $file->extension();
-                    $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.' .$fileExtension;
+                    $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, file_get_contents($file));
-    
+
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
                     $reportNew->delegate_id = $request->delegate;
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $filePath;
-
                     if ($request->priority1) {
                         $reportNew->priority = 'Alto';
                     } else if ($request->priority2) {
@@ -385,6 +392,9 @@ class Report extends Controller
                     } else {
                         $reportNew->priority = 'Bajo';
                     }
+                    $reportNew->state = "Abierto";
+                    $reportNew->comment = $request->comment;
+                    $reportNew->evidence = $request->evidence ?? $report->evidence;
 
                     if (in_array($fileExtension, $extensionesImagen)) {
                         $reportNew->image = true;
@@ -399,44 +409,49 @@ class Report extends Controller
                         $reportNew->video = false;
                         $reportNew->file = true;
                     }
-                    $reportNew->state = "Abierto";
-                    $reportNew->comment = $request->comment;
-                    
+
                     if ($report->count == null) {
                         $reportNew->count = 1;
                     } else {
                         $reportNew->count = $report->count + 1;
                     }
-                    
+
+                    if ($reportNew->count == null) {
+                        $reportNew->count = 1;
+                    } else {
+                        $reportNew->count = $report->count + 1;
+                    }
                     $reportNew->repeat = true;
+                    $reportNew->delegated_date = Carbon::now();
+                    $reportNew->expected_date = $request->expected_date;
                     $reportNew->save();
                 }
-    
+
                 if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
                     $reportNew->delegate_id = $request->delegate;
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
-    
+
                     $currentYear = date("Y");
                     $startsWithYear = strpos($report->content, $currentYear) === 0;
                     $startsWithReporte = strpos($report->content, "Reporte") === 0;
-    
+
                     if ($startsWithYear) {
                         // $report->content comienza con el año actual
                         $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                        $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];   
-    
-                        $sourcePath = public_path('reportes/'.$report->content); // Ruta del archivo existente
+                        $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+
+                        $sourcePath = public_path('reportes/' . $report->content); // Ruta del archivo existente
                         $pathInfo = pathinfo($sourcePath); // Obtener información sobre la ruta del archivo
                         $fileExtension = $pathInfo['extension']; // Obtener la extensión del archivo
-    
+
                         $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
                         $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
-                        
+
                         $destinationPath = public_path('reportes/' . $filePath); // Ruta donde se guardará la copia
-    
+
                         if (File::exists($sourcePath)) {
                             File::copy($sourcePath, $destinationPath);
                         }
@@ -454,7 +469,6 @@ class Report extends Controller
                             $reportNew->video = false;
                             $reportNew->file = true;
                         }
-    
                     } elseif ($startsWithReporte) {
                         // $report->content comienza con "Reporte"
                         $reportNew->content = $report->content;
@@ -466,7 +480,7 @@ class Report extends Controller
                         $reportNew->video = false;
                         $reportNew->file = false;
                     }
-
+                    
                     if ($request->priority1) {
                         $reportNew->priority = 'Alto';
                     } else if ($request->priority2) {
@@ -474,19 +488,20 @@ class Report extends Controller
                     } else {
                         $reportNew->priority = 'Bajo';
                     }
-                    
                     $reportNew->state = "Abierto";
                     $reportNew->comment = $request->comment;
-                    
+                    $reportNew->evidence = $request->evidence ?? $report->evidence;
                     if ($report->count == null) {
                         $reportNew->count = 1;
                     } else {
                         $reportNew->count = $report->count + 1;
                     }
-                    $reportNew->repeat = true; 
+                    $reportNew->repeat = true;
+                    $reportNew->delegated_date = Carbon::now();
+                    $reportNew->expected_date = $request->expected_date;
                     $reportNew->save();
                 }
-    
+
                 return redirect()->route('projects.reports.index', ['project' => $project_id]);
             } else {
                 return redirect('/projects');

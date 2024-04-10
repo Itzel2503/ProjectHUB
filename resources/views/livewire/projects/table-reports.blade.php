@@ -300,7 +300,7 @@
                                     @endif
                                     @if ($report->video == true)
                                     @if (strpos($report->content, 'Reporte') === 0)
-                                    <p class="my-3 text-red-600">Falta subir '{{ $report->content }}'
+                                    <p class="my-3 text-red-600">Falta subir video
                                     </p>
                                     @else
                                     <video src="{{ asset('reportes/' . $report->content) }}" alt="Report Video"
@@ -412,7 +412,8 @@
                             <div class="flex justify-center">
                                 <div id="dropdown-button-{{ $report->id }}" class="relative">
                                     <!-- Button -->
-                                    <button onclick="toggleDropdown('{{ $report->id }}')" type="button" class="flex items-center px-5 py-2.5">
+                                    <button onclick="toggleDropdown('{{ $report->id }}')" type="button"
+                                        class="flex items-center px-5 py-2.5">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24"
                                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
@@ -458,8 +459,12 @@
                                             Eliminar
                                         </div>
                                         <!-- Botón Reincidencia -->
-                                        <div wire:click="reportRepeat({{ $project->id }}, {{ $report->id }})"
-                                            class="@if ($report->repeat != false && $report->state == 'Resuelto') @else hidden @endif flex cursor-pointer px-4 py-2 text-sm text-black">
+                                        @if ($report->state == 'Resuelto')
+                                        <div @if ($report->report_id == null || $report->report_id != null  && $report->repeat == true)wire:click="reportRepeat({{
+                                            $project->id
+                                            }}, {{ $report->id }})" @endif
+                                            class="flex cursor-pointer px-4 py-2 text-sm text-black">
+                                            @if ($report->report_id == null || $report->report_id != null  && $report->repeat == true)
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                 class="icon icon-tabler icon-tabler-bug-filled mr-2" width="24"
                                                 height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -468,9 +473,12 @@
                                                 <path
                                                     d="M12 4a4 4 0 0 1 3.995 3.8l.005 .2a1 1 0 0 1 .428 .096l3.033 -1.938a1 1 0 1 1 1.078 1.684l-3.015 1.931a7.17 7.17 0 0 1 .476 2.227h3a1 1 0 0 1 0 2h-3v1a6.01 6.01 0 0 1 -.195 1.525l2.708 1.616a1 1 0 1 1 -1.026 1.718l-2.514 -1.501a6.002 6.002 0 0 1 -3.973 2.56v-5.918a1 1 0 0 0 -2 0v5.917a6.002 6.002 0 0 1 -3.973 -2.56l-2.514 1.503a1 1 0 1 1 -1.026 -1.718l2.708 -1.616a6.01 6.01 0 0 1 -.195 -1.526v-1h-3a1 1 0 0 1 0 -2h3.001v-.055a7 7 0 0 1 .474 -2.173l-3.014 -1.93a1 1 0 1 1 1.078 -1.684l3.032 1.939l.024 -.012l.068 -.027l.019 -.005l.016 -.006l.032 -.008l.04 -.013l.034 -.007l.034 -.004l.045 -.008l.015 -.001l.015 -.002l.087 -.004a4 4 0 0 1 4 -4zm0 2a2 2 0 0 0 -2 2h4a2 2 0 0 0 -2 -2z"
                                                     stroke-width="0" fill="currentColor" />
-                                            </svg>
-                                            Reincidencia
+                                            </svg>Reincidencia
+                                            @else
+                                            Sin acciones
+                                            @endif
                                         </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -607,7 +615,7 @@
                             @if ($reportShow->video == true)
                             @if (strpos($reportShow->content, 'Reporte') === 0)
                             <div class="my-5 w-full text-center text-lg">
-                                <p class="text-red my-5">Falta subir '{{ $reportShow->content }}'</p>
+                                <p class="text-red my-5">Subir video '{{ $reportShow->content }}'</p>
                             </div>
                             @else
                             <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
@@ -724,7 +732,7 @@
         </div>
     </div>
     {{-- END MODAL SHOW --}}
-    {{-- MODAL EDIT / CREATE ACTIVITY --}}
+    {{-- MODAL EDIT / CREATE REPORT --}}
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalEdit) block  @else hidden @endif">
         <div
             class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500">
@@ -806,31 +814,39 @@
                 <div class="modalFooter">
                     @if ($modalEdit)
                     <button class="btnSave" wire:click="update({{ $reportEdit->id }}, {{ $project->id }})"
-                        wire:loading.remove wire:target="update({{ $reportEdit->id }}, {{ $project->id }})"> Guardar
+                        wire:loading.remove wire:target="update({{ $reportEdit->id }}, {{ $project->id }})">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy mr-2"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M14 4l0 4l-6 0l0 -4" />
+                        </svg>
+                        Guardar
                     </button>
                     @endif
                 </div>
             </div>
         </div>
     </div>
-    {{-- END MODAL EDIT / CREATE ACTIVITY --}}
+    {{-- END MODAL EDIT / CREATE REPORT --}}
     {{-- END MODAL DELETE --}}
     {{-- MODAL EVIDENCE --}}
-    <div class="@if ($modalEvidence) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+    <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalEvidence) block  @else hidden @endif">
         <div
-            class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+            class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500">
         </div>
-        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
-            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
-                <div
-                    class="bg-main-fund flex flex-row justify-between rounded-tl-lg rounded-tr-lg px-6 py-4 text-white">
-                    <h2
-                        class="text-secondary title-font border-secondary-fund w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                        Evidencia</h2>
+        <div class="flex text:md justify-center h-screen items-center top-0 left-0 z-40 w-full fixed">
+            <div class="flex flex-col md:w-2/5 mx-auto rounded-lg   overflow-y-auto " style="max-height: 90%;">
+                <div class="flex flex-row justify-between px-6 py-4 bg-gray-100 text-white rounded-tl-lg rounded-tr-lg">
+                    <h3
+                        class="text-xl text-secundaryColor font-medium title-font  w-full border-l-4 border-secundaryColor pl-4 py-2">
+                        Evidencia</h3>
                     <svg id="modalEvidence" data-id="@if ($modalEvidence) {{ $reportEvidence->id }} @endif"
                         data-project_id="@if ($modalEvidence) {{ $reportEvidence->project_id }} @endif"
                         data-state="@if ($modalEvidence) {{ $reportEvidence->state }} @endif"
-                        class="h-6 w-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
+                        class="w-6 h-6 my-2 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
                         class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -839,23 +855,43 @@
                         <path d="M6 6l12 12"></path>
                     </svg>
                 </div>
-                <div class="bg-main-fund px-6 py-2 text-sm">
-                    <div class="mb-6 md:flex">
-                        <div class="flex w-full flex-col px-3">
-                            <h5 class="mb-3 inline-flex font-semibold" for="name">
-                                Para completar tu reporte, por favor, sube el archivo de evidencia.
-                            </h5>
-                            <input wire:model='evidence' type="file" name="evidence" id="evidence"
-                                class="mx-auto block w-full appearance-none rounded border border-gray-400 bg-white px-4 py-1 leading-snug text-gray-700">
+                <div class="modalBody">
+                    <div class="w-full md-3/4 mt-5 flex flex-col">
+                        <div class="-mx-3 flex flex-row">
+                            <div class="w-full px-3">
+                                <h5 class="inline-flex font-semibold" for="evidence">
+                                    Para completar tu reporte, por favor, sube el archivo de evidencia.
+                                </h5>
+                                <input wire:model='evidence' required type="file" name="evidence" id="evidence" class="inputs">
+                                <div>
+                                    <span class="text-red-600 text-xs italic">
+                                        @error('evidence')
+                                        <span class="pl-2 text-red-600 text-xs italic">
+                                            {{ $message }}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="bg-main-fund flex items-center justify-center py-6">
+                <div class="modalFooter">
                     @if ($modalEvidence)
-                    <button
-                        class="border-secundaryColor hover:bg-secondary cursor-pointer rounded px-4 py-2 font-semibold text-white"
-                        wire:click="updateEvidence({{ $reportEvidence->id }}, {{ $reportEvidence->project_id }})">
-                        Guardar </button>
+                    <button class="btnSave"
+                        wire:click="updateEvidence({{ $reportEvidence->id }}, {{ $reportEvidence->project_id }})"
+                        wire:loading.remove
+                        wire:target="updateEvidence({{ $reportEvidence->id }}, {{ $reportEvidence->project_id }})">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy mr-2"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M14 4l0 4l-6 0l0 -4" />
+                        </svg>
+                        Guardar
+                    </button>
                     @endif
                 </div>
             </div>
