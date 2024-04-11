@@ -289,7 +289,7 @@
             <table class="w-full whitespace-no-wrap table table-hover">
                 <thead class="border-0 headTable ">
                     <tr>
-                        <th class="w-80 px-4 py-3">Actividad</th>
+                        <th class="w-96 px-4 py-3">Actividad</th>
                         <th class="w-60 px-4 py-3">
                             <div @if($progressFiltered) wire:click="orderByLowDates('progress')" @else
                                 wire:click="orderByHighDates('progress')" @endif class="justify-center inline-flex">
@@ -432,7 +432,7 @@
                                     $activity->delegate->name }} {{ $activity->delegate->lastname }}</p>
                                 <select wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
                                     name="delegate" id="delegate"
-                                    class="w-full text-sm inpSelectTable w-min-full @if($activity->state == 'Resuelto') hidden @endif"
+                                    class="w-full text-sm inpSelectTable @if($activity->state == 'Resuelto') hidden @endif"
                                     @if($firstSprint->state == 'Pendiente' && Auth::user()->type_user != 1 &&
                                     Auth::user()->area_id != 1)disabled @endif>
                                     <option selected value={{ $activity->delegate->id }}>{{ $activity->delegate->name }}
