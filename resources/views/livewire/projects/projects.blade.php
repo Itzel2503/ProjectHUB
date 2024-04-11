@@ -652,7 +652,7 @@
                 confirmButtonColor: '#202a33',
                 cancelButtonColor: '#ef4444',
                 confirmButtonText: 'Eliminar',
-                calcelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar',
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.livewire.emit('destroy', deletebyId);
@@ -674,7 +674,7 @@
                 confirmButtonColor: '#202a33',
                 cancelButtonColor: '#ef4444',
                 confirmButtonText: 'Restaurar',
-                calcelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.livewire.emit('restore', restartbyId);

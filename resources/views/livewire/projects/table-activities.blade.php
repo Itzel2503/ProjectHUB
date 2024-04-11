@@ -478,10 +478,10 @@
                         </td>
                         <td class="px-4 py-2 text-left">
                             <div class="mx-auto">
-                                <span class="font-semibold inline-block">Para:</span> {{
+                                <span class="font-semibold inline-block">Entrega:</span> {{
                                 \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY')
                                 }}<br>
-                                <span class="font-semibold inline-block">Se delegó:</span> {{
+                                <span class="font-semibold inline-block">Delegado el:</span> {{
                                 \Carbon\Carbon::parse($activity->delegated_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY')
                                 }}
                             </div>
@@ -1129,7 +1129,7 @@
                 confirmButtonColor: '#202a33',
                 cancelButtonColor: '#ef4444',
                 confirmButtonText: 'Eliminar',
-                calcelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.livewire.emit('destroyActivity', deletebyId);
@@ -1151,7 +1151,7 @@
                 confirmButtonColor: '#202a33',
                 cancelButtonColor: '#ef4444',
                 confirmButtonText: 'Eliminar',
-                calcelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.livewire.emit('destroySprint', deletebyId);

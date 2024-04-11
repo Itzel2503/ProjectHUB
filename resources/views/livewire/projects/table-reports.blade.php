@@ -391,11 +391,11 @@
                         </td>
                         <td class="px-4 py-2 text-left">
                             <div class="mx-auto w-36">
-                                <span class="inline-block font-semibold">Para:</span>
+                                <span class="inline-block font-semibold">Entrega:</span>
                                 {{
                                 \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY')
                                 }}<br>
-                                <span class="inline-block font-semibold">Se delegó:</span>
+                                <span class="inline-block font-semibold">Delegado el:</span>
                                 {{
                                 \Carbon\Carbon::parse($report->delegated_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY')
                                 }}
@@ -951,7 +951,7 @@
                 confirmButtonColor: '#202a33',
                 cancelButtonColor: '#ef4444',
                 confirmButtonText: 'Eliminar',
-                calcelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.livewire.emit('delete', id, project_id);
