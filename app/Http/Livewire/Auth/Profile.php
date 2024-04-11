@@ -8,12 +8,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Profile extends Component
 {
+    use WithFileUploads;
+
     public $listeners = ['reloadPage' => 'reloadPage'];
     public $editing = false;
-    public $name, $lastname, $phone, $date_birthday, $area, $email, $password;
+    public $name, $lastname, $phone, $date_birthday, $area, $email, $password, $file;
     
     public function render()
     {
@@ -41,14 +44,6 @@ class Profile extends Component
         } else {
             $this->editing = true;
         }
-
-        $user = User::find($id);
-
-        $this->name = $user->name;
-        $this->lastname = $user->lastname;
-        $this->phone = $user->phone;
-        $this->date_birthday = $user->date_birthday;
-        $this->email = $user->email;
     }
 
     public function update($id)
@@ -62,34 +57,23 @@ class Profile extends Component
             if (Storage::disk('users')->exists($user->profile_photo)) {
                 Storage::disk('users')->delete($user->profile_photo);
             }
+
             $this->file->storeAs('/', $filePath, 'users');
-
             $user->profile_photo = $originalFileName;
-            
-        }
 
-        $user->name = $this->name ?? $user->name;
-        $user->lastname = $this->lastname ?? $user->lastname;
-        $user->phone = $this->phone ?? $user->phone;
-        $user->date_birthday = $this->date_birthday ?? $user->date_birthday;
-        $user->email = $this->email ?? $user->email;
-        $user->area_id = $this->area ?? $user->area_id;
+            if ($this->password) {
+                $user->password = Hash::make($this->password);
+            }
 
-        if ($this->area == 1) {        
-            $user->type_user = 1;
-        } else if ($this->area == null) {
-            $user->type_user = $user->type_user;
-        } else {
-            $user->type_user = 2;
+            $user->save();
+            return redirect()->to('/profile');
         }
         
         if ($this->password) {
             $user->password = Hash::make($this->password);
         }
-
         $user->save();
         $this->editing = false;
-        $this->emit('reloadPage');
     }
 
     public function reloadPage()
