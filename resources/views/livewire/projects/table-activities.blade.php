@@ -290,7 +290,7 @@
                 <thead class="border-0 headTable ">
                     <tr>
                         <th class="w-96 px-4 py-3">Actividad</th>
-                        <th class="w-60 px-4 py-3">
+                        <th class="px-4 py-3">
                             <div @if($progressFiltered) wire:click="orderByLowDates('progress')" @else
                                 wire:click="orderByHighDates('progress')" @endif class="justify-center inline-flex">
                                 Delegado
@@ -476,7 +476,7 @@
                             </select>
                         </td>
                         <td class="px-4 py-2 text-justify">
-                            <div class="md:w-1/2 mx-auto">
+                            <div class="lg:w-1/2 mx-auto">
                                 <span class="font-semibold inline-block">Para:</span> {{
                                 \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY')
                                 }}<br>
