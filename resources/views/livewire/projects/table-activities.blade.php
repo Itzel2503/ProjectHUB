@@ -657,7 +657,7 @@
                         class="text-xl text-secundaryColor font-medium title-font  w-full border-l-4 border-secundaryColor pl-4 py-2">
                         Crear sprint</h3>
                     @endif
-                    <svg wire:click="modalCreateSprint" wire:loading.remove wire:target="modalCreateSprint"
+                    <svg wire:click="modalCreateSprint"
                         class="w-6 h-6 my-2 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
                         class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -725,10 +725,9 @@
                 </div>
                 <div class="modalFooter">
                     @if($showUpdateSprint)
-                    <button class="btnSave" wire:click="updateSprint({{ $sprintEdit->id }})" wire:loading.remove
-                        wire:target="updateSprint({{ $sprintEdit->id }})"> Guardar </button>
+                    <button class="btnSave" wire:click="updateSprint({{ $sprintEdit->id }})"> Guardar </button>
                     @else
-                    <button class="btnSave" wire:click="createSprint()" wire:loading.remove wire:target="create">
+                    <button class="btnSave" wire:click="createSprint()">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy mr-2"
                             width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                             fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -772,7 +771,7 @@
                 </div>
                 @else
                 <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
-                    <svg wire:click="modalShowActivity" wire:loading.remove wire:target="modalShowActivity"
+                    <svg wire:click="modalShowActivity"
                         class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
                         class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -898,7 +897,7 @@
                         class="text-xl text-secundaryColor font-medium title-font  w-full border-l-4 border-secundaryColor pl-4 py-2">
                         Crear actividad</h3>
                     @endif
-                    <svg wire:click="modalCreateActivity()" wire:loading.remove wire:target="modalCreateActivity"
+                    <svg wire:click="modalCreateActivity()"
                         class="w-6 h-6 my-2 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
                         class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -1066,11 +1065,9 @@
                 </div>
                 <div class="modalFooter">
                     @if($showUpdateActivity)
-                    <button class="btnSave" wire:click="updateActivity({{ $activityEdit->id }})" wire:loading.remove
-                        wire:target="updateActivity({{ $activityEdit->id }})"> Guardar </button>
+                    <button class="btnSave" wire:click="updateActivity({{ $activityEdit->id }})"> Guardar </button>
                     @else
-                    <button class="btnSave" wire:click="createActivity()" wire:loading.remove
-                        wire:target="createActivity">
+                    <button class="btnSave" wire:click="createActivity()">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy mr-2"
                             width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                             fill="none" stroke-linecap="round" stroke-linejoin="round">
