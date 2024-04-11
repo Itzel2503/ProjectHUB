@@ -218,19 +218,6 @@
                             @endif
                         </td>
                     </tr>
-                    {{-- LOADING PAGE --}}
-                    <div class="absolute w-full h-screen z-50 top-0 left-0" wire:loading
-                        wire:target="showUpdate({{$project->id}})">
-                        <div class="absolute w-full h-screen bg-gray-200 z-10 opacity-40"></div>
-                        <div class="loadingspinner relative top-1/3 z-20">
-                            <div id="square1"></div>
-                            <div id="square2"></div>
-                            <div id="square3"></div>
-                            <div id="square4"></div>
-                            <div id="square5"></div>
-                        </div>
-                    </div>
-                    {{-- END LOADING PAGE --}}
                     @endforeach
                 </tbody>
             </table>
@@ -603,19 +590,6 @@
                 </div>
                 <div class="modalFooter">
                     @if($showUpdate)
-                    {{-- LOADING PAGE --}}
-                    <div class="absolute w-full h-screen z-50 top-0 left-0" wire:loading
-                        wire:target="update({{$projectEdit->id}})">
-                        <div class="absolute w-full h-screen bg-gray-200 z-10 opacity-40"></div>
-                        <div class="loadingspinner relative top-1/3 z-20">
-                            <div id="square1"></div>
-                            <div id="square2"></div>
-                            <div id="square3"></div>
-                            <div id="square4"></div>
-                            <div id="square5"></div>
-                        </div>
-                    </div>
-                    {{-- END LOADING PAGE --}}
                     <button class="btnSave" wire:click="update({{$projectEdit->id}})">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy mr-2"
                             width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -647,7 +621,7 @@
     {{-- END MODAL EDIT / CREATE --}}
     {{-- LOADING PAGE --}}
     <div class="absolute w-full h-screen z-50 top-0 left-0" wire:loading
-        wire:target="modalCreateEdit, addInput, create">
+        wire:target="modalCreateEdit, showReports, showActivities, showUpdate, modalCreateEdit, addInput, removeInput, update, create">
         <div class="absolute w-full h-screen bg-gray-200 z-10 opacity-40"></div>
         <div class="loadingspinner relative top-1/3 z-20">
             <div id="square1"></div>

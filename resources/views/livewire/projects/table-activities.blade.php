@@ -573,10 +573,9 @@
                     <h3
                         class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
                         Backlog</h3>
-                    <svg wire:click="modalBacklog" wire:target="modalBacklog"
-                        class="h-6 w-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
-                        class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
-                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    <svg wire:click="modalBacklog()" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24"
+                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                         stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M18 6l-12 12"></path>
@@ -657,10 +656,9 @@
                         class="text-xl text-secundaryColor font-medium title-font  w-full border-l-4 border-secundaryColor pl-4 py-2">
                         Crear sprint</h3>
                     @endif
-                    <svg wire:click="modalCreateSprint"
-                        class="w-6 h-6 my-2 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
-                        class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
-                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    <svg wire:click="modalCreateSprint()" class="w-6 h-6 my-2 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24"
+                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                         stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M18 6l-12 12"></path>
@@ -759,10 +757,9 @@
                         echo mb_substr( $activityShow->title, 0, 25) . " ...";
                         @endphp
                     </h3>
-                    <svg wire:click="modalShowActivity" wire:target="modalShowActivity"
-                        class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
-                        class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
-                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    <svg wire:click="modalShowActivity()" class="w-6 h-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24"
+                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                         stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M18 6l-12 12"></path>
@@ -771,10 +768,9 @@
                 </div>
                 @else
                 <div class="flex flex-row justify-end px-6 py-4 bg-main-fund text-white rounded-tl-lg rounded-tr-lg">
-                    <svg wire:click="modalShowActivity"
-                        class="w-6 h-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
-                        class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
-                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    <svg wire:click="modalShowActivity()" class="w-6 h-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24"
+                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                         stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M18 6l-12 12"></path>
@@ -1085,7 +1081,8 @@
     </div>
     {{-- END MODAL EDIT / CREATE ACTIVITY --}}
     {{-- LOADING PAGE --}}
-    <div class="absolute w-full h-screen z-50 top-0 left-0 " wire:loading>
+    <div class="absolute w-full h-screen z-50 top-0 left-0 " wire:loading
+        wire:target="modalCreateSprint, showEditSprint, modalBacklog, modalCreateActivity, orderByLowDates, orderByHighDates, showActivity, showEditActivity, modalBacklog, modalCreateSprint, updateSprint, createSprint, modalShowActivity, modalShowActivity, updateChat, modalCreateActivity, updateActivity, createActivity">
         <div class="absolute w-full h-screen bg-gray-200 z-10 opacity-40"></div>
         <div class="loadingspinner relative top-1/3 z-20">
             <div id="square1"></div>

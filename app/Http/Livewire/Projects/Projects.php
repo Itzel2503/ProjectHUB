@@ -157,7 +157,7 @@ class Projects extends Component
         $backlog->project_id = $project->id;
         $backlog->save();
 
-        if (!empty($this->files) && !empty(array_filter($this->files))) {
+        if (empty($this->files) && empty(array_filter($this->files))) {
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
                 'title' => 'Se requiere seleccionar o cargar al menos una imagen.',
