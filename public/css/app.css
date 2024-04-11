@@ -828,10 +828,6 @@ select {
   bottom: 0px;
 }
 
-.bottom-0 {
-  bottom: 0px;
-}
-
 .bottom-10 {
   bottom: 2.5rem;
 }
@@ -1643,11 +1639,6 @@ select {
   border-color: rgb(215 229 231 / var(--tw-border-opacity));
 }
 
-.border-primaryColor-dark {
-  --tw-border-opacity: 1;
-  border-color: rgb(23 40 51 / var(--tw-border-opacity));
-}
-
 .border-red-600 {
   --tw-border-opacity: 1;
   border-color: rgb(220 38 38 / var(--tw-border-opacity));
@@ -1676,6 +1667,11 @@ select {
 .border-yellow-400 {
   --tw-border-opacity: 1;
   border-color: rgb(250 204 21 / var(--tw-border-opacity));
+}
+
+.bg-amber-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(251 191 36 / var(--tw-bg-opacity));
 }
 
 .bg-blue-500 {

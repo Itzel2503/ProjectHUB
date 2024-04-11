@@ -463,9 +463,10 @@
                         <td class="px-4 py-2">
                             <select wire:change='updateState({{ $activity->id }}, $event.target.value)' name="state"
                                 id="state" class="inpSelectTable w-28 text-sm inpSelectTable font-semibold
-                                @if($activity->state == 'Abierto' && $activity->state == 'Proceso') bg-white @endif
-                                @if($activity->state == 'Resuelto') bg-lime-700 text-white @endif
-                                @if($activity->state == 'Conflicto') bg-red-600 text-white @endif
+                                @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif 
+                                @if ($activity->state == 'Proceso') bg-amber-400 @endif 
+                                @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif 
+                                @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif
                                 " @if($firstSprint->state == 'Pendiente' && Auth::user()->type_user != 1)disabled
                                 @endif
                                 >
