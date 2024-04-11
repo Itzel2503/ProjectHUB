@@ -394,7 +394,7 @@
                         <td class="px-4 py-2">
                             <div wire:click="showActivity({{ $activity->id }})"
                                 class="flex flex-col items-center text-center cursor-pointer">
-                                <p class="text-xs mb-2 text-justify">{{ $activity->tittle }}</p>
+                                <p class="text-xs mb-2 text-justify font-semibold">{{ $activity->tittle }}</p>
                                 @if (!empty($activity->image))
                                 <div class="relative h-22 w-auto px-3 pt-2">
                                     @if ($activity->image == true)

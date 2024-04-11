@@ -291,7 +291,7 @@
                         <td class="px-4 py-2">
                             <div wire:click="showReport({{ $report->id }})"
                                 class="flex cursor-pointer flex-col items-center text-center">
-                                <p class="mb-2 text-justify text-xs">{{ $report->title }}</p>
+                                <p class="mb-2 text-justify text-xs font-semibold">{{ $report->title }}</p>
                                 @if (!empty($report->content))
                                 <div class="h-22 relative w-auto px-3 pt-2">
                                     @if ($report->image == true)
