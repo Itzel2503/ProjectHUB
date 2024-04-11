@@ -6,6 +6,7 @@ use App\Models\Area;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
 class Profile extends Component
@@ -53,6 +54,20 @@ class Profile extends Component
     public function update($id)
     {
         $user = User::find($id);
+
+        if ($this->file) {
+            $originalFileName = $this->file->getClientOriginalName();
+            $filePath = $originalFileName;
+
+            if (Storage::disk('users')->exists($user->profile_photo)) {
+                Storage::disk('users')->delete($user->profile_photo);
+            }
+            $this->file->storeAs('/', $filePath, 'users');
+
+            $user->profile_photo = $originalFileName;
+            
+        }
+
         $user->name = $this->name ?? $user->name;
         $user->lastname = $this->lastname ?? $user->lastname;
         $user->phone = $this->phone ?? $user->phone;

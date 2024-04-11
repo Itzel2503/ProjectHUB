@@ -828,6 +828,10 @@ select {
   bottom: 0px;
 }
 
+.bottom-0 {
+  bottom: 0px;
+}
+
 .bottom-10 {
   bottom: 2.5rem;
 }
@@ -3127,6 +3131,10 @@ select {
 
   .lg\:w-3\/5 {
     width: 60%;
+  }
+
+  .lg\:w-48 {
+    width: 12rem;
   }
 
   .lg\:w-auto {

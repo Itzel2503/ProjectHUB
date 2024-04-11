@@ -290,7 +290,7 @@
                 <thead class="border-0 headTable ">
                     <tr>
                         <th class="w-96 px-4 py-3">Actividad</th>
-                        <th class="px-4 py-3">
+                        <th class="lg:w-48 px-4 py-3">
                             <div @if($progressFiltered) wire:click="orderByLowDates('progress')" @else
                                 wire:click="orderByHighDates('progress')" @endif class="justify-center inline-flex">
                                 Delegado
