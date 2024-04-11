@@ -427,7 +427,7 @@
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="w-auto mx-auto text-justify ">
+                            <div class="w-auto mx-auto text-left">
                                 <p class="@if($activity->state == 'Resuelto') font-semibold @else hidden @endif">{{
                                     $activity->delegate->name }} {{ $activity->delegate->lastname }}</p>
                                 <select wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
@@ -475,8 +475,8 @@
                                 @endforeach
                             </select>
                         </td>
-                        <td class="px-4 py-2 text-justify">
-                            <div class="lg:w-1/2 mx-auto">
+                        <td class="px-4 py-2 text-left">
+                            <div class="mx-auto">
                                 <span class="font-semibold inline-block">Para:</span> {{
                                 \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY')
                                 }}<br>
@@ -486,7 +486,7 @@
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="mx-auto text-justify">
+                            <div class="mx-auto text-left">
                                 <span class=" font-semibold "> {{ $activity->user->name }} {{ $activity->user->lastname
                                     }} </span> <br>
                                 <span class=" font-mono"> {{
