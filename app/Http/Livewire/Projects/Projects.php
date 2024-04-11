@@ -28,7 +28,7 @@ class Projects extends Component
     public $projectCustomer, $projectEdit, $backlogEdit;
     // table
     public $search;
-    public $perPage = '10';
+    public $perPage = '';
     public $allType = ['Activo', 'Soporte', 'Resolución Piloto', 'Entregado seguimiento', 'No activo seguimiento'];
     // inputs
     public $code, $name, $type, $priority, $customer, $leader, $programmer, $general_objective, $scopes, $start_date, $closing_date, $passwords;

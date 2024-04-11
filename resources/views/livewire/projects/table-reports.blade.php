@@ -335,7 +335,7 @@
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="mx-auto w-full text-justify">
+                            <div class="mx-auto w-full text-left">
                                 <p class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
                                     {{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
                                 <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'
@@ -382,7 +382,7 @@
                             <p class="text-xs text-red-600">Reincidencia {{ $report->count }}</p>
                             @endif
                         </td>
-                        <td class="px-4 py-2 text-justify">
+                        <td class="px-4 py-2 text-left">
                             <div class="mx-auto w-36">
                                 <span class="inline-block font-semibold">Para:</span>
                                 {{
@@ -396,7 +396,7 @@
 
                         </td>
                         <td class="px-4 py-2">
-                            <div class="mx-auto w-40 text-justify">
+                            <div class="mx-auto w-40 text-left">
                                 <span class="font-semibold"> {{ $report->user->name }}
                                     {{ $report->user->lastname }} </span> <br>
                                 <span class="font-mono">
