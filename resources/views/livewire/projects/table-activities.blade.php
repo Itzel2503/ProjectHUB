@@ -476,7 +476,7 @@
                             </select>
                         </td>
                         <td class="px-4 py-2 text-justify">
-                            <div class="w-36 mx-auto">
+                            <div class="md:w-1/2 mx-auto">
                                 <span class="font-semibold inline-block">Para:</span> {{
                                 \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY')
                                 }}<br>
@@ -486,7 +486,7 @@
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="w-40 mx-auto text-justify">
+                            <div class="mx-auto text-justify">
                                 <span class=" font-semibold "> {{ $activity->user->name }} {{ $activity->user->lastname
                                     }} </span> <br>
                                 <span class=" font-mono"> {{
