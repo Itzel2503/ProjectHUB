@@ -48,7 +48,7 @@ class TableActivities extends Component
     
         // table, action's activities
         public $search;
-        public $perPage = '10';
+        public $perPage = '';
         public $priorityOrder = 'Bajo', $datesOrder = 'created_at', $ascOrDesc = 'desc';
         public $selectedDelegate = '';
         public $usersFiltered = [], $allUsersFiltered = [], $selectedStates = [], $statesFiltered = [];
@@ -521,7 +521,6 @@ class TableActivities extends Component
                 ]);
                 throw $e;
             }
-
             $activity = Activity::find($id);
             
             if ($this->file) {
@@ -537,6 +536,9 @@ class TableActivities extends Component
                         Storage::disk('activities')->delete($activity->image);
                     }
                 }
+                // Guardar el archivo en el disco 'activities'
+                $this->file->storeAs($filePath, $fileName, 'activities');
+                $activity->image = $fullNewFilePath;
             }
 
             $activity->sprint_id = $this->moveActivity ?? $activity->sprint_id;

@@ -126,7 +126,7 @@
             <table class="whitespace-no-wrap table-hover table w-full">
                 <thead class="headTable border-0">
                     <tr>
-                        <th class="w-1/5 px-4 py-3">
+                        <th class="w-80 px-4 py-3">
                             <div @if ($Filtered) wire:click="orderByLow('priority')" @else
                                 wire:click="orderByHigh('priority')" @endif class="justify- inline-flex cursor-pointer">
                                 Reporte
@@ -158,7 +158,7 @@
                             </div>
                         </th>
 
-                        <th class="w-1/6 px-4 py-3">
+                        <th class="w-60 px-4 py-3">
                             <div @if ($Filtered) wire:click="orderByLow('progress')" @else
                                 wire:click="orderByHigh('progress')" @endif class="inline-flex justify-center">
                                 Delegado
@@ -220,7 +220,7 @@
                                 @endif
                             </div>
                         </th>
-                        <th class="w-auto px-4 py-3">
+                        <th class="px-4 py-3">
                             <div @if ($Filtered) wire:click="orderByLow('expected_date')" @else
                                 wire:click="orderByHigh('expected_date')" @endif class="inline-flex justify-center">
                                 Fecha
@@ -251,7 +251,7 @@
                                 @endif
                             </div>
                         </th>
-                        <th class="w-auto px-4 py-3">
+                        <th class="px-4 py-3">
                             <div @if ($Filtered) wire:click="orderByLow('created_at')" @else
                                 wire:click="orderByHigh('created_at')" @endif class="inline-flex justify-center">
                                 Creado
@@ -282,7 +282,7 @@
                                 @endif
                             </div>
                         </th>
-                        <th class="w-auto px-4 py-3">Acciones</th>
+                        <th class="w-2 px-4 py-3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -293,7 +293,7 @@
                                 class="flex cursor-pointer flex-col items-center text-center">
                                 <p class="mb-2 text-justify text-xs">{{ $report->title }}</p>
                                 @if (!empty($report->content))
-                                <div class="h-22 relative w-full px-3 pt-2">
+                                <div class="h-22 relative w-auto px-3 pt-2">
                                     @if ($report->image == true)
                                     <img src="{{ asset('reportes/' . $report->content) }}" alt="Report Image"
                                         class="mx-auto h-16 w-20 object-cover">
@@ -335,12 +335,12 @@
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="mx-auto w-56 text-justify">
+                            <div class="mx-auto w-full text-justify">
                                 <p class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
                                     {{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
                                 <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'
                                     name="delegate" id="delegate"
-                                    class="inpSelectTable w-min-full @if ($report->state == 'Resuelto') hidden @endif w-full text-sm">
+                                    class="inpSelectTable @if ($report->state == 'Resuelto') hidden @endif w-full text-sm">
                                     <option selected value={{ $report->delegate->id }}>
                                         {{ $report->delegate->name }} </option>
                                     @foreach ($report->usersFiltered as $userFiltered)

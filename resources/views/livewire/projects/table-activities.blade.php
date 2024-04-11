@@ -289,8 +289,8 @@
             <table class="w-full whitespace-no-wrap table table-hover">
                 <thead class="border-0 headTable ">
                     <tr>
-                        <th class="px-4 py-3 w-20">Actividad</th>
-                        <th class="px-4 py-3 w-1/6">
+                        <th class="w-80 px-4 py-3">Actividad</th>
+                        <th class="w-60 px-4 py-3">
                             <div @if($progressFiltered) wire:click="orderByLowDates('progress')" @else
                                 wire:click="orderByHighDates('progress')" @endif class="justify-center inline-flex">
                                 Delegado
@@ -322,7 +322,7 @@
                             </div>
                         </th>
                         <th class="px-4 py-3">Estado</th>
-                        <th class="px-4 py-3 w-auto">
+                        <th class="px-4 py-3">
                             <div @if($expectedFiltered) wire:click="orderByLowDates('expected_date')" @else
                                 wire:click="orderByHighDates('expected_date')" @endif
                                 class="justify-center inline-flex">
@@ -354,7 +354,7 @@
                                 @endif
                             </div>
                         </th>
-                        <th class="px-4 py-3 w-auto">
+                        <th class="px-4 py-3">
                             <div @if($createdFiltered) wire:click="orderByLowDates('created_at')" @else
                                 wire:click="orderByHighDates('created_at')" @endif class="justify-center inline-flex">
                                 Creado
@@ -385,7 +385,7 @@
                                 @endif
                             </div>
                         </th>
-                        <th class="px-4 py-3 w-auto">Acciones</th>
+                        <th class="w-2 px-4 py-3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -396,7 +396,7 @@
                                 class="flex flex-col items-center text-center cursor-pointer">
                                 <p class="text-xs mb-2 text-justify">{{ $activity->tittle }}</p>
                                 @if (!empty($activity->image))
-                                <div class="relative h-22 w-full px-3 pt-2">
+                                <div class="relative h-22 w-auto px-3 pt-2">
                                     @if ($activity->image == true)
                                     <img src="{{ asset('activities/' . $activity->image) }}" alt="Activity Image"
                                         class="mx-auto h-16 w-20 object-cover">
@@ -427,7 +427,7 @@
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="w-56 mx-auto text-justify ">
+                            <div class="w-auto mx-auto text-justify ">
                                 <p class="@if($activity->state == 'Resuelto') font-semibold @else hidden @endif">{{
                                     $activity->delegate->name }} {{ $activity->delegate->lastname }}</p>
                                 <select wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
@@ -497,7 +497,7 @@
                             </div>
                         </td>
                         <td class="px-4 py-5">
-                            <div class="flex justify-center">
+                            <div class="flex justify-center @if($activity->state == 'Resuelto') hidden @endif">
                                 <div id="dropdown-button-{{ $activity->id }}" class="relative">
                                     <button onclick="toggleDropdown('{{ $activity->id }}')" type="button"
                                         class="flex items-center px-5 py-2.5" @if($firstSprint->state == 'Pendiente' &&
