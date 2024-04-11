@@ -329,7 +329,10 @@
                                 </div>
                                 @endif
                                 <div
-                                    class="@if ($report->priority == 'Alto') bg-red-500 text-white @endif @if ($report->priority == 'Medio') bg-yellow-500 text-white @endif @if ($report->priority == 'Bajo') bg-blue-500 text-white @endif my-2 w-auto rounded-md px-3 text-center font-semibold">
+                                    class="@if ($report->priority == 'Alto') bg-red-500 text-white @endif 
+                                    @if ($report->priority == 'Medio') bg-yellow-400 @endif 
+                                    @if ($report->priority == 'Bajo') bg-blue-500 text-white @endif 
+                                    my-2 w-auto rounded-md px-3 text-center font-semibold">
                                     {{ $report->priority }}
                                 </div>
                             </div>
@@ -374,7 +377,7 @@
                                 name="state" id="state"
                                 class="inpSelectTable w-auto text-sm font-semibold
                                 @if ($report->state == 'Abierto') bg-blue-500 text-white @endif 
-                                @if ($report->state == 'Proceso') bg-amber-400 @endif 
+                                @if ($report->state == 'Proceso') bg-yellow-400   @endif 
                                 @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif 
                                 @if ($report->state == 'Conflicto') bg-red-600 text-white @endif">
                                 <option selected value={{ $report->state }}>{{ $report->state }}</option>
