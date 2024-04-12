@@ -400,7 +400,6 @@
                                 \Carbon\Carbon::parse($report->delegated_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY')
                                 }}
                             </div>
-
                         </td>
                         <td class="px-4 py-2">
                             <div class="mx-auto w-40 text-left">

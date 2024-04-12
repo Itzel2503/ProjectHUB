@@ -24,14 +24,14 @@
                 </div>
             </div>
             <!-- COUNT -->
-            <div class="inline-flex  px-2 md:px-0  w-1/2 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
+            {{-- <div class="inline-flex  px-2 md:px-0  w-1/2 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
                 <select wire:model="perPage" id="" class="inputs">
                     <option value="10"> 10 por página</option>
                     <option value="25"> 25 por página</option>
                     <option value="50"> 50 por página</option>
                     <option value="100"> 100 por página</option>
                 </select>
-            </div>
+            </div> --}}
             <!-- BTN NEW -->
             @if (Auth::user()->type_user == 1)
             <div class="inline-flex px-2 md:px-0  w-1/2 md:w-1/4 h-12 bg-transparent mb-2">

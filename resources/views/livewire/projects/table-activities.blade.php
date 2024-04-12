@@ -1,11 +1,11 @@
 <div>
     {{-- SPRINTS --}}
     <div class="sm:rounded-lg px-4 py-4">
-        <div class="flex flex-row justify-between">
+        <div class="flex flex-col gap-2 md:flex-row justify-between text-sm lg:text-base">
             @if($sprints->isEmpty())
             @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
             <!-- BTN NEW -->
-            <div class="md:inline-flex w-1/6 h-12 bg-transparent mb-2">
+            <div class="flex flex-wrap  md:inline-flex md:flex-nowrap w-full md:w-4/5">
                 <button wire:click="modalCreateSprint()" class="btnNuevo">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2" width="24"
                         height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
@@ -19,11 +19,12 @@
             </div>
             @endif
             @else
-            <div class="flex flex-col gap-2 md:flex-row justify-start text-sm lg:text-base">
+            <div class="flex flex-wrap  md:inline-flex md:flex-nowrap w-full md:w-4/5">
                 {{-- NOMBRE --}}
-                <div class="px-2 md:px-0 inline-flex w-1/2 md:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
+                <div class="px-2 md:px-0 inline-flex w-2/6 h-12 md:mx-3 mb-2 bg-transparent">
                     <span class="m-auto mr-5">
-                        Sprint @if(Auth::user()->type_user == 1){{ $percentageResolved }}% @endif
+                        <span class="inline-block font-semibold">Avance</span>
+                        {{ $percentageResolved }}%
                     </span>
                     <select wire:model="selectSprint" wire:change="selectSprint($event.target.value)" class="inputs">
                         @foreach ($sprints as $sprint)
@@ -33,7 +34,7 @@
                 </div>
                 @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
                 {{-- ESTADO --}}
-                <div class="px-2 md:px-0 inline-flex w-1/6  h-12 md:mx-3 mb-2 bg-transparent">
+                <div class="px-2 md:px-0 inline-flex w-36  h-12 md:mx-3 mb-2 bg-transparent">
                     <select wire:change='updateStateSprint({{ $idSprint }}, $event.target.value)' name="state"
                         id="state" class="inputs">
                         <option selected value={{ $firstSprint->state }}>{{ $firstSprint->state }}</option>
@@ -44,16 +45,14 @@
                 </div>
                 @endif
                 {{-- FECHAS --}}
-                <div class="px-2 md:px-0 items-center w-auto h-12 md:mx-3 mb-2 bg-transparent">
-                    <p>Fecha de inicio</p>
-                    <p>{{ \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}</p>
-                </div>
-                <div class="px-2 md:px-0 items-center w-auto h-12 md:mx-3 mb-2 bg-transparent">
-                    <p>Fecha de cierre</p>
-                    <p>{{ \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}</p>
+                <div class="mx-2 w-auto">
+                    <span class="inline-block font-semibold">Fecha de inicio:</span>
+                    {{ \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
+                    <span class="inline-block font-semibold">Fecha de cierre:</span>
+                    {{ \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                 </div>
                 @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
-                <div class="hidden md:inline-flex w-auto h-12 bg-transparent mb-2">
+                <div class="hidden md:inline-flex w-auto h-12 bg-transparent">
                     <div class="flex justify-center">
                         <div x-data="{
                                 open: false,
@@ -142,6 +141,7 @@
                 @endif
             </div>
             @endif
+
             <div class="md:inline-flex w-1/6 h-12 bg-transparent mb-2">
                 <button wire:click="modalBacklog()" class="btnNuevo">
                     Backlog
@@ -174,7 +174,6 @@
                             style="padding-left: 3em;">
                     </div>
                 </div>
-
                 <!-- DELEGATE -->
                 <div class="px-2 md:px-0 inline-flex w-1/2 md:w-1/5 h-12 md:mx-3 mb-2 bg-transparent">
                     <select wire:model.lazy="selectedDelegate" class="inputs">
@@ -265,7 +264,7 @@
             <!-- BTN NEW -->
             @if ($sprints->isEmpty()) @else
             @if ($firstSprint->state != 'Cerrado')
-            <div class=" md:inline-flex w-1/6 h-12 bg-transparent mb-2">
+            <div class="md:inline-flex w-1/6 h-12 bg-transparent mb-2">
                 <button wire:click="modalCreateActivity()" @if($firstSprint->state == 'Pendiente' &&
                     Auth::user()->type_user != 1 && Auth::user()->area_id != 1)disabled class="btnDisabled"@else
                     class="btnNuevo"@endif>
