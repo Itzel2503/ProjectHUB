@@ -178,6 +178,7 @@ class Projects extends Component
 
             $backlog = new Backlog();
             $backlog->general_objective = $this->general_objective;
+            $backlog->scopes = $this->scopes ?? null;
             $backlog->start_date = $this->start_date;
             $backlog->closing_date = $this->closing_date;
             $backlog->passwords = $this->passwords;
@@ -189,7 +190,7 @@ class Projects extends Component
                 if (is_null($fileArray) || empty($fileArray)) {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'info',
-                        'title' => 'Falta al menos un archivo.',
+                        'title' => 'No se selecciono al menos una imagen.',
                     ]);
                     continue; // Saltar al siguiente elemento del bucle si $fileArray es null o está vacío
                 }
@@ -252,208 +253,391 @@ class Projects extends Component
             ]);
             throw $e;
         }
-        $project = Project::find($id);
-        $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
-        $project->code = $this->code ?? $project->code;
-        $project->type = ($this->type != null) ? $this->type : $project->type;
-        $project->name = $this->name ?? $project->name;
-        $project->priority = $this->priority ?? $project->priority;
-        $project->save();
-
-        // Primero, quita las relaciones existentes para estos roles
-        $project->users()->wherePivot('leader', true)->detach();
-        $project->users()->wherePivot('programmer', true)->detach();
-
-        // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
-        $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
 
         $backlog = Backlog::all()->where('project_id', $id)->first();
         if (isset($backlog)) {
             $backlogFiles = BacklogFiles::where('backlog_id', $backlog->id)->get();
-            // Contar la cantidad de archivos restantes
-            $remainingFilesCount = $backlogFiles->count();
-            // Eliminar los archivos seleccionados
-            foreach ($this->selectedFiles as $fileId) {
-                // Verificar si hay más de un archivo restante antes de eliminarlo
-                if ($remainingFilesCount > 1) {
-                    // Buscar el archivo en la colección de archivos
-                    $fileToDelete = $backlogFiles->where('id', $fileId)->first();
-                    // Verificar si se encontró el archivo
-                    if ($fileToDelete) {
-                        // Eliminar el archivo físico si existe en el disco
-                        if (Storage::disk('backlogs')->exists($fileToDelete->route)) {
-                            Storage::disk('backlogs')->delete($fileToDelete->route);
-                        }
-                        // Eliminar el archivo de la base de datos
-                        $fileToDelete->delete();
-                        // Disminuir el contador de archivos restantes
-                        $remainingFilesCount--;
-
-                        $backlog->scopes = $this->scopes ?? $backlog->scopes;
-
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'success',
-                            'title' => 'Imagen eliminada.',
-                        ]);
-                    } else {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'error',
-                            'title' => 'No se encontró la imagen.',
-                        ]);
-                    }
-                } else if (empty($this->scopes)) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'warning',
-                        'title' => 'Debe haber al menos un archivo asociado al backlog.',
-                    ]);
-                    return;
-                } else {
-                    // Buscar el archivo en la colección de archivos
-                    $fileToDelete = $backlogFiles->where('id', $fileId)->first();
-                    // Verificar si se encontró el archivo
-                    if ($fileToDelete) {
-                        // Eliminar el archivo físico si existe en el disco
-                        if (Storage::disk('backlogs')->exists($fileToDelete->route)) {
-                            Storage::disk('backlogs')->delete($fileToDelete->route);
-                        }
-                        // Eliminar el archivo de la base de datos
-                        $fileToDelete->delete();
-                        // Disminuir el contador de archivos restantes
-                        $remainingFilesCount--;
-
-                        $backlog->scopes = $this->scopes ?? $backlog->scopes;
-
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'success',
-                            'title' => 'Imagen eliminada.',
-                        ]);
-                    } else {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'error',
-                            'title' => 'No se encontró la imagen.',
-                        ]);
-                    }
-                }
-            }
-
-            if (empty($this->files)) {
-                $backlog->scopes = $this->scopes ?? $backlog->scopes;
-            } else {
-                // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
-                foreach ($this->files as $index => $fileArray) {
-                    // Verificar si $fileArray es null o está vacío
-                    if (is_null($fileArray) || empty($fileArray)) {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'info',
-                            'title' => 'Parece que no seleccionaste ningún archivo o faltó seleccionar alguno.',
-                        ]);
-                        continue; // Saltar al siguiente elemento del bucle si $fileArray es null o está vacío
-                    }
-                    // Accede al objeto TemporaryUploadedFile dentro del array
-                    $file = $fileArray[0];
-                    $fileExtension = $file->extension();
-                    $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                    if (in_array($fileExtension, $extensionesImagen)) {
-                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                        $fileName = $file->getClientOriginalName();
-                        $fullNewFilePath = $filePath . '/' . $fileName;
-                        // Guardar el archivo en el disco 'backlogs'
-                        $file->storeAs($filePath, $fileName, 'backlogs');
-
-                        $files = new BacklogFiles();
-                        $files->backlog_id = $backlog->id;
-                        $files->route = $fullNewFilePath;
-                        $files->save();
-
-                        $backlog->scopes = $this->scopes ?? $backlog->scopes;
-
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'success',
-                            'title' => 'Imagen guardada.',
-                        ]);
-                    } else {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'info',
-                            'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
-                            'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
-                        ]);
-                    }
-                }
-            }
-
-            $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
-            $backlog->start_date = $this->start_date ?? $backlog->start_date;
-            $backlog->closing_date = $this->closing_date ?? $backlog->closing_date;
-            $backlog->passwords = $this->passwords ?? $backlog->passwords;
-            $backlog->save();
-        } else {
-            if (empty($this->files) && empty($this->scopes)) {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'El backlog debe incluir al menos un alcance.',
-                ]);
-                return;
-            } else {
-                $backlog = new Backlog();
-                $backlog->general_objective = $this->general_objective;
-                $backlog->scopes = $this->scopes;
-                $backlog->start_date = $this->start_date;
-                $backlog->closing_date = $this->closing_date;
-                $backlog->passwords = $this->passwords;
-                $backlog->project_id = $project->id;
-
-                if (empty($this->scopes)) {
-                    if (empty(array_filter($this->files))) {
+            // No contiene archivos
+            if ($backlogFiles->isEmpty()) {
+                if (empty($this->files) || empty(array_filter($this->files))) {
+                    if (empty($this->scopes)) {
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'error',
                             'title' => 'Se requiere seleccionar o cargar al menos una imagen.',
                         ]);
                         return;
                     } else {
-                        $backlog->save();
-                        // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
-                        foreach ($this->files as $index => $fileArray) {
-                            // Verificar si $fileArray es null o está vacío
-                            if (is_null($fileArray) || empty($fileArray)) {
-                                $this->dispatchBrowserEvent('swal:modal', [
-                                    'type' => 'info',
-                                    'title' => 'Falta al menos un archivo.',
-                                ]);
-                                continue; // Saltar al siguiente elemento del bucle si $fileArray es null o está vacío
-                            }
-                            // Accede al objeto TemporaryUploadedFile dentro del array
-                            $file = $fileArray[0];
-                            $fileExtension = $file->extension();
-                            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                            if (in_array($fileExtension, $extensionesImagen)) {
-                                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                                $fileName = $file->getClientOriginalName();
-                                $fullNewFilePath = $filePath . '/' . $fileName;
-                                // Guardar el archivo en el disco 'backlogs'
-                                $file->storeAs($filePath, $fileName, 'backlogs');
+                        $project = Project::find($id);
+                        $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                        $project->code = $this->code ?? $project->code;
+                        $project->type = ($this->type != null) ? $this->type : $project->type;
+                        $project->name = $this->name ?? $project->name;
+                        $project->priority = $this->priority ?? $project->priority;
+                        $project->save();
+                        // Primero, quita las relaciones existentes para estos roles
+                        $project->users()->wherePivot('leader', true)->detach();
+                        $project->users()->wherePivot('programmer', true)->detach();
+                        // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
+                        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
+                        $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
 
-                                $files = new BacklogFiles();
-                                $files->backlog_id = $backlog->id;
-                                $files->route = $fullNewFilePath;
-                                $files->save();
+                        $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
+                        $backlog->scopes = $this->scopes ?? $backlog->scopes;
+                        $backlog->start_date = $this->start_date ?? $backlog->start_date;
+                        $backlog->closing_date = $this->closing_date ?? $backlog->closing_date;
+                        $backlog->passwords = $this->passwords ?? $backlog->passwords;
+                        $backlog->save();
+                    }
+                } else {
+                    $project = Project::find($id);
+                    $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                    $project->code = $this->code ?? $project->code;
+                    $project->type = ($this->type != null) ? $this->type : $project->type;
+                    $project->name = $this->name ?? $project->name;
+                    $project->priority = $this->priority ?? $project->priority;
+                    $project->save();
+                    // Primero, quita las relaciones existentes para estos roles
+                    $project->users()->wherePivot('leader', true)->detach();
+                    $project->users()->wherePivot('programmer', true)->detach();
+                    // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+
+                    $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
+                    $backlog->scopes = $this->scopes ?? $backlog->scopes;
+                    $backlog->start_date = $this->start_date ?? $backlog->start_date;
+                    $backlog->closing_date = $this->closing_date ?? $backlog->closing_date;
+                    $backlog->passwords = $this->passwords ?? $backlog->passwords;
+                    $backlog->save();
+                    // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
+                    foreach ($this->files as $index => $fileArray) {
+                        // Verificar si $fileArray es null o está vacío
+                        if (is_null($fileArray) || empty($fileArray)) {
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'info',
+                                'title' => 'No se selecciono al menos una imagen.',
+                            ]);
+                            continue; // Saltar al siguiente elemento del bucle si $fileArray es null o está vacío
+                        }
+                        // Accede al objeto TemporaryUploadedFile dentro del array
+                        $file = $fileArray[0];
+                        $fileExtension = $file->extension();
+                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                        if (in_array($fileExtension, $extensionesImagen)) {
+                            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                            $fileName = $file->getClientOriginalName();
+                            $fullNewFilePath = $filePath . '/' . $fileName;
+                            // Guardar el archivo en el disco 'backlogs'
+                            $file->storeAs($filePath, $fileName, 'backlogs');
+
+                            $files = new BacklogFiles();
+                            $files->backlog_id = $backlog->id;
+                            $files->route = $fullNewFilePath;
+                            $files->save();
+
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Imagen guardada exitosamente.',
+                            ]);
+                        } else {
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'info',
+                                'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
+                                'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
+                            ]);
+                        }
+                    }
+                }
+            } else {
+                if ($this->selectedFiles == []) {
+                    $project = Project::find($id);
+                    $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                    $project->code = $this->code ?? $project->code;
+                    $project->type = ($this->type != null) ? $this->type : $project->type;
+                    $project->name = $this->name ?? $project->name;
+                    $project->priority = $this->priority ?? $project->priority;
+                    $project->save();
+                    // Primero, quita las relaciones existentes para estos roles
+                    $project->users()->wherePivot('leader', true)->detach();
+                    $project->users()->wherePivot('programmer', true)->detach();
+                    // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+
+                    $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
+                    $backlog->scopes = $this->scopes ?? $backlog->scopes;
+                    $backlog->start_date = $this->start_date ?? $backlog->start_date;
+                    $backlog->closing_date = $this->closing_date ?? $backlog->closing_date;
+                    $backlog->passwords = $this->passwords ?? $backlog->passwords;
+                    $backlog->save();
+                } else {
+                    // Contar la cantidad de archivos restantes
+                    $remainingFilesCount = $backlogFiles->count();
+                    // Eliminar los archivos seleccionados
+                    foreach ($this->selectedFiles as $fileId) {
+                        // Verificar si hay más de un archivo restante antes de eliminarlo
+                        if ($remainingFilesCount > 1) {
+                            // Buscar el archivo en la colección de archivos
+                            $fileToDelete = $backlogFiles->where('id', $fileId)->first();
+                            // Verificar si se encontró el archivo
+                            if ($fileToDelete) {
+                                // Eliminar el archivo físico si existe en el disco
+                                if (Storage::disk('backlogs')->exists($fileToDelete->route)) {
+                                    Storage::disk('backlogs')->delete($fileToDelete->route);
+                                }
+                                // Eliminar el archivo de la base de datos
+                                $fileToDelete->delete();
+                                // Disminuir el contador de archivos restantes
+                                $remainingFilesCount--;
+                                // Guardar backlog
+                                $project = Project::find($id);
+                                $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                                $project->code = $this->code ?? $project->code;
+                                $project->type = ($this->type != null) ? $this->type : $project->type;
+                                $project->name = $this->name ?? $project->name;
+                                $project->priority = $this->priority ?? $project->priority;
+                                $project->save();
+                                // Primero, quita las relaciones existentes para estos roles
+                                $project->users()->wherePivot('leader', true)->detach();
+                                $project->users()->wherePivot('programmer', true)->detach();
+                                // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
+                                $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
+                                $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+
+                                $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
+                                $backlog->scopes = $this->scopes ?? $backlog->scopes;
+                                $backlog->start_date = $this->start_date ?? $backlog->start_date;
+                                $backlog->closing_date = $this->closing_date ?? $backlog->closing_date;
+                                $backlog->passwords = $this->passwords ?? $backlog->passwords;
+                                $backlog->save();
 
                                 $this->dispatchBrowserEvent('swal:modal', [
                                     'type' => 'success',
-                                    'title' => 'Imagen guardada exitosamente.',
+                                    'title' => 'Imagen eliminada.',
                                 ]);
                             } else {
                                 $this->dispatchBrowserEvent('swal:modal', [
-                                    'type' => 'info',
-                                    'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
-                                    'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
+                                    'type' => 'error',
+                                    'title' => 'No se encontró la imagen.',
+                                ]);
+                            }
+                        } else if (empty($this->scopes)) { // Esta vacio el textarea
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'warning',
+                                'title' => 'Debe existir al menos una imagen asociada al backlog.',
+                            ]);
+                            return;
+                        } else { // Eliminar todos los archivos ya que tiene texto
+                            // Buscar el archivo en la colección de archivos
+                            $fileToDelete = $backlogFiles->where('id', $fileId)->first();
+                            // Verificar si se encontró el archivo
+                            if ($fileToDelete) {
+                                // Eliminar el archivo físico si existe en el disco
+                                if (Storage::disk('backlogs')->exists($fileToDelete->route)) {
+                                    Storage::disk('backlogs')->delete($fileToDelete->route);
+                                }
+                                // Eliminar el archivo de la base de datos
+                                $fileToDelete->delete();
+                                // Disminuir el contador de archivos restantes
+                                $remainingFilesCount--;
+                                // Guardar backlog
+                                $project = Project::find($id);
+                                $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                                $project->code = $this->code ?? $project->code;
+                                $project->type = ($this->type != null) ? $this->type : $project->type;
+                                $project->name = $this->name ?? $project->name;
+                                $project->priority = $this->priority ?? $project->priority;
+                                $project->save();
+                                // Primero, quita las relaciones existentes para estos roles
+                                $project->users()->wherePivot('leader', true)->detach();
+                                $project->users()->wherePivot('programmer', true)->detach();
+                                // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
+                                $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
+                                $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+
+                                $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
+                                $backlog->scopes = $this->scopes ?? $backlog->scopes;
+                                $backlog->start_date = $this->start_date ?? $backlog->start_date;
+                                $backlog->closing_date = $this->closing_date ?? $backlog->closing_date;
+                                $backlog->passwords = $this->passwords ?? $backlog->passwords;
+                                $backlog->save();
+
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'success',
+                                    'title' => 'Imagen eliminada.',
+                                ]);
+                            } else {
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'error',
+                                    'title' => 'No se encontró la imagen.',
                                 ]);
                             }
                         }
                     }
-                } else {
-                    $backlog->scopes = $this->scopes;
+                }
+
+                if (!empty($this->files)) {
+                    $project = Project::find($id);
+                    $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                    $project->code = $this->code ?? $project->code;
+                    $project->type = ($this->type != null) ? $this->type : $project->type;
+                    $project->name = $this->name ?? $project->name;
+                    $project->priority = $this->priority ?? $project->priority;
+                    $project->save();
+                    // Primero, quita las relaciones existentes para estos roles
+                    $project->users()->wherePivot('leader', true)->detach();
+                    $project->users()->wherePivot('programmer', true)->detach();
+                    // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+
+                    $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
+                    $backlog->scopes = $this->scopes ?? $backlog->scopes;
+                    $backlog->start_date = $this->start_date ?? $backlog->start_date;
+                    $backlog->closing_date = $this->closing_date ?? $backlog->closing_date;
+                    $backlog->passwords = $this->passwords ?? $backlog->passwords;
                     $backlog->save();
+                    // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
+                    foreach ($this->files as $index => $fileArray) {
+                        // Verificar si $fileArray es null o está vacío
+                        if (is_null($fileArray) || empty($fileArray)) {
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'info',
+                                'title' => 'No se selecciono al menos una imagen.',
+                            ]);
+                            continue; // Saltar al siguiente elemento del bucle si $fileArray es null o está vacío
+                        }
+                        // Accede al objeto TemporaryUploadedFile dentro del array
+                        $file = $fileArray[0];
+                        $fileExtension = $file->extension();
+                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                        if (in_array($fileExtension, $extensionesImagen)) {
+                            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                            $fileName = $file->getClientOriginalName();
+                            $fullNewFilePath = $filePath . '/' . $fileName;
+                            // Guardar el archivo en el disco 'backlogs'
+                            $file->storeAs($filePath, $fileName, 'backlogs');
+
+                            $files = new BacklogFiles();
+                            $files->backlog_id = $backlog->id;
+                            $files->route = $fullNewFilePath;
+                            $files->save();
+
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Imagen guardada exitosamente.',
+                            ]);
+                        } else {
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'info',
+                                'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
+                                'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
+                            ]);
+                        }
+                    }
+                }
+            }
+        } else {
+            // Verificar si al menos uno de los campos está presente
+            if (!$this->files && !$this->scopes) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Faltan los alcances.',
+                ]);
+                return;
+            } else {
+                if (empty($this->files) || empty(array_filter($this->files))) {
+                    if (empty($this->scopes)) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Se requiere seleccionar o cargar al menos una imagen.',
+                        ]);
+                        return;
+                    } else {
+                        $project = Project::find($id);
+                        $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                        $project->code = $this->code ?? $project->code;
+                        $project->type = ($this->type != null) ? $this->type : $project->type;
+                        $project->name = $this->name ?? $project->name;
+                        $project->priority = $this->priority ?? $project->priority;
+                        $project->save();
+                        // Primero, quita las relaciones existentes para estos roles
+                        $project->users()->wherePivot('leader', true)->detach();
+                        $project->users()->wherePivot('programmer', true)->detach();
+                        // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
+                        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
+                        $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+
+                        $backlog = new Backlog();
+                        $backlog->general_objective = $this->general_objective;
+                        $backlog->scopes = $this->scopes ?? null;
+                        $backlog->start_date = $this->start_date;
+                        $backlog->closing_date = $this->closing_date;
+                        $backlog->passwords = $this->passwords;
+                        $backlog->project_id = $project->id;
+                        $backlog->save();
+                    }
+                } else {
+                    $project = Project::find($id);
+                    $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                    $project->code = $this->code ?? $project->code;
+                    $project->type = ($this->type != null) ? $this->type : $project->type;
+                    $project->name = $this->name ?? $project->name;
+                    $project->priority = $this->priority ?? $project->priority;
+                    $project->save();
+                    // Primero, quita las relaciones existentes para estos roles
+                    $project->users()->wherePivot('leader', true)->detach();
+                    $project->users()->wherePivot('programmer', true)->detach();
+                    // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+
+                    $backlog = new Backlog();
+                    $backlog->general_objective = $this->general_objective;
+                    $backlog->scopes = $this->scopes ?? null;
+                    $backlog->start_date = $this->start_date;
+                    $backlog->closing_date = $this->closing_date;
+                    $backlog->passwords = $this->passwords;
+                    $backlog->project_id = $project->id;
+                    $backlog->save();
+                    // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
+                    foreach ($this->files as $index => $fileArray) {
+                        // Verificar si $fileArray es null o está vacío
+                        if (is_null($fileArray) || empty($fileArray)) {
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'info',
+                                'title' => 'No se selecciono al menos una imagen.',
+                            ]);
+                            continue; // Saltar al siguiente elemento del bucle si $fileArray es null o está vacío
+                        }
+                        // Accede al objeto TemporaryUploadedFile dentro del array
+                        $file = $fileArray[0];
+                        $fileExtension = $file->extension();
+                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                        if (in_array($fileExtension, $extensionesImagen)) {
+                            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                            $fileName = $file->getClientOriginalName();
+                            $fullNewFilePath = $filePath . '/' . $fileName;
+                            // Guardar el archivo en el disco 'backlogs'
+                            $file->storeAs($filePath, $fileName, 'backlogs');
+
+                            $files = new BacklogFiles();
+                            $files->backlog_id = $backlog->id;
+                            $files->route = $fullNewFilePath;
+                            $files->save();
+
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Imagen guardada exitosamente.',
+                            ]);
+                        } else {
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'info',
+                                'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
+                                'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
+                            ]);
+                        }
+                    }
                 }
             }
         }
