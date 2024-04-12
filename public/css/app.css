@@ -1669,11 +1669,6 @@ select {
   border-color: rgb(250 204 21 / var(--tw-border-opacity));
 }
 
-.bg-amber-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(251 191 36 / var(--tw-bg-opacity));
-}
-
 .bg-blue-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));

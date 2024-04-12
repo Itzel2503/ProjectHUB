@@ -62,7 +62,7 @@
                         <th class="px-4 py-3">Cliente</th>
                         <th class="px-4 py-3">Proyecto</th>
                         <th class="px-4 py-3">Líder y Scrum Master</th>
-                        <th class="px-4 py-2">Acciones</th>
+                        <th class="w-8 px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -71,28 +71,24 @@
                         @if(Auth::user()->area_id == 1)
                         <th class="px-4 py-2">{{ $project->code }}</th>
                         @endif
-
                         <td class="px-4 py-2">
                             <div class="w-32 mx-auto text-justify">
                                 <span class="font-bold">{{ $project->customer_name }}</span><br>
                             </div>
                         </td>
-
                         <td class="px-4 py-2">
                             <div class="w-36 mx-auto text-justify">
                                 <span class="font-semibold">{{ $project->name }} </span> <br>
                                 <span class="italic">{{ $project->type }}</span> - K{{ $project->priority }}
                             </div>
                         </td>
-
                         <td class="px-4 py-2">
                             <div class="w-36 mx-auto text-justify">
                                 - {{ $project->leader->name }} {{ $project->leader->lastname }} <br>
                                 - {{ $project->programmer->name }} {{ $project->programmer->lastname }}
                             </div>
                         </td>
-
-                        <td class="px-4 py-2 flex justify-center">
+                        <td class="px-4 py-2 flex justify-end">
                             @if($project->deleted_at == null)
                             <button wire:click="showReports({{ $project->id }})"
                                 class="bg-red-500 text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
@@ -129,90 +125,74 @@
                             @endif
                             @endif
                             @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
-                            <div x-data="{
-                                    open: false,
-                                    toggle() {
-                                        if (this.open) {
-                                            return this.close()
-                                        }
-
-                                        this.$refs.button.focus()
-                                        this.open = true
-                                    },
-
-                                    close(focusAfter) {
-                                        if (! this.open) return
-                                        this.open = false
-                                        focusAfter && focusAfter.focus()
-                                    }
-                                }" x-on:keydown.escape.prevent.stop="close($refs.button)" x-id="['dropdown-button']"
-                                class="relative">
-                                <button x-ref="button" x-on:click="toggle()" :aria-expanded="open"
-                                    :aria-controls="$id('dropdown-button')" type="button"
-                                    class="flex items-center px-5 py-2.5">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24"
-                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                    </svg>
-                                </button>
-                                <!-- Panel -->
-                                <div x-ref="panel" x-show="open" x-on:click.outside="close($refs.button)"
-                                    :id="$id('dropdown-button')" style="display: none;"
-                                    class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200 z-10">
-                                    <!-- Botón Restaurar -->
-                                    <div wire:click="$emit('restartItem',{{ $project->id }})"
-                                        class="@if($project->deleted_at == null) hidden @endif flex content-center px-4 py-2 text-sm text-black cursor-pointer">
+                            <div class="flex justify-righ">
+                                <div id="dropdown-button-{{ $project->id }}" class="relative">
+                                    <button onclick="toggleDropdown('{{ $project->id }}')" type="button"
+                                        class="flex items-center px-5 py-2.5">
                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-reload mr-2" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
                                             stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <path
-                                                d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747">
-                                            </path>
-                                            <path d="M20 4v5h-5"></path>
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
                                         </svg>
-                                        Restaurar
+                                    </button>
+                                    <!-- Panel -->
+                                    <div id="dropdown-panel-{{ $project->id }}" style="display: none;"
+                                        class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200 z-10">
+                                        <!-- Botón Restaurar -->
+                                        <div wire:click="$emit('restartItem',{{ $project->id }})"
+                                            class="@if($project->deleted_at == null) hidden @endif flex content-center px-4 py-2 text-sm text-black cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-reload mr-2" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path
+                                                    d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747">
+                                                </path>
+                                                <path d="M20 4v5h-5"></path>
+                                            </svg>
+                                            Restaurar
+                                        </div>
+                                        @if($project->deleted_at == null)
+                                        <!-- Botón Editar -->
+                                        <div wire:click="showUpdate({{$project->id}})"
+                                            class="flex content-center px-4 py-2 text-sm text-black cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-edit mr-2" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
+                                                </path>
+                                                <path
+                                                    d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
+                                                </path>
+                                                <path d="M16 5l3 3"></path>
+                                            </svg>
+                                            Editar
+                                        </div>
+                                        <!-- Botón Eliminar -->
+                                        <div wire:click="$emit('deleteItem',{{ $project->id }})"
+                                            class="@if(Auth::user()->type_user == 1)flex @else hidden @endif content-center px-4 py-2 text-sm text-red-600 cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-trash mr-2" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M4 7l16 0"></path>
+                                                <path d="M10 11l0 6"></path>
+                                                <path d="M14 11l0 6"></path>
+                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                            </svg>
+                                            Eliminar
+                                        </div>
+                                        @endif
                                     </div>
-                                    @if($project->deleted_at == null)
-                                    <!-- Botón Editar -->
-                                    <div wire:click="showUpdate({{$project->id}})"
-                                        class="flex content-center px-4 py-2 text-sm text-black cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-edit mr-2" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
-                                            <path
-                                                d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
-                                            </path>
-                                            <path d="M16 5l3 3"></path>
-                                        </svg>
-                                        Editar
-                                    </div>
-                                    <!-- Botón Eliminar -->
-                                    <div wire:click="$emit('deleteItem',{{ $project->id }})"
-                                        class="@if(Auth::user()->type_user == 1)flex @else hidden @endif content-center px-4 py-2 text-sm text-red-600 cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-trash mr-2" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <path d="M4 7l16 0"></path>
-                                            <path d="M10 11l0 6"></path>
-                                            <path d="M14 11l0 6"></path>
-                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                        </svg>
-                                        Eliminar
-                                    </div>
-                                    @endif
                                 </div>
                             </div>
                             @endif
@@ -634,6 +614,21 @@
     {{-- END LOADING PAGE --}}
     @push('js')
     <script>
+        // DROPDOWN
+        function toggleDropdown(activityId) {
+            var panel = document.getElementById('dropdown-panel-' + activityId);
+            if (panel.style.display === 'none') {
+                // Oculta todos los paneles de dropdown
+                var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
+                allPanels.forEach(function(panel) {
+                    panel.style.display = 'none';
+                });
+
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
+        }
         // INPUTS FILES RESET
         window.addEventListener('file-reset', () => {
             document.querySelectorAll('.files').value = null;
