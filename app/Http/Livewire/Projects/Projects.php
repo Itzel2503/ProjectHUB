@@ -19,7 +19,7 @@ class Projects extends Component
     use WithFileUploads;
     use WithPagination;
     protected $paginationTheme = 'tailwind';
-    
+
     public $listeners = ['reloadPage' => 'reloadPage', 'destroy', 'restore'];
     // modal 
     public $modalCreateEdit = false, $createBacklog = false;
@@ -33,7 +33,7 @@ class Projects extends Component
     // inputs
     public $code, $name, $type, $priority, $customer, $leader, $programmer, $general_objective, $scopes, $start_date, $closing_date, $passwords;
     public $files = [];
-    
+
     public function render()
     {
         $allCustomers = Customer::all();
@@ -42,10 +42,10 @@ class Projects extends Component
 
         if (Auth::user()->type_user == 1) {
             $projects = Project::select(
-                'projects.*', 
+                'projects.*',
                 'customers.name as customer_name',
                 'backlogs.id as backlog'
-                )
+            )
                 ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
                 ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
                 ->withTrashed()
@@ -63,10 +63,10 @@ class Projects extends Component
                 ->paginate($this->perPage);
         } else {
             $projects = Project::select(
-                'projects.*', 
+                'projects.*',
                 'customers.name as customer_name',
                 'backlogs.id as backlog'
-                )
+            )
                 ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
                 ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
                 ->where(function ($query) {
@@ -88,7 +88,7 @@ class Projects extends Component
             // Encuentra al líder y al programador dentro de los usuarios relacionados
             $leader = $project->users->where('pivot.leader', true)->first();
             $programmer = $project->users->where('pivot.programmer', true)->first();
-        
+
             $project->leader = $leader;
             $project->programmer = $programmer;
         }
@@ -122,7 +122,7 @@ class Projects extends Component
             if (!$this->files && !$this->scopes) {
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
-                    'title' => 'Se requiere al menos un archivo o los alcances.',
+                    'title' => 'Faltan los alcances.',
                 ]);
                 return;
             }
@@ -136,34 +136,53 @@ class Projects extends Component
             throw $e;
         }
 
-        $project = new Project();
-        $project->customer_id = $this->customer;
-        $project->code = $this->code;
-        $project->type = $this->type;
-        $project->name = $this->name;
-        $project->priority = $this->priority;
-        $project->save();
+        if (empty($this->files) || empty(array_filter($this->files))) {
+            if (empty($this->scopes)) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Se requiere seleccionar o cargar al menos una imagen.',
+                ]);
+                return;
+            } else {
+                $project = new Project();
+                $project->customer_id = $this->customer;
+                $project->code = $this->code;
+                $project->type = $this->type;
+                $project->name = $this->name;
+                $project->priority = $this->priority;
+                $project->save();
+                // Asocia el usuario al proyecto
+                $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false]);
+                $project->users()->attach($this->programmer, ['leader' => false, 'programmer' => true]);
 
-        // Asocia el usuario al proyecto
-        $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false]);
-        $project->users()->attach($this->programmer, ['leader' => false, 'programmer' => true]);
-
-        $backlog = new Backlog();
-        $backlog->general_objective = $this->general_objective;
-        $backlog->scopes = $this->scopes;
-        $backlog->start_date = $this->start_date;
-        $backlog->closing_date = $this->closing_date;
-        $backlog->passwords = $this->passwords;
-        $backlog->project_id = $project->id;
-        $backlog->save();
-
-        if (empty($this->files) && empty(array_filter($this->files))) {
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Se requiere seleccionar o cargar al menos una imagen.',
-            ]);
-            return;
+                $backlog = new Backlog();
+                $backlog->general_objective = $this->general_objective;
+                $backlog->scopes = $this->scopes;
+                $backlog->start_date = $this->start_date;
+                $backlog->closing_date = $this->closing_date;
+                $backlog->passwords = $this->passwords;
+                $backlog->project_id = $project->id;
+                $backlog->save();
+            }
         } else {
+            $project = new Project();
+            $project->customer_id = $this->customer;
+            $project->code = $this->code;
+            $project->type = $this->type;
+            $project->name = $this->name;
+            $project->priority = $this->priority;
+            $project->save();
+            // Asocia el usuario al proyecto
+            $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false]);
+            $project->users()->attach($this->programmer, ['leader' => false, 'programmer' => true]);
+
+            $backlog = new Backlog();
+            $backlog->general_objective = $this->general_objective;
+            $backlog->start_date = $this->start_date;
+            $backlog->closing_date = $this->closing_date;
+            $backlog->passwords = $this->passwords;
+            $backlog->project_id = $project->id;
+            $backlog->save();
             // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
             foreach ($this->files as $index => $fileArray) {
                 // Verificar si $fileArray es null o está vacío
@@ -236,11 +255,11 @@ class Projects extends Component
         $project = Project::find($id);
         $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
         $project->code = $this->code ?? $project->code;
-        $project->type = ($this->type != null) ? $this->type : $project->type ;
+        $project->type = ($this->type != null) ? $this->type : $project->type;
         $project->name = $this->name ?? $project->name;
         $project->priority = $this->priority ?? $project->priority;
         $project->save();
-        
+
         // Primero, quita las relaciones existentes para estos roles
         $project->users()->wherePivot('leader', true)->detach();
         $project->users()->wherePivot('programmer', true)->detach();
@@ -248,7 +267,7 @@ class Projects extends Component
         // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
         $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
         $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
-        
+
         $backlog = Backlog::all()->where('project_id', $id)->first();
         if (isset($backlog)) {
             $backlogFiles = BacklogFiles::where('backlog_id', $backlog->id)->get();
@@ -283,7 +302,7 @@ class Projects extends Component
                             'title' => 'No se encontró la imagen.',
                         ]);
                     }
-                } else if(empty($this->scopes)) {
+                } else if (empty($this->scopes)) {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'warning',
                         'title' => 'Debe haber al menos un archivo asociado al backlog.',
@@ -317,7 +336,7 @@ class Projects extends Component
                     }
                 }
             }
-            
+
             if (empty($this->files)) {
                 $backlog->scopes = $this->scopes ?? $backlog->scopes;
             } else {
@@ -384,7 +403,7 @@ class Projects extends Component
                 $backlog->passwords = $this->passwords;
                 $backlog->project_id = $project->id;
 
-                if(empty($this->scopes)) {
+                if (empty($this->scopes)) {
                     if (empty(array_filter($this->files))) {
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'error',
@@ -524,7 +543,7 @@ class Projects extends Component
         $this->backlogEdit = Backlog::all()->where('project_id', $id)->first();
         $this->general_objective = $this->backlogEdit->general_objective ?? '';
         $this->scopes = $this->backlogEdit->scopes ?? '';
-        
+
         $start_date = Carbon::parse($this->backlogEdit->start_date ?? '');
         $this->start_date = $start_date->toDateString();
         $closing_date = Carbon::parse($this->backlogEdit->closing_date  ?? '');
