@@ -22,10 +22,12 @@
             <div class="flex flex-wrap  md:inline-flex md:flex-nowrap w-full md:w-4/5">
                 {{-- NOMBRE --}}
                 <div class="px-2 md:px-0 inline-flex w-2/6 h-12 md:mx-3 mb-2 bg-transparent">
+                    @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
                     <span class="m-auto mr-5">
                         <span class="inline-block font-semibold">Avance</span>
                         {{ $percentageResolved }}%
                     </span>
+                    @endif
                     <select wire:model="selectSprint" wire:change="selectSprint($event.target.value)" class="inputs">
                         @foreach ($sprints as $sprint)
                         <option value="{{ $sprint->id }}">{{ $sprint->number }} - {{ $sprint->name }}</option>
