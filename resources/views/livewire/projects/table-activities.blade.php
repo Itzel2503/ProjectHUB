@@ -5,7 +5,7 @@
             @if($sprints->isEmpty())
             @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
             <!-- BTN NEW -->
-            <div class="flex flex-wrap  md:inline-flex md:flex-nowrap w-full md:w-4/5">
+            <div class="flex flex-wrap  md:inline-flex md:flex-nowrap w-40">
                 <button wire:click="modalCreateSprint()" class="btnNuevo">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2" width="24"
                         height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
