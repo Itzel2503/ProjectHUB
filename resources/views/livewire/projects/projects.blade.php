@@ -90,6 +90,22 @@
                         </td>
                         <td class="px-4 py-2 flex justify-end">
                             @if($project->deleted_at == null)
+                            @if ($project->backlog != null)
+                            <button wire:click="showActivities({{ $project->id }})"
+                                class="bg-yellow-500 text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                    <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                    <path d="M3 6l0 13" />
+                                    <path d="M12 6l0 13" />
+                                    <path d="M21 6l0 13" />
+                                </svg>
+                            </button>
+                            @endif
                             <button wire:click="showReports({{ $project->id }})"
                                 class="bg-secondary text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-bug"
@@ -107,22 +123,6 @@
                                     <path d="M20 7l-3.75 2.4" />
                                 </svg>
                             </button>
-                            @if ($project->backlog != null)
-                            <button wire:click="showActivities({{ $project->id }})"
-                                class="bg-yellow-500 text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-book">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                    <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                    <path d="M3 6l0 13" />
-                                    <path d="M12 6l0 13" />
-                                    <path d="M21 6l0 13" />
-                                </svg>
-                            </button>
-                            @endif
                             @endif
                             @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
                             <div class="flex justify-righ">
