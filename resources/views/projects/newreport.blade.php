@@ -178,7 +178,7 @@
                     <h3 class="text-text2 text-lg font-bold inline-flex">Video capturado</h3>
                     <video id="recording" width="300" height="200" loop autoplay class="w-full h-2/5"></video>
                     {{-- hidden --}}
-                    <div class="justify-center items-center  ">
+                    <div class="justify-center items-center hidden">
                         <a id="downloadVideo" class="btnSecondary" style="color: white;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download"
                                 width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -199,9 +199,9 @@
                     method="POST" enctype="multipart/form-data">
                     @csrf
                     {{-- hidden --}}
-                    <input  type="text" id="user_id" name="user_id" value="{{ $user->id }}">
-                    <input  type="text" id="inputPhoto" name="photo">
-                    <input  type="text" id="inputVideo" name="video">
+                    <input hidden type="text" id="user_id" name="user_id" value="{{ $user->id }}">
+                    <input hidden type="text" id="inputPhoto" name="photo">
+                    <input hidden type="text" id="inputVideo" name="video">
                     <div class="-mx-3 mb-6 flex flex-row">
                         <div id="viewText" class="w-full flex flex-col px-3 mb-6">
                             <h5 class="inline-flex font-semibold" for="code">
