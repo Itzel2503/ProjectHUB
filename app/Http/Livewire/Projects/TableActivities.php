@@ -153,7 +153,7 @@ class TableActivities extends Component
                         $query->orderBy($this->datesOrder, $this->ascOrDesc);
                     })
                     ->with(['user', 'delegate'])
-                    ->paginate($this->perPage);
+                    ->get();
             } else {
                 $activities = Activity::where('sprint_id', $this->selectSprint)
                     ->where(function ($query) {
@@ -180,7 +180,7 @@ class TableActivities extends Component
                         $query->orderBy($this->datesOrder, $this->ascOrDesc);
                     })
                     ->with(['user', 'delegate'])
-                    ->paginate($this->perPage);
+                    ->get();
             }
             // TODOS LOS DELEGADOS
             foreach ($this->allUsers as $key => $user) {

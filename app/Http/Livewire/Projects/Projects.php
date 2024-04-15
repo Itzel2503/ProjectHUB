@@ -42,10 +42,10 @@ class Projects extends Component
 
         if (Auth::user()->type_user == 1) {
             $projects = Project::select(
-                'projects.*',
-                'customers.name as customer_name',
-                'backlogs.id as backlog'
-            )
+                    'projects.*',
+                    'customers.name as customer_name',
+                    'backlogs.id as backlog'
+                )
                 ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
                 ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
                 ->withTrashed()
@@ -60,13 +60,13 @@ class Projects extends Component
                     $query->withPivot('leader', 'programmer');
                 }])
                 ->orderBy('created_at', 'desc')
-                ->paginate($this->perPage);
+                ->get();
         } else {
             $projects = Project::select(
-                'projects.*',
-                'customers.name as customer_name',
-                'backlogs.id as backlog'
-            )
+                    'projects.*',
+                    'customers.name as customer_name',
+                    'backlogs.id as backlog'
+                )
                 ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
                 ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
                 ->where(function ($query) {
@@ -80,7 +80,7 @@ class Projects extends Component
                     $query->withPivot('leader', 'programmer');
                 }])
                 ->orderBy('created_at', 'desc')
-                ->paginate($this->perPage);
+                ->get();
         }
 
         // ADD ATRIBUTES

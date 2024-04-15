@@ -91,7 +91,7 @@
                         <td class="px-4 py-2 flex justify-end">
                             @if($project->deleted_at == null)
                             <button wire:click="showReports({{ $project->id }})"
-                                class="bg-red-500 text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                class="bg-secondary text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-bug"
                                     width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -201,9 +201,6 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
-        <div class="py-5">
-            {{ $projects->links() }}
         </div>
     </div>
     {{-- END TABLE --}}

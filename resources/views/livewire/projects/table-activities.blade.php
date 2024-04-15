@@ -559,9 +559,6 @@
                 </tbody>
             </table>
         </div>
-        <div class="py-5">
-            {{ $activities->links() }}
-        </div>
     </div>
     {{-- END TABLE --}}
     {{-- MODAL SHOW BACKLOG --}}
