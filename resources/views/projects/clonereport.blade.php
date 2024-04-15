@@ -250,7 +250,7 @@
                     <div class="-mx-3 mb-6">
                         <div class="w-full flex flex-col px-3 mb-6">
                             <h5 class="inline-flex font-semibold" for="name">
-                                Descripción del reporte
+                                Descripción del reporte <p class="text-red-600">*</p>
                             </h5>
                             <textarea disabled type="text"
                                 placeholder="Describa la observación y especifique el objetivo a cumplir."
@@ -268,7 +268,7 @@
                     <div class="-mx-3 mb-6 flex flex-row">
                         <div id="viewText" class="w-full flex flex-col px-3 mb-6">
                             <h5 class="inline-flex font-semibold" for="code">
-                                Prioridad
+                                Prioridad <p class="text-red-600">*</p>
                             </h5>
                             <div class="flex justify-center gap-20">
                                 <div class="flex flex-col items-center">
@@ -514,7 +514,6 @@
                     isManuallyStopped = false;
                 }
             };
-
             mediaRecorder.start();
             log("Grabación iniciada.");
             // return stopped;
