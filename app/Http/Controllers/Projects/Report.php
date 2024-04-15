@@ -79,7 +79,7 @@ class Report extends Controller
                     ]);
                     // Aquí puedes continuar con tu lógica después de la validación exitosa
                 } catch (\Illuminate\Validation\ValidationException $e) {
-                    return redirect()->back()->with('error', 'Faltan campos o campos incorrectos');
+                    return redirect()->back()->with('error', 'Faltan campos o campos incorrectos.');
                     throw $e;
                 }
 
@@ -123,7 +123,6 @@ class Report extends Controller
                     $report->delegate_id = $request->delegate;
                     $report->title = $request->title;
                     $report->content = $filePath;
-
                     if ($request->priority1) {
                         $report->priority = 'Alto';
                     } else if ($request->priority2) {
@@ -131,7 +130,6 @@ class Report extends Controller
                     } else {
                         $report->priority = 'Bajo';
                     }
-
                     $report->state = "Abierto";
                     $report->comment = $request->comment;
                     $report->evidence = ($request->evidence) ? true : false;

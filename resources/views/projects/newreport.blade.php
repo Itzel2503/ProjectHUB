@@ -275,7 +275,8 @@
                             <select required name="delegate" id="delegate" class="inputs">
                                 <option value="0" selected>Selecciona...</option>
                                 @foreach ($allUsers as $allUser)
-                                    <option value="{{ $allUser->id }}">{{ $allUser->name }} {{ $allUser->lastname }}</option>
+                                <option value="{{ $allUser->id }}">{{ $allUser->name }} {{ $allUser->lastname }}
+                                </option>
                                 @endforeach
                             </select>
                             @if ($errors->has('delegate'))
@@ -296,13 +297,24 @@
                             <h5 class="inline-flex font-semibold" for="name">
                                 Evidencia
                             </h5>
-                            <input type="checkbox" name="evidence" id="evidence"
-                            class="ml-4"
-                            style="height: 24px; width: 24px; accent-color: #0062cc;">
+                            <input type="checkbox" name="evidence" id="evidence" class="ml-4"
+                                style="height: 24px; width: 24px; accent-color: #0062cc;">
                         </div>
                     </div>
                     <div class="flex justify-center items-center mb-6">
-                        <button type="submit" class="btnSave">
+                        <button type="submit" class="btnSave" id="buttonSave" style="display: flex">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M14 4l0 4l-6 0l0 -4" />
+                            </svg>
+                            Guardar
+                        </button>
+                        <button type="submit" class="btnSave" id="buttonSaveVideo" style="display: none">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
@@ -332,7 +344,7 @@
         {{-- VIDEO --}}
         <video id="preview" width="100%" height="auto" autoplay muted class="mt-2" style="display: none;"></video>
     </div>
-    
+
     @if(session('error'))
     <script>
         toastr['error']("{{ session('error') }}", "Error");
@@ -379,6 +391,8 @@
         // BUTTONS FORM
         let checkboxes = document.querySelectorAll('.priority-checkbox');
         let downloadVideo = document.getElementById('downloadVideo');
+        let buttonSave = document.getElementById('buttonSave');
+        let buttonSaveVideo = document.getElementById('buttonSaveVideo');
         // VARIABLES GLOBALES
         let user = @json($user->id);
         let project = @json($project->name);
@@ -401,45 +415,39 @@
                 drawCanvas.parentNode.removeChild(drawCanvas); // Eliminar el dibujo del overlay canvas
             }
         }
-        // Funcion de limpiar formulario
-        function cleanForm() {
-            const elementosFormulario = formReport.querySelectorAll('input, textarea');
-            const selectores = formReport.querySelectorAll('select');
-
-            // Establece los valores de los elementos input y textarea en vacío
-            elementosFormulario.forEach(elemento => {
-                if (elemento.type !== 'button' && elemento.type !== 'submit') {
-                    elemento.value = '';
-                }
-            });
-
-            // Establece el valor de todos los elementos select en '0'
-            selectores.forEach(select => {
-                select.value = '0';
-            });
-        }
-        // Vaidacion de formulario
-        formReport.addEventListener('submit', function(e) {
+        // Función de validación del formulario
+        function validateForm() {
             // Verificar si se ha seleccionado una opción diferente de "Selecciona..."
             const selectedValue = delegateSelect.value;
-            if (selectedValue === '0') {
-                toastr['error']("Debes seleccionar un delegado");
-                e.preventDefault();
-                return;
-            }
-            // Verifica si selecciono un checkbox de prioridad
+            // Verificar si se seleccionó al menos un checkbox de prioridad
             const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-            if (!isChecked) {
-                toastr['error']("Selecciona la prioridad");
-                
-                e.preventDefault();
-                return; 
+
+            // Verificar si se cumplen todas las condiciones
+            if (selectedValue === '0' || !isChecked) {
+                toastr['error']("Faltan campos o campos incorrectos.");
+                return false; // Retorna false si no se cumplen todas las condiciones
             }
-            // Verifica si el botón de descarga tiene una URL y descárgalo
-            if (downloadVideo.href) {
-                setTimeout(function() {
-                    downloadVideo.click();
-                }, 100);
+            return true; // Retorna true si se cumplen todas las condiciones
+        }
+
+        // Evento 'click' para el botón "Guardar"
+        buttonSave.addEventListener('click', function(e) {
+            if (!validateForm()) {
+                e.preventDefault(); // Detener el envío del formulario si la validación falla
+            }
+        });
+
+        // Evento 'click' para el botón "Guardar con video"
+        buttonSaveVideo.addEventListener('click', function(e) {
+            if (!validateForm()) {
+                e.preventDefault(); // Detener el envío del formulario si la validación falla
+            } else {
+                // Verificar si el botón de descarga tiene una URL y descárgalo
+                if (downloadVideo.href) {
+                    setTimeout(function() {
+                        downloadVideo.click();
+                    }, 100);
+                }
             }
         });
         // ------------------------------ GRABACION DE VIDEO ------------------------------
@@ -518,6 +526,8 @@
                     viewPhoto.style.display = 'none';
                     viewVideo.style.display = 'block';
                     viewText.style.display = 'none';
+                    buttonSave.style.display = 'none';
+                    buttonSaveVideo.style.display = 'flex';
                 } else {
                     // Posiblemente reiniciar isManuallyStopped para futuras grabaciones
                     isManuallyStopped = false;
@@ -714,6 +724,8 @@
                             viewPhoto.style.display = 'block';
                             viewVideo.style.display = 'none';
                             viewText.style.display = 'none';
+                            buttonSave.style.display = 'flex';
+                            buttonSaveVideo.style.display = 'none';
 
                             const combinedCanvas = document.createElement('canvas');
                             combinedCanvas.width = imageBitmap.width;
@@ -764,6 +776,8 @@
             // FORM
             viewPhoto.style.display = 'none';
             viewText.style.display = 'block';
+            buttonSave.style.display = 'flex';
+            buttonSaveVideo.style.display = 'none';
         });
         // ------------------------------ FORMULARIO NORMAL ------------------------------
         textButton.addEventListener('click', function() {
@@ -776,6 +790,8 @@
             viewVideo.style.display = 'none';
             viewPhoto.style.display = 'none';
             viewText.style.display = 'block';
+            buttonSave.style.display = 'flex';
+            buttonSaveVideo.style.display = 'none';
         });
     </script>
 </body>
