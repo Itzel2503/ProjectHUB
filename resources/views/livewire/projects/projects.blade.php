@@ -49,12 +49,11 @@
             @endif
         </div>
         {{-- END NAVEGADOR --}}
-
         {{-- TABLE --}}
         <div class="tableStyle">
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 headTable">
-                    <tr class="">
+                    <tr>
                         {{-- <th class="px-4 py-3"></th> LOGO --}}
                         @if(Auth::user()->area_id == 1)
                         <th class="px-4 py-3">Código</th>

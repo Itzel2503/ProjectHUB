@@ -15,14 +15,14 @@ class TableUsers extends Component
     use WithFileUploads;
     use WithPagination;
     protected $paginationTheme = 'tailwind';
-    
-    public $listeners = ['reloadPage' => 'reloadPage'];
+
+    public $listeners = ['reloadPage' => 'reloadPage', 'destroy', 'restore'];
     // modal
-    public $modalCreateEdit = false, $modalDelete = false, $modalRestore = false;
-    public $showUpdate = false, $showDelete = false, $showRestore = false;
+    public $modalCreateEdit = false;
+    public $showUpdate = false;
     // table, action's user
-    public $search, $userEdit, $areaUser, $userDelete, $userRestore;
-    public $perPage = '10';
+    public $search, $userEdit, $areaUser;
+    public $perPage = '';
     public $rules = [], $allAreas = [], $allTypes = [1, 2];
     // inputs
     public $file, $name, $lastname, $date_birthday, $phone, $area, $type_user, $email, $password;
@@ -36,16 +36,16 @@ class TableUsers extends Component
         $users = User::onlyTrashed()
             ->select('users.*', 'areas.name as area_name')
             ->leftJoin('areas', 'users.area_id', '=', 'areas.id')
-            ->where(function($query) {
+            ->where(function ($query) {
                 if ($this->search == 'Administrador' || $this->search == 'administrador') {
                     $query->orWhere('users.type_user', 1);
                 } elseif ($this->search == 'Usuario' || $this->search == 'usuario') {
                     $query->orWhere('users.type_user', 2);
                 }
             })
-            ->orWhere('users.name', 'like', '%' . $this->search . '%') 
+            ->orWhere('users.name', 'like', '%' . $this->search . '%')
             ->orWhere('users.lastname', 'like', '%' . $this->search . '%')
-            ->orWhere('users.email', 'like', '%' . $this->search . '%') 
+            ->orWhere('users.email', 'like', '%' . $this->search . '%')
             ->orWhere('areas.name', 'like', '%' . $this->search . '%')
             ->orderBy('created_at', 'desc')
             ->paginate($this->perPage);
@@ -85,18 +85,42 @@ class TableUsers extends Component
                 'text' => 'El correo electrónico ya está registrado.',
             ]);
         }
-        
+
         $user = new User();
 
         if ($this->file) {
-            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
             if (in_array($this->file->extension(), $extensionesImagen)) {
-                $fileExtension = $this->file->extension();
-                $fileName = $this->name . ' ' . $this->lastname . '.' . $fileExtension;
-                $filePath = $fileName;
-                $this->file->storeAs('/', $filePath, 'users');
-
-                $user->profile_photo = $fileName;
+                $maxSize = 5 * 1024 * 1024; // 5 MB
+                // Verificar el tamaño del archivo
+                if ($this->file->getSize() > $maxSize) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                    ]);
+                    return;
+                }
+                $filePath = $this->file->getClientOriginalName();
+                // Procesar la imagen
+                $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
+                // Redimensionar la imagen si es necesario
+                $image->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                // Guardar la imagen temporalmente
+                $tempPath = $filePath; // Carpeta temporal dentro del almacenamiento
+                $image->save(storage_path('app/' . $tempPath));
+                // Guardar la imagen redimensionada en el almacenamiento local
+                Storage::disk('users')->put($filePath, Storage::disk('local')->get($tempPath));
+                // // Eliminar la imagen temporal
+                Storage::disk('local')->delete($tempPath);
+                $user->profile_photo = $filePath;
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El archivo no está en formato de imagen.'
+                ]);
+                return;
             }
         }
 
@@ -119,7 +143,6 @@ class TableUsers extends Component
         if ($this->file) {
             $this->refreshPage();
         }
-
         // Emitir un evento de navegador
         $this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',
@@ -150,16 +173,43 @@ class TableUsers extends Component
         $user = User::find($id);
 
         if ($this->file) {
-            $originalFileName = $this->file->getClientOriginalName();
-            $filePath = $originalFileName;
-
-            if (Storage::disk('users')->exists($user->profile_photo)) {
-                Storage::disk('users')->delete($user->profile_photo);
+            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+            if (in_array($this->file->extension(), $extensionesImagen)) {
+                $maxSize = 5 * 1024 * 1024; // 5 MB
+                // Verificar el tamaño del archivo
+                if ($this->file->getSize() > $maxSize) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                    ]);
+                    return;
+                }
+                $filePath = $this->file->getClientOriginalName();
+                // Procesar la imagen
+                $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
+                // Redimensionar la imagen si es necesario
+                $image->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                // Guardar la imagen temporalmente
+                $tempPath = $filePath; // Carpeta temporal dentro del almacenamiento
+                $image->save(storage_path('app/' . $tempPath));
+                // Eliminar imagen anterior
+                if (Storage::disk('users')->exists($user->profile_photo)) {
+                    Storage::disk('users')->delete($user->profile_photo);
+                }
+                // Guardar la imagen redimensionada en el almacenamiento local
+                Storage::disk('users')->put($filePath, Storage::disk('local')->get($tempPath));
+                // // Eliminar la imagen temporal
+                Storage::disk('local')->delete($tempPath);
+                $user->profile_photo = $filePath;
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El archivo no es una imagen'
+                ]);
+                return;
             }
-            $this->file->storeAs('/', $filePath, 'users');
-
-            $user->profile_photo = $originalFileName;
-            
         }
 
         $user->name = $this->name ?? $user->name;
@@ -171,7 +221,7 @@ class TableUsers extends Component
         if (!empty($this->area)) {
             $user->area_id = $this->area;
         }
-        
+
         $user->type_user = $this->type_user ?? $user->type_user;
 
         if ($this->password) {
@@ -185,7 +235,6 @@ class TableUsers extends Component
         $user->save();
         $this->clearInputs();
         $this->modalCreateEdit = false;
-        
         // Emitir un evento de navegador
         $this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',
@@ -198,6 +247,10 @@ class TableUsers extends Component
         $user = User::find($id);
 
         if ($user) {
+            // Eliminar imagen anterior
+            if (Storage::disk('users')->exists($user->profile_photo)) {
+                Storage::disk('users')->delete($user->profile_photo);
+            }
             $user->delete();
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
@@ -212,7 +265,6 @@ class TableUsers extends Component
             ]);
         }
         $this->emit('reloadPage');
-        $this->modalDelete = false;
     }
 
     public function restore($id)
@@ -222,10 +274,10 @@ class TableUsers extends Component
         if ($user) {
             $user->restore();
             // Emitir un evento de navegador
-        $this->dispatchBrowserEvent('swal:modal', [
-            'type' => 'success',
-            'title' => 'Usuario restaurado',
-        ]);
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Usuario restaurado',
+            ]);
         } else {
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
@@ -233,36 +285,8 @@ class TableUsers extends Component
                 'title' => 'Usuario no existe',
             ]);
         }
-
-        $this->modalRestore = false;
     }
     // INFO MODAL
-    public function showDelete($id)
-    {
-        $this->showDelete = true;
-
-        if ($this->modalDelete == true) {
-            $this->modalDelete = false;
-        } else {
-            $this->modalDelete = true;
-        }
-
-        $this->userDelete = User::find($id);
-    }
-
-    public function showRestore($id)
-    {
-        $this->showRestore = true;
-
-        if ($this->modalRestore == true) {
-            $this->modalRestore = false;
-        } else {
-            $this->modalRestore = true;
-        }
-
-        $this->userRestore = User::withTrashed()->find($id);
-    }
-
     public function showUpdate($id)
     {
         $this->showUpdate = true;
@@ -274,7 +298,7 @@ class TableUsers extends Component
         }
 
         $this->userEdit = User::find($id);
-        
+
         $this->allAreas = Area::all();
 
         $this->areaUser = $this->allAreas->find($this->userEdit->area_id);
@@ -305,25 +329,6 @@ class TableUsers extends Component
         $this->clearInputs();
         $this->resetErrorBag();
         $this->dispatchBrowserEvent('file-reset');
-    }
-
-    public function modalDelete()
-    {
-        if ($this->modalDelete == true) {
-            $this->modalDelete = false;
-        } else {
-            $this->modalDelete = true;
-        }
-    }
-
-    public function modalRestore()
-    {
-        if ($this->modalRestore == true) {
-            $this->modalRestore = false;
-        } else {
-            $this->modalRestore = true;
-        }
-        $this->resetErrorBag();
     }
     // EXTRAS
     public function clearInputs()

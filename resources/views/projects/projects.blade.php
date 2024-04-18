@@ -9,7 +9,6 @@ text-yellow-400
 @endsection
 
 @section('content')
-
 <div class="mt-4 w-full mx-auto">
     <div class="py-3 space-y-6 w-full px-4 ">
         <h1 class="tiitleHeader">

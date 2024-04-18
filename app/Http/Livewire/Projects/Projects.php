@@ -42,10 +42,10 @@ class Projects extends Component
 
         if (Auth::user()->type_user == 1) {
             $projects = Project::select(
-                    'projects.*',
-                    'customers.name as customer_name',
-                    'backlogs.id as backlog'
-                )
+                'projects.*',
+                'customers.name as customer_name',
+                'backlogs.id as backlog'
+            )
                 ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
                 ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
                 ->withTrashed()
@@ -63,10 +63,10 @@ class Projects extends Component
                 ->get();
         } else {
             $projects = Project::select(
-                    'projects.*',
-                    'customers.name as customer_name',
-                    'backlogs.id as backlog'
-                )
+                'projects.*',
+                'customers.name as customer_name',
+                'backlogs.id as backlog'
+            )
                 ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
                 ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
                 ->where(function ($query) {
@@ -197,14 +197,34 @@ class Projects extends Component
                 // Accede al objeto TemporaryUploadedFile dentro del array
                 $file = $fileArray[0];
                 $fileExtension = $file->extension();
-                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
                 if (in_array($fileExtension, $extensionesImagen)) {
+                    $maxSize = 5 * 1024 * 1024; // 5 MB
+                    // Verificar el tamaño del archivo
+                    if ($file->getSize() > $maxSize) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                        ]);
+                        return;
+                    }
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
                     $fileName = $file->getClientOriginalName();
                     $fullNewFilePath = $filePath . '/' . $fileName;
-                    // Guardar el archivo en el disco 'backlogs'
-                    $file->storeAs($filePath, $fileName, 'backlogs');
-
+                    // Procesar la imagen
+                    $image = \Intervention\Image\Facades\Image::make($file->getRealPath());
+                    // Redimensionar la imagen si es necesario
+                    $image->resize(800, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    // Guardar la imagen temporalmente
+                    $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                    $image->save(storage_path('app/' . $tempPath));
+                    // Guardar la imagen redimensionada en el almacenamiento local
+                    Storage::disk('backlogs')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                    // // Eliminar la imagen temporal
+                    Storage::disk('local')->delete($tempPath);
+                    // Guardar información de la imagen
                     $files = new BacklogFiles();
                     $files->backlog_id = $backlog->id;
                     $files->route = $fullNewFilePath;
@@ -217,8 +237,8 @@ class Projects extends Component
                 } else {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'info',
-                        'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
-                        'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
+                        'title' => 'El archivo no está en formato de imagen.',
+                        'text' => 'Archivo: ' . $file->getClientOriginalName(),
                     ]);
                 }
             }
@@ -322,14 +342,34 @@ class Projects extends Component
                         // Accede al objeto TemporaryUploadedFile dentro del array
                         $file = $fileArray[0];
                         $fileExtension = $file->extension();
-                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
                         if (in_array($fileExtension, $extensionesImagen)) {
+                            $maxSize = 5 * 1024 * 1024; // 5 MB
+                            // Verificar el tamaño del archivo
+                            if ($file->getSize() > $maxSize) {
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'error',
+                                    'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                                ]);
+                                return;
+                            }
                             $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
                             $fileName = $file->getClientOriginalName();
                             $fullNewFilePath = $filePath . '/' . $fileName;
-                            // Guardar el archivo en el disco 'backlogs'
-                            $file->storeAs($filePath, $fileName, 'backlogs');
-
+                            // Procesar la imagen
+                            $image = \Intervention\Image\Facades\Image::make($file->getRealPath());
+                            // Redimensionar la imagen si es necesario
+                            $image->resize(800, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                            });
+                            // Guardar la imagen temporalmente
+                            $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                            $image->save(storage_path('app/' . $tempPath));
+                            // Guardar la imagen redimensionada en el almacenamiento local
+                            Storage::disk('backlogs')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                            // // Eliminar la imagen temporal
+                            Storage::disk('local')->delete($tempPath);
+                            // Guardar información de la imagen
                             $files = new BacklogFiles();
                             $files->backlog_id = $backlog->id;
                             $files->route = $fullNewFilePath;
@@ -342,8 +382,8 @@ class Projects extends Component
                         } else {
                             $this->dispatchBrowserEvent('swal:modal', [
                                 'type' => 'info',
-                                'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
-                                'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
+                                'title' => 'El archivo no está en formato de imagen.',
+                                'text' => 'Archivo: ' . $file->getClientOriginalName(),
                             ]);
                         }
                     }
@@ -510,14 +550,34 @@ class Projects extends Component
                         // Accede al objeto TemporaryUploadedFile dentro del array
                         $file = $fileArray[0];
                         $fileExtension = $file->extension();
-                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
                         if (in_array($fileExtension, $extensionesImagen)) {
+                            $maxSize = 5 * 1024 * 1024; // 5 MB
+                            // Verificar el tamaño del archivo
+                            if ($file->getSize() > $maxSize) {
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'error',
+                                    'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                                ]);
+                                return;
+                            }
                             $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
                             $fileName = $file->getClientOriginalName();
                             $fullNewFilePath = $filePath . '/' . $fileName;
-                            // Guardar el archivo en el disco 'backlogs'
-                            $file->storeAs($filePath, $fileName, 'backlogs');
-
+                            // Procesar la imagen
+                            $image = \Intervention\Image\Facades\Image::make($file->getRealPath());
+                            // Redimensionar la imagen si es necesario
+                            $image->resize(800, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                            });
+                            // Guardar la imagen temporalmente
+                            $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                            $image->save(storage_path('app/' . $tempPath));
+                            // Guardar la imagen redimensionada en el almacenamiento local
+                            Storage::disk('backlogs')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                            // // Eliminar la imagen temporal
+                            Storage::disk('local')->delete($tempPath);
+                            // Guardar información de la imagen
                             $files = new BacklogFiles();
                             $files->backlog_id = $backlog->id;
                             $files->route = $fullNewFilePath;
@@ -530,8 +590,8 @@ class Projects extends Component
                         } else {
                             $this->dispatchBrowserEvent('swal:modal', [
                                 'type' => 'info',
-                                'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
-                                'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
+                                'title' => 'El archivo no está en formato de imagen.',
+                                'text' => 'Archivo: ' . $file->getClientOriginalName(),
                             ]);
                         }
                     }
@@ -613,14 +673,34 @@ class Projects extends Component
                         // Accede al objeto TemporaryUploadedFile dentro del array
                         $file = $fileArray[0];
                         $fileExtension = $file->extension();
-                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
                         if (in_array($fileExtension, $extensionesImagen)) {
+                            $maxSize = 5 * 1024 * 1024; // 5 MB
+                            // Verificar el tamaño del archivo
+                            if ($file->getSize() > $maxSize) {
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'error',
+                                    'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                                ]);
+                                return;
+                            }
                             $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
                             $fileName = $file->getClientOriginalName();
                             $fullNewFilePath = $filePath . '/' . $fileName;
-                            // Guardar el archivo en el disco 'backlogs'
-                            $file->storeAs($filePath, $fileName, 'backlogs');
-
+                            // Procesar la imagen
+                            $image = \Intervention\Image\Facades\Image::make($file->getRealPath());
+                            // Redimensionar la imagen si es necesario
+                            $image->resize(800, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                            });
+                            // Guardar la imagen temporalmente
+                            $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                            $image->save(storage_path('app/' . $tempPath));
+                            // Guardar la imagen redimensionada en el almacenamiento local
+                            Storage::disk('backlogs')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                            // // Eliminar la imagen temporal
+                            Storage::disk('local')->delete($tempPath);
+                            // Guardar información de la imagen
                             $files = new BacklogFiles();
                             $files->backlog_id = $backlog->id;
                             $files->route = $fullNewFilePath;
@@ -633,8 +713,8 @@ class Projects extends Component
                         } else {
                             $this->dispatchBrowserEvent('swal:modal', [
                                 'type' => 'info',
-                                'title' => 'Al menos uno de los archivos seleccionados no es una imagen.',
-                                'text' => 'Nombre del archivo: ' . $file->getClientOriginalName(),
+                                'title' => 'El archivo no está en formato de imagen.',
+                                'text' => 'Archivo: ' . $file->getClientOriginalName(),
                             ]);
                         }
                     }

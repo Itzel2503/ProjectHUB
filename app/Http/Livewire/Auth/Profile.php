@@ -52,7 +52,7 @@ class Profile extends Component
 
         if ($this->file) {
             $fileExtension = $this->file->extension();
-            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
             if (in_array($fileExtension, $extensionesImagen)) {
                 $maxSize = 5 * 1024 * 1024; // 5 MB
                 // Verificar el tamaño del archivo
@@ -85,7 +85,7 @@ class Profile extends Component
             } else {
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
-                    'title' => 'El archivo no es una imagen'
+                    'title' => 'El archivo no está en formato de imagen.'
                 ]);
                 return;
             }

@@ -49,38 +49,38 @@ class TableReports extends Component
 
         if (Auth::user()->type_user == 1) {
             $reports = Report::where('project_id', $this->project->id)
-            ->where(function ($query) {
-                $query->where('title', 'like', '%' . $this->search . '%')
-                    ->orWhere('comment', 'like', '%' . $this->search . '%')
-                    ->orWhere('state', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('delegate', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('user', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->search . '%');
-                    });
-                // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
-                if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
-                    $query->orWhereNotNull('count');
-                }
-            })
-            ->when($this->stateOrder, function ($query) {
-                $query->orderByRaw($this->stateOrder);
-            })
-            ->when($this->selectedStates, function ($query) {
-                $query->whereIn('state', $this->selectedStates);
-            }) 
-            ->when($this->selectedDelegate, function ($query) {
-                $query->where('delegate_id', $this->selectedDelegate);
-            })
-            ->when($this->priorityOrder, function ($query) {
-                $query->orderByRaw($this->priorityOrder);
-            })
-            ->when($this->datesOrder, function ($query) {
-                $query->orderBy($this->datesOrder, $this->progressOrder);
-            })
-            ->with(['user', 'delegate'])
-            ->paginate($this->perPage);
+                ->where(function ($query) {
+                    $query->where('title', 'like', '%' . $this->search . '%')
+                        ->orWhere('comment', 'like', '%' . $this->search . '%')
+                        ->orWhere('state', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('delegate', function ($subQuery) {
+                            $subQuery->where('name', 'like', '%' . $this->search . '%');
+                        })
+                        ->orWhereHas('user', function ($subQuery) {
+                            $subQuery->where('name', 'like', '%' . $this->search . '%');
+                        });
+                    // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
+                    if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
+                        $query->orWhereNotNull('count');
+                    }
+                })
+                ->when($this->stateOrder, function ($query) {
+                    $query->orderByRaw($this->stateOrder);
+                })
+                ->when($this->selectedStates, function ($query) {
+                    $query->whereIn('state', $this->selectedStates);
+                })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
+                })
+                ->when($this->priorityOrder, function ($query) {
+                    $query->orderByRaw($this->priorityOrder);
+                })
+                ->when($this->datesOrder, function ($query) {
+                    $query->orderBy($this->datesOrder, $this->progressOrder);
+                })
+                ->with(['user', 'delegate'])
+                ->paginate($this->perPage);
         } else {
             $reports = Report::where('project_id', $this->project->id)
                 ->where(function ($query) {
@@ -94,12 +94,12 @@ class TableReports extends Component
                         $query->orWhereNotNull('count');
                     }
                 })
-                ->where(function($query) use ($user_id) {
+                ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id)
                         // O incluir registros donde user_id es igual a user_id y video es true
-                        ->orWhere(function($subQuery) use ($user_id) {
+                        ->orWhere(function ($subQuery) use ($user_id) {
                             $subQuery->where('user_id', $user_id)
-                                    ->where('video', true);
+                                ->where('video', true);
                         });
                 })
                 ->when($this->stateOrder, function ($query) {
@@ -107,7 +107,7 @@ class TableReports extends Component
                 })
                 ->when($this->selectedStates, function ($query) {
                     $query->whereIn('state', $this->selectedStates);
-                }) 
+                })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
@@ -135,7 +135,7 @@ class TableReports extends Component
         }
 
         // ADD ATRIBUTES
-        foreach ($reports as $report) {    
+        foreach ($reports as $report) {
             // ACTIONS
             $report->filteredActions = $this->getFilteredActions($report->state);
             // DELEGATE
@@ -204,7 +204,7 @@ class TableReports extends Component
                     $report->progress = Carbon::now();
                     $report->look = false;
                 }
-                
+
                 $report->state = $state;
                 $report->save();
 
@@ -218,7 +218,7 @@ class TableReports extends Component
             if ($state == 'Resuelto') {
                 if ($report->evidence == true) {
                     $this->modalEvidence = true;
-                
+
                     $project = Project::find($project_id);
                     $report->project_id = $project->id;
                     $this->reportEvidence = $report;
@@ -255,7 +255,7 @@ class TableReports extends Component
         }
     }
 
-    public function updateChat($id) 
+    public function updateChat($id)
     {
         $report = Report::find($id);
         $user = Auth::user();
@@ -287,41 +287,73 @@ class TableReports extends Component
             if ($this->evidence) {
                 $now = Carbon::now();
                 $dateString = $now->format("Y-m-d H_i_s");
-                
+
                 $fileExtension = $this->evidence->extension();
-                $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
-                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                $fullNewFilePath = $filePath . '/' . $fileName;
-
-                // Verificar si la ruta existe, si no, crearla
-                if (!Storage::disk('evidence')->exists($filePath)) {
-                    Storage::disk('evidence')->makeDirectory($filePath);
-                }
-
-                // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
-                $this->evidence->storeAs($filePath, $fileName, 'evidence');
-
                 $evidence = new Evidence;
-
                 $evidence->report_id = $report->id;
-                $evidence->content = $fullNewFilePath;
 
                 $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
                 $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
                 if (in_array($fileExtension, $extensionesImagen)) {
+                    $maxSize = 5 * 1024 * 1024; // 5 MB
+                    // Verificar el tamaño del archivo
+                    if ($this->file->getSize() > $maxSize) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                        ]);
+                        return;
+                    }
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fileName = $this->evidence->getClientOriginalName();
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Procesar la imagen
+                    $image = \Intervention\Image\Facades\Image::make($this->evidence->getRealPath());
+                    // Redimensionar la imagen si es necesario
+                    $image->resize(800, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    // Guardar la imagen temporalmente
+                    $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                    $image->save(storage_path('app/' . $tempPath));
+                    // Guardar la imagen redimensionada en el almacenamiento local
+                    Storage::disk('evidence')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                    // // Eliminar la imagen temporal
+                    Storage::disk('local')->delete($tempPath);
+
                     $evidence->image = true;
                     $evidence->video = false;
                     $evidence->file = false;
                 } elseif (in_array($fileExtension, $extensionesVideo)) {
+                    $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Verificar si la ruta existe, si no, crearla
+                    if (!Storage::disk('evidence')->exists($filePath)) {
+                        Storage::disk('evidence')->makeDirectory($filePath);
+                    }
+                    // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
+                    $this->evidence->storeAs($filePath, $fileName, 'evidence');
+
                     $evidence->image = false;
                     $evidence->video = true;
                     $evidence->file = false;
                 } else {
+                    $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Verificar si la ruta existe, si no, crearla
+                    if (!Storage::disk('evidence')->exists($filePath)) {
+                        Storage::disk('evidence')->makeDirectory($filePath);
+                    }
+                    // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
+                    $this->evidence->storeAs($filePath, $fileName, 'evidence');
+
                     $evidence->image = false;
                     $evidence->video = false;
                     $evidence->file = true;
                 }
-
+                $evidence->content = $fullNewFilePath;
                 $evidence->save();
 
                 $this->dispatchBrowserEvent('swal:modal', [
@@ -332,7 +364,6 @@ class TableReports extends Component
                 $report->state = 'Resuelto';
                 $report->repeat = true;
                 $report->save();
-
                 $this->modalEvidence = false;
             } else {
                 $this->dispatchBrowserEvent('swal:modal', [
@@ -350,35 +381,75 @@ class TableReports extends Component
 
         if ($report) {
             if ($this->file) {
-                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                $fileName = $this->file->getClientOriginalName();
-                $fullNewFilePath = $filePath . '/' . $fileName;
-
-                // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-                if ($report->content && Storage::disk('reports')->exists($report->content)) {
-                    $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
-
-                    if ($existingFilePath == $filePath) {
-                        Storage::disk('reports')->delete($report->content);
-                    }
-                }
-
-                // Guardar el archivo en el disco 'reports'
-                $this->file->storeAs($filePath, $fileName, 'reports');
-
                 $extension = $this->file->extension();
                 $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
                 $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
 
                 if (in_array($extension, $extensionesImagen)) {
+                    $maxSize = 5 * 1024 * 1024; // 5 MB
+                    // Verificar el tamaño del archivo
+                    if ($this->file->getSize() > $maxSize) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                        ]);
+                        return;
+                    }
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fileName = $this->file->getClientOriginalName();
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Procesar la imagen
+                    $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
+                    // Redimensionar la imagen si es necesario
+                    $image->resize(800, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    // Guardar la imagen temporalmente
+                    $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                    $image->save(storage_path('app/' . $tempPath));
+                    // Eliminar imagen anterior
+                    if (Storage::disk('reports')->exists($report->content)) {
+                        Storage::disk('reports')->delete($report->content);
+                    }
+                    // Guardar la imagen redimensionada en el almacenamiento local
+                    Storage::disk('reports')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                    // // Eliminar la imagen temporal
+                    Storage::disk('local')->delete($tempPath);
+
                     $report->image = true;
                     $report->video = false;
                     $report->file = false;
                 } elseif (in_array($extension, $extensionesVideo)) {
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fileName = $this->file->getClientOriginalName();
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
+                    if ($report->content && Storage::disk('reports')->exists($report->content)) {
+                        $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
+                        if ($existingFilePath == $filePath) {
+                            Storage::disk('reports')->delete($report->content);
+                        }
+                    }
+                    // Guardar el archivo en el disco 'reports'
+                    $this->file->storeAs($filePath, $fileName, 'reports');
+
                     $report->image = false;
                     $report->video = true;
                     $report->file = false;
                 } else {
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fileName = $this->file->getClientOriginalName();
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
+                    if ($report->content && Storage::disk('reports')->exists($report->content)) {
+                        $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
+                        if ($existingFilePath == $filePath) {
+                            Storage::disk('reports')->delete($report->content);
+                        }
+                    }
+                    // Guardar el archivo en el disco 'reports'
+                    $this->file->storeAs($filePath, $fileName, 'reports');
+
                     $report->image = false;
                     $report->video = false;
                     $report->file = true;
@@ -389,7 +460,7 @@ class TableReports extends Component
             $report->comment = $this->comment;
             $report->expected_date = $this->expected_date;
             $report->save();
-            
+
             $this->modalEdit = false;
 
             $this->dispatchBrowserEvent('swal:modal', [
@@ -408,7 +479,7 @@ class TableReports extends Component
             if ($report->content) {
                 $contentPath = 'reportes/' . $report->content;
                 $fullPath = public_path($contentPath);
-                
+
                 if (File::exists($fullPath)) {
                     File::delete($fullPath);
                 }
@@ -453,15 +524,15 @@ class TableReports extends Component
             $lastMessage->look = true;
             $lastMessage->save();
         }
-        
-        if($this->messages) {
+
+        if ($this->messages) {
             $this->showChat = true;
             $this->messages->messages_count = $this->messages->where('look', false)->count();
         }
 
         if ($this->evidenceShow) {
             $this->showEvidence = true;
-        } 
+        }
 
         $user = Auth::user();
 
@@ -557,7 +628,6 @@ class TableReports extends Component
         }
 
         $this->Filtered = true;
-        
     }
 
     public function orderByLow($type)
@@ -616,23 +686,23 @@ class TableReports extends Component
         if ($currentState == 'Conflicto') {
             return ['Resuelto'];
         }
-    
+
         if ($currentState == 'Resuelto') {
             return [];
         }
-    
+
         if ($currentState == 'Proceso') {
             return array_filter($actions, function ($action) {
                 return !in_array($action, ['Abierto', 'Proceso']);
             });
         }
-    
+
         // En cualquier otro caso, elimina el estado actual del arreglo
         return array_filter($actions, function ($action) use ($currentState) {
             return $action != $currentState;
         });
     }
-    
+
     public function reloadPage()
     {
         $this->reset();

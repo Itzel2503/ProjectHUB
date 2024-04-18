@@ -17,7 +17,7 @@ class TableCustomers extends Component
     public $showUpdate = false, $showDelete = false, $showRestore = false;
     // table, action's user
     public $search, $customerEdit, $customerDelete, $customerRestore;
-    public $perPage = '10';
+    public $perPage = '';
     public $rules = [];
     // inputs
     public $name;
