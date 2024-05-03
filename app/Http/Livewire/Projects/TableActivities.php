@@ -956,12 +956,12 @@ class TableActivities extends Component
 
     public function updateChat($id)
     {
-        $report = Activity::find($id);
+        $activity = Activity::find($id);
         $user = Auth::user();
 
-        if ($report) {
+        if ($activity) {
             $chat = new ChatReports();
-            $chat->activity_id = $report->id;
+            $chat->activity_id = $activity->id;
             $chat->user_id = $user->id;
             $chat->message = $this->message;
             $chat->look = false;
