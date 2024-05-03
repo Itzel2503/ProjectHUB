@@ -541,6 +541,19 @@ class TableReports extends Component
             $this->reportShow->look = true;
             $this->reportShow->save();
         }
+
+        // Verificar si el archivo existe en la base de datos
+        if ($this->reportShow && $this->reportShow->content) {
+            // Verificar si el archivo existe en la carpeta
+            $filePath = public_path('reportes/' . $this->reportShow->content);
+            if (file_exists($filePath)) {
+                $this->reportShow->contentExists = true;
+            } else {
+                $this->reportShow->contentExists = false;
+            }
+        } else {
+            $this->reportShow->contentExists = false;
+        }
     }
 
     public function showEdit($id)
