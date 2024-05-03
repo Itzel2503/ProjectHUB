@@ -44,7 +44,7 @@ class TableActivities extends Component
     public $modalCreateActivity = false, $modalShowActivity = false;
     public $showUpdateActivity = false, $showActivity = false, $showChat = false;
     public $activityShow, $messages, $activityEdit, $moveActivity;
-    public $tittle, $file, $description, $delegate, $expected_date, $priority1, $priority2, $priority3;
+    public $tittle, $file, $description, $delegate, $expected_date, $priority1, $priority2, $priority3, $message;
 
     // table, action's activities
     public $search;
@@ -951,6 +951,29 @@ class TableActivities extends Component
             $this->priority2 = true;
         } elseif ($value === 'Bajo') {
             $this->priority3 = true;
+        }
+    }
+
+    public function updateChat($id)
+    {
+        $report = Activity::find($id);
+        $user = Auth::user();
+
+        if ($report) {
+            $chat = new ChatReports();
+            $chat->activity_id = $report->id;
+            $chat->user_id = $user->id;
+            $chat->message = $this->message;
+            $chat->look = false;
+            $chat->save();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Mensaje enviado',
+            ]);
+
+            $this->message = '';
+            $this->modalShowActivity = false;
         }
     }
 
