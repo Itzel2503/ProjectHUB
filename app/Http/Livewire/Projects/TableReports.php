@@ -297,7 +297,7 @@ class TableReports extends Component
                 if (in_array($fileExtension, $extensionesImagen)) {
                     $maxSize = 5 * 1024 * 1024; // 5 MB
                     // Verificar el tamaño del archivo
-                    if ($this->file->getSize() > $maxSize) {
+                    if ($this->evidence->getSize() > $maxSize) {
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'error',
                             'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
