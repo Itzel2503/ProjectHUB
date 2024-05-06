@@ -141,10 +141,16 @@
                         <tr class="trTable">
                             <td class="relative px-4 py-2">
                                 <div wire:click="showActivity({{ $activity->id }})"
-                                    class="flex cursor-pointer flex-col items-center text-center justify-center">
-                                    <p class="text-justify text-xs font-semibold">
-                                        Proyecto: {{ optional($activity->sprint)->backlog->project->name }}
-                                    </p>
+                                    class="flex cursor-pointer flex-col items-center justify-center text-center">
+                                    @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
+                                        <p class="text-justify text-xs font-semibold">
+                                            Proyecto: {{ $activity->sprint->backlog->project->name }}
+                                        </p>
+                                    @else
+                                        <p class="text-justify text-xs font-semibold">
+                                            Proyecto no disponible
+                                        </p>
+                                    @endif
                                     <p class="mb-2 text-justify text-xs font-semibold">{{ $activity->tittle }}</p>
                                     @if (!empty($activity->image))
                                         <div class="h-22 relative w-auto px-3 pt-2">
