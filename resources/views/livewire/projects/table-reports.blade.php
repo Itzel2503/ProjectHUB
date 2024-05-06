@@ -298,7 +298,7 @@
                     @foreach ($reports as $report)
                         <tr class="trTable">
                             <td class="px-4 py-2 relative">
-                                <div wire:click="showActivity({{ $report->id }})"
+                                <div wire:click="showReport({{ $report->id }})"
                                     class="flex cursor-pointer flex-col items-center text-center">
                                     <p class="mb-2 text-justify text-xs font-semibold">{{ $report->tittle }}</p>
                                     @if (!empty($report->content))
