@@ -31,8 +31,7 @@
                     <label for="password" value="{{ __('Password') }}"
                         class="ml-3 peer-focus:font-medium absolute text-sm text-gray-500  duration-300 transform -translate-y-8 scale-75 top-3 z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-500 peer-focus: peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8">Contraseña</label>
                     <div id="noViewPassword"
-                        class="hidden absolute inset-y-0 right-0 flex items-center text-sm leading-5 cursor-pointer"
-                        style="padding-right: .25vw">
+                        class="hidden absolute inset-y-0 right-0 flex items-center text-sm leading-5 cursor-pointer mr-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-off text-secondary" width="24"
                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -45,8 +44,7 @@
                         </svg>
                     </div>
                     <div id="viewPassword"
-                        class="absolute inset-y-0 right-0 flex items-center text-sm leading-5 cursor-pointer"
-                        style="padding-right: .25vw">
+                        class="absolute inset-y-0 right-0 flex items-center text-sm leading-5 cursor-pointer mr-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye text-secondary" width="24"
                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                             stroke-linecap="round" stroke-linejoin="round">

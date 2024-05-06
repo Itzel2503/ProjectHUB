@@ -870,11 +870,15 @@
                                                 alt="Activity Image">
                                         </div>
                                     @else
-                                        <div class="md-3/4 mb-5 mt-3 flex w-full justify-center items-center flex-col">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-photo-off">
+                                        <div class="md-3/4 mb-5 mt-3 flex w-full flex-col items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-photo-off">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                 <path d="M15 8h.01" />
-                                                <path d="M7 3h11a3 3 0 0 1 3 3v11m-.856 3.099a2.991 2.991 0 0 1 -2.144 .901h-12a3 3 0 0 1 -3 -3v-12c0 -.845 .349 -1.608 .91 -2.153" />
+                                                <path
+                                                    d="M7 3h11a3 3 0 0 1 3 3v11m-.856 3.099a2.991 2.991 0 0 1 -2.144 .901h-12a3 3 0 0 1 -3 -3v-12c0 -.845 .349 -1.608 .91 -2.153" />
                                                 <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" />
                                                 <path d="M16.33 12.338c.574 -.054 1.155 .166 1.67 .662l3 3" />
                                                 <path d="M3 3l18 18" />
@@ -910,111 +914,52 @@
                             @endif
                         </div>
                     </div>
+                @endif
             </div>
-            @endif
         </div>
     </div>
-</div>
-{{-- END MODAL SHOW ACTIVITY --}}
-{{-- MODAL EDIT / CREATE ACTIVITY --}}
-<div
-    class="@if ($modalCreateActivity) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+    {{-- END MODAL SHOW ACTIVITY --}}
+    {{-- MODAL EDIT / CREATE ACTIVITY --}}
     <div
-        class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
-    </div>
-    <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
-        <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
-            <div class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
-                @if ($showUpdateActivity)
-                    <h3
-                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                        Editar actividad</h3>
-                @else
-                    <h3
-                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                        Crear actividad</h3>
-                @endif
-                <svg wire:click="modalCreateActivity()" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
-                    xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
-                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M18 6l-12 12"></path>
-                    <path d="M6 6l12 12"></path>
-                </svg>
-            </div>
-            <div class="modalBody">
-                <div class="md-3/4 mb-5 mt-5 flex w-full flex-col">
-                    <div class="-mx-3 mb-6 flex flex-row">
-                        <div class="mb-6 flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="tittle">
-                                Titulo<p class="text-red-600">*</p>
-                            </h5>
-                            <input wire:model='tittle' required type="text" placeholder="Título" name="tittle"
-                                id="tittle" class="inputs">
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('tittle')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mb-6 flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="file">
-                                Imagen
-                            </h5>
-                            <input wire:model='file' required type="file" name="file" id="file"
-                                class="inputs">
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('file')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="-mx-3 mb-6">
-                        <div class="mb-6 flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="description">
-                                Descripción
-                            </h5>
-                            <textarea wire:model='description' type="text" rows="10"
-                                placeholder="Describa la observación y especifique el objetivo a cumplir." name="description" id="description"
-                                class="inputs"></textarea>
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('description')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="-mx-3 mb-6 flex flex-row">
-                        @if ($showUpdateActivity)
-                            <div
-                                class="@if ($showUpdateActivity) @else hidden @endif mb-6 flex w-full flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="delegate">
-                                    Mover a sprint
+        class="@if ($modalCreateActivity) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+        <div
+            class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+        </div>
+        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
+            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+                <div
+                    class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
+                    @if ($showUpdateActivity)
+                        <h3
+                            class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                            Editar actividad</h3>
+                    @else
+                        <h3
+                            class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                            Crear actividad</h3>
+                    @endif
+                    <svg wire:click="modalCreateActivity()"
+                        class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div class="modalBody">
+                    <div class="md-3/4 mb-5 mt-5 flex w-full flex-col">
+                        <div class="-mx-3 mb-6 flex flex-row">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="tittle">
+                                    Titulo<p class="text-red-600">*</p>
                                 </h5>
-                                <select wire:model="moveActivity" class="inputs">
-                                    @foreach ($sprints as $sprint)
-                                        <option value="{{ $sprint->id }}">{{ $sprint->number }} -
-                                            {{ $sprint->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <input wire:model='tittle' required type="text" placeholder="Título"
+                                    name="tittle" id="tittle" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
-                                        @error('moveActivity')
+                                        @error('tittle')
                                             <span class="pl-2 text-xs italic text-red-600">
                                                 {{ $message }}
                                             </span>
@@ -1022,23 +967,15 @@
                                     </span>
                                 </div>
                             </div>
-                        @else
-                            <div
-                                class="@if ($showUpdateActivity) hidden @else @endif mb-6 flex w-full flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="delegate">
-                                    Delegar<p class="text-red-600">*</p>
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="file">
+                                    Imagen
                                 </h5>
-                                <select wire:model='delegate' required name="delegate" id="delegate"
+                                <input wire:model='file' required type="file" name="file" id="file"
                                     class="inputs">
-                                    <option selected>Selecciona...</option>
-                                    @foreach ($allUsers as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}
-                                            {{ $user->lastname }}</option>
-                                    @endforeach
-                                </select>
                                 <div>
                                     <span class="text-xs italic text-red-600">
-                                        @error('delegate')
+                                        @error('file')
                                             <span class="pl-2 text-xs italic text-red-600">
                                                 {{ $message }}
                                             </span>
@@ -1046,169 +983,238 @@
                                     </span>
                                 </div>
                             </div>
-                        @endif
-                        <div class="mb-6 flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="expected_date">
-                                Fecha de entrega<p class="text-red-600">*</p>
-                            </h5>
-                            <input wire:model='expected_date' required type="date" name="expected_date"
-                                id="expected_date" class="inputs">
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('expected_date')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="description">
+                                    Descripción
+                                </h5>
+                                <textarea wire:model='description' type="text" rows="10"
+                                    placeholder="Describa la observación y especifique el objetivo a cumplir." name="description" id="description"
+                                    class="inputs"></textarea>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('description')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="-mx-3 mb-6">
-                        <div class="flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="priority">
-                                Prioridad
-                            </h5>
-                            <div class="flex justify-center gap-20">
-                                <div class="flex flex-col items-center">
-                                    <input type="checkbox" wire:model="priority1"
-                                        wire:change="selectPriority($event.target.value)" value="Alto"
-                                        class="priority-checkbox border-red-600 bg-red-600"
-                                        style="height: 24px; width: 24px; accent-color: #dd4231;" />
-                                    <label for="priority1" class="mt-2">Alto</label>
+                        <div class="-mx-3 mb-6 flex flex-row">
+                            @if ($showUpdateActivity)
+                                <div
+                                    class="@if ($showUpdateActivity) @else hidden @endif mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="delegate">
+                                        Mover a sprint
+                                    </h5>
+                                    <select wire:model="moveActivity" class="inputs">
+                                        @foreach ($sprints as $sprint)
+                                            <option value="{{ $sprint->id }}">{{ $sprint->number }} -
+                                                {{ $sprint->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div>
+                                        <span class="text-xs italic text-red-600">
+                                            @error('moveActivity')
+                                                <span class="pl-2 text-xs italic text-red-600">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="flex flex-col items-center">
-                                    <input type="checkbox" wire:model="priority2"
-                                        wire:change="selectPriority($event.target.value)" value="Medio"
-                                        class="priority-checkbox border-yellow-400 bg-yellow-400"
-                                        style="height: 24px; width: 24px; accent-color: #f6c03e;" />
-                                    <label for="priority2" class="mt-2">Medio</label>
+                            @else
+                                <div
+                                    class="@if ($showUpdateActivity) hidden @else @endif mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="delegate">
+                                        Delegar<p class="text-red-600">*</p>
+                                    </h5>
+                                    <select wire:model='delegate' required name="delegate" id="delegate"
+                                        class="inputs">
+                                        <option selected>Selecciona...</option>
+                                        @foreach ($allUsers as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }}
+                                                {{ $user->lastname }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div>
+                                        <span class="text-xs italic text-red-600">
+                                            @error('delegate')
+                                                <span class="pl-2 text-xs italic text-red-600">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="flex flex-col items-center">
-                                    <input type="checkbox" wire:model="priority3"
-                                        wire:change="selectPriority($event.target.value)" value="Bajo"
-                                        class="priority-checkbox border-secondary bg-secondary"
-                                        style="height: 24px; width: 24px; accent-color: #0062cc;" />
-                                    <label for="priority3" class="mt-2">Bajo</label>
+                            @endif
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="expected_date">
+                                    Fecha de entrega<p class="text-red-600">*</p>
+                                </h5>
+                                <input wire:model='expected_date' required type="date" name="expected_date"
+                                    id="expected_date" class="inputs">
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('expected_date')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
                                 </div>
                             </div>
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('priority')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="priority">
+                                    Prioridad
+                                </h5>
+                                <div class="flex justify-center gap-20">
+                                    <div class="flex flex-col items-center">
+                                        <input type="checkbox" wire:model="priority1"
+                                            wire:change="selectPriority($event.target.value)" value="Alto"
+                                            class="priority-checkbox border-red-600 bg-red-600"
+                                            style="height: 24px; width: 24px; accent-color: #dd4231;" />
+                                        <label for="priority1" class="mt-2">Alto</label>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <input type="checkbox" wire:model="priority2"
+                                            wire:change="selectPriority($event.target.value)" value="Medio"
+                                            class="priority-checkbox border-yellow-400 bg-yellow-400"
+                                            style="height: 24px; width: 24px; accent-color: #f6c03e;" />
+                                        <label for="priority2" class="mt-2">Medio</label>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <input type="checkbox" wire:model="priority3"
+                                            wire:change="selectPriority($event.target.value)" value="Bajo"
+                                            class="priority-checkbox border-secondary bg-secondary"
+                                            style="height: 24px; width: 24px; accent-color: #0062cc;" />
+                                        <label for="priority3" class="mt-2">Bajo</label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('priority')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modalFooter">
-                @if ($showUpdateActivity)
-                    <button class="btnSave" wire:click="updateActivity({{ $activityEdit->id }})"> Guardar </button>
-                @else
-                    <button class="btnSave" wire:click="createActivity()">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                            <path d="M14 4l0 4l-6 0l0 -4" />
-                        </svg>
-                        Guardar
-                    </button>
-                @endif
+                <div class="modalFooter">
+                    @if ($showUpdateActivity)
+                        <button class="btnSave" wire:click="updateActivity({{ $activityEdit->id }})"> Guardar
+                        </button>
+                    @else
+                        <button class="btnSave" wire:click="createActivity()">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M14 4l0 4l-6 0l0 -4" />
+                            </svg>
+                            Guardar
+                        </button>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
-</div>
-{{-- END MODAL EDIT / CREATE ACTIVITY --}}
-{{-- LOADING PAGE --}}
-<div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-    wire:target="modalCreateSprint, showEditSprint, modalBacklog, modalCreateActivity, orderByLowDates, orderByHighDates, showActivity, showEditActivity, modalBacklog, modalCreateSprint, updateSprint, createSprint, modalShowActivity, modalShowActivity, updateChat, modalCreateActivity, updateActivity, createActivity">
-    <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
-    <div class="loadingspinner relative top-1/3 z-20">
-        <div id="square1"></div>
-        <div id="square2"></div>
-        <div id="square3"></div>
-        <div id="square4"></div>
-        <div id="square5"></div>
+    {{-- END MODAL EDIT / CREATE ACTIVITY --}}
+    {{-- LOADING PAGE --}}
+    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
+        wire:target="modalCreateSprint, showEditSprint, modalBacklog, modalCreateActivity, orderByLowDates, orderByHighDates, showActivity, showEditActivity, modalBacklog, modalCreateSprint, updateSprint, createSprint, modalShowActivity, modalShowActivity, updateChat, modalCreateActivity, updateActivity, createActivity">
+        <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
+        <div class="loadingspinner relative top-1/3 z-20">
+            <div id="square1"></div>
+            <div id="square2"></div>
+            <div id="square3"></div>
+            <div id="square4"></div>
+            <div id="square5"></div>
+        </div>
     </div>
-</div>
-{{-- END LOADING PAGE --}}
-@push('js')
-    <script>
-        // DROPDOWN
-        function toggleDropdown(activityId) {
-            var panel = document.getElementById('dropdown-panel-' + activityId);
-            if (panel.style.display === 'none') {
-                // Oculta todos los paneles de dropdown
-                var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
-                allPanels.forEach(function(panel) {
+    {{-- END LOADING PAGE --}}
+    @push('js')
+        <script>
+            // DROPDOWN
+            function toggleDropdown(activityId) {
+                var panel = document.getElementById('dropdown-panel-' + activityId);
+                if (panel.style.display === 'none') {
+                    // Oculta todos los paneles de dropdown
+                    var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
+                    allPanels.forEach(function(panel) {
+                        panel.style.display = 'none';
+                    });
+
+                    panel.style.display = 'block';
+                } else {
                     panel.style.display = 'none';
-                });
-
-                panel.style.display = 'block';
-            } else {
-                panel.style.display = 'none';
+                }
             }
-        }
 
-        window.addEventListener('file-reset', () => {
-            document.getElementById('file').value = null;
-        });
-        // MODALS
-        window.addEventListener('swal:modal', event => {
-            toastr[event.detail.type](event.detail.text, event.detail.title);
-        });
+            window.addEventListener('file-reset', () => {
+                document.getElementById('file').value = null;
+            });
+            // MODALS
+            window.addEventListener('swal:modal', event => {
+                toastr[event.detail.type](event.detail.text, event.detail.title);
+            });
 
-        Livewire.on('deleteActivity', deletebyId => {
-            Swal.fire({
-                title: '¿Seguro que deseas eliminar este elemento?',
-                text: "Esta acción es irreversible",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#202a33',
-                cancelButtonColor: '#ef4444',
-                confirmButtonText: 'Eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.livewire.emit('destroyActivity', deletebyId);
-                    // Swal.fire(
-                    //   '¡Eliminado!',
-                    //   'Tu elemento ha sido eliminado.',
-                    //   'Exito'
-                    // )
-                }
-            })
-        });
+            Livewire.on('deleteActivity', deletebyId => {
+                Swal.fire({
+                    title: '¿Seguro que deseas eliminar este elemento?',
+                    text: "Esta acción es irreversible",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#202a33',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.livewire.emit('destroyActivity', deletebyId);
+                        // Swal.fire(
+                        //   '¡Eliminado!',
+                        //   'Tu elemento ha sido eliminado.',
+                        //   'Exito'
+                        // )
+                    }
+                })
+            });
 
-        Livewire.on('deleteSprint', deletebyId => {
-            Swal.fire({
-                title: '¿Seguro que deseas eliminar este elemento?',
-                text: "Esta acción es irreversible",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#202a33',
-                cancelButtonColor: '#ef4444',
-                confirmButtonText: 'Eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.livewire.emit('destroySprint', deletebyId);
-                    Swal.fire(
-                        '¡Eliminado!',
-                        'Sprint eliminado',
-                        'Exito'
-                    )
-                }
-            })
-        });
-    </script>
-@endpush
+            Livewire.on('deleteSprint', deletebyId => {
+                Swal.fire({
+                    title: '¿Seguro que deseas eliminar este elemento?',
+                    text: "Esta acción es irreversible",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#202a33',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.livewire.emit('destroySprint', deletebyId);
+                        Swal.fire(
+                            '¡Eliminado!',
+                            'Sprint eliminado',
+                            'Exito'
+                        )
+                    }
+                })
+            });
+        </script>
+    @endpush
 </div>

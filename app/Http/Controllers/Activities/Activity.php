@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Projects;
+namespace App\Http\Controllers\Activities;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,21 +13,10 @@ class Activity extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($project_id)
+    public function index()
     {
         if (Auth::check()) {
-            $project = Project::with('backlog.sprints')->find($project_id);
-            
-            if ($project) {
-                $backlog = $project->backlog;
-                if ($backlog) {
-                    return view('projects.activities', compact('project', 'backlog'));
-                } else {
-                    return redirect('/projects');
-                }
-            } else {
-                return redirect('/projects');
-            }
+            return view('activities.activities');
         } else {
             return redirect('/login');
         }

@@ -756,18 +756,6 @@ class TableActivities extends Component
         }
 
         $this->activityShow = Activity::find($id);
-        // Verificar si el archivo existe en la base de datos
-        if ($this->activityShow && $this->activityShow->image) {
-            // Verificar si el archivo existe en la carpeta
-            $filePath = public_path('activities/' . $this->activityShow->image);
-            if (file_exists($filePath)) {
-                $this->activityShow->imageExists = true;
-            } else {
-                $this->activityShow->imageExists = false;
-            }
-        } else {
-            $this->activityShow->imageExists = false;
-        }
 
         $this->messages = ChatReports::where('activity_id', $this->activityShow->id)->get();
         // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
@@ -790,6 +778,19 @@ class TableActivities extends Component
             $this->activityShow->progress = Carbon::now();
             $this->activityShow->look = true;
             $this->activityShow->save();
+        }
+
+        // Verificar si el archivo existe en la base de datos
+        if ($this->activityShow && $this->activityShow->image) {
+            // Verificar si el archivo existe en la carpeta
+            $filePath = public_path('activities/' . $this->activityShow->image);
+            if (file_exists($filePath)) {
+                $this->activityShow->imageExists = true;
+            } else {
+                $this->activityShow->imageExists = false;
+            }
+        } else {
+            $this->activityShow->imageExists = false;
         }
     }
 

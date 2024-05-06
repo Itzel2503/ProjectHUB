@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Activities\Activity as ActivitiesActivity;
 use App\Http\Controllers\Projects\Activity;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Customers\Customer;
@@ -30,23 +31,21 @@ Route::get('/', function () {
 
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['web', 'auth'])->group(function () {
-    // USER
+    // PROFILE
     Route::resource('/profile', ProfileController::class)->only(['index']);
-
     // USERS
     Route::resource('/userCatalog', UserCatalog::class)->only(['index'])->middleware('user.type:1');
-
     // CUSTOMERS
     Route::resource('/customers', Customer::class)->middleware('user.type:1');
-
     // PROJECTS
     Route::resource('/projects', Project::class)->only(['index']);
     Route::resource('projects.reports', Report::class);
     Route::resource('projects.activities', Activity::class)->only(['index']);
-    
+    // ACTIVITIES
+    Route::resource('/all-activities', ActivitiesActivity::class)->only(['index']);
+
     // PERMITS
     Route::resource('/permits', Permit::class);
 });
-
 // Rutas de autenticación generadas por Auth::routes();
 Auth::routes();
