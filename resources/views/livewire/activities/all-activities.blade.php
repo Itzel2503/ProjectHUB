@@ -143,7 +143,7 @@
                                 <div wire:click="showActivity({{ $activity->id }})"
                                     class="flex cursor-pointer flex-col items-center text-center justify-center">
                                     <p class="text-justify text-xs font-semibold">
-                                        Proyecto: {{ $activity->sprint->backlog->project->name }}
+                                        Proyecto: {{ optional($activity->sprint)->backlog->project->name }}
                                     </p>
                                     <p class="mb-2 text-justify text-xs font-semibold">{{ $activity->tittle }}</p>
                                     @if (!empty($activity->image))
