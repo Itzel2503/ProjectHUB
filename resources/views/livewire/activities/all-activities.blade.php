@@ -143,8 +143,9 @@
                                 <div wire:click="showActivity({{ $activity->id }})"
                                     class="flex cursor-pointer flex-col items-center justify-center text-center">
                                     @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
-                                        <p class="text-justify text-xs font-semibold">
-                                            Proyecto: {{ $activity->sprint->backlog->project->name }}
+                                        <p class="text-justify text-xs mb-2">
+                                            <span class="inline-block font-semibold">Proyecto:</span>
+                                            {{ $activity->sprint->backlog->project->name }}
                                         </p>
                                     @else
                                         <p class="text-justify text-xs font-semibold">
