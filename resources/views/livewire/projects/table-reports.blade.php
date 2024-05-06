@@ -297,12 +297,12 @@
                 <tbody>
                     @foreach ($reports as $report)
                         <tr class="trTable">
-                            <td class="relative px-4 py-2">
-                                <div wire:click="showReport({{ $report->id }})"
+                            <td class="px-4 py-2 relative">
+                                <div wire:click="showActivity({{ $report->id }})"
                                     class="flex cursor-pointer flex-col items-center text-center">
-                                    <p class="mb-2 text-justify text-xs font-semibold">{{ $report->title }}</p>
-                                    <div class="h-22 w-auto px-3 pt-2">
-                                        @if (!empty($report->content))
+                                    <p class="mb-2 text-justify text-xs font-semibold">{{ $report->tittle }}</p>
+                                    @if (!empty($report->content))
+                                        <div class="h-22 w-auto px-3 pt-2">
                                             @if ($report->image == true)
                                                 <img src="{{ asset('reportes/' . $report->content) }}"
                                                     alt="Report Image" class="mx-auto h-16 w-20 object-cover">
@@ -321,12 +321,12 @@
                                                 <img src="https://static.vecteezy.com/system/resources/previews/007/678/851/non_2x/documents-line-icon-vector.jpg"
                                                     alt="Report Image" class="mx-auto h-20 w-20 object-cover">
                                             @endif
-                                        @else
-                                            <p class=""></p>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @else
+                                        <p class=""></p>
+                                    @endif
                                     @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
-                                        <div class="absolute right-0 top-0 mr-2 mt-2">
+                                        <div class="absolute right-0 top-0">
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                 class="icon icon-tabler icon-tabler-circle-filled text-red-600"
                                                 width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
@@ -339,10 +339,10 @@
                                             </svg>
                                         </div>
                                     @endif
-                                </div>
-                                <div
-                                    class="@if ($report->priority == 'Alto') bg-red-500 text-white @endif @if ($report->priority == 'Medio') bg-yellow-400 @endif @if ($report->priority == 'Bajo') bg-blue-500 text-white @endif my-2 w-auto rounded-md px-3 text-center font-semibold">
-                                    {{ $report->priority }}
+                                    <div
+                                        class="@if ($report->priority == 'Alto') bg-red-500 text-white @endif @if ($report->priority == 'Medio') bg-yellow-400 @endif @if ($report->priority == 'Bajo') bg-blue-500 text-white @endif my-2 w-auto rounded-md px-3 text-center font-semibold">
+                                        {{ $report->priority }}
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-4 py-2">
