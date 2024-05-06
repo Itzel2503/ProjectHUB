@@ -135,7 +135,7 @@ class AllActivities extends Component
             $activity->messages_count = $messages->where('look', false)->count();
         }
         
-        return view('livewire.Activities.all-activities', [
+        return view('livewire.activities.all-activities', [
             'activities' => $activities,
         ]);
     }
