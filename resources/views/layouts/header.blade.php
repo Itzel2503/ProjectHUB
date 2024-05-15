@@ -174,22 +174,22 @@
                             <span class="ml-4">Proyectos</span>
                         </a>
                     </li>
-                    <li class="menu {{ request()->routeIs('all-activities.index') ? 'active' : '' }}">
+                    <li class="menu {{ request()->routeIs('activities-reports.index') ? 'active' : '' }}">
                         @yield('all-activities')
                         <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
-                            href="{{ route('all-activities.index') }}">
+                            href="{{ route('activities-reports.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round"
-                                class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-list-search">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                <path d="M3 6l0 13" />
-                                <path d="M12 6l0 13" />
-                                <path d="M21 6l0 13" />
+                                <path d="M15 15m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                <path d="M18.5 18.5l2.5 2.5" />
+                                <path d="M4 6h16" />
+                                <path d="M4 12h4" />
+                                <path d="M4 18h4" />
                             </svg>
-                            <span class="ml-4">Actividades</span>
+                            <span class="ml-4">Actividades / Reportes</span>
                         </a>
                     </li>
                     {{-- <li class="menu">
@@ -392,6 +392,24 @@
                                 <path d="M16 16l3.923 -.98" />
                             </svg>
                             <span class="ml-4">Proyectos</span>
+                        </a>
+                    </li>
+                    <li class="menu">
+                        @yield('activities-reports')
+                        <a class="@yield('black5') inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            href="{{ route('activities-reports.index') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-list-search">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M15 15m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                <path d="M18.5 18.5l2.5 2.5" />
+                                <path d="M4 6h16" />
+                                <path d="M4 12h4" />
+                                <path d="M4 18h4" />
+                            </svg>
+                            <span class="ml-4">Actividades / Reportes</span>
                         </a>
                     </li>
                     {{-- <li class="menu">

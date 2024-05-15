@@ -297,7 +297,7 @@
                 <tbody>
                     @foreach ($reports as $report)
                         <tr class="trTable">
-                            <td class="px-4 py-2 relative">
+                            <td class="relative px-4 py-2">
                                 <div wire:click="showReport({{ $report->id }})"
                                     class="flex cursor-pointer flex-col items-center text-center">
                                     <p class="mb-2 text-justify text-xs font-semibold">{{ $report->title }}</p>
@@ -537,7 +537,6 @@
                         </svg>
                     </div>
                 @endif
-
                 @if ($showReport)
                     <div class="flex flex-col items-stretch overflow-y-auto bg-white px-6 py-2 text-sm lg:flex-row">
                         <div
@@ -656,33 +655,33 @@
                                             <p>Sin contenido</p>
                                         </div>
                                     @endif
-                                @else
-                                    <div class="my-5 w-full text-center text-lg">
-                                        <p class="text-red my-5">Sin archivo</p>
-                                    </div>
-                            @endif
-                            @if ($reportShow->image == true || $reportShow->video == true || $reportShow->file == true)
-                                <div class="flex items-center justify-center">
-                                    <a href="{{ asset('reportes/' . $reportShow->content) }}"
-                                        download="{{ basename($reportShow->content) }}" class="btnSecondary"
-                                        style="color: white;">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-download" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                                            <path d="M7 11l5 5l5 -5" />
-                                            <path d="M12 4l0 12" />
-                                        </svg>
-                                        &nbsp;
-                                        Descargar
-                                    </a>
+                                    @if ($reportShow->image == true || $reportShow->video == true || $reportShow->file == true)
+                                        <div class="flex items-center justify-center">
+                                            <a href="{{ asset('reportes/' . $reportShow->content) }}"
+                                                download="{{ basename($reportShow->content) }}" class="btnSecondary"
+                                                style="color: white;">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon icon-tabler icon-tabler-download" width="24"
+                                                    height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                                    stroke="currentColor" fill="none" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                                    <path d="M7 11l5 5l5 -5" />
+                                                    <path d="M12 4l0 12" />
+                                                </svg>
+                                                &nbsp;
+                                                Descargar
+                                            </a>
+                                        </div>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="my-5 w-full text-center text-lg">
+                                    <p class="text-red my-5">Sin archivo</p>
                                 </div>
                             @endif
                         </div>
-
                         <div id="evidence" class="hidden">
                             @if ($evidenceShow)
                                 <div class="flex flex-col">
@@ -706,7 +705,6 @@
                                             </svg> &nbsp; Evidencia
                                         </div>
                                     </div>
-
                                     @if (!empty($evidenceShow->content))
                                         @if ($evidenceShow->image == true)
                                             <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
@@ -755,62 +753,46 @@
                             @endif
                         </div>
                     </div>
+                @endif
             </div>
-            @endif
         </div>
     </div>
-</div>
-{{-- END MODAL SHOW --}}
-{{-- MODAL EDIT / CREATE REPORT --}}
-<div
-    class="@if ($modalEdit) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+    {{-- END MODAL SHOW --}}
+    {{-- MODAL EDIT / CREATE REPORT --}}
     <div
-        class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
-    </div>
-    <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
-        <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
-            <div class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
-                <h3
-                    class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                    Editar reporte</h3>
-                <svg wire:click="modalEdit" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
-                    xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
-                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M18 6l-12 12"></path>
-                    <path d="M6 6l12 12"></path>
-                </svg>
-            </div>
-            <div class="modalBody">
-                <div class="md-3/4 mb-5 mt-5 flex w-full flex-col">
-                    <div class="-mx-3 mb-6 flex flex-row">
-                        <div class="@if (Auth::user()->type_user == 1) flex flex-col @else @endif mb-6 w-full px-3">
-                            <h5 class="inline-flex font-semibold" for="file">
-                                Seleccionar archivo
-                            </h5>
-                            <input wire:model='file' required type="file" name="file" id="file"
-                                class="inputs">
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('file')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
-                            </div>
-                        </div>
-                        @if (Auth::user()->type_user == 1)
-                            <div class="mb-6 flex w-full flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="expected_date">
-                                    Fecha de entrega
+        class="@if ($modalEdit) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+        <div
+            class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+        </div>
+        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
+            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+                <div
+                    class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
+                    <h3
+                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                        Editar reporte</h3>
+                    <svg wire:click="modalEdit" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div class="modalBody">
+                    <div class="md-3/4 mb-5 mt-5 flex w-full flex-col">
+                        <div class="-mx-3 mb-6 flex flex-row">
+                            <div
+                                class="@if (Auth::user()->type_user == 1) flex flex-col @else @endif mb-6 w-full px-3">
+                                <h5 class="inline-flex font-semibold" for="file">
+                                    Seleccionar archivo
                                 </h5>
-                                <input wire:model='expected_date' required type="date" name="expected_date"
-                                    id="expected_date" class="inputs">
+                                <input wire:model='file' required type="file" name="file" id="file"
+                                    class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
-                                        @error('expected_date')
+                                        @error('file')
                                             <span class="pl-2 text-xs italic text-red-600">
                                                 {{ $message }}
                                             </span>
@@ -818,213 +800,231 @@
                                     </span>
                                 </div>
                             </div>
-                        @endif
-                    </div>
-                    <div class="-mx-3 mb-6">
-                        <div class="mb-6 flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="comment">
-                                Descripción
-                            </h5>
-                            <textarea wire:model='comment' type="text" rows="10"
-                                placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" id="comment"
-                                class="inputs"></textarea>
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('comment')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
+                            @if (Auth::user()->type_user == 1)
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="expected_date">
+                                        Fecha de entrega
+                                    </h5>
+                                    <input wire:model='expected_date' required type="date" name="expected_date"
+                                        id="expected_date" class="inputs">
+                                    <div>
+                                        <span class="text-xs italic text-red-600">
+                                            @error('expected_date')
+                                                <span class="pl-2 text-xs italic text-red-600">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
                                         </span>
-                                    @enderror
-                                </span>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="comment">
+                                    Descripción
+                                </h5>
+                                <textarea wire:model='comment' type="text" rows="10"
+                                    placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" id="comment"
+                                    class="inputs"></textarea>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('comment')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modalFooter">
-                @if ($modalEdit)
-                    <button class="btnSave" wire:click="update({{ $reportEdit->id }}, {{ $project->id }})">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                            <path d="M14 4l0 4l-6 0l0 -4" />
-                        </svg>
-                        Guardar
-                    </button>
-                @endif
+                <div class="modalFooter">
+                    @if ($modalEdit)
+                        <button class="btnSave" wire:click="update({{ $reportEdit->id }}, {{ $project->id }})">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M14 4l0 4l-6 0l0 -4" />
+                            </svg>
+                            Guardar
+                        </button>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
-</div>
-{{-- END MODAL EDIT / CREATE REPORT --}}
-{{-- END MODAL DELETE --}}
-{{-- MODAL EVIDENCE --}}
-<div
-    class="@if ($modalEvidence) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+    {{-- END MODAL EDIT / CREATE REPORT --}}
+    {{-- END MODAL DELETE --}}
+    {{-- MODAL EVIDENCE --}}
     <div
-        class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
-    </div>
-    <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
-        <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
-            <div class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
-                <h3
-                    class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                    Evidencia</h3>
-                <svg id="modalEvidence"
-                    data-id="@if ($modalEvidence) {{ $reportEvidence->id }} @endif"
-                    data-project_id="@if ($modalEvidence) {{ $reportEvidence->project_id }} @endif"
-                    data-state="@if ($modalEvidence) {{ $reportEvidence->state }} @endif"
-                    class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
-                    class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
-                    stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M18 6l-12 12"></path>
-                    <path d="M6 6l12 12"></path>
-                </svg>
-            </div>
-            <div class="modalBody">
-                <div class="md-3/4 mt-5 flex w-full flex-col">
-                    <div class="-mx-3 flex flex-row">
-                        <div class="w-full px-3">
-                            <h5 class="inline-flex font-semibold" for="evidence">
-                                Para completar tu reporte, por favor, sube el archivo de evidencia.
-                            </h5>
-                            <input wire:model='evidence' required type="file" name="evidence" id="evidence"
-                                class="inputs">
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('evidence')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
+        class="@if ($modalEvidence) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+        <div
+            class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+        </div>
+        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
+            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+                <div
+                    class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
+                    <h3
+                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                        Evidencia</h3>
+                    <svg id="modalEvidence"
+                        data-id="@if ($modalEvidence) {{ $reportEvidence->id }} @endif"
+                        data-project_id="@if ($modalEvidence) {{ $reportEvidence->project_id }} @endif"
+                        data-state="@if ($modalEvidence) {{ $reportEvidence->state }} @endif"
+                        class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div class="modalBody">
+                    <div class="md-3/4 mt-5 flex w-full flex-col">
+                        <div class="-mx-3 flex flex-row">
+                            <div class="w-full px-3">
+                                <h5 class="inline-flex font-semibold" for="evidence">
+                                    Para completar tu reporte, por favor, sube el archivo de evidencia.
+                                </h5>
+                                <input wire:model='evidence' required type="file" name="evidence" id="evidence"
+                                    class="inputs">
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('evidence')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modalFooter">
-                @if ($modalEvidence)
-                    <button class="btnSave"
-                        wire:click="updateEvidence({{ $reportEvidence->id }}, {{ $reportEvidence->project_id }})">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                            <path d="M14 4l0 4l-6 0l0 -4" />
-                        </svg>
-                        Guardar
-                    </button>
-                @endif
+                <div class="modalFooter">
+                    @if ($modalEvidence)
+                        <button class="btnSave"
+                            wire:click="updateEvidence({{ $reportEvidence->id }}, {{ $reportEvidence->project_id }})">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M14 4l0 4l-6 0l0 -4" />
+                            </svg>
+                            Guardar
+                        </button>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
-</div>
-{{-- END MODAL EVIDENCE --}}
-{{-- LOADING PAGE --}}
-<div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-    wire:target="orderByLow, orderByHigh, showReport, showEdit, reportRepeat, modalShow, updateChat, modalEdit, update, updateEvidence">
-    <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40">
+    {{-- END MODAL EVIDENCE --}}
+    {{-- LOADING PAGE --}}
+    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
+        wire:target="orderByLow, orderByHigh, showReport, showEdit, reportRepeat, modalShow, updateChat, modalEdit, update, updateEvidence">
+        <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40">
+        </div>
+        <div class="loadingspinner relative top-1/3 z-20">
+            <div id="square1"></div>
+            <div id="square2"></div>
+            <div id="square3"></div>
+            <div id="square4"></div>
+            <div id="square5"></div>
+        </div>
     </div>
-    <div class="loadingspinner relative top-1/3 z-20">
-        <div id="square1"></div>
-        <div id="square2"></div>
-        <div id="square3"></div>
-        <div id="square4"></div>
-        <div id="square5"></div>
-    </div>
-</div>
-{{-- END LOADING PAGE --}}
-@push('js')
-    <script>
-        // DROPDOWN
-        function toggleDropdown(reportId) {
-            var panel = document.getElementById('dropdown-panel-' + reportId);
-            if (panel.style.display === 'none') {
-                // Oculta todos los paneles de dropdown
-                var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
-                allPanels.forEach(function(panel) {
-                    panel.style.display = 'none';
-                });
+    {{-- END LOADING PAGE --}}
+    @push('js')
+        <script>
+            // DROPDOWN
+            function toggleDropdown(reportId) {
+                var panel = document.getElementById('dropdown-panel-' + reportId);
+                if (panel.style.display === 'none') {
+                    // Oculta todos los paneles de dropdown
+                    var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
+                    allPanels.forEach(function(panel) {
+                        panel.style.display = 'none';
+                    });
 
-                panel.style.display = 'block';
-            } else {
-                panel.style.display = 'none';
-            }
-        }
-
-        window.addEventListener('file-reset', () => {
-            document.getElementById('file').value = null;
-        });
-        // MODALS
-        window.addEventListener('swal:modal', event => {
-            toastr[event.detail.type](event.detail.text, event.detail.title);
-        });
-
-        Livewire.on('deleteReport', (id, project_id) => {
-            Swal.fire({
-                title: '¿Seguro que deseas eliminar este elemento?',
-                text: "Esta acción es irreversible",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#202a33',
-                cancelButtonColor: '#ef4444',
-                confirmButtonText: 'Eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.livewire.emit('delete', id, project_id);
-                    Swal.fire(
-                        '¡Eliminado!',
-                        'Reporte eliminado',
-                        'Exito'
-                    )
-                }
-            })
-        });
-
-        let modalEvidence = document.getElementById('modalEvidence');
-        modalEvidence.addEventListener('click', function() {
-            let id = modalEvidence.getAttribute('data-id');
-            let project_id = modalEvidence.getAttribute('data-project_id');
-            let state = modalEvidence.getAttribute('data-state');
-            console.log(modalEvidence, id, project_id, state);
-
-            Swal.fire({
-                title: 'Confirmación de cierre',
-                text: "Si cierras sin subir evidencia, el reporte permanecerá sin actualizar. ¿Seguro que quieres continuar?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#4faead',
-                cancelButtonColor: '#0062cc',
-                confirmButtonText: 'Sí, cerrar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    location.reload();
+                    panel.style.display = 'block';
                 } else {
-
+                    panel.style.display = 'none';
                 }
+            }
+
+            window.addEventListener('file-reset', () => {
+                document.getElementById('file').value = null;
             });
-        });
+            // MODALS
+            window.addEventListener('swal:modal', event => {
+                toastr[event.detail.type](event.detail.text, event.detail.title);
+            });
 
-        let banEvidence = false;
+            Livewire.on('deleteReport', (id, project_id) => {
+                Swal.fire({
+                    title: '¿Seguro que deseas eliminar este elemento?',
+                    text: "Esta acción es irreversible",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#202a33',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.livewire.emit('delete', id, project_id);
+                        Swal.fire(
+                            '¡Eliminado!',
+                            'Reporte eliminado',
+                            'Exito'
+                        )
+                    }
+                })
+            });
 
-        function toogleEvidence() {
-            let evidence = document.getElementById('evidence');
-            let example = document.getElementById('example');
-            evidence.classList.toggle("hidden");
-            example.classList.toggle("hidden");
-        }
-    </script>
-@endpush
+            let modalEvidence = document.getElementById('modalEvidence');
+            modalEvidence.addEventListener('click', function() {
+                let id = modalEvidence.getAttribute('data-id');
+                let project_id = modalEvidence.getAttribute('data-project_id');
+                let state = modalEvidence.getAttribute('data-state');
+                console.log(modalEvidence, id, project_id, state);
+
+                Swal.fire({
+                    title: 'Confirmación de cierre',
+                    text: "Si cierras sin subir evidencia, el reporte permanecerá sin actualizar. ¿Seguro que quieres continuar?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4faead',
+                    cancelButtonColor: '#0062cc',
+                    confirmButtonText: 'Sí, cerrar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.reload();
+                    } else {
+
+                    }
+                });
+            });
+
+            let banEvidence = false;
+
+            function toogleEvidence() {
+                let evidence = document.getElementById('evidence');
+                let example = document.getElementById('example');
+                evidence.classList.toggle("hidden");
+                example.classList.toggle("hidden");
+            }
+        </script>
+    @endpush
 </div>

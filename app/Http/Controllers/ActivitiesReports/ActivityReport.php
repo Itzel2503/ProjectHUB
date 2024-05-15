@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Activities;
+namespace App\Http\Controllers\ActivitiesReports;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class Activity extends Controller
+class ActivityReport extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +16,7 @@ class Activity extends Controller
     public function index()
     {
         if (Auth::check()) {
-            return view('activities.activities');
+            return view('activitiesreports.activitiesreports');
         } else {
             return redirect('/login');
         }
