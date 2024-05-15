@@ -232,16 +232,19 @@ class TableActivities extends Component
             $activity->messages_count = $messages->where('look', false)->count();
         }
         // COUNT ACTIVITIES
-        $totalActivities = $activities->count(); // Contar el número total de actividades del sprint
+        $totalActivities = Activity::where('sprint_id', $this->selectSprint)
+            ->count(); // Contar el número total de actividades del sprint
+        $allActivities = Activity::where('sprint_id', $this->selectSprint)
+            ->get(); // Seleccionar todas las actividades del sprint
         $sprint = Sprint::find($this->selectSprint);
         if ($totalActivities && Auth::user()->type_user == 1) {
             if ($sprint->state == 'Curso' || $sprint->state == 'Cerrado') {
-                $resolvedActivities = $activities->where('state', 'Resuelto')->count(); // Contar el número de actividades resueltas
+                $resolvedActivities = $allActivities->where('state', 'Resuelto')->count(); // Contar el número de actividades resueltas
                 if ($totalActivities > 0) {
                     $this->percentageResolved = ($resolvedActivities / $totalActivities) * 100; // Calcular el porcentaje de actividades resueltas sobre el total de actividades
                     $this->percentageResolved = round($this->percentageResolved, 2); // Redondear el porcentaje a dos decimales
                     // Verificar si todas las actividades están en estado "Resuelto"
-                    $allResolved = $activities->every(function ($activity) {
+                    $allResolved = $allActivities->every(function ($activity) {
                         return $activity->state === 'Resuelto';
                     });
                     // Si todas las actividades están en estado "Resuelto", actualizar el estado del sprint a "Cerrado"
