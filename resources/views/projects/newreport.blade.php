@@ -9,6 +9,9 @@
 
     <title>ARTEN/KIRCOF</title>
 
+    <!-- Logo -->
+    <link rel="icon" href="{{ asset('logos/coma-logo-c_v1.png') }}" type="image/png">
+
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
