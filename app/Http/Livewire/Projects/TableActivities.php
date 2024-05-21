@@ -977,20 +977,28 @@ class TableActivities extends Component
         $user = Auth::user();
 
         if ($activity) {
-            $chat = new ChatReports();
-            $chat->activity_id = $activity->id;
-            $chat->user_id = $user->id;
-            $chat->message = $this->message;
-            $chat->look = false;
-            $chat->save();
+            if ($this->message != '') {
+                $chat = new ChatReports();
+                $chat->activity_id = $activity->id;
+                $chat->user_id = $user->id;
+                $chat->message = $this->message;
+                $chat->look = false;
+                $chat->save();
 
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Mensaje enviado',
-            ]);
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Mensaje enviado',
+                ]);
 
-            $this->message = '';
-            $this->modalShowActivity = false;
+                $this->message = '';
+                $this->modalShowActivity = false;
+            } else {
+                $this->modalShowActivity = false;
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El mensaje está vacío.',
+                ]);
+            }
         }
     }
 
