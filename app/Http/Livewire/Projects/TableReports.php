@@ -259,22 +259,29 @@ class TableReports extends Component
     {
         $report = Report::find($id);
         $user = Auth::user();
-
+        
         if ($report) {
-            $chat = new ChatReports();
-            $chat->report_id = $report->id;
-            $chat->user_id = $user->id;
-            $chat->message = $this->message;
-            $chat->look = false;
-            $chat->save();
+            if ($this->message != '') {
+                $chat = new ChatReports();
+                $chat->report_id = $report->id;
+                $chat->user_id = $user->id;
+                $chat->message = $this->message;
+                $chat->look = false;
+                $chat->save();
 
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Mensaje enviado',
-            ]);
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Mensaje enviado',
+                ]);
 
-            $this->message = '';
-            $this->modalShow = false;
+                $this->message = '';
+                $this->modalShow = false;
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El mensaje está vacío.',
+                ]);
+            }
         }
     }
 

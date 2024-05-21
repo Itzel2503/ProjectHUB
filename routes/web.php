@@ -28,7 +28,6 @@ Route::get('/', function () {
     }
     return view('auth.login');
 });
-
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['web', 'auth'])->group(function () {
     // PROFILE
