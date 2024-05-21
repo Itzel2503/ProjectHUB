@@ -277,6 +277,7 @@ class TableReports extends Component
                 $this->message = '';
                 $this->modalShow = false;
             } else {
+                $this->modalShow = false;
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
                     'title' => 'El mensaje está vacío.',
