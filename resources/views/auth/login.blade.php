@@ -9,31 +9,33 @@
 </div>
 <div class="relative min-h-screen flex flex-col justify-center items-center">
     <div class="relative sm:max-w-sm w-full">
-        <div class="relative w-full rounded-lg px-6 py-4 bg-primaryColor shadow-md">
-            <div class="py-2">
-                <h1 class="block mt-3 text-lg text-center font-semibold text-text1">Inicia sesión</h1>
-            </div>
+        <div>
+            <img class="mx-auto" src="{{asset('logos/coma-logo-color_v1.png')}}">
+        </div>
+        <div class="relative w-full rounded-3xl px-6 py-4 bg-secundaryColor shadow-md">
+            <h1 class="block text-lg text-center font-semibold text-white">Inicia sesión</h1>
             <br>
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="relative z-0 w-full mb-6 group">
-                    <input type="email" name="email"
-                        class="inputs block appearance-none focus:outline-none focus:ring-0 peer" placeholder=" "
-                        :value="old('email')" id="email" required />
+                    <input type="email" name="email" placeholder=""
+                        class="inputs block appearance-none focus:outline-none focus:ring-0 peer"
+                        style="border-radius: 5rem;" :value="old('email')" id="email" required />
                     <label for="email" value="{{ __('Email') }}"
-                        class="ml-3 peer-focus:font-medium absolute text-sm text-gray-500  duration-300 transform -translate-y-8 scale-75 top-3 z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-500 peer-focus: peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8">Correo
+                        class="ml-3 peer-focus:font-medium absolute text-sm text-gray-300  duration-300 transform -translate-y-8 scale-75 top-3 z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-300 peer-focus: peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8">Correo
                         electrónico</label>
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
-                    <input type="password" name="password" id="password"
-                        class="inputs block appearance-none focus:outline-none focus:ring-0 peer" placeholder=" "
-                        required autocomplete="current-password" />
+                    <input type="password" name="password" id="password" placeholder=""
+                        class="inputs block appearance-none focus:outline-none focus:ring-0 peer"
+                        style="border-radius: 5rem;" required autocomplete="current-password" />
                     <label for="password" value="{{ __('Password') }}"
-                        class="ml-3 peer-focus:font-medium absolute text-sm text-gray-500  duration-300 transform -translate-y-8 scale-75 top-3 z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-500 peer-focus: peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8">Contraseña</label>
+                        class="ml-3 peer-focus:font-medium absolute text-sm text-gray-300  duration-300 transform -translate-y-8 scale-75 top-3 z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-300 peer-focus: peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8">Contraseña</label>
                     <div id="noViewPassword"
                         class="hidden absolute inset-y-0 right-0 flex items-center text-sm leading-5 cursor-pointer mr-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-off text-secondary" width="24"
-                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-eye-off text-secondary" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                             stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                             <path d="M10.585 10.587a2 2 0 0 0 2.829 2.828"></path>
@@ -45,9 +47,9 @@
                     </div>
                     <div id="viewPassword"
                         class="absolute inset-y-0 right-0 flex items-center text-sm leading-5 cursor-pointer mr-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye text-secondary" width="24"
-                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                            stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye text-secondary"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                             <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
                             <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6">
@@ -67,8 +69,9 @@
                     </p>
                     @enderror
                 </div>
-                <div class="my-14 flex justify-center">
-                    <button type="submit" class="btnSave">
+                <div class="mt-10 flex justify-center">
+                    <button type="submit" class="btnSave text-xl"
+                        style="border-radius: 5rem;background-color: rgb(59 130 246)">
                         Ingresar
                     </button>
                 </div>
@@ -87,6 +90,14 @@
                     </div>
                 </div> --}}
             </form>
+            <!-- Imagen de ubicación posicionada en la esquina inferior derecha -->
+            <div class="absolute -bottom-4 -right-16 p-2">
+                <img src="{{asset('images/ubicacion.png')}}" alt="Ubicación" class="h-28 w-28">
+            </div>
+        </div>
+        <!-- Imagen colocada en la parte inferior de la pantalla, centrada horizontalmente -->
+        <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2">
+            <img src="{{asset('logos/evolve-ArtenLogo_v1.png')}}" alt="Evolve Logo" class="h-40 w-auto">
         </div>
     </div>
 </div>

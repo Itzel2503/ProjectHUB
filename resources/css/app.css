@@ -2,68 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* header */
-.active{ @apply border-l-4  border-secundaryColor font-extrabold bg-slate-100}
-.menu{@apply relative px-6 py-2.5 hover:opacity-70}
-
+.active {
+    @apply border-l-4  border-secundaryColor font-extrabold bg-slate-100;
+}
+.menu {
+    @apply relative px-6 py-2.5 hover:opacity-70;
+}
 /* tablas */
-.tableStyle { @apply  align-middle inline-block w-full overflow-x-scroll border rounded-lg  mt-4  ;}
-.headTable{@apply font-semibold tracking-wide text-center text-text1 text-base bg-primaryColor}
-.trTable{@apply text-sm text-center border-b pt-1}
-
+.tableStyle {
+    @apply align-middle inline-block w-full overflow-x-scroll border rounded-lg  mt-4;
+}
+.headTable {
+    @apply font-semibold tracking-wide text-center text-text1 text-base bg-primaryColor;
+}
+.trTable {
+    @apply text-sm text-center border-b pt-1;
+}
 /* /inputs */
-.inputs{  @apply w-full border border-gray-300 rounded-lg px-3 py-1.5 relative focus:outline-none cursor-pointer ;}
-.inpSelectTable{  @apply  border border-gray-300 rounded-lg px-3 py-1.5 relative focus:outline-none cursor-pointer ;}
-.tiitleHeader{ @apply inline-flex w-auto text-xl text-secundaryColor font-bold  border-b-2 border-secondary-fund pb-1 ;}
-
+.inputs {
+    @apply w-full border border-gray-300 rounded-lg px-3 py-1.5 relative focus:outline-none cursor-pointer;
+}
+.inpSelectTable {
+    @apply border border-gray-300 rounded-lg px-3 py-1.5 relative focus:outline-none cursor-pointer;
+}
+.tiitleHeader {
+    @apply inline-flex w-auto text-xl text-secundaryColor font-bold  border-b-2 border-secondary-fund pb-1;
+}
 /* botones nuevo editar eliminar  */
-.btnIcon{@apply flex flex-row justify-center items-center}
-.btnNuevo{ @apply  text-white font-semibold  bg-secundaryColor  rounded-lg cursor-pointer w-full btnIcon }
-.btnSave{ @apply  text-white font-semibold  bg-secundaryColor  rounded-lg cursor-pointer w-auto px-4 py-2 btnIcon }
-.btnClose{ @apply  text-white font-semibold  bg-red-500  rounded-lg cursor-pointer w-auto px-4 py-2 btnIcon }
-.btnSecondary{ @apply  text-white font-semibold  px-4 py-2 bg-blue-500  hover:bg-blue-400 rounded-lg  btnIcon }
-.btnDisabled{ @apply  text-white font-semibold  px-4 py-2 bg-gray-500  rounded-lg  btnIcon }
-
+.btnIcon {
+    @apply flex flex-row justify-center items-center;
+}
+.btnNuevo {
+    @apply text-white font-semibold  bg-secundaryColor  rounded-lg cursor-pointer w-full btnIcon;
+}
+.btnSave {
+    @apply text-white font-semibold  bg-secundaryColor  rounded-lg cursor-pointer w-auto px-4 py-2 btnIcon;
+}
+.btnClose {
+    @apply text-white font-semibold  bg-red-500  rounded-lg cursor-pointer w-auto px-4 py-2 btnIcon;
+}
+.btnSecondary {
+    @apply text-white font-semibold  px-4 py-2 bg-blue-500  hover:bg-blue-400 rounded-lg  btnIcon;
+}
+.btnDisabled {
+    @apply text-white font-semibold  px-4 py-2 bg-gray-500  rounded-lg  btnIcon;
+}
 /* modal */
-.modalHeader{
+.modalHeader {
     @apply flex flex-row justify-between px-6 py-4 bg-gray-100 text-white rounded-tl-lg rounded-tr-lg;
 }
-.modalBody{
+.modalBody {
     @apply flex flex-col sm:flex-row px-6 py-2 bg-white overflow-y-auto text-sm;
 }
-.modalFooter{
+.modalFooter {
     @apply flex justify-center items-center py-6 bg-white;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .loadingspinner {
     --square: 38px;
@@ -74,22 +68,22 @@
     --in-duration: 0.4s;
     --in-delay: 0.1s;
     --in-timing-function: ease-out;
-    width: calc( 3 * var(--offset) + var(--square));
-    height: calc( 2 * var(--offset) + var(--square));
+    width: calc(3 * var(--offset) + var(--square));
+    height: calc(2 * var(--offset) + var(--square));
     padding: 0px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 10px;
     margin-bottom: 30px;
     position: relative;
-  }
-  
-  .loadingspinner div {
+}
+
+.loadingspinner div {
     @apply bg-primaryColor-light;
     display: inline-block;
-    
-      /*background: var(--text-color);*/
-      /*box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);*/
+
+    /*background: var(--text-color);*/
+    /*box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);*/
     border: none;
     border-radius: 2px;
     width: var(--square);
@@ -99,216 +93,227 @@
     margin: 0px;
     font-size: 6pt;
     color: black;
-  }
-  
-  .loadingspinner #square1 {
-    left: calc( 0 * var(--offset) );
-    top: calc( 0 * var(--offset) );
-    animation: square1 var(--duration) var(--delay) var(--timing-function) infinite,
-                 squarefadein var(--in-duration) calc(1 * var(--in-delay)) var(--in-timing-function) both;
-  }
-  
-  .loadingspinner #square2 {
-    left: calc( 0 * var(--offset) );
-    top: calc( 1 * var(--offset) );
-    animation: square2 var(--duration) var(--delay) var(--timing-function) infinite,
-                squarefadein var(--in-duration) calc(1 * var(--in-delay)) var(--in-timing-function) both;
-  }
-  
-  .loadingspinner #square3 {
-    left: calc( 1 * var(--offset) );
-    top: calc( 1 * var(--offset) );
-    animation: square3 var(--duration) var(--delay) var(--timing-function) infinite,
-                 squarefadein var(--in-duration) calc(2 * var(--in-delay)) var(--in-timing-function) both;
-  }
-  
-  .loadingspinner #square4 {
-    left: calc( 2 * var(--offset) );
-    top: calc( 1 * var(--offset) );
-    animation: square4 var(--duration) var(--delay) var(--timing-function) infinite,
-                 squarefadein var(--in-duration) calc(3 * var(--in-delay)) var(--in-timing-function) both;
-  }
-  
-  .loadingspinner #square5 {
-    left: calc( 3 * var(--offset) );
-    top: calc( 1 * var(--offset) );
-    animation: square5 var(--duration) var(--delay) var(--timing-function) infinite,
-                 squarefadein var(--in-duration) calc(4 * var(--in-delay)) var(--in-timing-function) both;
-  }
-  
-  @keyframes square1 {
+}
+
+.loadingspinner #square1 {
+    left: calc(0 * var(--offset));
+    top: calc(0 * var(--offset));
+    animation: square1 var(--duration) var(--delay) var(--timing-function)
+            infinite,
+        squarefadein var(--in-duration) calc(1 * var(--in-delay))
+            var(--in-timing-function) both;
+}
+
+.loadingspinner #square2 {
+    left: calc(0 * var(--offset));
+    top: calc(1 * var(--offset));
+    animation: square2 var(--duration) var(--delay) var(--timing-function)
+            infinite,
+        squarefadein var(--in-duration) calc(1 * var(--in-delay))
+            var(--in-timing-function) both;
+}
+
+.loadingspinner #square3 {
+    left: calc(1 * var(--offset));
+    top: calc(1 * var(--offset));
+    animation: square3 var(--duration) var(--delay) var(--timing-function)
+            infinite,
+        squarefadein var(--in-duration) calc(2 * var(--in-delay))
+            var(--in-timing-function) both;
+}
+
+.loadingspinner #square4 {
+    left: calc(2 * var(--offset));
+    top: calc(1 * var(--offset));
+    animation: square4 var(--duration) var(--delay) var(--timing-function)
+            infinite,
+        squarefadein var(--in-duration) calc(3 * var(--in-delay))
+            var(--in-timing-function) both;
+}
+
+.loadingspinner #square5 {
+    left: calc(3 * var(--offset));
+    top: calc(1 * var(--offset));
+    animation: square5 var(--duration) var(--delay) var(--timing-function)
+            infinite,
+        squarefadein var(--in-duration) calc(4 * var(--in-delay))
+            var(--in-timing-function) both;
+}
+
+@keyframes square1 {
     0% {
-      left: calc( 0 * var(--offset) );
-      top: calc( 0 * var(--offset) );
+        left: calc(0 * var(--offset));
+        top: calc(0 * var(--offset));
     }
-  
+
     8.333% {
-      left: calc( 0 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(0 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     100% {
-      left: calc( 0 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(0 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  }
-  
-  @keyframes square2 {
+}
+
+@keyframes square2 {
     0% {
-      left: calc( 0 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(0 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     8.333% {
-      left: calc( 0 * var(--offset) );
-      top: calc( 2 * var(--offset) );
+        left: calc(0 * var(--offset));
+        top: calc(2 * var(--offset));
     }
-  
+
     16.67% {
-      left: calc( 1 * var(--offset) );
-      top: calc( 2 * var(--offset) );
+        left: calc(1 * var(--offset));
+        top: calc(2 * var(--offset));
     }
-  
+
     25.00% {
-      left: calc( 1 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(1 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     83.33% {
-      left: calc( 1 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(1 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     91.67% {
-      left: calc( 1 * var(--offset) );
-      top: calc( 0 * var(--offset) );
+        left: calc(1 * var(--offset));
+        top: calc(0 * var(--offset));
     }
-  
+
     100% {
-      left: calc( 0 * var(--offset) );
-      top: calc( 0 * var(--offset) );
+        left: calc(0 * var(--offset));
+        top: calc(0 * var(--offset));
     }
-  }
-  
-  @keyframes square3 {
-    0%,100% {
-      left: calc( 1 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+}
+
+@keyframes square3 {
+    0%,
+    100% {
+        left: calc(1 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     16.67% {
-      left: calc( 1 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(1 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     25.00% {
-      left: calc( 1 * var(--offset) );
-      top: calc( 0 * var(--offset) );
+        left: calc(1 * var(--offset));
+        top: calc(0 * var(--offset));
     }
-  
+
     33.33% {
-      left: calc( 2 * var(--offset) );
-      top: calc( 0 * var(--offset) );
+        left: calc(2 * var(--offset));
+        top: calc(0 * var(--offset));
     }
-  
+
     41.67% {
-      left: calc( 2 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(2 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     66.67% {
-      left: calc( 2 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(2 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     75.00% {
-      left: calc( 2 * var(--offset) );
-      top: calc( 2 * var(--offset) );
+        left: calc(2 * var(--offset));
+        top: calc(2 * var(--offset));
     }
-  
+
     83.33% {
-      left: calc( 1 * var(--offset) );
-      top: calc( 2 * var(--offset) );
+        left: calc(1 * var(--offset));
+        top: calc(2 * var(--offset));
     }
-  
+
     91.67% {
-      left: calc( 1 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(1 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  }
-  
-  @keyframes square4 {
+}
+
+@keyframes square4 {
     0% {
-      left: calc( 2 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(2 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     33.33% {
-      left: calc( 2 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(2 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     41.67% {
-      left: calc( 2 * var(--offset) );
-      top: calc( 2 * var(--offset) );
+        left: calc(2 * var(--offset));
+        top: calc(2 * var(--offset));
     }
-  
+
     50.00% {
-      left: calc( 3 * var(--offset) );
-      top: calc( 2 * var(--offset) );
+        left: calc(3 * var(--offset));
+        top: calc(2 * var(--offset));
     }
-  
+
     58.33% {
-      left: calc( 3 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(3 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     100% {
-      left: calc( 3 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(3 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  }
-  
-  @keyframes square5 {
+}
+
+@keyframes square5 {
     0% {
-      left: calc( 3 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(3 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     50.00% {
-      left: calc( 3 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(3 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     58.33% {
-      left: calc( 3 * var(--offset) );
-      top: calc( 0 * var(--offset) );
+        left: calc(3 * var(--offset));
+        top: calc(0 * var(--offset));
     }
-  
+
     66.67% {
-      left: calc( 2 * var(--offset) );
-      top: calc( 0 * var(--offset) );
+        left: calc(2 * var(--offset));
+        top: calc(0 * var(--offset));
     }
-  
+
     75.00% {
-      left: calc( 2 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(2 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  
+
     100% {
-      left: calc( 2 * var(--offset) );
-      top: calc( 1 * var(--offset) );
+        left: calc(2 * var(--offset));
+        top: calc(1 * var(--offset));
     }
-  }
-  
-  @keyframes squarefadein {
+}
+
+@keyframes squarefadein {
     0% {
-      transform: scale(0.75);
-      opacity: 0.0;
+        transform: scale(0.75);
+        opacity: 0;
     }
-  
+
     100% {
-      transform: scale(1.0);
-      opacity: 1.0;
+        transform: scale(1);
+        opacity: 1;
     }
-  }
+}
