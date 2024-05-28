@@ -348,7 +348,7 @@
                             <td class="px-4 py-2">
                                 <div class="mx-auto w-full text-left">
                                     <p class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
-                                        {{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
+                                        {{ $report->delegate->name }}</p>
                                     <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'
                                         name="delegate" id="delegate"
                                         class="inpSelectTable @if ($report->state == 'Resuelto') hidden @endif w-full text-sm">
@@ -402,8 +402,7 @@
                             </td>
                             <td class="px-4 py-2">
                                 <div class="mx-auto w-40 text-left">
-                                    <span class="font-semibold"> {{ $report->user->name }}
-                                        {{ $report->user->lastname }} </span> <br>
+                                    <span class="font-semibold"> {{ $report->user->name }} </span> <br>
                                     <span class="font-mono">
                                         {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                     </span><br>
@@ -826,7 +825,7 @@
                                 </h5>
                                 <textarea wire:model='comment' type="text" rows="10"
                                     placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" id="comment"
-                                    class="inputs"></textarea>
+                                    class="textarea"></textarea>
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('comment')

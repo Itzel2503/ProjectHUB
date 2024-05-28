@@ -232,7 +232,7 @@
                             </h5>
                             <textarea required type="text" rows="10"
                                 placeholder="Describa la observación y especifique el objetivo a cumplir."
-                                name="comment" class="inputs"></textarea>
+                                name="comment" class="textarea"></textarea>
                             @if ($errors->has('comment'))
                             <span class="text-red-600 text-xs italic pl-2">
                                 {{ $errors->first('comment') }}
@@ -278,7 +278,7 @@
                             <select required name="delegate" id="delegate" class="inputs">
                                 <option value="0" selected>Selecciona...</option>
                                 @foreach ($allUsers as $allUser)
-                                <option value="{{ $allUser->id }}">{{ $allUser->name }} {{ $allUser->lastname }}
+                                <option value="{{ $allUser->id }}">{{ $allUser->name }}
                                 </option>
                                 @endforeach
                             </select>

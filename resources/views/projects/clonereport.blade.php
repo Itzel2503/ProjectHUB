@@ -257,10 +257,10 @@
                             </h5>
                             <textarea disabled type="text"
                                 placeholder="Describa la observación y especifique el objetivo a cumplir."
-                                class="bg-gray-100 inputs mb-2">{{ $report->comment }}</textarea>
+                                class="bg-gray-100 textarea mb-2">{{ $report->comment }}</textarea>
                             <textarea required type="text" rows="10"
                                 placeholder="Describa la nueva observación y especifique el objetivo a cumplir."
-                                name="comment" class="inputs"></textarea>
+                                name="comment" class="textarea"></textarea>
                             @if ($errors->has('comment'))
                             <span class="text-red-600 text-xs italic pl-2">
                                 {{ $errors->first('comment') }}

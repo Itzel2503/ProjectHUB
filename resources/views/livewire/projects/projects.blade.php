@@ -83,8 +83,8 @@
                         </td>
                         <td class="px-4 py-2">
                             <div class="w-36 mx-auto text-justify">
-                                - {{ $project->leader->name }} {{ $project->leader->lastname }} <br>
-                                - {{ $project->programmer->name }} {{ $project->programmer->lastname }}
+                                - {{ $project->leader->name }}<br>
+                                - {{ $project->programmer->name }}
                             </div>
                         </td>
                         <td class="px-4 py-2 flex justify-end">
@@ -491,7 +491,7 @@
                                 @endforeach
                                 <textarea wire:model='scopes' required type="text" rows="10"
                                     placeholder="Escriba los alcances." name="scopes" id="scopes"
-                                    class="inputs"></textarea>
+                                    class="textarea"></textarea>
                                 <div>
                                     <span class="text-red-600 text-xs italic">
                                         @error('scopes')
@@ -550,7 +550,7 @@
                                 </h5>
                                 <textarea wire:model='passwords' required type="text" rows="10"
                                     placeholder="Accesos de sistema." name="passwords" id="passwords"
-                                    class="inputs"></textarea>
+                                    class="textarea"></textarea>
                                 <div>
                                     <span class="text-red-600 text-xs italic">
                                         @error('passwords')

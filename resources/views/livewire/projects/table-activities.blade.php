@@ -445,7 +445,7 @@
                             <td class="px-4 py-2">
                                 <div class="mx-auto w-auto text-left">
                                     <p class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
-                                        {{ $activity->delegate->name }} {{ $activity->delegate->lastname }}</p>
+                                        {{ $activity->delegate->name }}</p>
                                     <select
                                         wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
                                         name="delegate" id="delegate"
@@ -500,8 +500,7 @@
                             </td>
                             <td class="px-4 py-2">
                                 <div class="mx-auto text-left">
-                                    <span class="font-semibold"> {{ $activity->user->name }}
-                                        {{ $activity->user->lastname }} </span> <br>
+                                    <span class="font-semibold"> {{ $activity->user->name }}</span> <br>
                                     <span class="font-mono">
                                         {{ \Carbon\Carbon::parse($activity->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                     </span><br>
@@ -630,7 +629,7 @@
                                 <h5 class="text-text2 text-lg font-bold">
                                     Claves de acceso
                                 </h5>
-                                <textarea required disabled type="text" rows="10" name="scopes" id="scopes" class="inputs">{{ $backlog->passwords }}</textarea>
+                                <textarea required disabled type="text" rows="10" name="scopes" id="scopes" class="textarea">{{ $backlog->passwords }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -641,7 +640,7 @@
                                     Alcances
                                 </h5>
                                 @if ($backlog->scopes)
-                                    <textarea required disabled type="text" rows="10" name="scopes" id="scopes" class="inputs">{{ $backlog->scopes }}</textarea>
+                                    <textarea required disabled type="text" rows="10" name="scopes" id="scopes" class="textarea">{{ $backlog->scopes }}</textarea>
                                 @endif
                                 @if ($backlog->files)
                                     @foreach ($backlog->files as $file)
@@ -993,7 +992,7 @@
                                 </h5>
                                 <textarea wire:model='description' type="text" rows="10"
                                     placeholder="Describa la observación y especifique el objetivo a cumplir." name="description" id="description"
-                                    class="inputs"></textarea>
+                                    class="textarea"></textarea>
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('description')
@@ -1039,8 +1038,7 @@
                                         class="inputs">
                                         <option selected>Selecciona...</option>
                                         @foreach ($allUsers as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }}
-                                                {{ $user->lastname }}</option>
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
                                         @endforeach
                                     </select>
                                     <div>
