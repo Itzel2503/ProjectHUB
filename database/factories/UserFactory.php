@@ -16,15 +16,13 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->firstName,
-            'lastname' => $this->faker->lastName,
+            'name' => $this->faker->firstName . ' ' . $this->faker->lastName,
             'email' => $this->faker->unique()->safeEmail,
             'password' => Hash::make('Arten.123!'), // Es mejor no utilizar contraseñas predeterminadas para datos aleatorios
             'type_user' => $this->faker->randomElement([1, 2]), // Suponiendo que tienes varios tipos de usuarios
             'date_birthday' => $this->faker->date(),
-            'phone' => $this->faker->e164PhoneNumber,
             'area_id' => $this->faker->numberBetween(1,4), // Asumiendo que tienes áreas del 1 al 10
-
+            'entry_date' => $this->faker->date(),
 
             // 'name' => $this->faker->name(),
             // 'email' => $this->faker->unique()->safeEmail(),

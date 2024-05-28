@@ -13,7 +13,7 @@ class Area extends Model
         'name',
     ];
 
-    public function area()
+    public function user()
     {
         return $this->hasOne(User::class);
     }

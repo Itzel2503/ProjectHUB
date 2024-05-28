@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Auth;
 
-use App\Models\Area;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -15,57 +14,85 @@ class Profile extends Component
     use WithFileUploads;
 
     public $listeners = ['reloadPage' => 'reloadPage'];
-    public $editing = false;
-    public $name, $lastname, $phone, $date_birthday, $area, $email, $password, $file;
+    public $name, $email, $password, $confirmPassword, $photos, $idUser;
+    public $files = [];
 
     public function render()
     {
-        $areas = Area::all();
         $user = Auth::user();
-        $areaUser = $areas->find($user->area_id);
 
-        foreach ($areas as $key => $oneArea) {
-            if ($oneArea->name === $areaUser->name) {
-                unset($areas[$key]);
-            }
-        }
+        $this->name = $user->name;
+        $this->email = $user->email;
+        $this->idUser = $user->id;
 
         return view('livewire.auth.profile', [
             'user' => $user,
-            'areaUser' => $areaUser,
-            'areas' => $areas,
         ]);
-    }
-
-    public function edit($id)
-    {
-        if ($this->editing == true) {
-            $this->editing = false;
-        } else {
-            $this->editing = true;
-        }
     }
 
     public function update($id)
     {
         $user = User::find($id);
+        $user->name = $this->name;
+        $user->email = $this->email;
 
-        if ($this->file) {
-            $fileExtension = $this->file->extension();
+        if (!isset($this->password) && isset($this->confirmPassword)) {
+            $this->password = '';
+            $this->confirmPassword = '';
+
+            $user->save();
+            return redirect()->to('/profile')->with('errorPassword', true);
+        }
+
+        if (isset($this->password) && !isset($this->confirmPassword)) {
+            $this->password = '';
+            $this->confirmPassword = '';
+
+            $user->save();
+            return redirect()->to('/profile')->with('errorPassword', true);
+        }
+
+        if (isset($this->password) && isset($this->confirmPassword)) {
+            if ($this->password == $this->confirmPassword) {
+                $user->password = Hash::make($this->password);
+            } else {
+                $this->password = '';
+                $this->confirmPassword = '';
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'La contraseña no coincide'
+                ]);
+                return;
+            }
+        }
+
+        $user->save();
+        return redirect()->to('/profile')->with('userUpdate', true);
+    }
+
+
+    public function updatedFiles()
+    {
+        $user = User::find($this->idUser);
+
+        if ($this->files) {
+            $file = $this->files[0];
+            $fileExtension = $file->extension();
             $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
             if (in_array($fileExtension, $extensionesImagen)) {
                 $maxSize = 5 * 1024 * 1024; // 5 MB
                 // Verificar el tamaño del archivo
-                if ($this->file->getSize() > $maxSize) {
+                if ($file->getSize() > $maxSize) {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'error',
                         'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
                     ]);
                     return;
                 }
-                $filePath = $this->file->getClientOriginalName();
+                $filePath = $file->getClientOriginalName();
                 // Procesar la imagen
-                $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
+                $image = \Intervention\Image\Facades\Image::make($file->getRealPath());
                 // Redimensionar la imagen si es necesario
                 $image->resize(800, null, function ($constraint) {
                     $constraint->aspectRatio();
@@ -83,29 +110,16 @@ class Profile extends Component
                 Storage::disk('local')->delete($tempPath);
                 $user->profile_photo = $filePath;
             } else {
+                $this->reset('files');
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
                     'title' => 'El archivo no está en formato de imagen.'
                 ]);
                 return;
             }
-            if ($this->password) {
-                $user->password = Hash::make($this->password);
-            }
+
             $user->save();
-            return redirect()->to('/profile');
+            return redirect()->to('/profile')->with('photoUpdate', true);;
         }
-
-        if ($this->password) {
-            $user->password = Hash::make($this->password);
-        }
-        $user->save();
-        $this->editing = false;
-    }
-
-    public function reloadPage()
-    {
-        $this->reset();
-        $this->render();
     }
 }

@@ -49,13 +49,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Administrador',
-            'lastname' => 'Arten/Kircof',
+            'name' => 'Administrador ArtenKircof',
             'email' => 'admin@artendigital.mx',
             'password' => Hash::make('Arten.123!'),
             'type_user' => '1',
             'date_birthday' => Carbon::now(),
             'area_id' => '1',
+            'entry_date' => Carbon::now(),
         ]);
 
         $this->call(UsersTableSeeder::class,);

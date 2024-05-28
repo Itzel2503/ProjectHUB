@@ -25,7 +25,7 @@ class TableUsers extends Component
     public $perPage = '';
     public $rules = [], $allAreas = [], $allTypes = [1, 2];
     // inputs
-    public $file, $name, $lastname, $date_birthday, $phone, $area, $type_user, $email, $password;
+    public $file, $name, $date_birthday, $entry_date, $area, $type_user, $email, $password;
 
     public function render()
     {
@@ -41,10 +41,13 @@ class TableUsers extends Component
                     $query->orWhere('users.type_user', 1);
                 } elseif ($this->search == 'Usuario' || $this->search == 'usuario') {
                     $query->orWhere('users.type_user', 2);
+                } elseif ($this->search == 'Activo' || $this->search == 'activo') {
+                    $query->whereNull('users.deleted_at');
+                } elseif ($this->search == 'Inactivo' || $this->search == 'inactivo') {
+                    $query->whereNotNull('users.deleted_at');
                 }
             })
             ->orWhere('users.name', 'like', '%' . $this->search . '%')
-            ->orWhere('users.lastname', 'like', '%' . $this->search . '%')
             ->orWhere('users.email', 'like', '%' . $this->search . '%')
             ->orWhere('areas.name', 'like', '%' . $this->search . '%')
             ->orderBy('created_at', 'desc')
@@ -61,9 +64,8 @@ class TableUsers extends Component
         try {
             $this->validate([
                 'name' => 'required|max:255',
-                'lastname' => 'required|max:255',
                 'date_birthday' => 'required|date|max:255',
-                'phone' => 'required|numeric',
+                'entry_date' => 'required|date|max:255',
                 'area' => 'required',
                 'type_user' => 'required',
                 'email' => 'required|email|unique:users,email',
@@ -125,9 +127,8 @@ class TableUsers extends Component
         }
 
         $user->name = $this->name;
-        $user->lastname = $this->lastname;
-        $user->phone = $this->phone ?? null;
         $user->date_birthday = $this->date_birthday;
+        $user->entry_date = $this->entry_date;
         $user->email = $this->email;
         $user->area_id = $this->area;
         $user->type_user = $this->type_user;
@@ -155,9 +156,8 @@ class TableUsers extends Component
         try {
             $this->validate([
                 'name' => 'required|max:255',
-                'lastname' => 'required|max:255',
                 'date_birthday' => 'required|date|max:255',
-                'phone' => 'required|numeric',
+                'entry_date' => 'required|date|max:255',
                 'email' => 'required|email|unique:users,email,' . $id,
             ]);
             // Aquí puedes continuar con tu lógica después de la validación exitosa
@@ -213,9 +213,8 @@ class TableUsers extends Component
         }
 
         $user->name = $this->name ?? $user->name;
-        $user->lastname = $this->lastname ?? $user->lastname;
-        $user->phone = $this->phone ?? $user->phone;
         $user->date_birthday = $this->date_birthday ?? $user->date_birthday;
+        $user->entry_date = $this->entry_date ?? $user->entry_date;
         $user->email = $this->email ?? $user->email;
 
         if (!empty($this->area)) {
@@ -251,6 +250,9 @@ class TableUsers extends Component
             if (Storage::disk('users')->exists($user->profile_photo)) {
                 Storage::disk('users')->delete($user->profile_photo);
             }
+            // Actualizar el campo profile_photo a null
+            $user->profile_photo = null;
+            $user->save();
             $user->delete();
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
@@ -311,9 +313,8 @@ class TableUsers extends Component
 
         $this->type_user = $this->userEdit ? $this->userEdit->type_user : null;
         $this->name = $this->userEdit->name;
-        $this->lastname = $this->userEdit->lastname;
         $this->date_birthday = $this->userEdit->date_birthday;
-        $this->phone = $this->userEdit->phone;
+        $this->entry_date = $this->userEdit->entry_date;
         $this->email = $this->userEdit->email;
     }
     // MODAL
@@ -334,9 +335,8 @@ class TableUsers extends Component
     public function clearInputs()
     {
         $this->name = '';
-        $this->lastname = '';
         $this->date_birthday = '';
-        $this->phone = '';
+        $this->entry_date = '';
         $this->area = '';
         $this->type_user = '';
         $this->email = '';

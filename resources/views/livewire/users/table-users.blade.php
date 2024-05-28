@@ -23,16 +23,6 @@
                         style="padding-left: 3em;">
                 </div>
             </div>
-            <!-- COUNT -->
-            {{-- <div class="inline-flex w-1/3 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
-                <select wire:model="perPage" id=""
-                    class="w-full border-0 rounded-lg px-3 py-2 relative focus:outline-none">
-                    <option value="10"> 10 por página</option>
-                    <option value="25"> 25 por página</option>
-                    <option value="50"> 50 por página</option>
-                    <option value="100"> 100 por página</option>
-                </select>
-            </div> --}}
             <!-- BTN NEW -->
             <div class="inline-flex px-2 md:px-0  w-1/2 md:w-1/4 h-12 bg-transparent mb-2">
                 <button wire:click="modalCreateEdit()" class="btnNuevo">
@@ -54,11 +44,11 @@
                 <thead class="border-0 headTable">
                     <tr>
                         <th></th>
-                        <th class="px-4 py-3">Nombre</th>
-                        <th class="px-4 py-3">Apellidos </th>
+                        <th class="px-4 py-3">Nombre completo</th>
                         <th class="px-4 py-3">Correo electónico</th>
                         <th class="px-4 py-3">Área</th>
                         <th class="px-4 py-3">Tipo Usuario</th>
+                        <th class="w-8 px-4 py-3">Estatus</th>
                         <th class="w-8 px-4 py-3">Acciones</th>
                     </tr>
                 </thead>
@@ -74,11 +64,20 @@
                                 src="{{ Avatar::create($user->name)->toBase64() }}" alt="Avatar" />
                             @endif
                         </td>
-                        <td class="px-4 py-1">{{$user->name}}</td>
-                        <td class="px-4 py-1">{{$user->lastname}}</td>
-                        <td class="px-4 py-1">{{$user->email}}</td>
-                        <td class="px-4 py-1">{{$user->area_name}}</td>
-                        <td class="px-4 py-1">{{($user->type_user == 1 ) ? 'Administrador' : 'Usuario'}}</td>
+                        <td class="px-4 py-1">{{ $user->name }}</td>
+                        <td class="px-4 py-1">{{ $user->email }}</td>
+                        <td class="px-4 py-1">{{ $user->area_name }}</td>
+                        <td class="px-4 py-1">{{ ($user->type_user == 1 ) ? 'Administrador' : 'Usuario' }}</td>
+                        <td class="px-4 py-1">
+                            <div name="deleted_at" id="deleted_at"
+                                class="inpSelectTable inpSelectTable @if ($user->deleted_at == null) bg-lime-700 text-white @else bg-red-600 text-white @endif w-28 text-sm font-semibold">
+                                @if ($user->deleted_at == null)
+                                <option selected>Activo</option>
+                                @else
+                                <option selected>Inactivo</option>
+                                @endif
+                            </div>
+                        </td>
                         <td class="px-4 py-1">
                             <div class="flex justify-center">
                                 <div id="dropdown-button-{{ $user->id }}" class="relative">
@@ -189,9 +188,9 @@
                 </div>
                 <div class="modalBody">
                     <div class="w-full md-3/4 mb-5 mt-5 flex flex-col">
-                        <div class="-mx-3 mb-6">
+                        <div class="-mx-3 mb-6 flex flex-row">
                             <div class="w-full flex flex-col px-3 mb-6">
-                                <h5 class="inline-flex font-semibold" for="description">
+                                <h5 class="inline-flex font-semibold" for="file">
                                     Foto de perfil
                                 </h5>
                                 <input wire:model='file' required type="file" placeholder="Título" name="file" id="file"
@@ -206,33 +205,15 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="-mx-3 mb-6 flex flex-row">
                             <div class="w-full flex flex-col px-3 mb-6">
-                                <h5 class="inline-flex font-semibold" for="file">
-                                    Nombre<p class="text-red-600">*</p>
+                                <h5 class="inline-flex font-semibold" for="lastname">
+                                    Nombre completo<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='name' required type="text" placeholder="Nombre/s" name="name"
+                                <input wire:model='name' required type="text" placeholder="Nombre completo" name="name"
                                     id="name" class="inputs">
                                 <div>
                                     <span class="text-red-600 text-xs italic">
                                         @error('name')
-                                        <span class="pl-2 text-red-600 text-xs italic">
-                                            {{ $message }}
-                                        </span>
-                                        @enderror
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="w-full flex flex-col px-3 mb-6">
-                                <h5 class="inline-flex font-semibold" for="lastname">
-                                    Apellidos<p class="text-red-600">*</p>
-                                </h5>
-                                <input wire:model='lastname' required type="text" name="lastname"
-                                    placeholder="Apellidos" class="inputs">
-                                <div>
-                                    <span class="text-red-600 text-xs italic">
-                                        @error('lastname')
                                         <span class="pl-2 text-red-600 text-xs italic">
                                             {{ $message }}
                                         </span>
@@ -260,13 +241,13 @@
                             </div>
                             <div class="w-full flex flex-col px-3 mb-6">
                                 <h5 class="inline-flex font-semibold" for="phone">
-                                    Número de teléfono<p class="text-red-600">*</p>
+                                    Fecha de ingreso<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='phone' required type="number" name="phone" placeholder="444 444 4444"
-                                    class="inputs">
+                                <input wire:model='entry_date' required type="date" name="entry_date"
+                                    id="entry_date" class="inputs">
                                 <div>
                                     <span class="text-red-600 text-xs italic">
-                                        @error('phone')
+                                        @error('entry_date')
                                         <span class="pl-2 text-red-600 text-xs italic">
                                             {{ $message }}
                                         </span>
@@ -277,7 +258,7 @@
                         </div>
                         <div class="-mx-3 mb-6 flex flex-row">
                             <div class="w-full flex flex-col px-3 mb-6">
-                                <h5 class="inline-flex font-semibold" for="date_birthday">
+                                <h5 class="inline-flex font-semibold" for="area">
                                     Área @if(!$showUpdate)<p class="text-red-600">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
