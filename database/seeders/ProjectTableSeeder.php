@@ -17,7 +17,7 @@ class ProjectTableSeeder extends Seeder
     {
         // Project::factory()->count(5)->create();
         // Crear proyectos
-        Project::factory()->count(5)->create()->each(function ($project) {
+        Project::factory()->count(20)->create()->each(function ($project) {
             // Seleccionar dos usuarios aleatorios
             $users = User::inRandomOrder()->take(2)->get();
 

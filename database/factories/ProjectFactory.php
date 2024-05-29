@@ -16,7 +16,7 @@ class ProjectFactory extends Factory
         return [
             'code' => $this->faker->numberBetween(100, 1000),
             'customer_id' => $this->faker->numberBetween(1,15),
-            'type' => $this->faker->randomElement(['Activo', 'Soporte', 'Resolución piloto', 'Entregado seguimiento', 'No activo seguimiento']),
+            'type' => $this->faker->randomElement(['Activo', 'Soporte', 'Cerrado', 'Entregado', 'No activo']),
             'name' => $this->faker->name(),
             'priority' => $this->faker->numberBetween(1,10),
         ];

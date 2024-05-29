@@ -23,15 +23,6 @@
                         style="padding-left: 3em;">
                 </div>
             </div>
-            <!-- COUNT -->
-            {{-- <div class="inline-flex  px-2 md:px-0  w-1/2 sm:w-1/4 h-12 md:mx-3 mb-2 bg-transparent">
-                <select wire:model="perPage" id="" class="inputs">
-                    <option value="10"> 10 por página</option>
-                    <option value="25"> 25 por página</option>
-                    <option value="50"> 50 por página</option>
-                    <option value="100"> 100 por página</option>
-                </select>
-            </div> --}}
             <!-- BTN NEW -->
             @if (Auth::user()->type_user == 1)
             <div class="inline-flex px-2 md:px-0  w-1/2 md:w-1/4 h-12 bg-transparent mb-2">
@@ -49,36 +40,57 @@
             @endif
         </div>
         {{-- END NAVEGADOR --}}
+        {{-- PESTAÑAS --}}
+        <nav class="flex mt-5">
+            <button wire:click="setActiveTab('Activo')"
+                class="mx-2 py-1 font-semibold text-secundaryColor border border-secondary cursor-pointer w-40 @if ($activeTab === 'Activo') bg-gray-200 @endif">
+                Activos
+            </button>
+            <button wire:click="setActiveTab('No activo')"
+                class="mx-2 py-1 font-semibold text-secundaryColor border border-gray-500 cursor-pointer w-40 @if ($activeTab === 'No activo') bg-gray-200 @endif">
+                No activos
+            </button>
+            <button wire:click="setActiveTab('Entregado')"
+                class="mx-2 py-1 font-semibold text-secundaryColor border border-lime-700 cursor-pointer w-40 @if ($activeTab === 'Entregado') bg-gray-200 @endif">
+                Entregados
+            </button>
+            <button wire:click="setActiveTab('Cerrado')"
+                class="mx-2 py-1 font-semibold text-secundaryColor border border-red-600 cursor-pointer w-40 @if ($activeTab === 'Cerrado') bg-gray-200 @endif">
+                Cerrados
+            </button>
+        </nav>
+        {{-- END PESTAÑAS --}}
         {{-- TABLE --}}
         <div class="tableStyle">
+            <div class="px-4 pt-2 w-full font-semibold tracking-wide text-xl text-text1 bg-primaryColor">
+                @if ($activeTab == 'Activo')  <h2>Activos</h2> @endif
+                @if ($activeTab == 'No activo')  <h2>No activos</h2> @endif
+                @if ($activeTab == 'Entregado')  <h2>Entregados</h2> @endif
+                @if ($activeTab == 'Cerrado')  <h2>Cerrados</h2> @endif
+            </div>
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 headTable">
                     <tr>
-                        {{-- <th class="px-4 py-3"></th> LOGO --}}
-                        @if(Auth::user()->area_id == 1)
-                        <th class="px-4 py-3">Código</th>
-                        @endif
-                        <th class="px-4 py-3">Cliente</th>
+                        <th class="w-16 px-4 py-3">Prioridad</th>
                         <th class="px-4 py-3">Proyecto</th>
+                        <th class="px-4 py-3">Cliente</th>
                         <th class="px-4 py-3">Líder y Scrum Master</th>
-                        <th class="w-8 px-4 py-2">Acciones</th>
+                        <th class="w-2 px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($projects as $project)
                     <tr class="trTable">
-                        @if(Auth::user()->area_id == 1)
-                        <th class="px-4 py-2">{{ $project->code }}</th>
-                        @endif
+                        <th class="px-4 py-2">K{{ $project->priority }}</th>
                         <td class="px-4 py-2">
-                            <div class="w-32 mx-auto text-justify">
-                                <span class="font-bold">{{ $project->customer_name }}</span><br>
+                            <div class="w-1/2 mx-auto text-justify">
+                                <span class="font-semibold">{{ $project->name }} @if(Auth::user()->area_id == 1) - {{
+                                    $project->code }} @endif</span>
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="w-36 mx-auto text-justify">
-                                <span class="font-semibold">{{ $project->name }} </span> <br>
-                                <span class="italic">{{ $project->type }}</span> - K{{ $project->priority }}
+                            <div class="w-32 mx-auto text-justify">
+                                <span class="font-bold">{{ $project->customer_name }}</span><br>
                             </div>
                         </td>
                         <td class="px-4 py-2">
@@ -200,6 +212,156 @@
                     @endforeach
                 </tbody>
             </table>
+
+            @if ($activeTab == 'Activo')
+            <div class="px-4 pt-2 w-full font-semibold tracking-wide text-xl text-text1 bg-primaryColor">
+                <h2>Soportes</h2>
+            </div>
+            <table class="w-full whitespace-no-wrap table table-hover ">
+                <thead class="border-0 headTable">
+                    <tr>
+                        <th class="w-16 px-4 py-3">Prioridad</th>
+                        <th class="px-4 py-3">Proyecto</th>
+                        <th class="px-4 py-3">Cliente</th>
+                        <th class="px-4 py-3">Líder y Scrum Master</th>
+                        <th class="w-2 px-4 py-2">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($projectsSoporte as $project)
+                    <tr class="trTable">
+                        <th class="px-4 py-2">K{{ $project->priority }}</th>
+                        <td class="px-4 py-2">
+                            <div class="w-1/2 mx-auto text-justify">
+                                <span class="font-semibold">{{ $project->name }} @if(Auth::user()->area_id == 1) - {{
+                                    $project->code }} @endif</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-2">
+                            <div class="w-32 mx-auto text-justify">
+                                <span class="font-bold">{{ $project->customer_name }}</span><br>
+                            </div>
+                        </td>
+                        <td class="px-4 py-2">
+                            <div class="w-36 mx-auto text-justify">
+                                - {{ $project->leader->name }}<br>
+                                - {{ $project->programmer->name }}
+                            </div>
+                        </td>
+                        <td class="px-4 py-2 flex justify-end">
+                            @if($project->deleted_at == null)
+                            @if ($project->backlog != null)
+                            <button wire:click="showActivities({{ $project->id }})"
+                                class="bg-yellow-500 text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                    <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                    <path d="M3 6l0 13" />
+                                    <path d="M12 6l0 13" />
+                                    <path d="M21 6l0 13" />
+                                </svg>
+                            </button>
+                            @endif
+                            <button wire:click="showReports({{ $project->id }})"
+                                class="bg-secondary text-white font-bold py-1 px-2 mt-1 mx-1 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-bug"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
+                                    <path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
+                                    <path d="M3 13l4 0" />
+                                    <path d="M17 13l4 0" />
+                                    <path d="M12 20l0 -6" />
+                                    <path d="M4 19l3.35 -2" />
+                                    <path d="M20 19l-3.35 -2" />
+                                    <path d="M4 7l3.75 2.4" />
+                                    <path d="M20 7l-3.75 2.4" />
+                                </svg>
+                            </button>
+                            @endif
+                            @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
+                            <div class="flex justify-righ">
+                                <div id="dropdown-button-{{ $project->id }}" class="relative">
+                                    <button onclick="toggleDropdown('{{ $project->id }}')" type="button"
+                                        class="flex items-center px-5 py-2.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                        </svg>
+                                    </button>
+                                    <!-- Panel -->
+                                    <div id="dropdown-panel-{{ $project->id }}" style="display: none;"
+                                        class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200 z-10">
+                                        <!-- Botón Restaurar -->
+                                        <div wire:click="$emit('restartItem',{{ $project->id }})"
+                                            class="@if($project->deleted_at == null) hidden @endif flex content-center px-4 py-2 text-sm text-black cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-reload mr-2" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path
+                                                    d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747">
+                                                </path>
+                                                <path d="M20 4v5h-5"></path>
+                                            </svg>
+                                            Restaurar
+                                        </div>
+                                        @if($project->deleted_at == null)
+                                        <!-- Botón Editar -->
+                                        <div wire:click="showUpdate({{$project->id}})"
+                                            class="flex content-center px-4 py-2 text-sm text-black cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-edit mr-2" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
+                                                </path>
+                                                <path
+                                                    d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
+                                                </path>
+                                                <path d="M16 5l3 3"></path>
+                                            </svg>
+                                            Editar
+                                        </div>
+                                        <!-- Botón Eliminar -->
+                                        <div wire:click="$emit('deleteItem',{{ $project->id }})"
+                                            class="@if(Auth::user()->type_user == 1)flex @else hidden @endif content-center px-4 py-2 text-sm text-red-600 cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-trash mr-2" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M4 7l16 0"></path>
+                                                <path d="M10 11l0 6"></path>
+                                                <path d="M14 11l0 6"></path>
+                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                            </svg>
+                                            Eliminar
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
         </div>
     </div>
     {{-- END TABLE --}}
@@ -275,7 +437,7 @@
                         <div class="-mx-3 mb-6 flex flex-row">
                             <div class="w-full flex flex-col px-3 mb-6">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Tipo @if(!$showUpdate)<p class="text-red-600">*</p>@endif
+                                    Estatus @if(!$showUpdate)<p class="text-red-600">*</p>@endif
                                 </h5>
                                 @if($showUpdate)
                                 <select wire:model='type' required name="type" id="type" class="inputs">

@@ -21,6 +21,8 @@ class Projects extends Component
     protected $paginationTheme = 'tailwind';
 
     public $listeners = ['reloadPage' => 'reloadPage', 'destroy', 'restore'];
+    // PESTAÑA
+    public $activeTab = 'Activo';
     // modal 
     public $modalCreateEdit = false, $createBacklog = false;
     public $showUpdate = false;
@@ -28,8 +30,8 @@ class Projects extends Component
     public $projectCustomer, $projectEdit, $backlogEdit;
     // table
     public $search;
-    public $perPage = '';
-    public $allType = ['Activo', 'Soporte', 'Resolución Piloto', 'Entregado seguimiento', 'No activo seguimiento'];
+    public $allType = ['Activo', 'Soporte', 'No activo', 'Entregado', 'Cerrado'];
+    public $typeProject = 'Activo';
     // inputs
     public $code, $name, $type, $priority, $customer, $leader, $programmer, $general_objective, $scopes, $start_date, $closing_date, $passwords;
     public $files = [];
@@ -38,7 +40,6 @@ class Projects extends Component
     {
         $allCustomers = Customer::all();
         $allUsers = User::all();
-        $backlogs = Backlog::all();
 
         if (Auth::user()->type_user == 1) {
             $projects = Project::select(
@@ -56,11 +57,38 @@ class Projects extends Component
                         ->orWhere('projects.name', 'like', '%' . $this->search . '%')
                         ->orWhere('projects.priority', 'like', '%' . $this->search . '%');
                 })
+                ->where('type', $this->typeProject)
                 ->with(['users' => function ($query) {
                     $query->withPivot('leader', 'programmer');
                 }])
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            if ($this->activeTab == 'Activo') {
+                $projectsSoporte = Project::select(
+                    'projects.*',
+                    'customers.name as customer_name',
+                    'backlogs.id as backlog'
+                )
+                    ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
+                    ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
+                    ->withTrashed()
+                    ->where(function ($query) {
+                        $query->where('customers.name', 'like', '%' . $this->search . '%')
+                            ->orWhere('projects.code', 'like', '%' . $this->search . '%')
+                            ->orWhere('projects.type', 'like', '%' . $this->search . '%')
+                            ->orWhere('projects.name', 'like', '%' . $this->search . '%')
+                            ->orWhere('projects.priority', 'like', '%' . $this->search . '%');
+                    })
+                    ->where('type', 'Soporte')
+                    ->with(['users' => function ($query) {
+                        $query->withPivot('leader', 'programmer');
+                    }])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            } else {
+                $projectsSoporte = null;
+            }
         } else {
             $projects = Project::select(
                 'projects.*',
@@ -76,11 +104,36 @@ class Projects extends Component
                         ->orWhere('projects.name', 'like', '%' . $this->search . '%')
                         ->orWhere('projects.priority', 'like', '%' . $this->search . '%');
                 })
+                ->where('type', $this->typeProject)
                 ->with(['users' => function ($query) {
                     $query->withPivot('leader', 'programmer');
                 }])
                 ->orderBy('created_at', 'desc')
                 ->get();
+            if ($this->activeTab == 'Activo') {
+                $projectsSoporte = Project::select(
+                    'projects.*',
+                    'customers.name as customer_name',
+                    'backlogs.id as backlog'
+                )
+                    ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
+                    ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
+                    ->where(function ($query) {
+                        $query->where('customers.name', 'like', '%' . $this->search . '%')
+                            ->orWhere('projects.code', 'like', '%' . $this->search . '%')
+                            ->orWhere('projects.type', 'like', '%' . $this->search . '%')
+                            ->orWhere('projects.name', 'like', '%' . $this->search . '%')
+                            ->orWhere('projects.priority', 'like', '%' . $this->search . '%');
+                    })
+                    ->where('type', 'Soporte')
+                    ->with(['users' => function ($query) {
+                        $query->withPivot('leader', 'programmer');
+                    }])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            } else {
+                $projectsSoporte = null;
+            }
         }
 
         // ADD ATRIBUTES
@@ -93,8 +146,20 @@ class Projects extends Component
             $project->programmer = $programmer;
         }
 
+        if ($projectsSoporte != null) {
+            foreach ($projectsSoporte as $projectSoporte) {
+                // Encuentra al líder y al programador dentro de los usuarios relacionados
+                $leader = $projectSoporte->users->where('pivot.leader', true)->first();
+                $programmer = $projectSoporte->users->where('pivot.programmer', true)->first();
+
+                $projectSoporte->leader = $leader;
+                $projectSoporte->programmer = $programmer;
+            }
+        }
+
         return view('livewire.projects.projects', [
             'projects' => $projects,
+            'projectsSoporte' => $projectsSoporte,
             'allCustomers' => $allCustomers,
             'allUsers' => $allUsers,
         ]);
@@ -723,7 +788,7 @@ class Projects extends Component
         }
 
         $this->modalCreateEdit = false;
-        $this->allType = ['Activo', 'Soporte', 'Resolución Piloto', 'Entregado seguimiento', 'No activo seguimiento'];
+        $this->allType = ['Activo', 'Soporte', 'Cerrado', 'Entregado', 'No activo'];
         $this->clearInputs();
         // Emitir un evento de navegador
         $this->dispatchBrowserEvent('swal:modal', [
@@ -774,7 +839,7 @@ class Projects extends Component
     // INFO MODAL
     public function showUpdate($id)
     {
-        $this->allType = ['Activo', 'Soporte', 'Resolución Piloto', 'Entregado seguimiento', 'No activo seguimiento'];
+        $this->allType = ['Activo', 'Soporte', 'Cerrado', 'Entregado', 'No activo'];
         $this->showUpdate = true;
 
         if ($this->modalCreateEdit == true) {
@@ -860,7 +925,7 @@ class Projects extends Component
         $this->customer = '';
         $this->leader = '';
         $this->programmer = '';
-        $this->allType = ['Activo', 'Soporte', 'Resolución Piloto', 'Entregado seguimiento', 'No activo seguimiento'];
+        $this->allType = ['Activo', 'Soporte', 'Cerrado', 'Entregado', 'No activo'];
         $this->general_objective = '';
         $this->files = [];
         $this->selectedFiles = [];
@@ -869,6 +934,12 @@ class Projects extends Component
         $this->closing_date = '';
         $this->passwords = '';
         $this->dispatchBrowserEvent('file-reset');
+    }
+
+    public function setActiveTab($tab)
+    {
+        $this->activeTab = $tab;
+        $this->typeProject = $tab;
     }
 
     public function reloadPage()

@@ -1296,6 +1296,10 @@ select {
   width: 3.5rem;
 }
 
+.w-16 {
+  width: 4rem;
+}
+
 .w-2 {
   width: 0.5rem;
 }
@@ -1699,6 +1703,11 @@ select {
   border-color: rgb(22 101 52 / var(--tw-border-opacity));
 }
 
+.border-lime-700 {
+  --tw-border-opacity: 1;
+  border-color: rgb(77 124 15 / var(--tw-border-opacity));
+}
+
 .border-primaryColor {
   --tw-border-opacity: 1;
   border-color: rgb(215 229 231 / var(--tw-border-opacity));
@@ -2069,6 +2078,10 @@ select {
 
 .leading-snug {
   line-height: 1.375;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
 }
 
 .text-black {

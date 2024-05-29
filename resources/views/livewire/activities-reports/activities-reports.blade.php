@@ -1,6 +1,5 @@
 <div>
     <div class="px-4 py-4 sm:rounded-lg">
-        {{-- END NAVEGADOR --}}
         {{-- PESTAÑAS --}}
         <nav class="-mb-px flex">
             <button wire:click="setActiveTab('actividades')"
