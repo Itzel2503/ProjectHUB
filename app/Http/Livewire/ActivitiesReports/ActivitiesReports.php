@@ -21,6 +21,10 @@ class ActivitiesReports extends Component
 
     // PESTAÑA
     public $activeTab = 'actividades';
+    // Generales
+    public $allUsers;
+    public $allUsersFiltered = [];
+    public $selectedDelegate = '';
     // ------------------------------ ACTIVITY ------------------------------
     // modal activity
     public $modalShowActivity = false;
@@ -43,6 +47,7 @@ class ActivitiesReports extends Component
     public function render()
     {
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
+        $this->allUsers = User::all();
         // Filtro de consulta
         $user = Auth::user();
         $user_id = $user->id;
@@ -59,6 +64,9 @@ class ActivitiesReports extends Component
                             $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
                         });
                 })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
+                })
                 ->orderBy('created_at','desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
@@ -74,6 +82,9 @@ class ActivitiesReports extends Component
                         ->orWhereHas('user', function ($subQuery) {
                             $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
                         });
+                })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->orderBy('created_at','desc')
                 ->where('state', '!=', 'Resuelto')
@@ -93,6 +104,9 @@ class ActivitiesReports extends Component
                 })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id);
+                })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->orderBy('created_at','desc')
                 ->where('state', '!=', 'Resuelto')
@@ -117,6 +131,9 @@ class ActivitiesReports extends Component
                             $subQuery->where('user_id', $user_id)
                                 ->where('video', true);
                         });
+                })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->orderBy('created_at','desc')
                 ->where('state', '!=', 'Resuelto')
@@ -200,6 +217,10 @@ class ActivitiesReports extends Component
                 $report->user_chat = $lastMessage->user_id;
             }
             $report->messages_count = $messages->where('look', false)->count();
+        }
+        // TODOS LOS DELEGADOS
+        foreach ($this->allUsers as $key => $user) {
+            $this->allUsersFiltered[$user->id] = $user->name;
         }
         return view('livewire.activities-reports.activities-reports', [
             'activities' => $activities,

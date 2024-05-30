@@ -832,10 +832,6 @@ select {
   right: -4rem;
 }
 
-.-right-4 {
-  right: -1rem;
-}
-
 .bottom-0 {
   bottom: 0px;
 }
@@ -1985,10 +1981,6 @@ select {
 
 .text-justify {
   text-align: justify;
-}
-
-.text-start {
-  text-align: start;
 }
 
 .align-baseline {

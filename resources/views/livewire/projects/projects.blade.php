@@ -70,7 +70,7 @@
             </div>
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 headTable">
-                    <tr>
+                    <tr class="text-left">
                         <th class="w-16 px-4 py-3">Prioridad</th>
                         <th class="px-4 py-3">Proyecto</th>
                         <th class="px-4 py-3">Cliente</th>
@@ -83,18 +83,18 @@
                     <tr class="trTable">
                         <th class="px-4 py-2">K{{ $project->priority }}</th>
                         <td class="px-4 py-2">
-                            <div class="w-1/2 mx-auto text-justify">
+                            <div class="mx-auto text-justify">
                                 <span class="font-semibold">{{ $project->name }} @if(Auth::user()->area_id == 1) - {{
                                     $project->code }} @endif</span>
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="w-32 mx-auto text-justify">
+                            <div class="mx-auto text-justify">
                                 <span class="font-bold">{{ $project->customer_name }}</span><br>
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="w-36 mx-auto text-justify">
+                            <div class="mx-auto text-justify">
                                 - {{ $project->leader->name }}<br>
                                 - {{ $project->programmer->name }}
                             </div>
@@ -220,10 +220,10 @@
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 headTable">
                     <tr>
-                        <th class="w-16 px-4 py-3">Prioridad</th>
-                        <th class="px-4 py-3">Proyecto</th>
-                        <th class="px-4 py-3">Cliente</th>
-                        <th class="px-4 py-3">Líder y Scrum Master</th>
+                        <th class="w-16 px-4 py-3 text-left">Prioridad</th>
+                        <th class="px-4 py-3 text-left">Proyecto</th>
+                        <th class="px-4 py-3 text-left">Cliente</th>
+                        <th class="px-4 py-3 text-left">Líder y Scrum Master</th>
                         <th class="w-2 px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
@@ -232,18 +232,18 @@
                     <tr class="trTable">
                         <th class="px-4 py-2">K{{ $project->priority }}</th>
                         <td class="px-4 py-2">
-                            <div class="w-1/2 mx-auto text-justify">
+                            <div class="mx-auto text-justify">
                                 <span class="font-semibold">{{ $project->name }} @if(Auth::user()->area_id == 1) - {{
                                     $project->code }} @endif</span>
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="w-32 mx-auto text-justify">
+                            <div class="mx-auto text-justify">
                                 <span class="font-bold">{{ $project->customer_name }}</span><br>
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            <div class="w-36 mx-auto text-justify">
+                            <div class="mx-auto text-justify">
                                 - {{ $project->leader->name }}<br>
                                 - {{ $project->programmer->name }}
                             </div>
@@ -651,7 +651,7 @@
                                         class="inputs mb-2" multiple>
                                 </div>
                                 @endforeach
-                                <textarea wire:model='scopes' required type="text" rows="10"
+                                <textarea wire:model='scopes' required type="text" rows="6"
                                     placeholder="Escriba los alcances." name="scopes" id="scopes"
                                     class="textarea"></textarea>
                                 <div>
@@ -710,7 +710,7 @@
                                 <h5 class="inline-flex font-semibold" for="code">
                                     Claves de acceso
                                 </h5>
-                                <textarea wire:model='passwords' required type="text" rows="10"
+                                <textarea wire:model='passwords' required type="text" rows="6"
                                     placeholder="Accesos de sistema." name="passwords" id="passwords"
                                     class="textarea"></textarea>
                                 <div>

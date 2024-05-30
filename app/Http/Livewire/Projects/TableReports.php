@@ -114,7 +114,7 @@ class TableReports extends Component
 
         foreach ($this->allUsers as $key => $user) {
             // TODOS LOS DELEGADOS
-            $allUsersFiltered[$user->id] = $user->name;
+            $this->allUsersFiltered[$user->id] = $user->name;
         }
 
         // ADD ATRIBUTES

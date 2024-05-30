@@ -300,10 +300,10 @@
         <div class="tableStyle">
             <table class="whitespace-no-wrap table-hover table w-full">
                 <thead class="headTable border-0">
-                    <tr>
+                    <tr class="text-left">
                         <th class="w-96 px-4 py-3">Actividad</th>
                         <th class="px-4 py-3 lg:w-48">Delegado</th>
-                        <th class="px-4 py-3 w-48">Estado</th>
+                        <th class="px-4 py-3 w-48 text-center">Estado</th>
                         <th class="px-4 py-3 w-44">Fecha de entrega</th>
                         <th class="px-4 py-3 w-56">Creado</th>
                         <th class="px-4 py-3 w-16">Acciones</th>
@@ -325,6 +325,8 @@
                                                     d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
                                             </svg>
                                         </div>
+                                    @else 
+                                        <div class="w-12"></div>
                                     @endif
                                     <p class="my-auto text-left text-xs font-semibold">{{ $activity->tittle }}</p>
                                     @if ($activity->messages_count >= 1 && $activity->user_chat != Auth::id())
@@ -885,7 +887,7 @@
                                 <h5 class="inline-flex font-semibold" for="description">
                                     Descripción
                                 </h5>
-                                <textarea wire:model='description' type="text" rows="10"
+                                <textarea wire:model='description' type="text" rows="6"
                                     placeholder="Describa la observación y especifique el objetivo a cumplir." name="description" id="description"
                                     class="textarea"></textarea>
                                 <div>

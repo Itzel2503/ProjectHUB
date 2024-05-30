@@ -124,10 +124,10 @@
         <div class="tableStyle">
             <table class="whitespace-no-wrap table-hover table w-full">
                 <thead class="headTable border-0">
-                    <tr>
+                    <tr class="text-left">
                         <th class="w-96 px-4 py-3">Reporte</th>
                         <th class="px-4 py-3 lg:w-48">Delegado</th>
-                        <th class="px-4 py-3 w-48">Estado</th>
+                        <th class="px-4 py-3 w-48 text-center">Estado</th>
                         <th class="px-4 py-3 w-44">Fecha de entrega</th>
                         <th class="px-4 py-3 w-56">Creado</th>
                         <th class="px-4 py-3 w-16">Acciones</th>
@@ -635,7 +635,7 @@
                                 <h5 class="inline-flex font-semibold" for="tittle">
                                     Descripción<p class="text-red-600">*</p>
                                 </h5>
-                                <textarea wire:model='comment' type="text" rows="10"
+                                <textarea wire:model='comment' type="text" rows="6"
                                     placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" id="comment"
                                     class="textarea"></textarea>
                                 <div>

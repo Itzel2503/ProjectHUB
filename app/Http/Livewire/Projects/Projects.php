@@ -61,7 +61,7 @@ class Projects extends Component
                 ->with(['users' => function ($query) {
                     $query->withPivot('leader', 'programmer');
                 }])
-                ->orderBy('created_at', 'desc')
+                ->orderBy('projects.priority', 'asc')
                 ->get();
 
             if ($this->activeTab == 'Activo') {
@@ -84,7 +84,7 @@ class Projects extends Component
                     ->with(['users' => function ($query) {
                         $query->withPivot('leader', 'programmer');
                     }])
-                    ->orderBy('created_at', 'desc')
+                    ->orderBy('projects.priority', 'asc')
                     ->get();
             } else {
                 $projectsSoporte = null;

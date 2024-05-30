@@ -12,10 +12,21 @@
             </button>
             {{-- NAVEGADOR --}}
             <div
-                class="border-primaryColor ml-auto flex w-full flex-col justify-between gap-2 border-b-2 text-sm md:flex-row lg:text-base">
+                class="border-primaryColor ml-auto flex w-full flex-col gap-2 border-b-2 text-sm md:flex-row lg:text-base">
                 <!-- SEARCH -->
-                <div class="flex w-full flex-wrap md:inline-flex md:flex-nowrap">
-                    <div class="mb-2 ml-auto inline-flex h-12 bg-transparent px-2 md:px-0">
+                <div class="flex w-full flex-wrap justify-end md:inline-flex md:flex-nowrap">
+                    @if (Auth::user()->type_user == 1)
+                        <!-- DELEGATE -->
+                        <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
+                            <select wire:model.lazy="selectedDelegate" class="inputs">
+                                <option value="">Delegados</option>
+                                @foreach ($allUsersFiltered as $key => $userFiltered)
+                                    <option value="{{ $key }}">{{ $userFiltered }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
+                    <div class="mb-2 inline-flex h-12 bg-transparent px-2 md:px-0">
                         <div class="relative flex h-full w-full">
                             <div class="absolute z-10 mt-2 flex">
                                 <span
@@ -48,13 +59,13 @@
             @if ($activeTab === 'actividades')
                 <table class="whitespace-no-wrap table-hover table w-full">
                     <thead class="headTable border-0">
-                        <tr>
+                        <tr class="text-left">
                             <th class="w-96 px-4 py-3">Actividad</th>
                             <th class="px-4 py-3 lg:w-48">Delegado</th>
-                            <th class="px-4 py-3 w-48">Estado</th>
-                            <th class="px-4 py-3 w-44">Fecha de entrega</th>
-                            <th class="px-4 py-3 w-56">Creado</th>
-                            <th class="px-4 py-3 w-16">Acciones</th>
+                            <th class="w-48 px-4 py-3 text-center">Estado</th>
+                            <th class="w-44 px-4 py-3">Fecha de entrega</th>
+                            <th class="w-56 px-4 py-3">Creado</th>
+                            <th class="w-16 px-4 py-3">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,10 +75,12 @@
                                     <div wire:click="showActivity({{ $activity->id }})"
                                         class="flex cursor-pointer flex-col justify-center text-center">
                                         @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
-                                            <p class="mb-2 text-center text-xs">
-                                                <span class="inline-block font-semibold">Proyecto:</span>
-                                                {{ $activity->sprint->backlog->project->name }}
-                                            </p>
+                                            <div class="flex flex-row">
+                                                <div class="w-12"></div>
+                                                <p class="my-auto text-left text-xs font-semibold text-gray-400">
+                                                    {{ $activity->sprint->backlog->project->name }}
+                                                </p>
+                                            </div>
                                         @else
                                             <p class="text-justify text-xs font-semibold">
                                                 Proyecto no disponible
@@ -84,6 +97,8 @@
                                                             d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
                                                     </svg>
                                                 </div>
+                                            @else
+                                                <div class="w-12"></div>
                                             @endif
                                             <p class="my-auto text-left text-xs font-semibold">{{ $activity->tittle }}
                                             </p>
@@ -131,7 +146,7 @@
                                 <td class="px-2 py-1">
                                     <div wire:change='updateState({{ $activity->id }}, $event.target.value)'
                                         name="state" id="state"
-                                        class="inpSelectTable inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif w-28 text-sm font-semibold">
+                                        class="inpSelectTable inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif mx-auto w-28 text-sm font-semibold">
                                         <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
                                     </div>
                                 </td>
@@ -178,13 +193,13 @@
             @elseif ($activeTab === 'reportes')
                 <table class="whitespace-no-wrap table-hover table w-full">
                     <thead class="headTable border-0">
-                        <tr>
+                        <tr class="text-left">
                             <th class="w-96 px-4 py-3">Reporte</th>
                             <th class="px-4 py-3 lg:w-48">Delegado</th>
-                            <th class="px-4 py-3 w-48">Estado</th>
-                            <th class="px-4 py-3 w-44">Fecha de entrega</th>
-                            <th class="px-4 py-3 w-56">Creado</th>
-                            <th class="px-4 py-3 w-16">Acciones</th>
+                            <th class="w-48 px-4 py-3 text-center">Estado</th>
+                            <th class="w-44 px-4 py-3">Fecha de entrega</th>
+                            <th class="w-56 px-4 py-3">Creado</th>
+                            <th class="w-16 px-4 py-3">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -194,10 +209,12 @@
                                     <div wire:click="showReport({{ $report->id }})"
                                         class="flex cursor-pointer flex-col justify-center text-center">
                                         @if ($report->project)
-                                            <p class="mb-2 text-center text-xs">
-                                                <span class="inline-block font-semibold">Proyecto:</span>
-                                                {{ $report->project->name }}
-                                            </p>
+                                            <div class="flex flex-row">
+                                                <div class="w-12"></div>
+                                                <p class="my-auto text-left text-xs font-semibold text-gray-400">
+                                                    {{ $report->project->name }}
+                                                </p>
+                                            </div>
                                         @else
                                             <p class="text-justify text-xs font-semibold">
                                                 Proyecto no disponible
@@ -205,15 +222,16 @@
                                         @endif
                                         <div class="flex flex-row">
                                             <div class="my-2 w-auto rounded-md px-3 text-center font-semibold">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                    height="24" viewBox="0 0 24 24" fill="currentColor"
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="currentColor"
                                                     class="icon icon-tabler icons-tabler-filled icon-tabler-circle @if ($report->priority == 'Alto') text-red-500 @endif @if ($report->priority == 'Medio') text-yellow-400 @endif @if ($report->priority == 'Bajo') text-blue-500 @endif">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                     <path
                                                         d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
                                                 </svg>
                                             </div>
-                                            <p class="my-auto text-left text-xs font-semibold">{{ $report->title }}</p>
+                                            <p class="my-auto text-left text-xs font-semibold">{{ $report->title }}
+                                            </p>
                                         </div>
                                         @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
                                             <div class="absolute right-0 top-0 mt-1">
@@ -257,7 +275,7 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div name="state" id="state"
-                                        class="inpSelectTable inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-28 text-sm font-semibold">
+                                        class="inpSelectTable inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif mx-auto w-28 text-sm font-semibold">
                                         <option selected value={{ $report->state }}>{{ $report->state }}</option>
                                     </div>
                                     @if ($report->count)

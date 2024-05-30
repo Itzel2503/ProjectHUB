@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (auth()->check()) {
-        return redirect('/profile');
+        return redirect('/activities-reports');
     }
     return view('auth.login');
 });

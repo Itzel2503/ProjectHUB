@@ -230,7 +230,7 @@
                             <h5 class="inline-flex font-semibold" for="name">
                                 Descripción del reporte <p class="text-red-600">*</p>
                             </h5>
-                            <textarea required type="text" rows="10"
+                            <textarea required type="text" rows="6"
                                 placeholder="Describa la observación y especifique el objetivo a cumplir."
                                 name="comment" class="textarea"></textarea>
                             @if ($errors->has('comment'))

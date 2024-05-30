@@ -258,7 +258,7 @@
                             <textarea disabled type="text"
                                 placeholder="Describa la observación y especifique el objetivo a cumplir."
                                 class="bg-gray-100 textarea mb-2">{{ $report->comment }}</textarea>
-                            <textarea required type="text" rows="10"
+                            <textarea required type="text" rows="6"
                                 placeholder="Describa la nueva observación y especifique el objetivo a cumplir."
                                 name="comment" class="textarea"></textarea>
                             @if ($errors->has('comment'))
