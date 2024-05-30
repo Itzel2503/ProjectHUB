@@ -85,7 +85,7 @@
                                                     </svg>
                                                 </div>
                                             @endif
-                                            <p class="my-auto text-start text-xs font-semibold">{{ $activity->tittle }}
+                                            <p class="my-auto text-left text-xs font-semibold">{{ $activity->tittle }}
                                             </p>
                                         </div>
                                         @if ($activity->messages_count >= 1 && $activity->user_chat != Auth::id())
@@ -135,7 +135,7 @@
                                         <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
                                     </div>
                                 </td>
-                                <td class="px-2 py-1 text-start">
+                                <td class="px-2 py-1 text-left">
                                     <div class="mx-auto">
                                         {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                     </div>
@@ -213,7 +213,7 @@
                                                         d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
                                                 </svg>
                                             </div>
-                                            <p class="my-auto text-start text-xs font-semibold">{{ $report->title }}</p>
+                                            <p class="my-auto text-left text-xs font-semibold">{{ $report->title }}</p>
                                         </div>
                                         @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
                                             <div class="absolute right-0 top-0 mt-1">
@@ -264,7 +264,7 @@
                                         <p class="text-xs text-red-600">Reincidencia {{ $report->count }}</p>
                                     @endif
                                 </td>
-                                <td class="px-2 py-1 text-start">
+                                <td class="px-2 py-1 text-left">
                                     <div class="mx-auto">
                                         {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                     </div>
