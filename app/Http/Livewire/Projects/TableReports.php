@@ -69,6 +69,7 @@ class TableReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
+                ->orderBy('created_at', 'desc')
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
         } else {
@@ -98,6 +99,7 @@ class TableReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
+                ->orderBy('created_at', 'desc')
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
         }
