@@ -148,7 +148,7 @@
                                                 d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
                                         </svg>
                                     </div>
-                                    <p class="my-auto text-start text-xs font-semibold">{{ $report->title }}</p>
+                                    <p class="my-auto text-left text-xs font-semibold">{{ $report->title }}</p>
                                     @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
                                         <div class="absolute right-0 top-0">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -213,7 +213,7 @@
                                 @endif
                             </td>
                             <td class="px-2 py-1">
-                                <div class="my-auto text-start">
+                                <div class="my-auto text-left">
                                     {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                 </div>
                             </td>

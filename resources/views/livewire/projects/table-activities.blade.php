@@ -326,7 +326,7 @@
                                             </svg>
                                         </div>
                                     @endif
-                                    <p class="my-auto text-start text-xs font-semibold">{{ $activity->tittle }}</p>
+                                    <p class="my-auto text-left text-xs font-semibold">{{ $activity->tittle }}</p>
                                     @if ($activity->messages_count >= 1 && $activity->user_chat != Auth::id())
                                         <div class="absolute right-0 top-0">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -392,7 +392,7 @@
                                 </select>
                             </td>
                             <td class="px-2 py-1">
-                                <div class="my-auto text-start">
+                                <div class="my-auto text-left">
                                     {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                 </div>
                             </td>
