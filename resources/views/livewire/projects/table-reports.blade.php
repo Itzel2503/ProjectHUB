@@ -125,227 +125,47 @@
             <table class="whitespace-no-wrap table-hover table w-full">
                 <thead class="headTable border-0">
                     <tr>
-                        <th class="w-80 px-4 py-3">
-                            <div @if ($Filtered) wire:click="orderByLow('priority')" @else
-                                wire:click="orderByHigh('priority')" @endif
-                                class="justify- inline-flex cursor-pointer">
-                                Reporte
-                                @if ($Filtered)
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24"
-                                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l9 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l7 0" />
-                                        <path d="M15 15l3 3l3 -3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-ascending ml-2 cursor-pointer"
-                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l7 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l9 0" />
-                                        <path d="M15 9l3 -3l3 3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @endif
-                            </div>
-                        </th>
-
-                        <th class="w-60 px-4 py-3">
-                            <div @if ($Filtered) wire:click="orderByLow('progress')" @else
-                                wire:click="orderByHigh('progress')" @endif
-                                class="inline-flex justify-center">
-                                Delegado
-                                @if ($Filtered)
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24"
-                                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l9 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l7 0" />
-                                        <path d="M15 15l3 3l3 -3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-ascending ml-2 cursor-pointer"
-                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l7 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l9 0" />
-                                        <path d="M15 9l3 -3l3 3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @endif
-                            </div>
-                        </th>
-                        <th class="px-4 py-3">
-                            <div @if ($Filtered) wire:click="orderByLow('state')" @else
-                                wire:click="orderByHigh('state')" @endif
-                                class="inline-flex justify-center">
-                                Estado
-                                @if ($Filtered)
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24"
-                                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l9 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l7 0" />
-                                        <path d="M15 15l3 3l3 -3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-ascending ml-2 cursor-pointer"
-                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l7 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l9 0" />
-                                        <path d="M15 9l3 -3l3 3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @endif
-                            </div>
-                        </th>
-                        <th class="px-4 py-3">
-                            <div @if ($Filtered) wire:click="orderByLow('expected_date')" @else
-                                wire:click="orderByHigh('expected_date')" @endif
-                                class="inline-flex justify-center">
-                                Fecha
-                                @if ($Filtered)
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24"
-                                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l9 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l7 0" />
-                                        <path d="M15 15l3 3l3 -3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-ascending ml-2 cursor-pointer"
-                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l7 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l9 0" />
-                                        <path d="M15 9l3 -3l3 3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @endif
-                            </div>
-                        </th>
-                        <th class="px-4 py-3">
-                            <div @if ($Filtered) wire:click="orderByLow('created_at')" @else
-                                wire:click="orderByHigh('created_at')" @endif
-                                class="inline-flex justify-center">
-                                Creado
-                                @if ($Filtered)
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24"
-                                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l9 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l7 0" />
-                                        <path d="M15 15l3 3l3 -3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-ascending ml-2 cursor-pointer"
-                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l7 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l9 0" />
-                                        <path d="M15 9l3 -3l3 3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @endif
-                            </div>
-                        </th>
-                        <th class="w-2 px-4 py-3">Acciones</th>
+                        <th class="w-96 px-4 py-3">Reporte</th>
+                        <th class="px-4 py-3 lg:w-48">Delegado</th>
+                        <th class="px-4 py-3">Estado</th>
+                        <th class="px-4 py-3">Fecha de entrega</th>
+                        <th class="px-4 py-3">Creado</th>
+                        <th class="px-4 py-3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($reports as $report)
                         <tr class="trTable">
-                            <td class="relative px-4 py-2">
+                            <td class="relative px-2 py-1">
                                 <div wire:click="showReport({{ $report->id }})"
-                                    class="flex cursor-pointer flex-col items-center text-center">
+                                    class="flex cursor-pointer flex-row items-center text-center">
+                                    <div class="my-2 w-auto rounded-md px-3 text-center font-semibold">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="currentColor"
+                                            class="icon icon-tabler icons-tabler-filled icon-tabler-circle @if ($report->priority == 'Alto') text-red-500 @endif @if ($report->priority == 'Medio') text-yellow-400 @endif @if ($report->priority == 'Bajo') text-blue-500 @endif">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path
+                                                d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
+                                        </svg>
+                                    </div>
                                     <p class="mb-2 text-justify text-xs font-semibold">{{ $report->title }}</p>
-                                    @if (!empty($report->content))
-                                        <div class="h-22 w-auto px-3 pt-2">
-                                            @if ($report->image == true)
-                                                <img src="{{ asset('reportes/' . $report->content) }}"
-                                                    alt="Report Image" class="mx-auto h-16 w-20 object-cover">
-                                            @endif
-                                            @if ($report->video == true)
-                                                @if (strpos($report->content, 'Reporte') === 0)
-                                                    <p class="my-3 text-red-600">Falta subir video
-                                                    </p>
-                                                @else
-                                                    <video src="{{ asset('reportes/' . $report->content) }}"
-                                                        alt="Report Video"
-                                                        class="mx-auto h-16 w-20 object-cover"></video>
-                                                @endif
-                                            @endif
-                                            @if ($report->file == true)
-                                                <img src="https://static.vecteezy.com/system/resources/previews/007/678/851/non_2x/documents-line-icon-vector.jpg"
-                                                    alt="Report Image" class="mx-auto h-20 w-20 object-cover">
-                                            @endif
-                                        </div>
-                                    @else
-                                        <p class=""></p>
-                                    @endif
                                     @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
                                         <div class="absolute right-0 top-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-circle-filled text-red-600"
-                                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M8 9h8" />
+                                                <path d="M8 13h6" />
                                                 <path
-                                                    d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z"
-                                                    stroke-width="0" fill="currentColor" />
+                                                    d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
                                             </svg>
                                         </div>
                                     @endif
-                                    <div
-                                        class="@if ($report->priority == 'Alto') bg-red-500 text-white @endif @if ($report->priority == 'Medio') bg-yellow-400 @endif @if ($report->priority == 'Bajo') bg-blue-500 text-white @endif my-2 w-auto rounded-md px-3 text-center font-semibold">
-                                        {{ $report->priority }}
-                                    </div>
                                 </div>
                             </td>
-                            <td class="px-4 py-2">
+                            <td class="px-2 py-1">
                                 <div class="mx-auto w-full text-left">
                                     <p class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
                                         {{ $report->delegate->name }}</p>
@@ -365,9 +185,9 @@
                                         @else
                                             @if ($report->state == 'Resuelto')
                                                 @if ($report->progress == null)
-                                                    Sin tiempo de desarrollo
+                                                    Sin desarrollo
                                                 @else
-                                                    Tiempo de desarrollo {{ $report->timeDifference }}
+                                                    Desarrollo {{ $report->timeDifference }}
                                                 @endif
                                             @else
                                                 @if ($report->look == true)
@@ -378,7 +198,7 @@
                                     </p>
                                 </div>
                             </td>
-                            <td class="px-4 py-2">
+                            <td class="px-2 py-1">
                                 <select
                                     wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)'
                                     name="state" id="state"
@@ -392,25 +212,18 @@
                                     <p class="text-xs text-red-600">Reincidencia {{ $report->count }}</p>
                                 @endif
                             </td>
-                            <td class="px-4 py-2 text-left">
-                                <div class="mx-auto w-36">
-                                    <span class="inline-block font-semibold">Entrega:</span>
-                                    {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
-                                    <span class="inline-block font-semibold">Delegado el:</span>
-                                    {{ \Carbon\Carbon::parse($report->delegated_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
-                                </div>
+                            <td class="px-2 py-1">
+                                {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                             </td>
-                            <td class="px-4 py-2">
+                            <td class="px-2 py-1">
                                 <div class="mx-auto w-40 text-left">
                                     <span class="font-semibold"> {{ $report->user->name }} </span> <br>
                                     <span class="font-mono">
                                         {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
-                                    </span><br>
-                                    <span class="italic">
-                                        {{ $report->created_at->diffForHumans(null, false, false, 1) }} </span>
+                                    </span>
                                 </div>
                             </td>
-                            <td class="px-4 py-5">
+                            <td class="px-2 py-1">
                                 <div class="flex justify-center">
                                     <div id="dropdown-button-{{ $report->id }}" class="relative">
                                         <!-- Button -->
@@ -782,8 +595,23 @@
                 <div class="modalBody">
                     <div class="md-3/4 mb-5 mt-5 flex w-full flex-col">
                         <div class="-mx-3 mb-6 flex flex-row">
-                            <div
-                                class="@if (Auth::user()->type_user == 1) flex flex-col @else @endif mb-6 w-full px-3">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="tittle">
+                                    Titulo<p class="text-red-600">*</p>
+                                </h5>
+                                <input wire:model='tittle' required type="text" placeholder="Título"
+                                    name="tittle" id="tittle" class="inputs">
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('tittle')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mb-6 flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="file">
                                     Seleccionar archivo
                                 </h5>
@@ -799,29 +627,11 @@
                                     </span>
                                 </div>
                             </div>
-                            @if (Auth::user()->type_user == 1)
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="expected_date">
-                                        Fecha de entrega
-                                    </h5>
-                                    <input wire:model='expected_date' required type="date" name="expected_date"
-                                        id="expected_date" class="inputs">
-                                    <div>
-                                        <span class="text-xs italic text-red-600">
-                                            @error('expected_date')
-                                                <span class="pl-2 text-xs italic text-red-600">
-                                                    {{ $message }}
-                                                </span>
-                                            @enderror
-                                        </span>
-                                    </div>
-                                </div>
-                            @endif
                         </div>
                         <div class="-mx-3 mb-6">
                             <div class="mb-6 flex w-full flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="comment">
-                                    Descripción
+                                <h5 class="inline-flex font-semibold" for="tittle">
+                                    Descripción<p class="text-red-600">*</p>
                                 </h5>
                                 <textarea wire:model='comment' type="text" rows="10"
                                     placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" id="comment"
@@ -829,6 +639,94 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('comment')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 mb-6 flex flex-row">
+                            <div
+                                class="mb-6 w-full px-3 flex flex-row m-auto">
+                                <h5 class="inline-flex font-semibold mr-5" for="evidenceEdit">
+                                    Evidencia
+                                </h5>
+                                <div class="flex justify-center gap-20">
+                                    <div class="flex flex-col items-center">
+                                        <input type="checkbox" wire:model="evidenceEdit"
+                                            class="priority-checkbox"
+                                            style="height: 24px; width: 24px;" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('evidenceEdit')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('delegate')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="expected_date">
+                                    Fecha de entrega<p class="text-red-600">*</p>
+                                </h5>
+                                <input wire:model='expected_date' required type="date" name="expected_date"
+                                    id="expected_date" class="inputs">
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('expected_date')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="tittle">
+                                    Prioridad<p class="text-red-600">*</p>
+                                </h5>
+                                <div class="flex justify-center gap-20">
+                                    <div class="flex flex-col items-center">
+                                        <input type="checkbox" wire:model="priority1"
+                                            wire:change="selectPriority($event.target.value)" value="Alto"
+                                            class="priority-checkbox border-red-600 bg-red-600"
+                                            style="height: 24px; width: 24px; accent-color: #dd4231;" />
+                                        <label for="priority1" class="mt-2">Alto</label>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <input type="checkbox" wire:model="priority2"
+                                            wire:change="selectPriority($event.target.value)" value="Medio"
+                                            class="priority-checkbox border-yellow-400 bg-yellow-400"
+                                            style="height: 24px; width: 24px; accent-color: #f6c03e;" />
+                                        <label for="priority2" class="mt-2">Medio</label>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <input type="checkbox" wire:model="priority3"
+                                            wire:change="selectPriority($event.target.value)" value="Bajo"
+                                            class="priority-checkbox border-secondary bg-secondary"
+                                            style="height: 24px; width: 24px; accent-color: #0062cc;" />
+                                        <label for="priority3" class="mt-2">Bajo</label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('priority')
                                             <span class="pl-2 text-xs italic text-red-600">
                                                 {{ $message }}
                                             </span>

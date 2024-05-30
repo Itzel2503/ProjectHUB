@@ -302,147 +302,48 @@
                 <thead class="headTable border-0">
                     <tr>
                         <th class="w-96 px-4 py-3">Actividad</th>
-                        <th class="px-4 py-3 lg:w-48">
-                            <div @if ($progressFiltered) wire:click="orderByLowDates('progress')" @else
-                                wire:click="orderByHighDates('progress')" @endif
-                                class="inline-flex justify-center">
-                                Delegado
-                                @if ($progressFiltered)
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24"
-                                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l9 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l7 0" />
-                                        <path d="M15 15l3 3l3 -3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-ascending ml-2 cursor-pointer"
-                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l7 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l9 0" />
-                                        <path d="M15 9l3 -3l3 3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @endif
-                            </div>
-                        </th>
+                        <th class="px-4 py-3 lg:w-48">Delegado</th>
                         <th class="px-4 py-3">Estado</th>
-                        <th class="px-4 py-3">
-                            <div @if ($expectedFiltered) wire:click="orderByLowDates('expected_date')" @else
-                                wire:click="orderByHighDates('expected_date')" @endif
-                                class="inline-flex justify-center">
-                                Fecha
-                                @if ($expectedFiltered)
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24"
-                                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l9 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l7 0" />
-                                        <path d="M15 15l3 3l3 -3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-ascending ml-2 cursor-pointer"
-                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l7 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l9 0" />
-                                        <path d="M15 9l3 -3l3 3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @endif
-                            </div>
-                        </th>
-                        <th class="px-4 py-3">
-                            <div @if ($createdFiltered) wire:click="orderByLowDates('created_at')" @else
-                                wire:click="orderByHighDates('created_at')" @endif
-                                class="inline-flex justify-center">
-                                Creado
-                                @if ($createdFiltered)
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-descending ml-2" width="24"
-                                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l9 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l7 0" />
-                                        <path d="M15 15l3 3l3 -3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-sort-ascending ml-2 cursor-pointer"
-                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 6l7 0" />
-                                        <path d="M4 12l7 0" />
-                                        <path d="M4 18l9 0" />
-                                        <path d="M15 9l3 -3l3 3" />
-                                        <path d="M18 6l0 12" />
-                                    </svg>
-                                @endif
-                            </div>
-                        </th>
-                        <th class="w-2 px-4 py-3">Acciones</th>
+                        <th class="px-4 py-3">Fecha de entrega</th>
+                        <th class="px-4 py-3">Creado</th>
+                        <th class="px-4 py-3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($activities as $activity)
                         <tr class="trTable">
-                            <td class="relative px-4 py-2">
+                            <td class="relative px-2 py-1">
                                 <div wire:click="showActivity({{ $activity->id }})"
-                                    class="flex cursor-pointer flex-col items-center text-center">
-                                    <p class="mb-2 text-justify text-xs font-semibold">{{ $activity->tittle }}</p>
-                                    @if (!empty($activity->image))
-                                        <div class="h-22 w-auto px-3 pt-2">
-                                            @if ($activity->image == true)
-                                                <img src="{{ asset('activities/' . $activity->image) }}"
-                                                    alt="Activity Image" class="mx-auto h-16 w-20 object-cover">
-                                            @endif
-                                        </div>
-                                    @endif
-                                    @if ($activity->messages_count >= 1 && $activity->user_chat != Auth::id())
-                                        <div class="absolute right-0 top-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-circle-filled text-red-600"
-                                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
+                                    class="flex cursor-pointer flex-row items-center text-center">
+                                    @if ($activity->priority)
+                                        <div class="my-2 w-auto rounded-md px-3 text-center font-semibold">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="currentColor"
+                                                class="icon icon-tabler icons-tabler-filled icon-tabler-circle @if ($activity->priority == 'Alto') text-red-500 @endif @if ($activity->priority == 'Medio') text-yellow-400 @endif @if ($activity->priority == 'Bajo') text-blue-500 @endif">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                 <path
-                                                    d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z"
-                                                    stroke-width="0" fill="currentColor" />
+                                                    d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
                                             </svg>
                                         </div>
                                     @endif
-                                    @if ($activity->priority)
-                                        <div
-                                            class="@if ($activity->priority == 'Alto') bg-red-500 text-white @endif @if ($activity->priority == 'Medio') bg-yellow-400 @endif @if ($activity->priority == 'Bajo') bg-blue-500 text-white @endif my-2 w-auto rounded-md px-3 text-center font-semibold">
-                                            {{ $activity->priority }}
+                                    <p class="mb-2 text-justify text-xs font-semibold">{{ $activity->tittle }}</p>
+                                    @if ($activity->messages_count >= 1 && $activity->user_chat != Auth::id())
+                                        <div class="absolute right-0 top-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M8 9h8" />
+                                                <path d="M8 13h6" />
+                                                <path
+                                                    d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                            </svg>
                                         </div>
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-4 py-2">
+                            <td class="px-2 py-1">
                                 <div class="mx-auto w-auto text-left">
                                     <p class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
                                         {{ $activity->delegate->name }}</p>
@@ -465,9 +366,9 @@
                                         @else
                                             @if ($activity->state == 'Resuelto')
                                                 @if ($activity->progress == null)
-                                                    Sin tiempo de desarrollo
+                                                    Sin desarrollo
                                                 @else
-                                                    Tiempo de desarrollo {{ $activity->timeDifference }}
+                                                    Desarrollo {{ $activity->timeDifference }}
                                                 @endif
                                             @else
                                                 @if ($activity->look == true)
@@ -479,7 +380,7 @@
                                     </p>
                                 </div>
                             </td>
-                            <td class="px-4 py-2">
+                            <td class="px-2 py-1">
                                 <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
                                     name="state" id="state"
                                     class="inpSelectTable inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif w-28 text-sm font-semibold"
@@ -490,26 +391,20 @@
                                     @endforeach
                                 </select>
                             </td>
-                            <td class="px-4 py-2 text-left">
+                            <td class="px-2 py-1">
                                 <div class="mx-auto">
-                                    <span class="inline-block font-semibold">Entrega:</span>
-                                    {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
-                                    <span class="inline-block font-semibold">Delegado el:</span>
-                                    {{ \Carbon\Carbon::parse($activity->delegated_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                    {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                 </div>
                             </td>
-                            <td class="px-4 py-2">
+                            <td class="px-2 py-1">
                                 <div class="mx-auto text-left">
                                     <span class="font-semibold"> {{ $activity->user->name }}</span> <br>
                                     <span class="font-mono">
                                         {{ \Carbon\Carbon::parse($activity->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
-                                    </span><br>
-                                    <span class="italic">
-                                        {{ $activity->created_at->diffForHumans(null, false, false, 1) }}
                                     </span>
                                 </div>
                             </td>
-                            <td class="px-4 py-5">
+                            <td class="px-2 py-1">
                                 <div class="@if ($activity->state == 'Resuelto') hidden @endif flex justify-center">
                                     <div id="dropdown-button-{{ $activity->id }}" class="relative">
                                         <button onclick="toggleDropdown('{{ $activity->id }}')" type="button"

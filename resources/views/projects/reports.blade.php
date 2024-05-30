@@ -34,7 +34,7 @@ text-yellow-400
                 <path d="M4 7l3.75 2.4" />
                 <path d="M20 7l-3.75 2.4" />
             </svg>
-            <span class="ml-4 text-xl">Reportes del proyecto '{{ $project->name }}'</span>
+            <span class="ml-4 text-xl">Reportes "{{ $project->name }}"</span>
         </h1>
     </div>
     <livewire:projects.table-reports :project="$project">

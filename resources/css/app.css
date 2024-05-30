@@ -17,7 +17,7 @@
     @apply font-semibold tracking-wide text-center text-text1 text-base bg-primaryColor;
 }
 .trTable {
-    @apply text-sm text-center border-b pt-1;
+    @apply text-sm text-center border-b;
 }
 /* /inputs */
 .inputs {

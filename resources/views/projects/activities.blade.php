@@ -16,7 +16,7 @@
                 <path d="M12 6l0 13" />
                 <path d="M21 6l0 13" />
             </svg>
-            <span class="ml-4 text-xl">Actividades del proyecto '{{ $project->name }}'</span>
+            <span class="ml-4 text-xl">Actividades "{{ $project->name }}"</span>
         </h1>
     </div>
     <livewire:projects.table-activities :project="$project" :backlog="$backlog" : sprints="$sprints">

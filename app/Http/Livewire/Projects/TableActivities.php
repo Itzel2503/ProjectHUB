@@ -52,7 +52,7 @@ class TableActivities extends Component
     public $priorityOrder = 'Bajo', $datesOrder = 'created_at', $ascOrDesc = 'desc';
     public $selectedDelegate = '';
     public $usersFiltered = [], $allUsersFiltered = [], $selectedStates = [], $statesFiltered = [];
-    public $priorityFiltered = false, $progressFiltered = false, $expectedFiltered = false, $createdFiltered = false;
+    public $priorityFiltered = false, $expectedFiltered = false, $createdFiltered = false;
 
     public function render()
     {
@@ -149,9 +149,6 @@ class TableActivities extends Component
                 ->when(!empty($this->selectedStates), function ($query) {
                     $query->whereIn('state', $this->selectedStates);
                 })
-                ->when($this->datesOrder, function ($query) {
-                    $query->orderBy($this->datesOrder, $this->ascOrDesc);
-                })
                 ->with(['user', 'delegate'])
                 ->get();
         } else {
@@ -175,9 +172,6 @@ class TableActivities extends Component
                 })
                 ->when(!empty($this->selectedStates), function ($query) {
                     $query->whereIn('state', $this->selectedStates);
-                })
-                ->when($this->datesOrder, function ($query) {
-                    $query->orderBy($this->datesOrder, $this->ascOrDesc);
                 })
                 ->with(['user', 'delegate'])
                 ->get();
@@ -870,60 +864,6 @@ class TableActivities extends Component
         }
         $this->clearInputs();
         $this->resetErrorBag();
-    }
-    // FILTERED
-    public function orderByHighPriority()
-    {
-        $this->priorityFiltered = true;
-        $this->priorityOrder = 'Alto';
-    }
-
-    public function orderByLowPriority()
-    {
-        $this->priorityFiltered = false;
-        $this->priorityOrder = 'Bajo';
-    }
-
-    public function orderByHighDates($type)
-    {
-        if ($type == 'progress') {
-            $this->progressFiltered = true;
-            $this->datesOrder = 'progress';
-            $this->ascOrDesc = 'desc';
-        }
-
-        if ($type == 'expected_date') {
-            $this->expectedFiltered = true;
-            $this->datesOrder = 'expected_date';
-            $this->ascOrDesc = 'desc';
-        }
-
-        if ($type == 'created_at') {
-            $this->createdFiltered = true;
-            $this->datesOrder = 'created_at';
-            $this->ascOrDesc = 'desc';
-        }
-    }
-
-    public function orderByLowDates($type)
-    {
-        if ($type == 'progress') {
-            $this->progressFiltered = false;
-            $this->datesOrder = 'progress';
-            $this->ascOrDesc = 'asc';
-        }
-
-        if ($type == 'expected_date') {
-            $this->expectedFiltered = false;
-            $this->datesOrder = 'expected_date';
-            $this->ascOrDesc = 'asc';
-        }
-
-        if ($type == 'created_at') {
-            $this->createdFiltered = false;
-            $this->datesOrder = 'created_at';
-            $this->ascOrDesc = 'asc';
-        }
     }
     // EXTRAS
     public function clearInputs()
