@@ -28,9 +28,6 @@ class ActivitiesReports extends Component
     public $activityShow, $messagesActivity, $messageActivity;
     // table, action's activities
     public $searchActivity;
-    public $datesOrderActivity = 'updated_at', $progressOrderActivity = 'desc';
-    public $stateOrderActivity = "CASE WHEN state = 'Proceso' THEN 1 WHEN state = 'Abierto' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END ASC";
-    public $FilteredActivity = false;
     // ------------------------------ REPORT ------------------------------
     // modal show report
     public $modalShowReport = false;
@@ -42,9 +39,6 @@ class ActivitiesReports extends Component
     public $messagesReport, $messageReport;
     // table, action's reports
     public $searchReport;
-    public $priorityOrderReport = '', $datesOrderReport = 'updated_at', $progressOrderReport = 'desc';
-    public $stateOrderReport = "CASE WHEN state = 'Proceso' THEN 1 WHEN state = 'Abierto' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END ASC";
-    public $FilteredReport = false;
 
     public function render()
     {
@@ -65,12 +59,7 @@ class ActivitiesReports extends Component
                             $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
                         });
                 })
-                ->when($this->stateOrderActivity, function ($query) {
-                    $query->orderByRaw($this->stateOrderActivity);
-                })
-                ->when($this->datesOrderActivity, function ($query) {
-                    $query->orderBy($this->datesOrderActivity, $this->progressOrderActivity);
-                })
+                ->orderBy('created_at','desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
@@ -86,15 +75,7 @@ class ActivitiesReports extends Component
                             $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
                         });
                 })
-                ->when($this->stateOrderReport, function ($query) {
-                    $query->orderByRaw($this->stateOrderReport);
-                })
-                ->when($this->priorityOrderReport, function ($query) {
-                    $query->orderByRaw($this->priorityOrderReport);
-                })
-                ->when($this->datesOrderReport, function ($query) {
-                    $query->orderBy($this->datesOrderReport, $this->progressOrderReport);
-                })
+                ->orderBy('created_at','desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
@@ -113,12 +94,7 @@ class ActivitiesReports extends Component
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id);
                 })
-                ->when($this->stateOrderActivity, function ($query) {
-                    $query->orderByRaw($this->stateOrderActivity);
-                })
-                ->when($this->datesOrderActivity, function ($query) {
-                    $query->orderBy($this->datesOrderActivity, $this->progressOrderActivity);
-                })
+                ->orderBy('created_at','desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
@@ -142,15 +118,7 @@ class ActivitiesReports extends Component
                                 ->where('video', true);
                         });
                 })
-                ->when($this->stateOrderReport, function ($query) {
-                    $query->orderByRaw($this->stateOrderReport);
-                })
-                ->when($this->priorityOrderReport, function ($query) {
-                    $query->orderByRaw($this->priorityOrderReport);
-                })
-                ->when($this->datesOrderReport, function ($query) {
-                    $query->orderBy($this->datesOrderReport, $this->progressOrderReport);
-                })
+                ->orderBy('created_at','desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
@@ -360,118 +328,6 @@ class ActivitiesReports extends Component
         } else {
             $this->modalShowReport = true;
         }
-    }
-    // FILTERED
-    public function orderByHighActivity($type)
-    {
-        if ($type == 'state') {
-            $this->stateOrderActivity = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END ASC";
-            $this->datesOrderActivity = '';
-            $this->progressOrderActivity = '';
-        }
-
-        if ($type == 'expected_date') {
-            $this->stateOrderActivity = "";
-            $this->datesOrderActivity = 'expected_date';
-            $this->progressOrderActivity = 'desc';
-        }
-
-        if ($type == 'created_at') {
-            $this->stateOrderActivity = "";
-            $this->datesOrderActivity = 'created_at';
-            $this->progressOrderActivity = 'desc';
-        }
-
-        $this->FilteredActivity = true;
-    }
-
-    public function orderByLowActivity($type)
-    {
-        if ($type == 'state') {
-            $this->stateOrderActivity = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END ASC";
-            $this->datesOrderActivity = '';
-            $this->progressOrderActivity = '';
-        }
-
-        if ($type == 'expected_date') {
-            $this->stateOrderActivity = "";
-            $this->datesOrderActivity = 'expected_date';
-            $this->progressOrderActivity = 'asc';
-        }
-
-        if ($type == 'created_at') {
-            $this->stateOrderActivity = "";
-            $this->datesOrderActivity = 'created_at';
-            $this->progressOrderActivity = 'asc';
-        }
-
-        $this->FilteredActivity = false;
-    }
-
-    public function orderByHighReport($type)
-    {
-        if ($type == 'priority') {
-            $this->priorityOrderReport = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 END desc";
-            $this->stateOrderReport = "";
-            $this->datesOrderReport = '';
-            $this->progressOrderReport = '';
-        }
-
-        if ($type == 'state') {
-            $this->priorityOrderReport = "";
-            $this->stateOrderReport = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END ASC";
-            $this->datesOrderReport = '';
-            $this->progressOrderReport = '';
-        }
-
-        if ($type == 'expected_date') {
-            $this->priorityOrderReport = "";
-            $this->stateOrderReport = "";
-            $this->datesOrderReport = 'expected_date';
-            $this->progressOrderReport = 'desc';
-        }
-
-        if ($type == 'created_at') {
-            $this->priorityOrderReport = "";
-            $this->stateOrderReport = "";
-            $this->datesOrderReport = 'created_at';
-            $this->progressOrderReport = 'desc';
-        }
-
-        $this->FilteredReport = true;
-    }
-
-    public function orderByLowReport($type)
-    {
-        if ($type == 'priority') {
-            $this->priorityOrderReport = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 END asc";
-            $this->stateOrderReport = "";
-            $this->datesOrderReport = '';
-            $this->progressOrderReport = '';
-        }
-
-        if ($type == 'state') {
-            $this->priorityOrderReport = "";
-            $this->stateOrderReport = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END ASC";
-            $this->datesOrderReport = '';
-            $this->progressOrderReport = '';
-        }
-
-        if ($type == 'expected_date') {
-            $this->priorityOrderReport = "";
-            $this->stateOrderReport = "";
-            $this->datesOrderReport = 'expected_date';
-            $this->progressOrderReport = 'asc';
-        }
-
-        if ($type == 'created_at') {
-            $this->priorityOrderReport = "";
-            $this->stateOrderReport = "";
-            $this->datesOrderReport = 'created_at';
-            $this->progressOrderReport = 'asc';
-        }
-
-        $this->FilteredReport = false;
     }
     // EXTRAS
     public function updateChatActivity($id)
