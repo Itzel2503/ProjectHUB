@@ -72,7 +72,7 @@
                 <thead class="border-0 headTable">
                     <tr class="text-left">
                         <th class="w-16 px-4 py-3">Prioridad</th>
-                        <th class="px-4 py-3">Proyecto</th>
+                        <th class="w-2/6 px-4 py-3">Proyecto</th>
                         <th class="px-4 py-3">Cliente</th>
                         <th class="px-4 py-3">Líder y Scrum Master</th>
                         <th class="w-2 px-4 py-2">Acciones</th>
@@ -219,11 +219,11 @@
             </div>
             <table class="w-full whitespace-no-wrap table table-hover ">
                 <thead class="border-0 headTable">
-                    <tr>
-                        <th class="w-16 px-4 py-3 text-left">Prioridad</th>
-                        <th class="px-4 py-3 text-left">Proyecto</th>
-                        <th class="px-4 py-3 text-left">Cliente</th>
-                        <th class="px-4 py-3 text-left">Líder y Scrum Master</th>
+                    <tr class="text-left">
+                        <th class="w-16 px-4 py-3">Prioridad</th>
+                        <th class="w-2/6 px-4 py-3">Proyecto</th>
+                        <th class="px-4 py-3">Cliente</th>
+                        <th class="px-4 py-3">Líder y Scrum Master</th>
                         <th class="w-2 px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
