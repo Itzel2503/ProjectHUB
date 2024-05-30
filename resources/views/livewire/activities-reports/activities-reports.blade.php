@@ -51,10 +51,10 @@
                         <tr>
                             <th class="w-96 px-4 py-3">Actividad</th>
                             <th class="px-4 py-3 lg:w-48">Delegado</th>
-                            <th class="px-4 py-3">Estado</th>
-                            <th class="px-4 py-3">Fecha de entrega</th>
-                            <th class="px-4 py-3">Creado</th>
-                            <th class="px-4 py-3">Acciones</th>
+                            <th class="px-4 py-3 w-48">Estado</th>
+                            <th class="px-4 py-3 w-44">Fecha de entrega</th>
+                            <th class="px-4 py-3 w-56">Creado</th>
+                            <th class="px-4 py-3 w-16">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,9 +62,9 @@
                             <tr class="trTable">
                                 <td class="relative px-2 py-1">
                                     <div wire:click="showActivity({{ $activity->id }})"
-                                        class="flex cursor-pointer flex-col items-center justify-center text-center">
+                                        class="flex cursor-pointer flex-col justify-center text-center">
                                         @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
-                                            <p class="mb-2 text-justify text-xs">
+                                            <p class="mb-2 text-center text-xs">
                                                 <span class="inline-block font-semibold">Proyecto:</span>
                                                 {{ $activity->sprint->backlog->project->name }}
                                             </p>
@@ -85,11 +85,11 @@
                                                     </svg>
                                                 </div>
                                             @endif
-                                            <p class="m-auto text-justify text-xs font-semibold">{{ $activity->tittle }}
+                                            <p class="my-auto text-start text-xs font-semibold">{{ $activity->tittle }}
                                             </p>
                                         </div>
                                         @if ($activity->messages_count >= 1 && $activity->user_chat != Auth::id())
-                                            <div class="absolute right-0 top-0 mr-2 mt-2">
+                                            <div class="absolute right-0 top-0 mt-1">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -135,7 +135,7 @@
                                         <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
                                     </div>
                                 </td>
-                                <td class="px-2 py-1 text-center">
+                                <td class="px-2 py-1 text-start">
                                     <div class="mx-auto">
                                         {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                     </div>
@@ -181,10 +181,10 @@
                         <tr>
                             <th class="w-96 px-4 py-3">Reporte</th>
                             <th class="px-4 py-3 lg:w-48">Delegado</th>
-                            <th class="px-4 py-3">Estado</th>
-                            <th class="px-4 py-3">Fecha de entrega</th>
-                            <th class="px-4 py-3">Creado</th>
-                            <th class="px-4 py-3">Acciones</th>
+                            <th class="px-4 py-3 w-48">Estado</th>
+                            <th class="px-4 py-3 w-44">Fecha de entrega</th>
+                            <th class="px-4 py-3 w-56">Creado</th>
+                            <th class="px-4 py-3 w-16">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -192,7 +192,7 @@
                             <tr class="trTable">
                                 <td class="relative px-2 py-1">
                                     <div wire:click="showReport({{ $report->id }})"
-                                        class="flex cursor-pointer flex-col items-center justify-center text-center">
+                                        class="flex cursor-pointer flex-col justify-center text-center">
                                         @if ($report->project)
                                             <p class="mb-2 text-center text-xs">
                                                 <span class="inline-block font-semibold">Proyecto:</span>
@@ -213,10 +213,10 @@
                                                         d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
                                                 </svg>
                                             </div>
-                                            <p class="m-auto text-justify text-xs font-semibold">{{ $report->title }}</p>
+                                            <p class="my-auto text-start text-xs font-semibold">{{ $report->title }}</p>
                                         </div>
                                         @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
-                                            <div class="absolute right-0 top-0 mr-2 mt-2">
+                                            <div class="absolute right-0 top-0 mt-1">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -264,7 +264,7 @@
                                         <p class="text-xs text-red-600">Reincidencia {{ $report->count }}</p>
                                     @endif
                                 </td>
-                                <td class="px-2 py-1 text-center">
+                                <td class="px-2 py-1 text-start">
                                     <div class="mx-auto">
                                         {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                     </div>

@@ -127,10 +127,10 @@
                     <tr>
                         <th class="w-96 px-4 py-3">Reporte</th>
                         <th class="px-4 py-3 lg:w-48">Delegado</th>
-                        <th class="px-4 py-3">Estado</th>
-                        <th class="px-4 py-3">Fecha de entrega</th>
-                        <th class="px-4 py-3">Creado</th>
-                        <th class="px-4 py-3">Acciones</th>
+                        <th class="px-4 py-3 w-48">Estado</th>
+                        <th class="px-4 py-3 w-44">Fecha de entrega</th>
+                        <th class="px-4 py-3 w-56">Creado</th>
+                        <th class="px-4 py-3 w-16">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -148,7 +148,7 @@
                                                 d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
                                         </svg>
                                     </div>
-                                    <p class="mb-2 text-justify text-xs font-semibold">{{ $report->title }}</p>
+                                    <p class="my-auto text-start text-xs font-semibold">{{ $report->title }}</p>
                                     @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
                                         <div class="absolute right-0 top-0">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -213,10 +213,12 @@
                                 @endif
                             </td>
                             <td class="px-2 py-1">
-                                {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                <div class="my-auto text-start">
+                                    {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                </div>
                             </td>
                             <td class="px-2 py-1">
-                                <div class="mx-auto w-40 text-left">
+                                <div class="mx-auto text-left">
                                     <span class="font-semibold"> {{ $report->user->name }} </span> <br>
                                     <span class="font-mono">
                                         {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}

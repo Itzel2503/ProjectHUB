@@ -303,10 +303,10 @@
                     <tr>
                         <th class="w-96 px-4 py-3">Actividad</th>
                         <th class="px-4 py-3 lg:w-48">Delegado</th>
-                        <th class="px-4 py-3">Estado</th>
-                        <th class="px-4 py-3">Fecha de entrega</th>
-                        <th class="px-4 py-3">Creado</th>
-                        <th class="px-4 py-3">Acciones</th>
+                        <th class="px-4 py-3 w-48">Estado</th>
+                        <th class="px-4 py-3 w-44">Fecha de entrega</th>
+                        <th class="px-4 py-3 w-56">Creado</th>
+                        <th class="px-4 py-3 w-16">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -326,7 +326,7 @@
                                             </svg>
                                         </div>
                                     @endif
-                                    <p class="mb-2 text-justify text-xs font-semibold">{{ $activity->tittle }}</p>
+                                    <p class="my-auto text-start text-xs font-semibold">{{ $activity->tittle }}</p>
                                     @if ($activity->messages_count >= 1 && $activity->user_chat != Auth::id())
                                         <div class="absolute right-0 top-0">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -392,7 +392,7 @@
                                 </select>
                             </td>
                             <td class="px-2 py-1">
-                                <div class="mx-auto">
+                                <div class="my-auto text-start">
                                     {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                 </div>
                             </td>
