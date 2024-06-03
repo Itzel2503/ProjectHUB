@@ -56,6 +56,7 @@ class DatabaseSeeder extends Seeder
             'date_birthday' => Carbon::now(),
             'area_id' => '1',
             'entry_date' => Carbon::now(),
+            'effort_points' => 40,
         ]);
 
         $this->call(UsersTableSeeder::class,);

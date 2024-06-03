@@ -160,7 +160,7 @@
         </div>
     </div>
     {{-- END TABLE --}}
-    {{-- MODAL EDIT / CREATE ACTIVITY --}}
+    {{-- MODAL EDIT / CREATE USER --}}
     <div class="top-20 left-0 z-50 max-h-full overflow-y-auto @if($modalCreateEdit) block  @else hidden @endif">
         <div
             class="flex justify-center h-screen items-center top-0 opacity-80 left-0 z-30 w-full fixed bg-no-repeat bg-cover bg-gray-500">
@@ -350,6 +350,24 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="w-full flex flex-col px-3 mb-6">
+                                <h5 class="inline-flex font-semibold" for="effort_points">
+                                    Puntos de esfuerzo (Mes)@if(!$showUpdate)<p class="text-red-600">*</p>@endif
+                                </h5>
+                                <input wire:model='effort_points' required type="number" placeholder="0-100"
+                                    name="effort_points" id="effort_points" class="inputs">
+                                <div>
+                                    <span class="text-red-600 text-xs italic">
+                                        @error('effort_points')
+                                        <span class="pl-2 text-red-600 text-xs italic">
+                                            {{$message}}
+                                        </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modalFooter">
@@ -372,7 +390,7 @@
             </div>
         </div>
     </div>
-    {{-- END MODAL EDIT / CREATE ACTIVITY --}}
+    {{-- END MODAL EDIT / CREATE USER --}}
     @push('js')
     <script>
         // DROPDOWN

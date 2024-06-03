@@ -21,38 +21,45 @@ class TableActivities extends Component
     protected $paginationTheme = 'tailwind';
 
     public $listeners = ['reloadPage' => 'reloadPage', 'sprintsUpdated', 'destroyActivity', 'destroySprint'];
-
     // GENERALES
     public $project, $backlog, $allUsers, $firstSprint;
     public $sprints = [];
-
     // Sprint
     public $selectSprint, $sprintState, $startDate, $endDate, $idSprint, $percentageResolved;
     public $filteredState = [];
     public $changeSprint = false;
-
     // modal backlog
     public $modalBacklog = false;
-
     // modal sprint
     public $modalCreateSprint = false;
     public $showUpdateSprint = false;
     public $sprintEdit;
     public $number, $name_sprint, $start_date, $end_date;
-
     // modal activity
-    public $modalCreateActivity = false, $modalShowActivity = false;
-    public $showUpdateActivity = false, $showActivity = false, $showChat = false;
+    public $modalCreateActivity = false,
+        $modalShowActivity = false;
+    public $showUpdateActivity = false,
+        $showActivity = false,
+        $showChat = false;
     public $activityShow, $messages, $activityEdit, $moveActivity;
     public $tittle, $file, $description, $delegate, $expected_date, $priority1, $priority2, $priority3, $message;
-
+    // modal activity points
+    public $changePoints = false;
+    public $points, $point_know, $point_many, $point_effort;
     // table, action's activities
     public $search;
     public $perPage = '';
-    public $priorityOrder = 'Bajo', $datesOrder = 'created_at', $ascOrDesc = 'desc';
+    public $priorityOrder = 'Bajo',
+        $datesOrder = 'created_at',
+        $ascOrDesc = 'desc';
     public $selectedDelegate = '';
-    public $usersFiltered = [], $allUsersFiltered = [], $selectedStates = [], $statesFiltered = [];
-    public $priorityFiltered = false, $expectedFiltered = false, $createdFiltered = false;
+    public $usersFiltered = [],
+        $allUsersFiltered = [],
+        $selectedStates = [],
+        $statesFiltered = [];
+    public $priorityFiltered = false,
+        $expectedFiltered = false,
+        $createdFiltered = false;
 
     public function render()
     {
@@ -133,7 +140,8 @@ class TableActivities extends Component
         if (Auth::user()->type_user == 1) {
             $activities = Activity::where('sprint_id', $this->selectSprint)
                 ->where(function ($query) {
-                    $query->where('tittle', 'like', '%' . $this->search . '%')
+                    $query
+                        ->where('tittle', 'like', '%' . $this->search . '%')
                         ->orWhere('description', 'like', '%' . $this->search . '%')
                         ->orWhere('state', 'like', '%' . $this->search . '%')
                         ->orWhereHas('delegate', function ($subQuery) {
@@ -154,7 +162,8 @@ class TableActivities extends Component
         } else {
             $activities = Activity::where('sprint_id', $this->selectSprint)
                 ->where(function ($query) {
-                    $query->where('tittle', 'like', '%' . $this->search . '%')
+                    $query
+                        ->where('tittle', 'like', '%' . $this->search . '%')
                         ->orWhere('description', 'like', '%' . $this->search . '%')
                         ->orWhere('state', 'like', '%' . $this->search . '%')
                         ->orWhereHas('delegate', function ($subQuery) {
@@ -178,16 +187,18 @@ class TableActivities extends Component
         }
         // TODOS LOS DELEGADOS
         foreach ($this->allUsers as $key => $user) {
-            $this->allUsersFiltered[$user->id] = $user->name .  $user->lastname;
+            $this->allUsersFiltered[$user->id] = $user->name . $user->lastname;
         }
         // ADD ATRIBUTES
         foreach ($activities as $activity) {
             // ACTIONS
             $activity->filteredActions = $this->getFilteredActions($activity->state);
             // DELEGATE
-            $activity->usersFiltered = $this->allUsers->reject(function ($user) use ($activity) {
-                return $user->id === $activity->delegate_id;
-            })->values();
+            $activity->usersFiltered = $this->allUsers
+                ->reject(function ($user) use ($activity) {
+                    return $user->id === $activity->delegate_id;
+                })
+                ->values();
             // PROGRESS
             if ($activity->progress && $activity->updated_at) {
                 $progress = Carbon::parse($activity->progress);
@@ -226,10 +237,8 @@ class TableActivities extends Component
             $activity->messages_count = $messages->where('look', false)->count();
         }
         // COUNT ACTIVITIES
-        $totalActivities = Activity::where('sprint_id', $this->selectSprint)
-            ->count(); // Contar el número total de actividades del sprint
-        $allActivities = Activity::where('sprint_id', $this->selectSprint)
-            ->get(); // Seleccionar todas las actividades del sprint
+        $totalActivities = Activity::where('sprint_id', $this->selectSprint)->count(); // Contar el número total de actividades del sprint
+        $allActivities = Activity::where('sprint_id', $this->selectSprint)->get(); // Seleccionar todas las actividades del sprint
         $sprint = Sprint::find($this->selectSprint);
         if ($totalActivities && Auth::user()->type_user == 1) {
             if ($sprint->state == 'Curso' || $sprint->state == 'Cerrado') {
@@ -270,20 +279,23 @@ class TableActivities extends Component
     public function createSprint()
     {
         try {
-            $this->validate([
-                'name_sprint' => 'required|max:255',
-                'start_date' => 'required|date|max:255',
-                'end_date' => 'required|date|max:255',
-            ], [
-                'name_sprint.required' => 'El nombre del sprint es obligatorio.',
-                'name_sprint.max' => 'El nombre del sprint no puede tener más de 255 caracteres.',
-                'start_date.required' => 'La fecha de inicio del sprint es obligatoria.',
-                'start_date.date' => 'La fecha de inicio del sprint debe ser una fecha válida.',
-                'start_date.max' => 'La fecha de inicio del sprint no puede tener más de 255 caracteres.',
-                'end_date.required' => 'La fecha de finalización del sprint es obligatoria.',
-                'end_date.date' => 'La fecha de finalización del sprint debe ser una fecha válida.',
-                'end_date.max' => 'La fecha de finalización del sprint no puede tener más de 255 caracteres.'
-            ]);
+            $this->validate(
+                [
+                    'name_sprint' => 'required|max:255',
+                    'start_date' => 'required|date|max:255',
+                    'end_date' => 'required|date|max:255',
+                ],
+                [
+                    'name_sprint.required' => 'El nombre del sprint es obligatorio.',
+                    'name_sprint.max' => 'El nombre del sprint no puede tener más de 255 caracteres.',
+                    'start_date.required' => 'La fecha de inicio del sprint es obligatoria.',
+                    'start_date.date' => 'La fecha de inicio del sprint debe ser una fecha válida.',
+                    'start_date.max' => 'La fecha de inicio del sprint no puede tener más de 255 caracteres.',
+                    'end_date.required' => 'La fecha de finalización del sprint es obligatoria.',
+                    'end_date.date' => 'La fecha de finalización del sprint debe ser una fecha válida.',
+                    'end_date.max' => 'La fecha de finalización del sprint no puede tener más de 255 caracteres.',
+                ],
+            );
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -326,12 +338,15 @@ class TableActivities extends Component
     public function updateSprint($id)
     {
         try {
-            $this->validate([
-                'name_sprint' => 'required|max:255',
-            ], [
-                'name_sprint.required' => 'El nombre del sprint es obligatorio.',
-                'name_sprint.max' => 'El nombre del sprint no puede tener más de 255 caracteres.',
-            ]);
+            $this->validate(
+                [
+                    'name_sprint' => 'required|max:255',
+                ],
+                [
+                    'name_sprint.required' => 'El nombre del sprint es obligatorio.',
+                    'name_sprint.max' => 'El nombre del sprint no puede tener más de 255 caracteres.',
+                ],
+            );
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -378,7 +393,7 @@ class TableActivities extends Component
                     'type' => 'success',
                     'title' => 'Estado de sprint actualizado',
                 ]);
-            } else if ($previousSprint) {
+            } elseif ($previousSprint) {
                 if ($previousSprint->state == 'Pendiente') {
                     // Emitir un evento de navegador
                     $this->dispatchBrowserEvent('swal:modal', [
@@ -440,17 +455,38 @@ class TableActivities extends Component
     public function createActivity()
     {
         try {
-            $this->validate([
-                'tittle' => 'required|max:255',
-                'delegate' => 'required',
-                'expected_date' => 'required|date'
-            ], [
-                'tittle.required' => 'El título es obligatorio.',
-                'tittle.max:255' => 'El título no debe tener más caracteres que 255.',
-                'delegate.required' => 'El delegado es obligatorio.',
-                'expected_date.required' => 'La fecha esperada es obligatoria.',
-                'expected_date.date' => 'La fecha esperada debe ser una fecha válida.'
-            ]);
+            $this->validate(
+                [
+                    'tittle' => 'required|max:255',
+                    'delegate' => 'required',
+                    'expected_date' => 'required|date',
+                ],
+                [
+                    'tittle.required' => 'El título es obligatorio.',
+                    'tittle.max:255' => 'El título no debe tener más caracteres que 255.',
+                    'delegate.required' => 'El delegado es obligatorio.',
+                    'expected_date.required' => 'La fecha esperada es obligatoria.',
+                    'expected_date.date' => 'La fecha esperada debe ser una fecha válida.',
+                ],
+            );
+            // Verificar si al menos uno de los campos está presente
+            if ($this->changePoints == true) {
+                if (!$this->points) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Agrega puntos de esfuerzo.',
+                    ]);
+                    return;
+                }
+            } else {
+                if (!$this->point_know || !$this->point_many || !$this->point_effort) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Por favor, complete el cuestionario.',
+                    ]);
+                    return;
+                }
+            }
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -470,7 +506,7 @@ class TableActivities extends Component
                 if ($this->file->getSize() > $maxSize) {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'error',
-                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
                     ]);
                     return;
                 }
@@ -515,6 +551,25 @@ class TableActivities extends Component
             $activity->priority = 'Bajo';
         }
         $activity->state = 'Abierto';
+
+        if ($this->changePoints == true) {
+            $validPoints = [1, 2, 3, 5, 8, 13];
+            $activity->points = $this->points;
+
+            if (!in_array($this->points, $validPoints)) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Puntuaje no válido.',
+                ]);
+                return; // O cualquier otra acción que desees realizar
+            } else {
+                $activity->points = $this->points;
+            }
+        } else {
+            $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+            $activity->points = $maxPoint;
+        }
+
         $activity->delegated_date = Carbon::now();
         $activity->expected_date = $this->expected_date;
         $activity->save();
@@ -532,15 +587,36 @@ class TableActivities extends Component
     public function updateActivity($id)
     {
         try {
-            $this->validate([
-                'tittle' => 'required|max:255',
-                'expected_date' => 'required|date'
-            ], [
-                'tittle.required' => 'El título es obligatorio.',
-                'tittle.max:255' => 'El título no debe tener más caracteres que 255.',
-                'expected_date.required' => 'La fecha esperada es obligatoria.',
-                'expected_date.date' => 'La fecha esperada debe ser una fecha válida.'
-            ]);
+            $this->validate(
+                [
+                    'tittle' => 'required|max:255',
+                    'expected_date' => 'required|date',
+                ],
+                [
+                    'tittle.required' => 'El título es obligatorio.',
+                    'tittle.max:255' => 'El título no debe tener más caracteres que 255.',
+                    'expected_date.required' => 'La fecha esperada es obligatoria.',
+                    'expected_date.date' => 'La fecha esperada debe ser una fecha válida.',
+                ],
+            );
+            // Verificar si al menos uno de los campos está presente
+            if ($this->changePoints == true) {
+                if (!$this->points) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Agrega puntos de esfuerzo.',
+                    ]);
+                    return;
+                }
+            } else {
+                if (!$this->point_know || !$this->point_many || !$this->point_effort) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Por favor, complete el cuestionario.',
+                    ]);
+                    return;
+                }
+            }
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -560,7 +636,7 @@ class TableActivities extends Component
                 if ($this->file->getSize() > $maxSize) {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'error',
-                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
                     ]);
                     return;
                 }
@@ -628,6 +704,25 @@ class TableActivities extends Component
         }
 
         $activity->expected_date = $this->expected_date ?? $activity->expected_date;
+
+        if ($this->changePoints == true) {
+            $validPoints = [1, 2, 3, 5, 8, 13];
+            $activity->points = $this->points;
+
+            if (!in_array($this->points, $validPoints)) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Puntuaje no válido.',
+                ]);
+                return; // O cualquier otra acción que desees realizar
+            } else {
+                $activity->points = $this->points ?? $activity->points;
+            }
+        } else {
+            $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+            $activity->points = $maxPoint ?? $activity->points;
+        }
+
         $activity->save();
 
         $this->clearInputs();
@@ -722,7 +817,7 @@ class TableActivities extends Component
             }
         }
     }
-    // INFO MODAL    
+    // INFO MODAL
     public function showEditSprint($id)
     {
         $this->showUpdateSprint = true;
@@ -820,6 +915,9 @@ class TableActivities extends Component
         } elseif ($this->activityEdit->priority == 'Bajo') {
             $this->priority3 = true;
         }
+
+        $this->points = $this->activityEdit->points;
+        $this->changePoints = true;
     }
     // MODAL
     public function modalBacklog()
@@ -860,6 +958,7 @@ class TableActivities extends Component
         if ($this->modalCreateActivity == true) {
             $this->modalCreateActivity = false;
         } else {
+            $this->activityEdit = null;
             $this->modalCreateActivity = true;
         }
         $this->clearInputs();
@@ -881,6 +980,12 @@ class TableActivities extends Component
         $this->priority1 = false;
         $this->priority2 = false;
         $this->priority3 = false;
+
+        $this->changePoints = false;
+        $this->points = '';
+        $this->point_know = '';
+        $this->point_many = '';
+        $this->point_effort = '';
     }
 
     public function sprintsUpdated()
@@ -939,6 +1044,21 @@ class TableActivities extends Component
                     'title' => 'El mensaje está vacío.',
                 ]);
             }
+        }
+    }
+
+    public function changePoints()
+    {
+        if ($this->changePoints == true) {
+            $this->changePoints = false;
+            if ($this->activityEdit == null) {
+                $this->points = '';
+            }
+        } else {
+            $this->changePoints = true;
+            $this->point_know = '';
+            $this->point_many = '';
+            $this->point_effort = '';
         }
     }
 

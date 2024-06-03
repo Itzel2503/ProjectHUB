@@ -22,11 +22,11 @@ class CreateUsersTable extends Migration
             $table->integer('type_user')->nullable();
             $table->date('date_birthday');
             $table->string('profile_photo')->nullable();
+            $table->date('entry_date');
+            $table->integer('effort_points');
 
             $table->unsignedBigInteger('area_id')->unsigned();            
             $table->foreign('area_id')->references('id')->on('areas');
-
-            $table->date('entry_date');
 
             $table->rememberToken();
             $table->softDeletes();

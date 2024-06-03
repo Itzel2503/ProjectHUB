@@ -25,7 +25,7 @@ class TableUsers extends Component
     public $perPage = '';
     public $rules = [], $allAreas = [], $allTypes = [1, 2];
     // inputs
-    public $file, $name, $date_birthday, $entry_date, $area, $type_user, $email, $password;
+    public $file, $name, $date_birthday, $entry_date, $area, $type_user, $email, $password, $effort_points;
 
     public function render()
     {
@@ -70,6 +70,7 @@ class TableUsers extends Component
                 'type_user' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:8',
+                'effort_points' => 'required|numeric',
             ]);
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -137,6 +138,8 @@ class TableUsers extends Component
             $user->password = Hash::make($this->password);
         }
 
+        $user->effort_points = $this->effort_points;
+
         $user->save();
         $this->clearInputs();
         $this->modalCreateEdit = false;
@@ -159,6 +162,7 @@ class TableUsers extends Component
                 'date_birthday' => 'required|date|max:255',
                 'entry_date' => 'required|date|max:255',
                 'email' => 'required|email|unique:users,email,' . $id,
+                'effort_points' => 'required|numeric',
             ]);
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -227,6 +231,8 @@ class TableUsers extends Component
             $user->password = Hash::make($this->password);
         }
 
+        $user->effort_points = $this->effort_points ?? $user->effort_points;
+
         if ($this->file) {
             $this->refreshPage();
         }
@@ -250,8 +256,9 @@ class TableUsers extends Component
             if (Storage::disk('users')->exists($user->profile_photo)) {
                 Storage::disk('users')->delete($user->profile_photo);
             }
-            // Actualizar el campo profile_photo a null
+            // Actualizar el campos
             $user->profile_photo = null;
+            $user->effort_points = 0;
             $user->save();
             $user->delete();
             // Emitir un evento de navegador
@@ -316,6 +323,7 @@ class TableUsers extends Component
         $this->date_birthday = $this->userEdit->date_birthday;
         $this->entry_date = $this->userEdit->entry_date;
         $this->email = $this->userEdit->email;
+        $this->effort_points = $this->userEdit->effort_points;
     }
     // MODAL
     public function modalCreateEdit()
@@ -341,6 +349,7 @@ class TableUsers extends Component
         $this->type_user = '';
         $this->email = '';
         $this->password = '';
+        $this->effort_points = '';
     }
 
     public function reloadPage()

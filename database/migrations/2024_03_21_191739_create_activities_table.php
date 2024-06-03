@@ -30,6 +30,7 @@ class CreateActivitiesTable extends Migration
             $table->longText('description')->nullable();
             $table->string('priority')->nullable();
             $table->string('state')->nullable();
+            $table->integer('points');
 
             $table->boolean('look')->default(false);
 

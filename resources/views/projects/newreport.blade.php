@@ -75,41 +75,41 @@
 
 <body>
     {{-- MENUS --}}
-    <div class="flex items-center justify-center rounded-md py-2 text-text1 bg-primaryColor">
+    <div class="text-text1 bg-primaryColor flex items-center justify-center rounded-md py-2">
         <div id="mainMenu" class="flex flex-row">
             <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}"
-                class="mx-3 w-auto flex justify-center items-center text-xl hover:opacity-70">
+                class="mx-3 flex w-auto items-center justify-center text-xl hover:opacity-70">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back mr-1 w-10 h-10">
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back mr-1 h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1" />
                 </svg>
                 Regresar
             </a>
-            <button id="screenButton" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
+            <button id="screenButton" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-camera w-10 h-10 ">
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-camera h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path
                         d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
                     <path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
                 </svg>
             </button>
-            <button id="videoButton" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
+            <button id="videoButton" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-video w-12 h-12">
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-video h-12 w-12">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" />
                     <path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
                 </svg>
             </button>
-            <button id="textButton" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
+            <button id="textButton" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-file-description w-10 h-10">
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-file-description h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M14 3v4a1 1 0 0 0 1 1h4" />
                     <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
@@ -119,29 +119,32 @@
             </button>
         </div>
         <div id="screenMenu" class="flex flex-row" style="display: none;">
-            <button id="returnButtonImage" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
+            <button id="returnButtonImage" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back w-10 h-10">
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1" />
                 </svg>
             </button>
-            <button id="refreshCanva" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-eraser w-10 h-10">
+            <button id="refreshCanva" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-eraser h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path
                         d="M19 20h-10.5l-4.21 -4.3a1 1 0 0 1 0 -1.41l10 -10a1 1 0 0 1 1.41 0l5 5a1 1 0 0 1 0 1.41l-9.2 9.3" />
                     <path d="M18 13.3l-6.3 -6.3" />
                 </svg>
             </button>
-            <input min="1" max="20" value="10" type="range" id="lineWidthSlider" class="mt-5 mx-5">
-            <button id="downloadScreen" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-download w-10 h-10">
+            <input min="1" max="20" value="10" type="range" id="lineWidthSlider"
+                class="mx-5 mt-5">
+            <button id="downloadScreen" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-download h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
                     <path d="M7 11l5 5l5 -5" />
@@ -150,18 +153,20 @@
             </button>
         </div>
         <div id="videoMenu" class="flex flex-row" style="display: none;">
-            <button id="returnButtonVideo" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back w-10 h-10">
+            <button id="returnButtonVideo" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1" />
                 </svg>
             </button>
-            <button id="stopButton" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-player-stop w-10 h-10">
+            <button id="stopButton" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-player-stop h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M5 5m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
                 </svg>
@@ -170,22 +175,22 @@
     </div>
     {{-- VIEW REPORT --}}
     <div id="viewReport" class="w-full" style="display: block;">
-        <div class="px-4 pb-4 pt-10 flex h-full w-full">
+        <div class="flex h-full w-full px-4 pb-4 pt-10">
             {{-- ARCHIVO --}}
-            <div class="w-2/4 mr-3">
+            <div class="mr-3 w-2/4">
                 <div id="viewPhoto" style="display: none;">
-                    <h3 class="text-text2 text-lg font-bold inline-flex">Imagen capturada</h3>
-                    <div id="renderedCanvas" class="w-full h-auto"></div>
+                    <h3 class="text-text2 inline-flex text-lg font-bold">Imagen capturada</h3>
+                    <div id="renderedCanvas" class="h-auto w-full"></div>
                 </div>
                 <div id="viewVideo" style="display: none;">
-                    <h3 class="text-text2 text-lg font-bold inline-flex">Video capturado</h3>
-                    <video id="recording" width="300" height="200" loop autoplay class="w-full h-2/5"></video>
+                    <h3 class="text-text2 inline-flex text-lg font-bold">Video capturado</h3>
+                    <video id="recording" width="300" height="200" loop autoplay class="h-2/5 w-full"></video>
                     {{-- hidden --}}
-                    <div class="justify-center items-center hidden">
+                    <div class="hidden items-center justify-center">
                         <a id="downloadVideo" class="btnSecondary" style="color: white;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
                                 <path d="M7 11l5 5l5 -5" />
@@ -197,7 +202,7 @@
                 </div>
             </div>
             {{-- FORMULARIO --}}
-            <div class="w-2/4 pl-3 lg:border-l-2 border-gray-400">
+            <div class="w-2/4 border-gray-400 pl-3 lg:border-l-2">
                 <form id="formReport" action="{{ route('projects.reports.store', ['project' => $project->id]) }}"
                     method="POST" enctype="multipart/form-data">
                     @csrf
@@ -206,42 +211,41 @@
                     <input hidden type="text" id="inputPhoto" name="photo">
                     <input hidden type="text" id="inputVideo" name="video">
                     <div class="-mx-3 mb-6 flex flex-row">
-                        <div id="viewText" class="w-full flex flex-col px-3 mb-6">
+                        <div id="viewText" class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
                                 Selecciona un archivo
                             </h5>
                             <input type="file" name="file" id="file" class="inputs">
                         </div>
-                        <div class="w-full flex flex-col px-3">
+                        <div class="flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Título del reporte <p class="text-red-600">*</p>
                             </h5>
-                            <input required type="text" placeholder="Título del reporte" name="title" id="title"
-                                class="inputs">
+                            <input required type="text" placeholder="Título del reporte" name="title"
+                                id="title" class="inputs">
                             @if ($errors->has('title'))
-                            <span class="text-red-600 text-xs italic pl-2">
-                                {{ $errors->first('title') }}
-                            </span>
+                                <span class="pl-2 text-xs italic text-red-600">
+                                    {{ $errors->first('title') }}
+                                </span>
                             @endif
                         </div>
                     </div>
                     <div class="-mx-3 mb-6">
-                        <div class="w-full flex flex-col px-3 mb-6">
+                        <div class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Descripción del reporte <p class="text-red-600">*</p>
                             </h5>
                             <textarea required type="text" rows="6"
-                                placeholder="Describa la observación y especifique el objetivo a cumplir."
-                                name="comment" class="textarea"></textarea>
+                                placeholder="Describa la observación y especifique el objetivo a cumplir." name="comment" class="textarea"></textarea>
                             @if ($errors->has('comment'))
-                            <span class="text-red-600 text-xs italic pl-2">
-                                {{ $errors->first('comment') }}
-                            </span>
+                                <span class="pl-2 text-xs italic text-red-600">
+                                    {{ $errors->first('comment') }}
+                                </span>
                             @endif
                         </div>
                     </div>
                     <div class="-mx-3 mb-6 flex flex-row">
-                        <div id="viewText" class="w-full flex flex-col px-3 mb-6">
+                        <div id="viewText" class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
                                 Prioridad <p class="text-red-600">*</p>
                             </h5>
@@ -266,45 +270,50 @@
                                 </div>
                             </div>
                             @if ($errors->has('priority'))
-                            <span class="text-red-600 text-xs italic pl-2">
-                                {{ $errors->first('priority') }}
-                            </span>
+                                <span class="pl-2 text-xs italic text-red-600">
+                                    {{ $errors->first('priority') }}
+                                </span>
                             @endif
                         </div>
-                        <div class="w-full flex flex-col px-3">
+                        <div class="flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Delegar <p class="text-red-600">*</p>
                             </h5>
                             <select required name="delegate" id="delegate" class="inputs">
                                 <option value="0" selected>Selecciona...</option>
                                 @foreach ($allUsers as $allUser)
-                                <option value="{{ $allUser->id }}">{{ $allUser->name }}
-                                </option>
+                                    <option value="{{ $allUser->id }}">{{ $allUser->name }}
+                                    </option>
                                 @endforeach
                             </select>
                             @if ($errors->has('delegate'))
-                            <span class="text-red-600 text-xs italic pl-2">
-                                {{ $errors->first('delegate') }}
-                            </span>
+                                <span class="pl-2 text-xs italic text-red-600">
+                                    {{ $errors->first('delegate') }}
+                                </span>
                             @endif
                         </div>
                     </div>
                     <div class="-mx-3 mb-6 flex flex-row">
-                        <div class="w-full flex flex-col px-3 mb-6">
+                        <div class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
                                 Fecha esperada <p class="text-red-600">*</p>
                             </h5>
                             <input required type="date" name="expected_date" id="expected_date" class="inputs">
                         </div>
-                        <div class="w-full flex flex-row px-3 m-auto">
+                        <div class="m-auto flex w-full flex-row px-3 justify-center">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Evidencia
                             </h5>
                             <input type="checkbox" name="evidence" id="evidence" class="ml-4"
                                 style="height: 24px; width: 24px; accent-color: #0062cc;">
                         </div>
+                        <div class="m-auto flex w-full flex-row px-3">
+                            <button class="btnSave" id="buttonPoints" style="display: flex">
+                                Puntos de esfuerzo
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex justify-center items-center mb-6">
+                    <div class="mb-6 flex items-center justify-center">
                         <button type="submit" class="btnSave" id="buttonSave" style="display: flex">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
@@ -336,8 +345,8 @@
     </div>
     {{-- PREVISUALIZACION --}}
     <div id="artboard" class="w-full" style="display: none;">
-        <h2 class="top-10 left-10 px-2 py-4 font-semibold text-3xl text-text2">Previsualización</h2>
-        <div class="w-full flex justify-center items-center">
+        <h2 class="text-text2 left-10 top-10 px-2 py-4 text-3xl font-semibold">Previsualización</h2>
+        <div class="flex w-full items-center justify-center">
             <p id="log" class="text-xl font-semibold text-red-600"></p>
             <p id="time" class="mx-3 text-xl font-semibold text-red-600"></p>
         </div>
@@ -345,13 +354,132 @@
         <div id="capturedImageContainer" class="flex items-center justify-center" style="display: none;"></div>
         <div id="renderCombinedImage"></div>
         {{-- VIDEO --}}
-        <video id="preview" width="100%" height="auto" autoplay muted class="mt-2" style="display: none;"></video>
+        <video id="preview" width="100%" height="auto" autoplay muted class="mt-2"
+            style="display: none;"></video>
     </div>
+    {{-- MODAL EDIT / CREATE SPRINT --}}
+    <div class="left-0 top-20 z-50 block max-h-full overflow-y-auto">
+        <div
+            class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+        </div>
+        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
+            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+                <div
+                    class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
+                    <h3
+                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                        Puntos de esfuerzo</h3>
+                    <svg class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div class="modalBody">
+                    <div class="md-3/4 mb-5 flex w-full flex-col px-5 md:mb-0">
+                        <div class="mb-6 flex flex-row">
+                            <span class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M7 10h14l-4 -4" />
+                                    <path d="M17 14h-14l4 4" />
+                                </svg>
+                                Agregar puntos directos
+                            </span>
+                        </div>
+                        <div class="-mx-3 mb-6" style="display: none">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Puntos <p class="text-red-600">*</p>
+                                </h5>
+                                <input type="number" placeholder="1, 2, 3, 5, 8, 13"
+                                    name="points" id="points" class="inputs">
+                            </div>
+                        </div>
+                        <div class="block">
+                            <div class="-mx-3 mb-6">
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="name">
+                                        ¿Cuánto se conoce de la tarea?<p class="text-red-600">*</p>
+                                    </h5>
+                                    <select name="point_know" id="point_know"
+                                        class="inputs">
+                                        <option selected>Selecciona...</option>
+                                        <option value="1">Todo</option>
+                                        <option value="2">Casi todo</option>
+                                        <option value="3">Algunas cosas</option>
+                                        <option value="5">Poco</option>
+                                        <option value="8">Casi nada</option>
+                                        <option value="13">Nada</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="-mx-3 mb-6">
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="name">
+                                        ¿De cuántos depende?<p class="text-red-600">*</p>
+                                    </h5>
+                                    <select name="point_many" id="point_many"
+                                        class="inputs">
+                                        <option selected>Selecciona...</option>
+                                        <option value="1">Solo uno</option>
+                                        <option value="2">Un par</option>
+                                        <option value="3">Pocos</option>
+                                        <option value="5">Varios</option>
+                                        <option value="8">Muchos</option>
+                                        <option value="13">No se sabe</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="-mx-3 mb-6">
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="name">
+                                        ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
+                                    </h5>
+                                    <select name="point_effort" id="point_effort"
+                                        class="inputs">
+                                        <option selected>Selecciona...</option>
+                                        <option value="1">Menos de 2 horas</option>
+                                        <option value="2">Medio dìa</option>
+                                        <option value="3">Hasta dos dìas</option>
+                                        <option value="5">Pocos dìas</option>
+                                        <option value="8">Alrededor de</option>
+                                        <option value="13">Mas de una</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modalFooter">
+                    <button class="btnSave">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M14 4l0 4l-6 0l0 -4" />
+                        </svg>
+                        Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL EDIT / CREATE SPRINT --}}
 
-    @if(session('error'))
-    <script>
-        toastr['error']("{{ session('error') }}", "Error");
-    </script>
+    @if (session('error'))
+        <script>
+            toastr['error']("{{ session('error') }}", "Error");
+        </script>
     @endif
 
     <script>
@@ -370,7 +498,8 @@
         let refreshCanvaButton = document.getElementById('refreshCanva'); // button with the id "refreshCanva"
         let lineWidthSlider = document.getElementById('lineWidthSlider');
         let downloadScreen = document.getElementById('downloadScreen'); // button with the id "downloadShot"
-        let capturedImageContainer = document.getElementById('capturedImageContainer'); // Container to display captured image
+        let capturedImageContainer = document.getElementById(
+            'capturedImageContainer'); // Container to display captured image
         let renderedCanvas = document.getElementById('renderedCanvas');
         let drawCanvas = document.querySelector('canvas');
         // VIDEO
@@ -514,7 +643,7 @@
                 if (!isManuallyStopped) { // Ejecutar solo si no se ha detenido manualmente
                     log("Grabación finalizada.");
                     stopCounting();
-                    mediaRecorder.stop();  // Detener la grabación si el stream se vuelve inactivo
+                    mediaRecorder.stop(); // Detener la grabación si el stream se vuelve inactivo
                     // INPUTS BUTTONS
                     inputUser.value = user;
                     downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato;
@@ -566,10 +695,14 @@
             file.value = null;
 
             navigator.mediaDevices.getDisplayMedia({
-                video: { 
+                video: {
                     mediaSource: 'screen',
-                    width: { ideal: 1024 }, // Ancho deseado del video
-                    height: { ideal: 1024 } // Altura deseada del video
+                    width: {
+                        ideal: 1024
+                    }, // Ancho deseado del video
+                    height: {
+                        ideal: 1024
+                    } // Altura deseada del video
                 },
                 audio: true
             }).then(stream => {
@@ -579,8 +712,10 @@
                 // Iniciar la grabación automáticamente cuando se obtiene la captura de pantalla
                 startCounting();
                 return startRecording(stream);
-            }).then (recordedChunks => {
-                let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
+            }).then(recordedChunks => {
+                let recordedBlob = new Blob(recordedChunks, {
+                    type: "video/mp4"
+                });
                 recording.src = URL.createObjectURL(recordedBlob);
                 downloadVideo.href = recording.src;
                 downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato;
@@ -591,7 +726,7 @@
         returnButtonVideo.addEventListener('click', function() {
             preview.src = '';
             downloadVideo.href = '';
-            inputVideo.value= '';
+            inputVideo.value = '';
             // VIEW
             viewReport.style.display = 'block';
             artboard.style.display = 'none';
@@ -660,7 +795,8 @@
 
                         const drawCanvas = document.createElement('canvas');
                         drawCanvas.width = canvas.width; // Use the width of the captured image
-                        drawCanvas.height = canvas.height; // Use the height of the captured image
+                        drawCanvas.height = canvas
+                            .height; // Use the height of the captured image
                         drawCanvas.style.position = 'absolute';
                         drawCanvas.style.top = '0';
                         drawCanvas.style.left = '0';
@@ -669,7 +805,7 @@
                         // Function to get the canvas context for drawing
                         const getDrawContext = () => drawCanvas.getContext('2d');
                         // Event listener for the line width slider
-                        lineWidthSlider.addEventListener('input', function () {
+                        lineWidthSlider.addEventListener('input', function() {
                             const lineWidthValue = parseInt(this.value);
                             // Update line width on drawing canvas
                             const drawCtx = drawCanvas.getContext('2d');
@@ -688,13 +824,14 @@
 
                         drawCanvas.addEventListener('mousemove', e => {
                             if (isDrawing) {
-                            const rect = drawCanvas.getBoundingClientRect();
-                            const x = e.clientX - rect.left;
-                            const y = e.clientY - rect.top;
-                            const drawCtx = getDrawContext();
-                            drawOnCanvas(prevX, prevY, x, y, parseInt(lineWidthSlider.value), drawCtx);
-                            prevX = x;
-                            prevY = y;
+                                const rect = drawCanvas.getBoundingClientRect();
+                                const x = e.clientX - rect.left;
+                                const y = e.clientY - rect.top;
+                                const drawCtx = getDrawContext();
+                                drawOnCanvas(prevX, prevY, x, y, parseInt(
+                                    lineWidthSlider.value), drawCtx);
+                                prevX = x;
+                                prevY = y;
                             }
                         });
 
@@ -743,7 +880,8 @@
                             drawImage.onload = () => {
                                 combinedCtx.drawImage(drawImage, 0, 0);
                                 // Get the combined canvas data URL and render the image for preview
-                                const combinedDataURL = combinedCanvas.toDataURL('image/jpg');
+                                const combinedDataURL = combinedCanvas.toDataURL(
+                                    'image/jpg');
                                 renderCombinedImage(combinedDataURL);
                             };
                             drawCanvas.hidden = true;
@@ -753,14 +891,15 @@
                             // Obtiene el contexto del canvas de dibujo
                             const drawCtx = drawCanvas.getContext('2d');
                             // Limpia todo el canvas
-                            drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+                            drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas
+                                .height);
                         });
                     };
                 }).catch(error => {
                     console.error('Error grabbing frame:', error);
                 });
             }).catch(error => {
-            console.error('Error accessing media devices:', error);
+                console.error('Error accessing media devices:', error);
             });
         });
         // RETURNBUTTONIMAGE

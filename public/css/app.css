@@ -3159,6 +3159,10 @@ select {
     flex-direction: row;
   }
 
+  .lg\:flex-col {
+    flex-direction: column;
+  }
+
   .lg\:border-l-2 {
     border-left-width: 2px;
   }

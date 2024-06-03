@@ -303,10 +303,10 @@
                     <tr class="text-left">
                         <th class="w-96 px-4 py-3">Actividad</th>
                         <th class="px-4 py-3 lg:w-48">Delegado</th>
-                        <th class="px-4 py-3 w-48 text-center">Estado</th>
-                        <th class="px-4 py-3 w-44">Fecha de entrega</th>
-                        <th class="px-4 py-3 w-56">Creado</th>
-                        <th class="px-4 py-3 w-16">Acciones</th>
+                        <th class="w-48 px-4 py-3 text-center">Estado</th>
+                        <th class="w-44 px-4 py-3">Fecha de entrega</th>
+                        <th class="w-56 px-4 py-3">Creado</th>
+                        <th class="w-16 px-4 py-3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -325,7 +325,7 @@
                                                     d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
                                             </svg>
                                         </div>
-                                    @else 
+                                    @else
                                         <div class="w-12"></div>
                                     @endif
                                     <p class="my-auto text-left text-xs font-semibold">{{ $activity->tittle }}</p>
@@ -821,10 +821,10 @@
     <div
         class="@if ($modalCreateActivity) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
         <div
-            class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+            class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
         </div>
-        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
-            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+        <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
+            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-3/4" style="max-height: 90%;">
                 <div
                     class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                     @if ($showUpdateActivity)
@@ -836,7 +836,7 @@
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
                             Crear actividad</h3>
                     @endif
-                    <svg wire:click="modalCreateActivity()"
+                    <svg wire:click="modalCreateActivity"
                         class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
                         xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -847,7 +847,14 @@
                     </svg>
                 </div>
                 <div class="modalBody">
-                    <div class="md-3/4 mb-5 mt-5 flex w-full flex-col">
+                    {{-- ACTIVITY --}}
+                    <div class="md-3/4 mb-5 flex w-full flex-col border-gray-400 px-5 md:mb-0 lg:w-1/2 lg:border-r-2">
+                        <div
+                            class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
+                            <h4
+                                class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
+                                Actividad</h4>
+                        </div>
                         <div class="-mx-3 mb-6 flex flex-row">
                             <div class="mb-6 flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="tittle">
@@ -1002,6 +1009,128 @@
                                             </span>
                                         @enderror
                                     </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- POINTS --}}
+                    <div class="w-full px-5 lg:w-1/2">
+                        <div
+                            class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
+                            <h4
+                                class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
+                                Puntos de esfuerzo</h4>
+                        </div>
+                        @if ($showUpdateActivity)
+                            @if (Auth::user()->type_user == 1 || Auth::id() == $activityEdit->user->id)
+                                <div class="mb-6 flex flex-row">
+                                    <span wire:click="changePoints"
+                                        class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M7 10h14l-4 -4" />
+                                            <path d="M17 14h-14l4 4" />
+                                        </svg>
+                                        @if ($changePoints)
+                                            Cuestionario
+                                        @else
+                                            Agregar puntos directos
+                                        @endif
+                                    </span>
+                                </div>
+                            @endif
+                        @else
+                            <div class="mb-6 flex flex-row">
+                                <span wire:click="changePoints"
+                                    class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 10h14l-4 -4" />
+                                        <path d="M17 14h-14l4 4" />
+                                    </svg>
+                                    @if ($changePoints)
+                                        Cuestionario
+                                    @else
+                                        Agregar puntos directos
+                                    @endif
+                                </span>
+                            </div>
+                        @endif
+                        <div class="@if ($changePoints) block @else hidden @endif -mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Puntos <p class="text-red-600">*</p>
+                                </h5>
+                                @if ($showUpdateActivity)
+                                    @if (Auth::user()->type_user == 1 || Auth::id() == $activityEdit->user->id)
+                                        <input wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
+                                            name="points" id="points" class="inputs">
+                                    @else
+                                        <input disabled wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
+                                            name="points" id="points" class="inputs">
+                                    @endif
+                                @else
+                                    <input wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
+                                            name="points" id="points" class="inputs">
+                                @endif
+                            </div>
+                        </div>
+                        <div class="@if ($changePoints) hidden @else block @endif">
+                            <div class="-mx-3 mb-6">
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="name">
+                                        ¿Cuánto se conoce de la tarea?<p class="text-red-600">*</p>
+                                    </h5>
+                                    <select wire:model='point_know' required name="point_know" id="point_know"
+                                        class="inputs">
+                                        <option selected>Selecciona...</option>
+                                        <option value="1">Todo</option>
+                                        <option value="2">Casi todo</option>
+                                        <option value="3">Algunas cosas</option>
+                                        <option value="5">Poco</option>
+                                        <option value="8">Casi nada</option>
+                                        <option value="13">Nada</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="-mx-3 mb-6">
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="name">
+                                        ¿De cuántos depende?<p class="text-red-600">*</p>
+                                    </h5>
+                                    <select wire:model='point_many' required name="point_many" id="point_many"
+                                        class="inputs">
+                                        <option selected>Selecciona...</option>
+                                        <option value="1">Solo uno</option>
+                                        <option value="2">Un par</option>
+                                        <option value="3">Pocos</option>
+                                        <option value="5">Varios</option>
+                                        <option value="8">Muchos</option>
+                                        <option value="13">No se sabe</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="-mx-3 mb-6">
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="name">
+                                        ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
+                                    </h5>
+                                    <select wire:model='point_effort' required name="point_effort" id="point_effort"
+                                        class="inputs">
+                                        <option selected>Selecciona...</option>
+                                        <option value="1">Menos de 2 horas</option>
+                                        <option value="2">Medio dìa</option>
+                                        <option value="3">Hasta dos dìas</option>
+                                        <option value="5">Pocos dìas</option>
+                                        <option value="8">Alrededor de</option>
+                                        <option value="13">Mas de una</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>

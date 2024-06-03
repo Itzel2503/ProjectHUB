@@ -23,6 +23,7 @@ class UserFactory extends Factory
             'date_birthday' => $this->faker->date(),
             'area_id' => $this->faker->numberBetween(1,4), // Asumiendo que tienes áreas del 1 al 10
             'entry_date' => $this->faker->date(),
+            'effort_points' => $this->faker->numberBetween(10, 100),
 
             // 'name' => $this->faker->name(),
             // 'email' => $this->faker->unique()->safeEmail(),
