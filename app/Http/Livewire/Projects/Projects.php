@@ -23,10 +23,12 @@ class Projects extends Component
     public $listeners = ['reloadPage' => 'reloadPage', 'destroy', 'restore'];
     // PESTAÑA
     public $activeTab = 'Activo';
-    // modal 
-    public $modalCreateEdit = false, $createBacklog = false;
+    // modal
+    public $modalCreateEdit = false,
+        $createBacklog = false;
     public $showUpdate = false;
-    public $customers = [], $selectedFiles = [];
+    public $customers = [],
+        $selectedFiles = [];
     public $projectCustomer, $projectEdit, $backlogEdit;
     // table
     public $search;
@@ -39,101 +41,105 @@ class Projects extends Component
     public function render()
     {
         $allCustomers = Customer::all();
-        $allUsers = User::all();
+        $allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
+        $user = Auth::user();
 
         if (Auth::user()->type_user == 1) {
-            $projects = Project::select(
-                'projects.*',
-                'customers.name as customer_name',
-                'backlogs.id as backlog'
-            )
+            $projects = Project::select('projects.*', 'customers.name as customer_name', 'backlogs.id as backlog')
                 ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
                 ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
                 ->withTrashed()
                 ->where(function ($query) {
-                    $query->where('customers.name', 'like', '%' . $this->search . '%')
+                    $query
+                        ->where('customers.name', 'like', '%' . $this->search . '%')
                         ->orWhere('projects.code', 'like', '%' . $this->search . '%')
                         ->orWhere('projects.type', 'like', '%' . $this->search . '%')
                         ->orWhere('projects.name', 'like', '%' . $this->search . '%')
                         ->orWhere('projects.priority', 'like', '%' . $this->search . '%');
                 })
                 ->where('type', $this->typeProject)
-                ->with(['users' => function ($query) {
-                    $query->withPivot('leader', 'programmer');
-                }])
+                ->with([
+                    'users' => function ($query) {
+                        $query->withPivot('leader', 'programmer');
+                    },
+                ])
                 ->orderBy('projects.priority', 'asc')
                 ->get();
 
             if ($this->activeTab == 'Activo') {
-                $projectsSoporte = Project::select(
-                    'projects.*',
-                    'customers.name as customer_name',
-                    'backlogs.id as backlog'
-                )
+                $projectsSoporte = Project::select('projects.*', 'customers.name as customer_name', 'backlogs.id as backlog')
                     ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
                     ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
                     ->withTrashed()
                     ->where(function ($query) {
-                        $query->where('customers.name', 'like', '%' . $this->search . '%')
+                        $query
+                            ->where('customers.name', 'like', '%' . $this->search . '%')
                             ->orWhere('projects.code', 'like', '%' . $this->search . '%')
                             ->orWhere('projects.type', 'like', '%' . $this->search . '%')
                             ->orWhere('projects.name', 'like', '%' . $this->search . '%')
                             ->orWhere('projects.priority', 'like', '%' . $this->search . '%');
                     })
                     ->where('type', 'Soporte')
-                    ->with(['users' => function ($query) {
-                        $query->withPivot('leader', 'programmer');
-                    }])
+                    ->with([
+                        'users' => function ($query) {
+                            $query->withPivot('leader', 'programmer');
+                        },
+                    ])
                     ->orderBy('projects.priority', 'asc')
                     ->get();
             } else {
                 $projectsSoporte = null;
             }
-        } else {
-            $projects = Project::select(
-                'projects.*',
-                'customers.name as customer_name',
-                'backlogs.id as backlog'
-            )
+        } elseif (Auth::user()->type_user == 2) {
+            $projects = Project::select('projects.*', 'customers.name as customer_name', 'backlogs.id as backlog')
                 ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
                 ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
                 ->where(function ($query) {
-                    $query->where('customers.name', 'like', '%' . $this->search . '%')
+                    $query
+                        ->where('customers.name', 'like', '%' . $this->search . '%')
                         ->orWhere('projects.code', 'like', '%' . $this->search . '%')
                         ->orWhere('projects.type', 'like', '%' . $this->search . '%')
                         ->orWhere('projects.name', 'like', '%' . $this->search . '%')
                         ->orWhere('projects.priority', 'like', '%' . $this->search . '%');
                 })
                 ->where('type', $this->typeProject)
-                ->with(['users' => function ($query) {
-                    $query->withPivot('leader', 'programmer');
-                }])
+                ->with([
+                    'users' => function ($query) {
+                        $query->withPivot('leader', 'programmer');
+                    },
+                ])
                 ->orderBy('created_at', 'desc')
                 ->get();
             if ($this->activeTab == 'Activo') {
-                $projectsSoporte = Project::select(
-                    'projects.*',
-                    'customers.name as customer_name',
-                    'backlogs.id as backlog'
-                )
+                $projectsSoporte = Project::select('projects.*', 'customers.name as customer_name', 'backlogs.id as backlog')
                     ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
                     ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
                     ->where(function ($query) {
-                        $query->where('customers.name', 'like', '%' . $this->search . '%')
+                        $query
+                            ->where('customers.name', 'like', '%' . $this->search . '%')
                             ->orWhere('projects.code', 'like', '%' . $this->search . '%')
                             ->orWhere('projects.type', 'like', '%' . $this->search . '%')
                             ->orWhere('projects.name', 'like', '%' . $this->search . '%')
                             ->orWhere('projects.priority', 'like', '%' . $this->search . '%');
                     })
                     ->where('type', 'Soporte')
-                    ->with(['users' => function ($query) {
-                        $query->withPivot('leader', 'programmer');
-                    }])
+                    ->with([
+                        'users' => function ($query) {
+                            $query->withPivot('leader', 'programmer');
+                        },
+                    ])
                     ->orderBy('created_at', 'desc')
                     ->get();
             } else {
                 $projectsSoporte = null;
             }
+        } elseif (Auth::user()->type_user == 3) {
+            $projects = $user->clientProjects()
+                ->where('projects.name', 'like', '%' . $this->search . '%')
+                ->orderBy('created_at', 'desc')
+                ->get();
+                
+            $projectsSoporte = null;
         }
 
         // ADD ATRIBUTES
@@ -217,8 +223,8 @@ class Projects extends Component
                 $project->priority = $this->priority;
                 $project->save();
                 // Asocia el usuario al proyecto
-                $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false]);
-                $project->users()->attach($this->programmer, ['leader' => false, 'programmer' => true]);
+                $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false, 'client' => false]);
+                $project->users()->attach($this->programmer, ['leader' => false, 'programmer' => true, 'client' => false]);
 
                 $backlog = new Backlog();
                 $backlog->general_objective = $this->general_objective;
@@ -238,8 +244,8 @@ class Projects extends Component
             $project->priority = $this->priority;
             $project->save();
             // Asocia el usuario al proyecto
-            $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false]);
-            $project->users()->attach($this->programmer, ['leader' => false, 'programmer' => true]);
+            $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false, 'client' => false]);
+            $project->users()->attach($this->programmer, ['leader' => false, 'programmer' => true, 'client' => false]);
 
             $backlog = new Backlog();
             $backlog->general_objective = $this->general_objective;
@@ -269,7 +275,7 @@ class Projects extends Component
                     if ($file->getSize() > $maxSize) {
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'error',
-                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
                         ]);
                         return;
                     }
@@ -353,9 +359,9 @@ class Projects extends Component
                         return;
                     } else {
                         $project = Project::find($id);
-                        $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                        $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                         $project->code = $this->code ?? $project->code;
-                        $project->type = ($this->type != null) ? $this->type : $project->type;
+                        $project->type = $this->type != null ? $this->type : $project->type;
                         $project->name = $this->name ?? $project->name;
                         $project->priority = $this->priority ?? $project->priority;
                         $project->save();
@@ -363,8 +369,8 @@ class Projects extends Component
                         $project->users()->wherePivot('leader', true)->detach();
                         $project->users()->wherePivot('programmer', true)->detach();
                         // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
-                        $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+                        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
+                        $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
 
                         $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                         $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -375,9 +381,9 @@ class Projects extends Component
                     }
                 } else {
                     $project = Project::find($id);
-                    $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                    $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                     $project->code = $this->code ?? $project->code;
-                    $project->type = ($this->type != null) ? $this->type : $project->type;
+                    $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
                     $project->priority = $this->priority ?? $project->priority;
                     $project->save();
@@ -385,8 +391,8 @@ class Projects extends Component
                     $project->users()->wherePivot('leader', true)->detach();
                     $project->users()->wherePivot('programmer', true)->detach();
                     // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
-                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
 
                     $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                     $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -414,7 +420,7 @@ class Projects extends Component
                             if ($file->getSize() > $maxSize) {
                                 $this->dispatchBrowserEvent('swal:modal', [
                                     'type' => 'error',
-                                    'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                                    'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
                                 ]);
                                 return;
                             }
@@ -456,9 +462,9 @@ class Projects extends Component
             } else {
                 if ($this->selectedFiles == []) {
                     $project = Project::find($id);
-                    $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                    $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                     $project->code = $this->code ?? $project->code;
-                    $project->type = ($this->type != null) ? $this->type : $project->type;
+                    $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
                     $project->priority = $this->priority ?? $project->priority;
                     $project->save();
@@ -466,8 +472,8 @@ class Projects extends Component
                     $project->users()->wherePivot('leader', true)->detach();
                     $project->users()->wherePivot('programmer', true)->detach();
                     // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
-                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
 
                     $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                     $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -496,9 +502,9 @@ class Projects extends Component
                                 $remainingFilesCount--;
                                 // Guardar backlog
                                 $project = Project::find($id);
-                                $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                                $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                                 $project->code = $this->code ?? $project->code;
-                                $project->type = ($this->type != null) ? $this->type : $project->type;
+                                $project->type = $this->type != null ? $this->type : $project->type;
                                 $project->name = $this->name ?? $project->name;
                                 $project->priority = $this->priority ?? $project->priority;
                                 $project->save();
@@ -506,8 +512,8 @@ class Projects extends Component
                                 $project->users()->wherePivot('leader', true)->detach();
                                 $project->users()->wherePivot('programmer', true)->detach();
                                 // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                                $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
-                                $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+                                $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
+                                $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
 
                                 $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                                 $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -526,13 +532,15 @@ class Projects extends Component
                                     'title' => 'No se encontró la imagen.',
                                 ]);
                             }
-                        } else if (empty($this->scopes)) { // Esta vacio el textarea
+                        } elseif (empty($this->scopes)) {
+                            // Esta vacio el textarea
                             $this->dispatchBrowserEvent('swal:modal', [
                                 'type' => 'warning',
                                 'title' => 'Debe existir al menos una imagen asociada al backlog.',
                             ]);
                             return;
-                        } else { // Eliminar todos los archivos ya que tiene texto
+                        } else {
+                            // Eliminar todos los archivos ya que tiene texto
                             // Buscar el archivo en la colección de archivos
                             $fileToDelete = $backlogFiles->where('id', $fileId)->first();
                             // Verificar si se encontró el archivo
@@ -547,9 +555,9 @@ class Projects extends Component
                                 $remainingFilesCount--;
                                 // Guardar backlog
                                 $project = Project::find($id);
-                                $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                                $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                                 $project->code = $this->code ?? $project->code;
-                                $project->type = ($this->type != null) ? $this->type : $project->type;
+                                $project->type = $this->type != null ? $this->type : $project->type;
                                 $project->name = $this->name ?? $project->name;
                                 $project->priority = $this->priority ?? $project->priority;
                                 $project->save();
@@ -557,8 +565,8 @@ class Projects extends Component
                                 $project->users()->wherePivot('leader', true)->detach();
                                 $project->users()->wherePivot('programmer', true)->detach();
                                 // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                                $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
-                                $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+                                $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
+                                $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
 
                                 $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                                 $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -583,9 +591,9 @@ class Projects extends Component
 
                 if (!empty($this->files)) {
                     $project = Project::find($id);
-                    $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                    $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                     $project->code = $this->code ?? $project->code;
-                    $project->type = ($this->type != null) ? $this->type : $project->type;
+                    $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
                     $project->priority = $this->priority ?? $project->priority;
                     $project->save();
@@ -593,8 +601,8 @@ class Projects extends Component
                     $project->users()->wherePivot('leader', true)->detach();
                     $project->users()->wherePivot('programmer', true)->detach();
                     // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
-                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
 
                     $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                     $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -622,7 +630,7 @@ class Projects extends Component
                             if ($file->getSize() > $maxSize) {
                                 $this->dispatchBrowserEvent('swal:modal', [
                                     'type' => 'error',
-                                    'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                                    'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
                                 ]);
                                 return;
                             }
@@ -680,9 +688,9 @@ class Projects extends Component
                         return;
                     } else {
                         $project = Project::find($id);
-                        $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                        $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                         $project->code = $this->code ?? $project->code;
-                        $project->type = ($this->type != null) ? $this->type : $project->type;
+                        $project->type = $this->type != null ? $this->type : $project->type;
                         $project->name = $this->name ?? $project->name;
                         $project->priority = $this->priority ?? $project->priority;
                         $project->save();
@@ -690,8 +698,8 @@ class Projects extends Component
                         $project->users()->wherePivot('leader', true)->detach();
                         $project->users()->wherePivot('programmer', true)->detach();
                         // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
-                        $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+                        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
+                        $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
 
                         $backlog = new Backlog();
                         $backlog->general_objective = $this->general_objective;
@@ -704,9 +712,9 @@ class Projects extends Component
                     }
                 } else {
                     $project = Project::find($id);
-                    $project->customer_id = (!empty($this->customer) && is_numeric($this->customer)) ? $this->customer : $project->customer_id;
+                    $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                     $project->code = $this->code ?? $project->code;
-                    $project->type = ($this->type != null) ? $this->type : $project->type;
+                    $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
                     $project->priority = $this->priority ?? $project->priority;
                     $project->save();
@@ -714,8 +722,8 @@ class Projects extends Component
                     $project->users()->wherePivot('leader', true)->detach();
                     $project->users()->wherePivot('programmer', true)->detach();
                     // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false]]);
-                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true]]);
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
 
                     $backlog = new Backlog();
                     $backlog->general_objective = $this->general_objective;
@@ -745,7 +753,7 @@ class Projects extends Component
                             if ($file->getSize() > $maxSize) {
                                 $this->dispatchBrowserEvent('swal:modal', [
                                     'type' => 'error',
-                                    'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                                    'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
                                 ]);
                                 return;
                             }
@@ -875,7 +883,7 @@ class Projects extends Component
 
         $start_date = Carbon::parse($this->backlogEdit->start_date ?? '');
         $this->start_date = $start_date->toDateString();
-        $closing_date = Carbon::parse($this->backlogEdit->closing_date  ?? '');
+        $closing_date = Carbon::parse($this->backlogEdit->closing_date ?? '');
         $this->closing_date = $closing_date->toDateString();
 
         $this->passwords = $this->backlogEdit->passwords ?? '';

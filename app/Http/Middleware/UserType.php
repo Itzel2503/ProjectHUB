@@ -14,9 +14,9 @@ class UserType
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next, $type)
-    {   
-        if ($request->user()->type_user != $type) {
+    public function handle(Request $request, Closure $next, ...$types)
+    {
+        if (!in_array($request->user()->type_user, $types)) {
             return redirect()->route('profile.index'); // Redirige a una ruta para usuarios no autorizados
         }
 

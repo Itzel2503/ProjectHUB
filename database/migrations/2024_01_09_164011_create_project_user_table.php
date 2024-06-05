@@ -24,7 +24,7 @@ class CreateProjectUserTable extends Migration
 
             $table->boolean('leader');
             $table->boolean('programmer');
-
+            $table->boolean('client');
             $table->timestamps();
         });
     }

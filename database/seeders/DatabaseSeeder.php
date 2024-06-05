@@ -31,6 +31,9 @@ class DatabaseSeeder extends Seeder
         Area::create([
             'name' => 'Soporte'
         ]);
+        Area::create([
+            'name' => 'Cliente'
+        ]);
 
         Permit::create([
             'name' => 'Home Office'

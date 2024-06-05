@@ -24,7 +24,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (auth()->check()) {
-        return redirect('/activities-reports');
+        if (auth()->user()->type_user == 3) {
+            return redirect('/projects');
+        } else {
+            return redirect('/activities-reports');
+        }
     }
     return view('auth.login');
 });
@@ -39,9 +43,9 @@ Route::middleware(['web', 'auth'])->group(function () {
     // PROJECTS
     Route::resource('/projects', Project::class)->only(['index']);
     Route::resource('projects.reports', Report::class);
-    Route::resource('projects.activities', Activity::class)->only(['index']);
+    Route::resource('projects.activities', Activity::class)->only(['index'])->middleware('user.type:1,2');
     // ACTIVITIES
-    Route::resource('/activities-reports', ActivityReport::class)->only(['index']);
+    Route::resource('/activities-reports', ActivityReport::class)->only(['index'])->middleware('user.type:1,2');
 
     // PERMITS
     Route::resource('/permits', Permit::class);

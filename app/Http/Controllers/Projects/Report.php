@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Ui\Presets\React;
 
 class Report extends Controller
 {
@@ -44,7 +43,7 @@ class Report extends Controller
     {
         if (Auth::check()) {
             $user = Auth::user();
-            $allUsers = User::all();
+            $allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
             $project = Project::find($project_id);
 
             if ($project) {
@@ -72,21 +71,29 @@ class Report extends Controller
             $dateString = $now->format("Y-m-d H_i_s");
 
             if ($project && $report) {
-                try {
-                    // Validación de los campos
-                    $validatedData = $request->validate([
-                        'delegate' => 'required|not_in:0',
-                    ]);
-                    // Aquí puedes continuar con tu lógica después de la validación exitosa
-                } catch (\Illuminate\Validation\ValidationException $e) {
-                    return redirect()->back()->with('error', 'Faltan campos o campos incorrectos.');
-                    throw $e;
+                if (Auth::user()->type_user != 3) {
+                    try {
+                        // Validación de los campos
+                        $validatedData = $request->validate([
+                            'delegate' => 'required|not_in:0',
+                        ]);
+                        // Aquí puedes continuar con tu lógica después de la validación exitosa
+                    } catch (\Illuminate\Validation\ValidationException $e) {
+                        return redirect()->back()->with('error', 'Faltan campos o campos incorrectos.');
+                        throw $e;
+                    }
                 }
 
                 if (isset($request->video)) {
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
-                    $report->delegate_id = $request->delegate;
+                    if (Auth::user()->type_user == 3) {
+                        $report->delegate_id = 1;
+                        $report->expected_date = Carbon::now();
+                    } else {
+                        $report->delegate_id = $request->delegate;
+                        $report->expected_date = $request->expected_date;
+                    }
                     $report->title = $request->title;
                     $report->content = $request->video;
 
@@ -105,7 +112,7 @@ class Report extends Controller
                     $report->video = true;
                     $report->file = false;
                     $report->delegated_date = Carbon::now();
-                    $report->expected_date = $request->expected_date;
+                    $report->points = 0;
                     $report->save();
                 }
 
@@ -120,7 +127,13 @@ class Report extends Controller
 
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
-                    $report->delegate_id = $request->delegate;
+                    if (Auth::user()->type_user == 3) {
+                        $report->delegate_id = 1;
+                        $report->expected_date = Carbon::now();
+                    } else {
+                        $report->delegate_id = $request->delegate;
+                        $report->expected_date = $request->expected_date;
+                    }
                     $report->title = $request->title;
                     $report->content = $filePath;
                     if ($request->priority1) {
@@ -137,7 +150,7 @@ class Report extends Controller
                     $report->video = false;
                     $report->file = false;
                     $report->delegated_date = Carbon::now();
-                    $report->expected_date = $request->expected_date;
+                    $report->points = 0;
                     $report->save();
                 }
 
@@ -153,7 +166,13 @@ class Report extends Controller
 
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
-                    $report->delegate_id = $request->delegate;
+                    if (Auth::user()->type_user == 3) {
+                        $report->delegate_id = 1;
+                        $report->expected_date = Carbon::now();
+                    } else {
+                        $report->delegate_id = $request->delegate;
+                        $report->expected_date = $request->expected_date;
+                    }
                     $report->title = $request->title;
                     $report->content = $filePath;
 
@@ -184,14 +203,20 @@ class Report extends Controller
                     }
 
                     $report->delegated_date = Carbon::now();
-                    $report->expected_date = $request->expected_date;
+                    $report->points = 0;
                     $report->save();
                 }
 
                 if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
-                    $report->delegate_id = $request->delegate;
+                    if (Auth::user()->type_user == 3) {
+                        $report->delegate_id = 1;
+                        $report->expected_date = Carbon::now();
+                    } else {
+                        $report->delegate_id = $request->delegate;
+                        $report->expected_date = $request->expected_date;
+                    }
                     $report->title = $request->title;
 
                     if ($request->priority1) {
@@ -209,7 +234,7 @@ class Report extends Controller
                     $report->video = false;
                     $report->file = false;
                     $report->delegated_date = Carbon::now();
-                    $report->expected_date = $request->expected_date;
+                    $report->points = 0;
                     $report->save();
                 }
                 return redirect()->route('projects.reports.index', ['project' => $project_id]);
@@ -231,7 +256,7 @@ class Report extends Controller
     {
         if (Auth::check()) {
             $user = Auth::user();
-            $allUsers = User::all();
+            $allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
             $project = Project::find($project_id);
             $report = ModelsReport::find($report_id);
 

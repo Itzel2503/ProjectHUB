@@ -44,7 +44,7 @@ class TableReports extends Component
 
         $user = Auth::user();
         $user_id = $user->id;
-        $this->allUsers = User::all();
+        $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
 
         if (Auth::user()->type_user == 1) {
             $reports = Report::where('project_id', $this->project->id)
@@ -72,7 +72,7 @@ class TableReports extends Component
                 ->orderBy('created_at', 'desc')
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
-        } else {
+        } elseif (Auth::user()->type_user == 2) {
             $reports = Report::where('project_id', $this->project->id)
                 ->where(function ($query) {
                     $query->where('title', 'like', '%' . $this->search . '%')
@@ -102,6 +102,25 @@ class TableReports extends Component
                 ->orderBy('created_at', 'desc')
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
+        } elseif (Auth::user()->type_user == 3) {
+            $reports = Report::where('project_id', $this->project->id)
+                ->whereHas('user', function ($query) {
+                    $query->where('type_user', 3);
+                })
+                ->where(function ($query) {
+                    $query->where('title', 'like', '%' . $this->search . '%')
+                        ->orWhere('comment', 'like', '%' . $this->search . '%')
+                        ->orWhere('state', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('delegate', function ($subQuery) {
+                            $subQuery->where('name', 'like', '%' . $this->search . '%');
+                        });
+                })
+                ->when($this->selectedStates, function ($query) {
+                    $query->whereIn('state', $this->selectedStates);
+                })
+                ->orderBy('created_at', 'desc')
+                ->with(['user', 'delegate'])
+                ->get();
         }
 
         // LEADER TABLE
@@ -242,7 +261,7 @@ class TableReports extends Component
     {
         $report = Report::find($id);
         $user = Auth::user();
-        
+
         if ($report) {
             if ($this->message != '') {
                 $chat = new ChatReports();
@@ -461,7 +480,7 @@ class TableReports extends Component
             } elseif ($this->priority3) {
                 $report->priority = 'Bajo';
             }
-            
+
             $report->save();
 
             $this->modalEdit = false;

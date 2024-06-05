@@ -17,7 +17,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = ['name', 'lastname', 'email', 'password', 'type_user', 'type_user', 'date_birthday', 'area_id'];
+    protected $fillable = ['name', 'email', 'password', 'type_user', 'date_birthday', 'area_id'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -47,7 +47,14 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->belongsToMany(Project::class);
+        return $this->belongsToMany(Project::class)
+            ->withTimestamps();
+    }
+
+    public function clientProjects()
+    {
+        return $this->belongsToMany(Project::class, 'project_user')
+            ->wherePivot('client', true);
     }
 
     public function reports()

@@ -275,6 +275,7 @@
                                 </span>
                             @endif
                         </div>
+                        @if (Auth::user()->type_user != 3 )
                         <div class="flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Delegar <p class="text-red-600">*</p>
@@ -307,11 +308,12 @@
                             <input type="checkbox" name="evidence" id="evidence" class="ml-4"
                                 style="height: 24px; width: 24px; accent-color: #0062cc;">
                         </div>
-                        <div class="m-auto flex w-full flex-row px-3">
+                        {{-- <div class="m-auto flex w-full flex-row px-3">
                             <button class="btnSave" id="buttonPoints" style="display: flex">
                                 Puntos de esfuerzo
                             </button>
-                        </div>
+                        </div> --}}
+                        @endif
                     </div>
                     <div class="mb-6 flex items-center justify-center">
                         <button type="submit" class="btnSave" id="buttonSave" style="display: flex">
@@ -358,7 +360,7 @@
             style="display: none;"></video>
     </div>
     {{-- MODAL EDIT / CREATE SPRINT --}}
-    <div class="left-0 top-20 z-50 block max-h-full overflow-y-auto">
+    <div class="left-0 top-20 z-50 block max-h-full overflow-y-auto hidden">
         <div
             class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
         </div>

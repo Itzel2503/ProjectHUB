@@ -187,7 +187,7 @@ class TableActivities extends Component
         }
         // TODOS LOS DELEGADOS
         foreach ($this->allUsers as $key => $user) {
-            $this->allUsersFiltered[$user->id] = $user->name . $user->lastname;
+            $this->allUsersFiltered[$user->id] = $user->name;
         }
         // ADD ATRIBUTES
         foreach ($activities as $activity) {
@@ -470,23 +470,23 @@ class TableActivities extends Component
                 ],
             );
             // Verificar si al menos uno de los campos está presente
-            if ($this->changePoints == true) {
-                if (!$this->points) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Agrega puntos de esfuerzo.',
-                    ]);
-                    return;
-                }
-            } else {
-                if (!$this->point_know || !$this->point_many || !$this->point_effort) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Por favor, complete el cuestionario.',
-                    ]);
-                    return;
-                }
-            }
+            // if ($this->changePoints == true) {
+            //     if (!$this->points) {
+            //         $this->dispatchBrowserEvent('swal:modal', [
+            //             'type' => 'error',
+            //             'title' => 'Agrega puntos de esfuerzo.',
+            //         ]);
+            //         return;
+            //     }
+            // } else {
+            //     if (!$this->point_know || !$this->point_many || !$this->point_effort) {
+            //         $this->dispatchBrowserEvent('swal:modal', [
+            //             'type' => 'error',
+            //             'title' => 'Por favor, complete el cuestionario.',
+            //         ]);
+            //         return;
+            //     }
+            // }
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -552,23 +552,23 @@ class TableActivities extends Component
         }
         $activity->state = 'Abierto';
 
-        if ($this->changePoints == true) {
-            $validPoints = [1, 2, 3, 5, 8, 13];
-            $activity->points = $this->points;
+        // if ($this->changePoints == true) {
+        //     $validPoints = [1, 2, 3, 5, 8, 13];
+        //     $activity->points = $this->points;
 
-            if (!in_array($this->points, $validPoints)) {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'Puntuaje no válido.',
-                ]);
-                return; // O cualquier otra acción que desees realizar
-            } else {
-                $activity->points = $this->points;
-            }
-        } else {
-            $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
-            $activity->points = $maxPoint;
-        }
+        //     if (!in_array($this->points, $validPoints)) {
+        //         $this->dispatchBrowserEvent('swal:modal', [
+        //             'type' => 'error',
+        //             'title' => 'Puntuaje no válido.',
+        //         ]);
+        //         return; // O cualquier otra acción que desees realizar
+        //     } else {
+        //         $activity->points = $this->points;
+        //     }
+        // } else {
+        //     $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+        //     $activity->points = $maxPoint;
+        // }
 
         $activity->delegated_date = Carbon::now();
         $activity->expected_date = $this->expected_date;
@@ -600,23 +600,23 @@ class TableActivities extends Component
                 ],
             );
             // Verificar si al menos uno de los campos está presente
-            if ($this->changePoints == true) {
-                if (!$this->points) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Agrega puntos de esfuerzo.',
-                    ]);
-                    return;
-                }
-            } else {
-                if (!$this->point_know || !$this->point_many || !$this->point_effort) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Por favor, complete el cuestionario.',
-                    ]);
-                    return;
-                }
-            }
+            // if ($this->changePoints == true) {
+            //     if (!$this->points) {
+            //         $this->dispatchBrowserEvent('swal:modal', [
+            //             'type' => 'error',
+            //             'title' => 'Agrega puntos de esfuerzo.',
+            //         ]);
+            //         return;
+            //     }
+            // } else {
+            //     if (!$this->point_know || !$this->point_many || !$this->point_effort) {
+            //         $this->dispatchBrowserEvent('swal:modal', [
+            //             'type' => 'error',
+            //             'title' => 'Por favor, complete el cuestionario.',
+            //         ]);
+            //         return;
+            //     }
+            // }
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -705,23 +705,23 @@ class TableActivities extends Component
 
         $activity->expected_date = $this->expected_date ?? $activity->expected_date;
 
-        if ($this->changePoints == true) {
-            $validPoints = [1, 2, 3, 5, 8, 13];
-            $activity->points = $this->points;
+        // if ($this->changePoints == true) {
+        //     $validPoints = [1, 2, 3, 5, 8, 13];
+        //     $activity->points = $this->points;
 
-            if (!in_array($this->points, $validPoints)) {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'Puntuaje no válido.',
-                ]);
-                return; // O cualquier otra acción que desees realizar
-            } else {
-                $activity->points = $this->points ?? $activity->points;
-            }
-        } else {
-            $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
-            $activity->points = $maxPoint ?? $activity->points;
-        }
+        //     if (!in_array($this->points, $validPoints)) {
+        //         $this->dispatchBrowserEvent('swal:modal', [
+        //             'type' => 'error',
+        //             'title' => 'Puntuaje no válido.',
+        //         ]);
+        //         return; // O cualquier otra acción que desees realizar
+        //     } else {
+        //         $activity->points = $this->points ?? $activity->points;
+        //     }
+        // } else {
+        //     $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+        //     $activity->points = $maxPoint ?? $activity->points;
+        // }
 
         $activity->save();
 
@@ -916,8 +916,8 @@ class TableActivities extends Component
             $this->priority3 = true;
         }
 
-        $this->points = $this->activityEdit->points;
-        $this->changePoints = true;
+        // $this->points = $this->activityEdit->points;
+        // $this->changePoints = true;
     }
     // MODAL
     public function modalBacklog()
@@ -958,7 +958,7 @@ class TableActivities extends Component
         if ($this->modalCreateActivity == true) {
             $this->modalCreateActivity = false;
         } else {
-            $this->activityEdit = null;
+            // $this->activityEdit = null;
             $this->modalCreateActivity = true;
         }
         $this->clearInputs();
@@ -981,11 +981,11 @@ class TableActivities extends Component
         $this->priority2 = false;
         $this->priority3 = false;
 
-        $this->changePoints = false;
-        $this->points = '';
-        $this->point_know = '';
-        $this->point_many = '';
-        $this->point_effort = '';
+        // $this->changePoints = false;
+        // $this->points = '';
+        // $this->point_know = '';
+        // $this->point_many = '';
+        // $this->point_effort = '';
     }
 
     public function sprintsUpdated()
@@ -1047,20 +1047,20 @@ class TableActivities extends Component
         }
     }
 
-    public function changePoints()
-    {
-        if ($this->changePoints == true) {
-            $this->changePoints = false;
-            if ($this->activityEdit == null) {
-                $this->points = '';
-            }
-        } else {
-            $this->changePoints = true;
-            $this->point_know = '';
-            $this->point_many = '';
-            $this->point_effort = '';
-        }
-    }
+    // public function changePoints()
+    // {
+    //     if ($this->changePoints == true) {
+    //         $this->changePoints = false;
+    //         if ($this->activityEdit == null) {
+    //             $this->points = '';
+    //         }
+    //     } else {
+    //         $this->changePoints = true;
+    //         $this->point_know = '';
+    //         $this->point_many = '';
+    //         $this->point_effort = '';
+    //     }
+    // }
 
     public function reloadPage()
     {

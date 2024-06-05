@@ -24,15 +24,17 @@
                             style="padding-left: 3em;">
                     </div>
                 </div>
-                <!-- DELEGATE -->
-                <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
-                    <select wire:model.lazy="selectedDelegate" class="inputs">
-                        <option value="">Delegados</option>
-                        @foreach ($allUsersFiltered as $key => $userFiltered)
-                            <option value="{{ $key }}">{{ $userFiltered }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                @if (Auth::user()->type_user != 3)
+                    <!-- DELEGATE -->
+                    <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
+                        <select wire:model.lazy="selectedDelegate" class="inputs">
+                            <option value="">Delegados</option>
+                            @foreach ($allUsersFiltered as $key => $userFiltered)
+                                <option value="{{ $key }}">{{ $userFiltered }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
                 <!-- STATE -->
                 <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
                     <div class="flex w-full justify-center">
@@ -127,10 +129,10 @@
                     <tr class="text-left">
                         <th class="w-96 px-4 py-3">Reporte</th>
                         <th class="px-4 py-3 lg:w-48">Delegado</th>
-                        <th class="px-4 py-3 w-48 text-center">Estado</th>
-                        <th class="px-4 py-3 w-44">Fecha de entrega</th>
-                        <th class="px-4 py-3 w-56">Creado</th>
-                        <th class="px-4 py-3 w-16">Acciones</th>
+                        <th class="w-48 px-4 py-3 text-center">Estado</th>
+                        <th class="w-44 px-4 py-3">Fecha de entrega</th>
+                        <th class="w-56 px-4 py-3">Creado</th>
+                        <th class="w-16 px-4 py-3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -166,50 +168,61 @@
                                 </div>
                             </td>
                             <td class="px-2 py-1">
-                                <div class="mx-auto w-full text-left">
-                                    <p class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
-                                        {{ $report->delegate->name }}</p>
-                                    <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'
-                                        name="delegate" id="delegate"
-                                        class="inpSelectTable @if ($report->state == 'Resuelto') hidden @endif w-full text-sm">
-                                        <option selected value={{ $report->delegate->id }}>
-                                            {{ $report->delegate->name }} </option>
-                                        @foreach ($report->usersFiltered as $userFiltered)
-                                            <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <p class="text-xs">
-                                        @if ($report->state == 'Proceso' || $report->state == 'Conflicto')
-                                            Progreso {{ $report->progress->diffForHumans(null, false, false, 1) }}
-                                        @else
-                                            @if ($report->state == 'Resuelto')
-                                                @if ($report->progress == null)
-                                                    Sin desarrollo
-                                                @else
-                                                    Desarrollo {{ $report->timeDifference }}
-                                                @endif
+                                @if (Auth::user()->type_user == 3)
+                                    <p class="my-auto text-left text-xs font-semibold">Arten</p>
+                                @else
+                                    <div class="mx-auto w-full text-left">
+                                        <p class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
+                                            {{ $report->delegate->name }}</p>
+                                        <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'
+                                            name="delegate" id="delegate"
+                                            class="inpSelectTable @if ($report->state == 'Resuelto') hidden @endif w-full text-sm">
+                                            <option selected value={{ $report->delegate->id }}>
+                                                {{ $report->delegate->name }} </option>
+                                            @foreach ($report->usersFiltered as $userFiltered)
+                                                <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <p class="text-xs">
+                                            @if ($report->state == 'Proceso' || $report->state == 'Conflicto')
+                                                Progreso {{ $report->progress->diffForHumans(null, false, false, 1) }}
                                             @else
-                                                @if ($report->look == true)
-                                                    Visto {{ $report->progress->diffForHumans(null, false, false, 1) }}
+                                                @if ($report->state == 'Resuelto')
+                                                    @if ($report->progress == null)
+                                                        Sin desarrollo
+                                                    @else
+                                                        Desarrollo {{ $report->timeDifference }}
+                                                    @endif
+                                                @else
+                                                    @if ($report->look == true)
+                                                        Visto
+                                                        {{ $report->progress->diffForHumans(null, false, false, 1) }}
+                                                    @endif
                                                 @endif
                                             @endif
-                                        @endif
-                                    </p>
-                                </div>
+                                        </p>
+                                    </div>
+                                @endif
                             </td>
                             <td class="px-2 py-1">
-                                <select
-                                    wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)'
-                                    name="state" id="state"
-                                    class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-auto text-sm font-semibold">
-                                    <option selected value={{ $report->state }}>{{ $report->state }}</option>
-                                    @foreach ($report->filteredActions as $action)
-                                        <option value="{{ $action }}">{{ $action }}</option>
-                                    @endforeach
-                                </select>
-                                @if ($report->count)
-                                    <p class="text-xs text-red-600">Reincidencia {{ $report->count }}</p>
+                                @if (Auth::user()->type_user == 3)
+                                    <p class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-auto text-sm font-semibold">
+                                        {{ $report->state }}
+                                    </p>
+                                @else
+                                    <select
+                                        wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)'
+                                        name="state" id="state"
+                                        class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-auto text-sm font-semibold">
+                                        <option selected value={{ $report->state }}>{{ $report->state }}</option>
+                                        @foreach ($report->filteredActions as $action)
+                                            <option value="{{ $action }}">{{ $action }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($report->count)
+                                        <p class="text-xs text-red-600">Reincidencia {{ $report->count }}</p>
+                                    @endif
                                 @endif
                             </td>
                             <td class="px-2 py-1">
@@ -227,7 +240,7 @@
                             </td>
                             <td class="px-2 py-1">
                                 <div class="flex justify-center">
-                                    <div id="dropdown-button-{{ $report->id }}" class="relative">
+                                    <div id="dropdown-button-{{ $report->id }}" class="@if(Auth::user()->type_user == 3) @if($report->state != 'Abierto') hidden @else relative @endif @else relative @endif ">
                                         <!-- Button -->
                                         <button onclick="toggleDropdown('{{ $report->id }}')" type="button"
                                             class="flex items-center px-5 py-2.5">
@@ -262,23 +275,25 @@
                                                 </svg>
                                                 Editar
                                             </div>
-                                            <!-- Botón Eliminar -->
-                                            <div wire:click="$emit('deleteReport',{{ $report->id }}, {{ $project->id }})"
-                                                class="@if ($report->state != 'Abierto') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-red-600">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-trash mr-2" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M4 7l16 0" />
-                                                    <path d="M10 11l0 6" />
-                                                    <path d="M14 11l0 6" />
-                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                                </svg>
-                                                Eliminar
-                                            </div>
+                                            @if (Auth::user()->type_user == 1 || Auth::user()->id == $report->user->id)
+                                                <!-- Botón Eliminar -->
+                                                <div wire:click="$emit('deleteReport',{{ $report->id }}, {{ $project->id }})"
+                                                    class="@if ($report->state != 'Abierto') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-red-600">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="icon icon-tabler icon-tabler-trash mr-2" width="24"
+                                                        height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                                        stroke="currentColor" fill="none" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M4 7l16 0" />
+                                                        <path d="M10 11l0 6" />
+                                                        <path d="M14 11l0 6" />
+                                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                                    </svg>
+                                                    Eliminar
+                                                </div>
+                                            @endif
                                             <!-- Botón Reincidencia -->
                                             @if ($report->state == 'Resuelto')
                                                 <div @if ($report->report_id == null || ($report->report_id != null && $report->repeat == true)) wire:click="reportRepeat({{ $project->id }}, {{ $report->id }})" @endif
@@ -308,9 +323,11 @@
                 </tbody>
             </table>
         </div>
-        <div class="py-5">
-            {{ $reports->links() }}
-        </div>
+        @if (Auth::user()->type_user != 3)
+            <div class="py-5">
+                {{ $reports->links() }}
+            </div>
+        @endif
     </div>
     {{-- END TABLE --}}
     {{-- MODAL SHOW --}}
@@ -650,15 +667,13 @@
                             </div>
                         </div>
                         <div class="-mx-3 mb-6 flex flex-row">
-                            <div
-                                class="mb-6 w-full px-3 flex flex-row m-auto">
-                                <h5 class="inline-flex font-semibold mr-5" for="evidenceEdit">
+                            <div class="m-auto mb-6 flex w-full flex-row px-3">
+                                <h5 class="mr-5 inline-flex font-semibold" for="evidenceEdit">
                                     Evidencia
                                 </h5>
                                 <div class="flex justify-center gap-20">
                                     <div class="flex flex-col items-center">
-                                        <input type="checkbox" wire:model="evidenceEdit"
-                                            class="priority-checkbox"
+                                        <input type="checkbox" wire:model="evidenceEdit" class="priority-checkbox"
                                             style="height: 24px; width: 24px;" />
                                     </div>
                                 </div>

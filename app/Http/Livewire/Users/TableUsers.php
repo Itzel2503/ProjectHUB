@@ -3,9 +3,11 @@
 namespace App\Http\Livewire\Users;
 
 use App\Models\Area;
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -20,18 +22,24 @@ class TableUsers extends Component
     // modal
     public $modalCreateEdit = false;
     public $showUpdate = false;
+    public $isClient = false;
     // table, action's user
     public $search, $userEdit, $areaUser;
-    public $perPage = '';
-    public $rules = [], $allAreas = [], $allTypes = [1, 2];
+    public $perPage = '50';
+    public $rules = [],
+        $allAreas = [],
+        $allTypes = [1, 2];
     // inputs
     public $file, $name, $date_birthday, $entry_date, $area, $type_user, $email, $password, $effort_points;
+    public $projects = [];
+    public $selectedProjects = [];
 
     public function render()
     {
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
 
         $areas = Area::all();
+        $this->projects = Project::all();
 
         $users = User::onlyTrashed()
             ->select('users.*', 'areas.name as area_name')
@@ -50,7 +58,7 @@ class TableUsers extends Component
             ->orWhere('users.name', 'like', '%' . $this->search . '%')
             ->orWhere('users.email', 'like', '%' . $this->search . '%')
             ->orWhere('areas.name', 'like', '%' . $this->search . '%')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('name', 'asc')
             ->paginate($this->perPage);
 
         return view('livewire.users.table-users', [
@@ -62,16 +70,30 @@ class TableUsers extends Component
     public function create()
     {
         try {
-            $this->validate([
+            $rules = [
                 'name' => 'required|max:255',
                 'date_birthday' => 'required|date|max:255',
                 'entry_date' => 'required|date|max:255',
-                'area' => 'required',
                 'type_user' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:8',
-                'effort_points' => 'required|numeric',
-            ]);
+            ];
+
+            if ($this->type_user == 3) {
+                $rules['selectedProjects'] = 'required';
+            } else {
+                $rules['area'] = 'required';
+            }
+
+            $validator = Validator::make($this->all(), $rules);
+
+            if ($validator->fails()) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Faltan campos o campos incorrectos',
+                ]);
+                throw new \Illuminate\Validation\ValidationException($validator);
+            }
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -99,7 +121,7 @@ class TableUsers extends Component
                 if ($this->file->getSize() > $maxSize) {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'error',
-                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
                     ]);
                     return;
                 }
@@ -121,7 +143,7 @@ class TableUsers extends Component
             } else {
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
-                    'title' => 'El archivo no está en formato de imagen.'
+                    'title' => 'El archivo no está en formato de imagen.',
                 ]);
                 return;
             }
@@ -131,16 +153,31 @@ class TableUsers extends Component
         $user->date_birthday = $this->date_birthday;
         $user->entry_date = $this->entry_date;
         $user->email = $this->email;
-        $user->area_id = $this->area;
+        // Guardar relaciones en la tabla pivote
+        if ($this->type_user == 3) {
+            $user->area_id = 5;
+        } else {
+            $user->area_id = $this->area;
+        }
+
         $user->type_user = $this->type_user;
 
         if ($this->password) {
             $user->password = Hash::make($this->password);
         }
-
-        $user->effort_points = $this->effort_points;
-
+        // $user->effort_points = $this->effort_points;
         $user->save();
+        // Guardar relaciones en la tabla pivote
+        if ($this->type_user == 3) {
+            foreach ($this->selectedProjects as $projectId) {
+                $user->projects()->attach($projectId, [
+                    'client' => true,
+                    'leader' => false,
+                    'programmer' => false,
+                ]);
+            }
+            $user->area_id = 5;
+        }
         $this->clearInputs();
         $this->modalCreateEdit = false;
 
@@ -157,13 +194,26 @@ class TableUsers extends Component
     public function update($id)
     {
         try {
-            $this->validate([
+            $rules = [
                 'name' => 'required|max:255',
                 'date_birthday' => 'required|date|max:255',
                 'entry_date' => 'required|date|max:255',
                 'email' => 'required|email|unique:users,email,' . $id,
-                'effort_points' => 'required|numeric',
-            ]);
+            ];
+
+            if ($this->type_user == 3) {
+                $rules['selectedProjects'] = 'required';
+            }
+
+            $validator = Validator::make($this->all(), $rules);
+
+            if ($validator->fails()) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Faltan campos o campos incorrectos',
+                ]);
+                throw new \Illuminate\Validation\ValidationException($validator);
+            }
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -184,7 +234,7 @@ class TableUsers extends Component
                 if ($this->file->getSize() > $maxSize) {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'error',
-                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
                     ]);
                     return;
                 }
@@ -210,7 +260,7 @@ class TableUsers extends Component
             } else {
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
-                    'title' => 'El archivo no es una imagen'
+                    'title' => 'El archivo no es una imagen',
                 ]);
                 return;
             }
@@ -222,7 +272,13 @@ class TableUsers extends Component
         $user->email = $this->email ?? $user->email;
 
         if (!empty($this->area)) {
-            $user->area_id = $this->area;
+            if ($this->type_user != 3) {
+                $user->area_id = $this->area;
+            } else {
+                $user->area_id = 5;
+            }
+        } elseif ($this->type_user == 3) {
+            $user->area_id = 5;
         }
 
         $user->type_user = $this->type_user ?? $user->type_user;
@@ -231,13 +287,63 @@ class TableUsers extends Component
             $user->password = Hash::make($this->password);
         }
 
-        $user->effort_points = $this->effort_points ?? $user->effort_points;
-
+        if ($this->type_user == 3) {
+            $existingPivote = $user->projects()->exists();
+            if ($existingPivote) {
+                // Verificar si existe algún registro en la tabla pivote con client = true
+                $existingClientProjects = $user->projects()->wherePivot('client', true)->exists();
+                if (!$existingClientProjects) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Usuario asignado a proyecto',
+                        'text' => 'Eliminar usuario del proyecto asignado antes de realizar cambios.',
+                    ]);
+                    return;
+                }
+            }
+        }
+        // $user->effort_points = $this->effort_points ?? $user->effort_points;
         if ($this->file) {
             $this->refreshPage();
         }
-
         $user->save();
+
+        if ($this->type_user == 3) {
+            $existingPivote = $user->projects()->exists();
+            if ($existingPivote) {
+                // Verificar si existe algún registro en la tabla pivote con client = true
+                $existingClientProjects = $user->projects()->wherePivot('client', true)->exists();
+                if ($existingClientProjects) {
+                    // Primero, quita las relaciones existentes para estos roles
+                    $user->projects()->wherePivot('client', true)->detach();
+                    // Crear un array con los datos de los proyectos seleccionados
+                    $projectsData = [];
+                    foreach ($this->selectedProjects as $projectId) {
+                        $projectsData[$projectId] = ['leader' => false, 'programmer' => false, 'client' => true];
+                    }
+                    // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
+                    $user->projects()->syncWithoutDetaching($projectsData);
+                } else {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Usuario asignado a proyecto',
+                        'text' => 'Eliminar usuario del proyecto asignado antes de realizar cambios.',
+                    ]);
+                    return;
+                }
+            } else {
+                // Crear un array con los datos de los proyectos seleccionados
+                $projectsData = [];
+                foreach ($this->selectedProjects as $projectId) {
+                    $projectsData[$projectId] = ['leader' => false, 'programmer' => false, 'client' => true];
+                }
+                // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
+                $user->projects()->syncWithoutDetaching($projectsData);
+            }
+        } else {
+            $user->projects()->wherePivot('client', true)->detach();
+        }
+
         $this->clearInputs();
         $this->modalCreateEdit = false;
         // Emitir un evento de navegador
@@ -252,20 +358,50 @@ class TableUsers extends Component
         $user = User::find($id);
 
         if ($user) {
-            // Eliminar imagen anterior
-            if (Storage::disk('users')->exists($user->profile_photo)) {
-                Storage::disk('users')->delete($user->profile_photo);
+            $existingPivote = $user->projects()->exists();
+            if ($existingPivote) {
+                // Verificar si existe algún registro en la tabla pivote con client = true
+                $existingClientProjects = $user->projects()->wherePivot('client', true)->exists();
+                if ($existingClientProjects) {
+                    $user->projects()->wherePivot('client', true)->detach();
+                    // Eliminar imagen anterior
+                    if (Storage::disk('users')->exists($user->profile_photo)) {
+                        Storage::disk('users')->delete($user->profile_photo);
+                    }
+                    // Actualizar el campos
+                    $user->profile_photo = null;
+                    // $user->effort_points = 0;
+                    $user->save();
+                    $user->delete();
+                    // Emitir un evento de navegador
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Usuario eliminado',
+                    ]);
+                } else {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Usuario asignado a proyecto',
+                        'text' => 'Eliminar usuario del proyecto asignado antes de realizar cambios.',
+                    ]);
+                    return;
+                }
+            } else {
+                // Eliminar imagen anterior
+                if (Storage::disk('users')->exists($user->profile_photo)) {
+                    Storage::disk('users')->delete($user->profile_photo);
+                }
+                // Actualizar el campos
+                $user->profile_photo = null;
+                // $user->effort_points = 0;
+                $user->save();
+                $user->delete();
+                // Emitir un evento de navegador
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Usuario eliminado',
+                ]);
             }
-            // Actualizar el campos
-            $user->profile_photo = null;
-            $user->effort_points = 0;
-            $user->save();
-            $user->delete();
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Usuario eliminado',
-            ]);
         } else {
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
@@ -307,9 +443,7 @@ class TableUsers extends Component
         }
 
         $this->userEdit = User::find($id);
-
         $this->allAreas = Area::all();
-
         $this->areaUser = $this->allAreas->find($this->userEdit->area_id);
 
         foreach ($this->allAreas as $key => $oneArea) {
@@ -317,13 +451,21 @@ class TableUsers extends Component
                 unset($this->allAreas[$key]);
             }
         }
-
+        // Establecer el tipo de usuario actual del usuario
         $this->type_user = $this->userEdit ? $this->userEdit->type_user : null;
+        // Asegúrate de tener todos los tipos de usuario disponibles
+        $this->allTypes = [1, 2, 3];
+
+        if ($this->userEdit->type_user == 3) {
+            $this->isClient = true;
+        }
+
+        $this->selectedProjects = $this->userEdit->projects()->wherePivot('client', true)->pluck('projects.id')->toArray();
         $this->name = $this->userEdit->name;
         $this->date_birthday = $this->userEdit->date_birthday;
         $this->entry_date = $this->userEdit->entry_date;
         $this->email = $this->userEdit->email;
-        $this->effort_points = $this->userEdit->effort_points;
+        // $this->effort_points = $this->userEdit->effort_points;
     }
     // MODAL
     public function modalCreateEdit()
@@ -335,6 +477,7 @@ class TableUsers extends Component
         } else {
             $this->modalCreateEdit = true;
         }
+        $this->isClient = false;
         $this->clearInputs();
         $this->resetErrorBag();
         $this->dispatchBrowserEvent('file-reset');
@@ -349,7 +492,14 @@ class TableUsers extends Component
         $this->type_user = '';
         $this->email = '';
         $this->password = '';
-        $this->effort_points = '';
+        // $this->effort_points = '';
+        $this->type_user = [];
+        $this->selectedProjects = [];
+    }
+
+    public function updatedTypeUser($value)
+    {
+        $this->isClient = $value == 3;
     }
 
     public function reloadPage()

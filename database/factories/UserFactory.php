@@ -19,9 +19,9 @@ class UserFactory extends Factory
             'name' => $this->faker->firstName . ' ' . $this->faker->lastName,
             'email' => $this->faker->unique()->safeEmail,
             'password' => Hash::make('Arten.123!'), // Es mejor no utilizar contraseñas predeterminadas para datos aleatorios
-            'type_user' => $this->faker->randomElement([1, 2]), // Suponiendo que tienes varios tipos de usuarios
+            'type_user' => $this->faker->randomElement([1, 2, 3]), // Suponiendo que tienes varios tipos de usuarios
             'date_birthday' => $this->faker->date(),
-            'area_id' => $this->faker->numberBetween(1,4), // Asumiendo que tienes áreas del 1 al 10
+            'area_id' => $this->faker->numberBetween(1,5), // Asumiendo que tienes áreas del 1 al 10
             'entry_date' => $this->faker->date(),
             'effort_points' => $this->faker->numberBetween(10, 100),
 
