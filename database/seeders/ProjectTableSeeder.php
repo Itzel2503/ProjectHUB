@@ -25,18 +25,18 @@ class ProjectTableSeeder extends Seeder
             if ($users->count() == 2) {
                 // Asignar el primer usuario como líder
                 $project->users()->attach($users->first()->id, [
-                    'leader' => !$users->first()->type_user == 3, // Si el type_user no es 3, entonces es líder
-                    'programmer' => !$users->first()->type_user == 3, // Si el type_user no es 3, entonces es programador
-                    'client' => $users->first()->type_user == 3, // Si el type_user es 3, entonces es cliente
+                    'leader' => true,
+                    'programmer' => false,
+                    'client' => false,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-            
+
                 // Asignar el segundo usuario como programador
                 $project->users()->attach($users->last()->id, [
-                    'leader' => !$users->last()->type_user == 3, // Si el type_user no es 3, entonces es líder
-                    'programmer' => !$users->last()->type_user == 3, // Si el type_user no es 3, entonces es programador
-                    'client' => $users->last()->type_user == 3, // Si el type_user es 3, entonces es cliente
+                    'leader' => false,
+                    'programmer' => true,
+                    'client' => false,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

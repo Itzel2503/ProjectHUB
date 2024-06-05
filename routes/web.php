@@ -35,13 +35,13 @@ Route::get('/', function () {
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['web', 'auth'])->group(function () {
     // PROFILE
-    Route::resource('/profile', ProfileController::class)->only(['index']);
+    Route::resource('profile', ProfileController::class)->only(['index']);
     // USERS
-    Route::resource('/userCatalog', UserCatalog::class)->only(['index'])->middleware('user.type:1');
+    Route::resource('userCatalog', UserCatalog::class)->only(['index'])->middleware('user.type:1');
     // CUSTOMERS
-    Route::resource('/customers', Customer::class)->middleware('user.type:1');
+    Route::resource('customers', Customer::class)->middleware('user.type:1');
     // PROJECTS
-    Route::resource('/projects', Project::class)->only(['index']);
+    Route::resource('projects', Project::class)->only(['index']);
     Route::resource('projects.reports', Report::class);
     Route::resource('projects.activities', Activity::class)->only(['index'])->middleware('user.type:1,2');
     // ACTIVITIES

@@ -90,8 +90,10 @@
         <!-- Desktop sidebar -->
         <div class="bg-primaryColor z-20 hidden w-60 flex-shrink-0 overflow-y-auto shadow-md md:block">
             <div class="bg-primaryColor py-1" style="height:100%">
-
                 @if (Auth::user())
+                @php
+                    $user = DB::table('users')->where('id', Auth::user()->id)->first();
+                @endphp
                 <div class="mt-5 flex justify-center justify-items-center">
                     @if (Auth::user()->profile_photo)
                     <img class="mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
@@ -118,7 +120,7 @@
                 </div>
                 @endif
                 <ul class="mt-5">
-                    @if (Auth::user()->type_user == 1)
+                    @if ($user->type_user == 1)
                     <li class="menu {{ request()->routeIs('userCatalog.index') ? 'active' : '' }}">
                         @yield('userCatalog')
                         <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
@@ -176,7 +178,7 @@
                             <span class="ml-4">Proyectos</span>
                         </a>
                     </li>
-                    @if (Auth::user()->type_user == 1)
+                    @if ($user->type_user != 3)
                         <li class="menu {{ request()->routeIs('activities-reports.index') ? 'active' : '' }}">
                             @yield('all-activities')
                             <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"

@@ -1,4 +1,9 @@
 <div>
+    @php
+        $user = DB::table('users')
+            ->where('id', Auth::user()->id)
+            ->first();
+    @endphp
     {{-- Tabla usuarios --}}
     <div class="px-4 py-4 sm:rounded-lg">
         {{-- NAVEGADOR --}}
@@ -24,7 +29,7 @@
                 </div>
             </div>
             <!-- BTN NEW -->
-            @if (Auth::user()->type_user == 1)
+            @if ($user->type_user == 1)
                 <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:w-1/4 md:px-0">
                     <button wire:click="modalCreateEdit()" class="btnNuevo">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2"
@@ -41,7 +46,7 @@
         </div>
         {{-- END NAVEGADOR --}}
         {{-- PESTAÑAS --}}
-        @if (Auth::user()->type_user = !3)
+        @if ($user->type_user != 3)
             <nav class="mt-5 flex">
                 <button wire:click="setActiveTab('Activo')"
                     class="text-secundaryColor border-secondary @if ($activeTab === 'Activo') bg-gray-200 @endif mx-2 w-40 cursor-pointer border py-1 font-semibold">
@@ -64,7 +69,7 @@
         {{-- END PESTAÑAS --}}
         {{-- TABLE --}}
         <div class="tableStyle">
-            @if (Auth::user()->type_user = !3)
+            @if ($user->type_user != 3)
                 <div class="text-text1 bg-primaryColor w-full px-4 pt-2 text-xl font-semibold tracking-wide">
                     @if ($activeTab == 'Activo')
                         <h2>Activos</h2>
@@ -82,34 +87,34 @@
             @endif
             <table class="whitespace-no-wrap table-hover table w-full">
                 <thead class="headTable border-0">
-                    <tr class="@if (Auth::user()->type_user = !3) text-left @else text-center @endif">
-                        @if (Auth::user()->type_user = !3)
+                    <tr class="@if ($user->type_user != 3) text-left @else text-center @endif">
+                        @if ($user->type_user != 3)
                             <th class="w-16 px-4 py-3">Prioridad</th>
                         @endif
-                        <th class="@if (Auth::user()->type_user = !3) w-2/6 @endif px-4 py-3">Proyecto</th>
-                        @if (Auth::user()->type_user = !3)
+                        <th class="@if ($user->type_user !=3) w-2/6 @endif px-4 py-3">Proyecto</th>
+                        @if ($user->type_user != 3)
                             <th class="px-4 py-3">Cliente</th>
                             <th class="px-4 py-3">Líder y Scrum Master</th>
                         @endif
-                        <th class="@if (Auth::user()->type_user = !3) w-2 @endif px-4 py-2">Acciones</th>
+                        <th class="@if ($user->type_user != 3) w-2 @endif px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($projects as $project)
                         <tr class="trTable">
-                            @if (Auth::user()->type_user = !3)
+                            @if ($user->type_user != 3)
                                 <th class="px-4 py-2">K{{ $project->priority }}</th>
                             @endif
                             <td class="px-4 py-2">
                                 <div
-                                    class="@if (Auth::user()->type_user = !3) text-justify @else text-center @endif mx-auto">
+                                    class="@if ($user->type_user != 3) text-justify @else text-center @endif mx-auto">
                                     <span class="font-semibold">{{ $project->name }} @if (Auth::user()->area_id == 1)
                                             - {{ $project->code }}
                                         @endif
                                     </span>
                                 </div>
                             </td>
-                            @if (Auth::user()->type_user = !3)
+                            @if ($user->type_user != 3)
                                 <td class="px-4 py-2">
                                     <div class="mx-auto text-justify">
                                         <span class="font-bold">{{ $project->customer_name }}</span><br>
@@ -123,10 +128,10 @@
                                 </td>
                             @endif
                             <td
-                                class="@if (Auth::user()->type_user = !3) justify-end @else justify-center @endif flex px-4 py-2">
+                                class="@if ($user->type_user != 3) justify-end @else justify-center @endif flex px-4 py-2">
                                 @if ($project->deleted_at == null)
                                     @if ($project->backlog != null)
-                                        @if (Auth::user()->type_user = !3)
+                                        @if ($user->type_user != 3)
                                             <button wire:click="showActivities({{ $project->id }})"
                                                 class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -162,7 +167,7 @@
                                         </svg>
                                     </button>
                                 @endif
-                                @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
+                                @if ($user->type_user == 1 || Auth::user()->area_id == 1)
                                     <div class="justify-righ flex">
                                         <div id="dropdown-button-{{ $project->id }}" class="relative">
                                             <button onclick="toggleDropdown('{{ $project->id }}')" type="button"
@@ -220,7 +225,7 @@
                                                     </div>
                                                     <!-- Botón Eliminar -->
                                                     <div wire:click="$emit('deleteItem',{{ $project->id }})"
-                                                        class="@if (Auth::user()->type_user == 1) flex @else hidden @endif cursor-pointer content-center px-4 py-2 text-sm text-red-600">
+                                                        class="@if ($user->type_user == 1) flex @else hidden @endif cursor-pointer content-center px-4 py-2 text-sm text-red-600">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                             class="icon icon-tabler icon-tabler-trash mr-2"
                                                             width="24" height="24" viewBox="0 0 24 24"
@@ -247,7 +252,7 @@
                     @endforeach
                 </tbody>
             </table>
-            @if (Auth::user()->type_user =! 3)
+            @if ($user->type_user != 3)
                 @if ($activeTab == 'Activo')
                     <div class="text-text1 bg-primaryColor w-full px-4 pt-2 text-xl font-semibold tracking-wide">
                         <h2>Soportes</h2>
@@ -325,7 +330,7 @@
                                                 </svg>
                                             </button>
                                         @endif
-                                        @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
+                                        @if ($user->type_user == 1 || Auth::user()->area_id == 1)
                                             <div class="justify-righ flex">
                                                 <div id="dropdown-button-{{ $project->id }}" class="relative">
                                                     <button onclick="toggleDropdown('{{ $project->id }}')"
@@ -387,7 +392,7 @@
                                                             </div>
                                                             <!-- Botón Eliminar -->
                                                             <div wire:click="$emit('deleteItem',{{ $project->id }})"
-                                                                class="@if (Auth::user()->type_user == 1) flex @else hidden @endif cursor-pointer content-center px-4 py-2 text-sm text-red-600">
+                                                                class="@if ($user->type_user == 1) flex @else hidden @endif cursor-pointer content-center px-4 py-2 text-sm text-red-600">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     class="icon icon-tabler icon-tabler-trash mr-2"
                                                                     width="24" height="24" viewBox="0 0 24 24"

@@ -25,7 +25,6 @@ class TableUsers extends Component
     public $isClient = false;
     // table, action's user
     public $search, $userEdit, $areaUser;
-    public $perPage = '50';
     public $rules = [],
         $allAreas = [],
         $allTypes = [1, 2];
@@ -59,7 +58,7 @@ class TableUsers extends Component
             ->orWhere('users.email', 'like', '%' . $this->search . '%')
             ->orWhere('areas.name', 'like', '%' . $this->search . '%')
             ->orderBy('name', 'asc')
-            ->paginate($this->perPage);
+            ->get();
 
         return view('livewire.users.table-users', [
             'users' => $users,
@@ -166,6 +165,7 @@ class TableUsers extends Component
             $user->password = Hash::make($this->password);
         }
         // $user->effort_points = $this->effort_points;
+        $user->effort_points = 0;
         $user->save();
         // Guardar relaciones en la tabla pivote
         if ($this->type_user == 3) {

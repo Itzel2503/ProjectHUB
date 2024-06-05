@@ -31,7 +31,7 @@ class TableReports extends Component
     // table, action's reports
     public $leader = false;
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
-    public $perPage = '';
+    public $perPage = '100';
     public $selectedDelegate = '';
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
     public $Filtered = false;
