@@ -584,19 +584,6 @@
             }
         });
         // Evento 'click' para el botón "Guardar con video"
-        // buttonSaveVideo.addEventListener('click', function(e) {
-        //     if (!validateForm()) {
-        //         e.preventDefault(); // Detener el envío del formulario si la validación falla
-        //     } else {
-        //         // Verificar si el botón de descarga tiene una URL y descárgalo
-        //         if (downloadVideo.href) {
-        //             setTimeout(function() {
-        //                 downloadVideo.click();
-        //             }, 10000);
-        //         }
-        //     }
-        // });
-        // Evento 'click' para el botón "Guardar con video"
         buttonSaveVideo.addEventListener('click', function(e) {
             if (!validateForm()) {
                 e.preventDefault(); // Detener el envío del formulario si la validación falla

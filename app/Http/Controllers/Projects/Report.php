@@ -329,7 +329,16 @@ class Report extends Controller
                 if (isset($request->video)) {
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
-                    $reportNew->delegate_id = $request->delegate;
+
+                    if (Auth::user()->type_user == 3) {
+                        // En produccion es usuario Soporte, Daniel Rodriguez§
+                        $reportNew->delegate_id = 10;
+                        $reportNew->expected_date = Carbon::now();
+                    } else {
+                        $reportNew->delegate_id = $request->delegate;
+                        $reportNew->expected_date = $request->expected_date;
+                    }
+                    
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $request->video;
@@ -353,7 +362,7 @@ class Report extends Controller
                     }
                     $reportNew->repeat = true;
                     $reportNew->delegated_date = Carbon::now();
-                    $reportNew->expected_date = $request->expected_date;
+                    $reportNew->points = 0;
                     $reportNew->save();
                 }
 
@@ -368,7 +377,16 @@ class Report extends Controller
 
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
-                    $reportNew->delegate_id = $request->delegate;
+
+                    if (Auth::user()->type_user == 3) {
+                        // En produccion es usuario Soporte, Daniel Rodriguez§
+                        $reportNew->delegate_id = 10;
+                        $reportNew->expected_date = Carbon::now();
+                    } else {
+                        $reportNew->delegate_id = $request->delegate;
+                        $reportNew->expected_date = $request->expected_date;
+                    }
+
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $filePath;
@@ -392,7 +410,7 @@ class Report extends Controller
                     }
                     $reportNew->repeat = true;
                     $reportNew->delegated_date = Carbon::now();
-                    $reportNew->expected_date = $request->expected_date;
+                    $reportNew->points = 0;
                     $reportNew->save();
                 }
 
@@ -408,7 +426,16 @@ class Report extends Controller
 
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
-                    $reportNew->delegate_id = $request->delegate;
+
+                    if (Auth::user()->type_user == 3) {
+                        // En produccion es usuario Soporte, Daniel Rodriguez§
+                        $reportNew->delegate_id = 10;
+                        $reportNew->expected_date = Carbon::now();
+                    } else {
+                        $reportNew->delegate_id = $request->delegate;
+                        $reportNew->expected_date = $request->expected_date;
+                    }
+
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $filePath;
@@ -450,14 +477,23 @@ class Report extends Controller
                     }
                     $reportNew->repeat = true;
                     $reportNew->delegated_date = Carbon::now();
-                    $reportNew->expected_date = $request->expected_date;
+                    $reportNew->points = 0;
                     $reportNew->save();
                 }
 
                 if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
-                    $reportNew->delegate_id = $request->delegate;
+
+                    if (Auth::user()->type_user == 3) {
+                        // En produccion es usuario Soporte, Daniel Rodriguez§
+                        $reportNew->delegate_id = 10;
+                        $reportNew->expected_date = Carbon::now();
+                    } else {
+                        $reportNew->delegate_id = $request->delegate;
+                        $reportNew->expected_date = $request->expected_date;
+                    }
+                    
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
 
@@ -525,7 +561,7 @@ class Report extends Controller
                     }
                     $reportNew->repeat = true;
                     $reportNew->delegated_date = Carbon::now();
-                    $reportNew->expected_date = $request->expected_date;
+                    $reportNew->points = 0;
                     $reportNew->save();
                 }
 

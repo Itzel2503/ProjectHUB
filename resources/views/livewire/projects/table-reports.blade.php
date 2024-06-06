@@ -168,10 +168,10 @@
                                 </div>
                             </td>
                             <td class="px-2 py-1">
-                                @if (Auth::user()->type_user == 3)
-                                    <p class="my-auto text-left text-xs font-semibold">Arten</p>
-                                @else
-                                    <div class="mx-auto w-full text-left">
+                                <div class="mx-auto w-full text-left">
+                                    @if (Auth::user()->type_user == 3)
+                                        <p class="my-auto text-left text-xs font-semibold">Arten</p>
+                                    @else
                                         <p class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
                                             {{ $report->delegate->name }}</p>
                                         <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'
@@ -184,30 +184,31 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <p class="text-xs">
-                                            @if ($report->state == 'Proceso' || $report->state == 'Conflicto')
-                                                Progreso {{ $report->progress->diffForHumans(null, false, false, 1) }}
-                                            @else
-                                                @if ($report->state == 'Resuelto')
-                                                    @if ($report->progress == null)
-                                                        Sin desarrollo
-                                                    @else
-                                                        Desarrollo {{ $report->timeDifference }}
-                                                    @endif
+                                    @endif
+                                    <p class="text-xs">
+                                        @if ($report->state == 'Proceso' || $report->state == 'Conflicto')
+                                            Progreso {{ $report->progress->diffForHumans(null, false, false, 1) }}
+                                        @else
+                                            @if ($report->state == 'Resuelto')
+                                                @if ($report->progress == null)
+                                                    Sin desarrollo
                                                 @else
-                                                    @if ($report->look == true)
-                                                        Visto
-                                                        {{ $report->progress->diffForHumans(null, false, false, 1) }}
-                                                    @endif
+                                                    Desarrollo {{ $report->timeDifference }}
+                                                @endif
+                                            @else
+                                                @if ($report->look == true)
+                                                    Visto
+                                                    {{ $report->progress->diffForHumans(null, false, false, 1) }}
                                                 @endif
                                             @endif
-                                        </p>
-                                    </div>
-                                @endif
+                                        @endif
+                                    </p>
+                                </div>
                             </td>
                             <td class="px-2 py-1">
                                 @if (Auth::user()->type_user == 3)
-                                    <p class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-auto text-sm font-semibold">
+                                    <p
+                                        class="inpSelectTable m-auto w-1/2 text-sm font-semibold @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif">
                                         {{ $report->state }}
                                     </p>
                                 @else
@@ -220,10 +221,11 @@
                                             <option value="{{ $action }}">{{ $action }}</option>
                                         @endforeach
                                     </select>
-                                    @if ($report->count)
-                                        <p class="text-xs text-red-600">Reincidencia {{ $report->count }}</p>
-                                    @endif
                                 @endif
+                                @if ($report->count)
+                                    <p class="text-xs text-red-600">Reincidencia {{ $report->count }}</p>
+                                @endif
+
                             </td>
                             <td class="px-2 py-1">
                                 <div class="my-auto text-left">
@@ -240,7 +242,8 @@
                             </td>
                             <td class="px-2 py-1">
                                 <div class="flex justify-center">
-                                    <div id="dropdown-button-{{ $report->id }}" class="@if(Auth::user()->type_user == 3) @if($report->state != 'Abierto') hidden @else relative @endif @else relative @endif ">
+                                    <div id="dropdown-button-{{ $report->id }}"
+                                        class="@if (Auth::user()->type_user == 3) @if ($report->state != 'Abierto' && $report->state != 'Resuelto') hidden @else relative @endif @else @endif relative">
                                         <!-- Button -->
                                         <button onclick="toggleDropdown('{{ $report->id }}')" type="button"
                                             class="flex items-center px-5 py-2.5">
@@ -672,8 +675,8 @@
                                     </h5>
                                     <div class="flex justify-center gap-20">
                                         <div class="flex flex-col items-center">
-                                            <input type="checkbox" wire:model="evidenceEdit" class="priority-checkbox"
-                                                style="height: 24px; width: 24px;" />
+                                            <input type="checkbox" wire:model="evidenceEdit"
+                                                class="priority-checkbox" style="height: 24px; width: 24px;" />
                                         </div>
                                     </div>
                                     <div>

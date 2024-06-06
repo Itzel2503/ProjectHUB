@@ -67,41 +67,41 @@
 
 <body>
     {{-- MENUS --}}
-    <div class="flex items-center justify-center rounded-md py-2 text-text1 bg-primaryColor">
+    <div class="text-text1 bg-primaryColor flex items-center justify-center rounded-md py-2">
         <div id="mainMenu" class="flex flex-row">
             <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}"
-                class="mx-3 w-auto flex justify-center items-center text-xl hover:opacity-70">
+                class="mx-3 flex w-auto items-center justify-center text-xl hover:opacity-70">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back mr-1 w-10 h-10">
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back mr-1 h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1" />
                 </svg>
                 Regresar
             </a>
-            <button id="screenButton" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
+            <button id="screenButton" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-camera w-10 h-10 ">
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-camera h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path
                         d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
                     <path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
                 </svg>
             </button>
-            <button id="videoButton" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
+            <button id="videoButton" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-video w-12 h-12">
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-video h-12 w-12">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" />
                     <path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
                 </svg>
             </button>
-            <button id="textButton" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
+            <button id="textButton" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-file-description w-10 h-10">
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-file-description h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M14 3v4a1 1 0 0 0 1 1h4" />
                     <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
@@ -111,29 +111,32 @@
             </button>
         </div>
         <div id="screenMenu" class="flex flex-row" style="display: none;">
-            <button id="returnButtonImage" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
+            <button id="returnButtonImage" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back w-10 h-10">
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1" />
                 </svg>
             </button>
-            <button id="refreshCanva" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-eraser w-10 h-10">
+            <button id="refreshCanva" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-eraser h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path
                         d="M19 20h-10.5l-4.21 -4.3a1 1 0 0 1 0 -1.41l10 -10a1 1 0 0 1 1.41 0l5 5a1 1 0 0 1 0 1.41l-9.2 9.3" />
                     <path d="M18 13.3l-6.3 -6.3" />
                 </svg>
             </button>
-            <input min="1" max="20" value="10" type="range" id="lineWidthSlider" class="mt-5 mx-5">
-            <button id="downloadScreen" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-download w-10 h-10">
+            <input min="1" max="20" value="10" type="range" id="lineWidthSlider"
+                class="mx-5 mt-5">
+            <button id="downloadScreen" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-download h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
                     <path d="M7 11l5 5l5 -5" />
@@ -142,18 +145,20 @@
             </button>
         </div>
         <div id="videoMenu" class="flex flex-row" style="display: none;">
-            <button id="returnButtonVideo" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back w-10 h-10">
+            <button id="returnButtonVideo" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-back h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1" />
                 </svg>
             </button>
-            <button id="stopButton" class="mx-3 flex justify-center items-center text-xl hover:opacity-70">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-player-stop w-10 h-10">
+            <button id="stopButton" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-player-stop h-10 w-10">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M5 5m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
                 </svg>
@@ -162,30 +167,39 @@
     </div>
     {{-- VIEW REPORT --}}
     <div id="viewReport" class="w-full" style="display: block;">
-        <div class="w-full my-10 md:px-20 text-center">
-            <label class="text-secondary">
-                Cuando reincides en un reporte, tienes la opción de agregar nueva información, como fotos o grabaciones,
-                además de actualizar el archivo adjunto si ya existe. También puedes ampliar la descripción del reporte.
-                Si es necesario, puedes delegar el reporte a otro miembro y ajustar la prioridad, la fecha o la
-                evidencia según sea necesario.
-            </label>
+        <div class="my-10 w-full text-center md:px-20">
+            @if (Auth::user()->type_user == 3)
+                <label class="text-secondary">
+                    Cuando reincides en un reporte, tienes la opción de agregar nueva información, como fotos o
+                    grabaciones, además de actualizar el archivo adjunto si ya existe. Debes agregar una nueva
+                    descripción y elegir una nueva prioridad. Puedes ver, pero no editar, el título del reporte y la
+                    descripción anterior del reporte.
+                </label>
+            @else
+                <label class="text-secondary">
+                    Cuando reincides en un reporte, tienes la opción de agregar nueva información, como fotos o
+                    grabaciones, además de actualizar el archivo adjunto si ya existe. También puedes ampliar la
+                    descripción del reporte. Si es necesario, puedes delegar el reporte a otro miembro y ajustar la
+                    prioridad, la fecha o la evidencia según sea necesario.
+                </label>
+            @endif
         </div>
-        <div class="px-4 pb-4 pt-10 flex h-full w-full">
+        <div class="flex h-full w-full px-4 pb-4 pt-10">
             {{-- ARCHIVO --}}
-            <div class="w-2/4 mr-3">
+            <div class="mr-3 w-2/4">
                 <div id="viewPhoto" style="display: none;">
-                    <h3 class="text-text2 text-lg font-bold inline-flex">Imagen capturada</h3>
-                    <div id="renderedCanvas" class="w-full h-auto"></div>
+                    <h3 class="text-text2 inline-flex text-lg font-bold">Imagen capturada</h3>
+                    <div id="renderedCanvas" class="h-auto w-full"></div>
                 </div>
                 <div id="viewVideo" style="display: none;">
-                    <h3 class="text-text2 text-lg font-bold inline-flex">Video capturado</h3>
-                    <video id="recording" width="300" height="200" loop autoplay class="w-full h-2/5"></video>
+                    <h3 class="text-text2 inline-flex text-lg font-bold">Video capturado</h3>
+                    <video id="recording" width="300" height="200" loop autoplay class="h-2/5 w-full"></video>
                     {{-- hidden --}}
-                    <div class="flex justify-center items-center hidden">
+                    <div class="flex hidden items-center justify-center">
                         <a id="downloadVideo" class="btnSecondary" style="color: white;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
                                 <path d="M7 11l5 5l5 -5" />
@@ -197,30 +211,32 @@
                 </div>
                 <div id="viewFile" style="display: block;">
                     @if (!empty($report->content))
-                    <h3 class="text-text2 text-lg font-bold inline-flex">Archivo</h3>
-                    @if ($report->image == true)
-                    <img name="imageFile" src="{{ asset('reportes/' . $report->content) }}" alt="Report Image">
-                    @endif
-                    @if ($report->video == true)
-                    @if (strpos($report->content, "Reporte") === 0)
-                    <p class="text-primaryColor-dark my-5">Falta subir '{{ $report->content }}'</p>
+                        <h3 class="text-text2 inline-flex text-lg font-bold">Archivo</h3>
+                        @if ($report->image == true)
+                            <img name="imageFile" src="{{ asset('reportes/' . $report->content) }}"
+                                alt="Report Image">
+                        @endif
+                        @if ($report->video == true)
+                            @if (strpos($report->content, 'Reporte') === 0)
+                                <p class="text-primaryColor-dark my-5">Falta subir '{{ $report->content }}'</p>
+                            @else
+                                <video name="videoFile" src="{{ asset('reportes/' . $report->content) }}" loop
+                                    autoplay alt="Report Video"></video>
+                            @endif
+                        @endif
+                        @if ($report->file == true)
+                            <iframe src="{{ asset('reportes/' . $report->content) }}" width="100%"
+                                height="600"></iframe>
+                        @endif
                     @else
-                    <video name="videoFile" src="{{ asset('reportes/' . $report->content) }}" loop autoplay
-                        alt="Report Video"></video>
-                    @endif
-                    @endif
-                    @if ($report->file == true)
-                    <iframe src="{{ asset('reportes/' . $report->content) }}" width="100%" height="600"></iframe>
-                    @endif
-                    @else
-                    <div class="mt-10 animate-bounce text-center text-2xl font-bold text-red-500">
-                        Sin archivo
-                    </div>
+                        <div class="mt-10 animate-bounce text-center text-2xl font-bold text-red-500">
+                            Sin archivo
+                        </div>
                     @endif
                 </div>
             </div>
             {{-- FORMULARIO --}}
-            <div class="w-2/4 pl-3 lg:border-l-2 border-gray-400">
+            <div class="w-2/4 border-gray-400 pl-3 lg:border-l-2">
                 <form id="formReport"
                     action="{{ route('projects.reports.update', ['project' => $project->id, 'report' => $report->id]) }}"
                     method="POST" enctype="multipart/form-data">
@@ -231,45 +247,43 @@
                     <input hidden type="text" id="inputPhoto" name="photo">
                     <input hidden type="text" id="inputVideo" name="video">
                     <div class="-mx-3 mb-6 flex flex-row">
-                        <div id="viewText" class="w-full flex flex-col px-3 mb-6">
+                        <div id="viewText" class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
                                 Selecciona un archivo
                             </h5>
                             <input type="file" name="file" id="file" class="inputs">
                         </div>
-                        <div class="w-full flex flex-col px-3">
+                        <div class="flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Título del reporte
                             </h5>
-                            <input disabled type="text" value="{{ $report->title }}" name="title" id="title"
-                                class="inputs bg-gray-100">
+                            <input disabled type="text" value="{{ $report->title }}" name="title"
+                                id="title" class="inputs bg-gray-100">
                             @if ($errors->has('title'))
-                            <span class="text-red-600 text-xs italic pl-2">
-                                {{ $errors->first('title') }}
-                            </span>
+                                <span class="pl-2 text-xs italic text-red-600">
+                                    {{ $errors->first('title') }}
+                                </span>
                             @endif
                         </div>
                     </div>
                     <div class="-mx-3 mb-6">
-                        <div class="w-full flex flex-col px-3 mb-6">
+                        <div class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Descripción del reporte <p class="text-red-600">*</p>
                             </h5>
-                            <textarea disabled type="text"
-                                placeholder="Describa la observación y especifique el objetivo a cumplir."
-                                class="bg-gray-100 textarea mb-2">{{ $report->comment }}</textarea>
+                            <textarea disabled type="text" placeholder="Describa la observación y especifique el objetivo a cumplir."
+                                class="textarea mb-2 bg-gray-100">{{ $report->comment }}</textarea>
                             <textarea required type="text" rows="6"
-                                placeholder="Describa la nueva observación y especifique el objetivo a cumplir."
-                                name="comment" class="textarea"></textarea>
+                                placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" class="textarea"></textarea>
                             @if ($errors->has('comment'))
-                            <span class="text-red-600 text-xs italic pl-2">
-                                {{ $errors->first('comment') }}
-                            </span>
+                                <span class="pl-2 text-xs italic text-red-600">
+                                    {{ $errors->first('comment') }}
+                                </span>
                             @endif
                         </div>
                     </div>
                     <div class="-mx-3 mb-6 flex flex-row">
-                        <div id="viewText" class="w-full flex flex-col px-3 mb-6">
+                        <div id="viewText" class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
                                 Prioridad <p class="text-red-600">*</p>
                             </h5>
@@ -294,48 +308,49 @@
                                 </div>
                             </div>
                             @if ($errors->has('priority'))
-                            <span class="text-red-600 text-xs italic pl-2">
-                                {{ $errors->first('priority') }}
-                            </span>
+                                <span class="pl-2 text-xs italic text-red-600">
+                                    {{ $errors->first('priority') }}
+                                </span>
                             @endif
                         </div>
-                        <div class="w-full flex flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="name">
-                                Delegar
-                            </h5>
-                            <select required name="delegate" id="delegate" class="inputs">
-                                <option value="{{ $report->delegate->id }}" selected>{{ $report->delegate->name }} {{
-                                    $report->delegate->lastname }}</option>
-                                @foreach ($filteredUsers as $filteredUser)
-                                <option value="{{ $filteredUser->id }}">{{ $filteredUser->name }} {{
-                                    $filteredUser->lastname }}</option>
-                                @endforeach
-                            </select>
-                            @if ($errors->has('delegate'))
-                            <span class="text-red-600 text-xs italic pl-2">
-                                {{ $errors->first('delegate') }}
-                            </span>
-                            @endif
-                        </div>
+                        @if (Auth::user()->type_user != 3)
+                            <div class="flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Delegar
+                                </h5>
+                                <select required name="delegate" id="delegate" class="inputs">
+                                    <option value="{{ $report->delegate->id }}" selected>
+                                        {{ $report->delegate->name }} {{ $report->delegate->lastname }}</option>
+                                    @foreach ($filteredUsers as $filteredUser)
+                                        <option value="{{ $filteredUser->id }}">{{ $filteredUser->name }}
+                                            {{ $filteredUser->lastname }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($errors->has('delegate'))
+                                    <span class="pl-2 text-xs italic text-red-600">
+                                        {{ $errors->first('delegate') }}
+                                    </span>
+                                @endif
+                            </div>
                     </div>
                     <div class="-mx-3 mb-6 flex flex-row">
-                        <div class="w-full flex flex-col px-3 mb-6">
+                        <div class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
                                 Fecha esperada
                             </h5>
                             <input type="date" name="expected_date" id="expected_date" class="inputs"
                                 value="{{ $expectedDate }}">
                         </div>
-                        <div class="w-full flex flex-row px-3 m-auto">
+                        <div class="m-auto flex w-full flex-row px-3">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Evidencia
                             </h5>
-                            <input type="checkbox" name="evidence" id="evidence"
-                            class="ml-4"
-                            style="height: 24px; width: 24px; accent-color: #0062cc;">
+                            <input type="checkbox" name="evidence" id="evidence" class="ml-4"
+                                style="height: 24px; width: 24px; accent-color: #0062cc;">
                         </div>
+                        @endif
                     </div>
-                    <div class="flex justify-center items-center mb-6">
+                    <div class="mb-6 flex items-center justify-center">
                         <button type="submit" class="btnSave">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
@@ -355,8 +370,8 @@
     </div>
     {{-- PREVISUALIZACION --}}
     <div id="artboard" class="w-full" style="display: none;">
-        <h2 class="top-10 left-10 px-2 py-4 font-semibold text-3xl text-text2">Previsualización</h2>
-        <div class="w-full flex justify-center items-center">
+        <h2 class="text-text2 left-10 top-10 px-2 py-4 text-3xl font-semibold">Previsualización</h2>
+        <div class="flex w-full items-center justify-center">
             <p id="log" class="text-xl font-semibold text-red-600"></p>
             <p id="time" class="mx-3 text-xl font-semibold text-red-600"></p>
         </div>
@@ -364,13 +379,14 @@
         <div id="capturedImageContainer" class="flex items-center justify-center" style="display: none;"></div>
         <div id="renderCombinedImage"></div>
         {{-- VIDEO --}}
-        <video id="preview" width="100%" height="auto" autoplay muted class="mt-2" style="display: none;"></video>
+        <video id="preview" width="100%" height="auto" autoplay muted class="mt-2"
+            style="display: none;"></video>
     </div>
 
-    @if(session('error'))
-    <script>
-        toastr['error']("{{ session('error') }}", "Error");
-    </script>
+    @if (session('error'))
+        <script>
+            toastr['error']("{{ session('error') }}", "Error");
+        </script>
     @endif
 
     <script>
@@ -389,7 +405,8 @@
         let refreshCanvaButton = document.getElementById('refreshCanva'); // button with the id "refreshCanva"
         let lineWidthSlider = document.getElementById('lineWidthSlider');
         let downloadScreen = document.getElementById('downloadScreen'); // button with the id "downloadShot"
-        let capturedImageContainer = document.getElementById('capturedImageContainer'); // Container to display captured image
+        let capturedImageContainer = document.getElementById(
+            'capturedImageContainer'); // Container to display captured image
         let renderedCanvas = document.getElementById('renderedCanvas');
         let drawCanvas = document.querySelector('canvas');
         // VIDEO
@@ -496,10 +513,10 @@
                 if (!isManuallyStopped) { // Ejecutar solo si no se ha detenido manualmente
                     log("Grabación finalizada.");
                     stopCounting();
-                    mediaRecorder.stop();  // Detener la grabación si el stream se vuelve inactivo
+                    mediaRecorder.stop(); // Detener la grabación si el stream se vuelve inactivo
                     // INPUTS BUTTONS
                     inputUser.value = user;
-                    downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato;
+                    downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato + '.mp4';
                     inputVideo.value = 'Reporte ' + project + ', ' + fechaEnFormato;
                     // VIEWS
                     viewReport.style.display = 'block';
@@ -547,7 +564,9 @@
             file.value = null;
 
             navigator.mediaDevices.getDisplayMedia({
-                video: { mediaSource: 'screen' },
+                video: {
+                    mediaSource: 'screen'
+                },
                 audio: true
             }).then(stream => {
                 preview.srcObject = stream;
@@ -556,11 +575,13 @@
                 // Iniciar la grabación automáticamente cuando se obtiene la captura de pantalla
                 startCounting();
                 return startRecording(stream);
-            }).then (recordedChunks => {
-                let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
+            }).then(recordedChunks => {
+                let recordedBlob = new Blob(recordedChunks, {
+                    type: "video/mp4"
+                });
                 recording.src = URL.createObjectURL(recordedBlob);
                 downloadVideo.href = recording.src;
-                downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato;
+                downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato + '.mp4';
             })
             /* .catch(log); */
         }, false);
@@ -568,7 +589,7 @@
         returnButtonVideo.addEventListener('click', function() {
             preview.src = '';
             downloadVideo.href = '';
-            inputVideo.value= '';
+            inputVideo.value = '';
             // VIEW
             viewReport.style.display = 'block';
             artboard.style.display = 'none';
@@ -586,9 +607,9 @@
 
             if (!isChecked) {
                 toastr['error']("Selecciona la prioridad");
-                
+
                 e.preventDefault();
-                return; 
+                return;
             }
             // Verifica si el botón de descarga tiene una URL y descárgalo
             if (downloadVideo.href) {
@@ -664,7 +685,7 @@
                         // Function to get the canvas context for drawing
                         const getDrawContext = () => drawCanvas.getContext('2d');
                         // Event listener for the line width slider
-                        lineWidthSlider.addEventListener('input', function () {
+                        lineWidthSlider.addEventListener('input', function() {
                             const lineWidthValue = parseInt(this.value);
                             // Update line width on drawing canvas
                             const drawCtx = drawCanvas.getContext('2d');
@@ -683,13 +704,14 @@
 
                         drawCanvas.addEventListener('mousemove', e => {
                             if (isDrawing) {
-                            const rect = drawCanvas.getBoundingClientRect();
-                            const x = e.clientX - rect.left;
-                            const y = e.clientY - rect.top;
-                            const drawCtx = getDrawContext();
-                            drawOnCanvas(prevX, prevY, x, y, parseInt(lineWidthSlider.value), drawCtx);
-                            prevX = x;
-                            prevY = y;
+                                const rect = drawCanvas.getBoundingClientRect();
+                                const x = e.clientX - rect.left;
+                                const y = e.clientY - rect.top;
+                                const drawCtx = getDrawContext();
+                                drawOnCanvas(prevX, prevY, x, y, parseInt(
+                                    lineWidthSlider.value), drawCtx);
+                                prevX = x;
+                                prevY = y;
                             }
                         });
 
@@ -736,7 +758,8 @@
                             drawImage.onload = () => {
                                 combinedCtx.drawImage(drawImage, 0, 0);
                                 // Get the combined canvas data URL and render the image for preview
-                                const combinedDataURL = combinedCanvas.toDataURL('image/jpg');
+                                const combinedDataURL = combinedCanvas.toDataURL(
+                                    'image/jpg');
                                 renderCombinedImage(combinedDataURL);
                             };
                             drawCanvas.hidden = true;
@@ -746,14 +769,15 @@
                             // Obtiene el contexto del canvas de dibujo
                             const drawCtx = drawCanvas.getContext('2d');
                             // Limpia todo el canvas
-                            drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+                            drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas
+                                .height);
                         });
                     };
                 }).catch(error => {
                     console.error('Error grabbing frame:', error);
                 });
             }).catch(error => {
-            console.error('Error accessing media devices:', error);
+                console.error('Error accessing media devices:', error);
             });
         });
         // RETURNBUTTONIMAGE
