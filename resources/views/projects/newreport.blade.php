@@ -186,7 +186,7 @@
                     <h3 class="text-text2 inline-flex text-lg font-bold">Video capturado</h3>
                     <video id="recording" width="300" height="200" loop autoplay class="h-2/5 w-full"></video>
                     {{-- hidden --}}
-                    <div class="hidden items-center justify-center">
+                    <div hidden class="items-center justify-center">
                         <a id="downloadVideo" class="btnSecondary" style="color: white;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download"
                                 width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
@@ -275,24 +275,24 @@
                                 </span>
                             @endif
                         </div>
-                        @if (Auth::user()->type_user != 3 )
-                        <div class="flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="name">
-                                Delegar <p class="text-red-600">*</p>
-                            </h5>
-                            <select required name="delegate" id="delegate" class="inputs">
-                                <option value="0" selected>Selecciona...</option>
-                                @foreach ($allUsers as $allUser)
-                                    <option value="{{ $allUser->id }}">{{ $allUser->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @if ($errors->has('delegate'))
-                                <span class="pl-2 text-xs italic text-red-600">
-                                    {{ $errors->first('delegate') }}
-                                </span>
-                            @endif
-                        </div>
+                        @if (Auth::user()->type_user != 3)
+                            <div class="flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Delegar <p class="text-red-600">*</p>
+                                </h5>
+                                <select required name="delegate" id="delegate" class="inputs">
+                                    <option value="0" selected>Selecciona...</option>
+                                    @foreach ($allUsers as $allUser)
+                                        <option value="{{ $allUser->id }}">{{ $allUser->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @if ($errors->has('delegate'))
+                                    <span class="pl-2 text-xs italic text-red-600">
+                                        {{ $errors->first('delegate') }}
+                                    </span>
+                                @endif
+                            </div>
                     </div>
                     <div class="-mx-3 mb-6 flex flex-row">
                         <div class="mb-6 flex w-full flex-col px-3">
@@ -301,7 +301,7 @@
                             </h5>
                             <input required type="date" name="expected_date" id="expected_date" class="inputs">
                         </div>
-                        <div class="m-auto flex w-full flex-row px-3 justify-center">
+                        <div class="m-auto flex w-full flex-row justify-center px-3">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Evidencia
                             </h5>
@@ -360,7 +360,7 @@
             style="display: none;"></video>
     </div>
     {{-- MODAL EDIT / CREATE SPRINT --}}
-    <div class="left-0 top-20 z-50 block max-h-full overflow-y-auto hidden">
+    <div class="left-0 top-20 z-50 block hidden max-h-full overflow-y-auto">
         <div
             class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
         </div>
@@ -383,7 +383,8 @@
                 <div class="modalBody">
                     <div class="md-3/4 mb-5 flex w-full flex-col px-5 md:mb-0">
                         <div class="mb-6 flex flex-row">
-                            <span class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                            <span
+                                class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round"
@@ -400,8 +401,8 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Puntos <p class="text-red-600">*</p>
                                 </h5>
-                                <input type="number" placeholder="1, 2, 3, 5, 8, 13"
-                                    name="points" id="points" class="inputs">
+                                <input type="number" placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
+                                    class="inputs">
                             </div>
                         </div>
                         <div class="block">
@@ -410,8 +411,7 @@
                                     <h5 class="inline-flex font-semibold" for="name">
                                         ¿Cuánto se conoce de la tarea?<p class="text-red-600">*</p>
                                     </h5>
-                                    <select name="point_know" id="point_know"
-                                        class="inputs">
+                                    <select name="point_know" id="point_know" class="inputs">
                                         <option selected>Selecciona...</option>
                                         <option value="1">Todo</option>
                                         <option value="2">Casi todo</option>
@@ -427,8 +427,7 @@
                                     <h5 class="inline-flex font-semibold" for="name">
                                         ¿De cuántos depende?<p class="text-red-600">*</p>
                                     </h5>
-                                    <select name="point_many" id="point_many"
-                                        class="inputs">
+                                    <select name="point_many" id="point_many" class="inputs">
                                         <option selected>Selecciona...</option>
                                         <option value="1">Solo uno</option>
                                         <option value="2">Un par</option>
@@ -444,8 +443,7 @@
                                     <h5 class="inline-flex font-semibold" for="name">
                                         ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
                                     </h5>
-                                    <select name="point_effort" id="point_effort"
-                                        class="inputs">
+                                    <select name="point_effort" id="point_effort" class="inputs">
                                         <option selected>Selecciona...</option>
                                         <option value="1">Menos de 2 horas</option>
                                         <option value="2">Medio dìa</option>
@@ -529,6 +527,7 @@
         let buttonSaveVideo = document.getElementById('buttonSaveVideo');
         // VARIABLES GLOBALES
         let user = @json($user->id);
+        let user_type = @json($user->type_user);
         let project = @json($project->name);
         // REVISION DE CHECKBOX
         checkboxes.forEach(function(checkbox) {
@@ -549,38 +548,68 @@
                 drawCanvas.parentNode.removeChild(drawCanvas); // Eliminar el dibujo del overlay canvas
             }
         }
+        // Asegúrate de que delegateSelect está definido correctamente
+        if (!delegateSelect && user_type != 3) {
+            console.error('Element with id "delegateSelect" not found.');
+        }
+        // Asegúrate de que los checkboxes están definidos correctamente
+        if (!checkboxes.length) {
+            console.error('No checkboxes with name "prioridad" found.');
+        }
         // Función de validación del formulario
         function validateForm() {
-            // Verificar si se ha seleccionado una opción diferente de "Selecciona..."
-            const selectedValue = delegateSelect.value;
             // Verificar si se seleccionó al menos un checkbox de prioridad
             const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
 
-            // Verificar si se cumplen todas las condiciones
-            if (selectedValue === '0' || !isChecked) {
-                toastr['error']("Faltan campos o campos incorrectos.");
-                return false; // Retorna false si no se cumplen todas las condiciones
+            if (user_type != 3) {
+                // Verificar si se ha seleccionado una opción diferente de "Selecciona..."
+                const selectedValue = delegateSelect.value;
+                // Verificar si se cumplen todas las condiciones
+                if (selectedValue === '0' || !isChecked) {
+                    toastr['error']("Faltan campos o campos incorrectos.");
+                    return false; // Retorna false si no se cumplen todas las condiciones
+                }
+            } else {
+                if (!isChecked) {
+                    toastr['error']("Faltan campos o campos incorrectos.");
+                    return false; // Retorna false si no se cumplen todas las condiciones
+                }
             }
             return true; // Retorna true si se cumplen todas las condiciones
         }
-
         // Evento 'click' para el botón "Guardar"
         buttonSave.addEventListener('click', function(e) {
             if (!validateForm()) {
                 e.preventDefault(); // Detener el envío del formulario si la validación falla
             }
         });
-
+        // Evento 'click' para el botón "Guardar con video"
+        // buttonSaveVideo.addEventListener('click', function(e) {
+        //     if (!validateForm()) {
+        //         e.preventDefault(); // Detener el envío del formulario si la validación falla
+        //     } else {
+        //         // Verificar si el botón de descarga tiene una URL y descárgalo
+        //         if (downloadVideo.href) {
+        //             setTimeout(function() {
+        //                 downloadVideo.click();
+        //             }, 10000);
+        //         }
+        //     }
+        // });
         // Evento 'click' para el botón "Guardar con video"
         buttonSaveVideo.addEventListener('click', function(e) {
             if (!validateForm()) {
                 e.preventDefault(); // Detener el envío del formulario si la validación falla
             } else {
+                e.preventDefault(); // Detener el envío del formulario para manejar manualmente
                 // Verificar si el botón de descarga tiene una URL y descárgalo
                 if (downloadVideo.href) {
                     setTimeout(function() {
                         downloadVideo.click();
-                    }, 100);
+                        formReport.submit(); // Enviar el formulario después de descargar el video
+                    }, 1000);
+                } else {
+                    formReport.submit(); // Enviar el formulario si no hay video para descargar
                 }
             }
         });
@@ -648,7 +677,7 @@
                     mediaRecorder.stop(); // Detener la grabación si el stream se vuelve inactivo
                     // INPUTS BUTTONS
                     inputUser.value = user;
-                    downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato;
+                    downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato + '.mp4';
                     inputVideo.value = 'Reporte ' + project + ', ' + fechaEnFormato;
                     // VIEWS
                     viewReport.style.display = 'block';
@@ -720,7 +749,7 @@
                 });
                 recording.src = URL.createObjectURL(recordedBlob);
                 downloadVideo.href = recording.src;
-                downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato;
+                downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato + '.mp4';
             })
             /* .catch(log); */
         }, false);
