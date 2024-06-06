@@ -88,7 +88,8 @@ class Report extends Controller
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
                     if (Auth::user()->type_user == 3) {
-                        $report->delegate_id = 1;
+                        // En produccion es usuario Soporte, Daniel Rodriguez§
+                        $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                     } else {
                         $report->delegate_id = $request->delegate;
@@ -128,7 +129,8 @@ class Report extends Controller
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
                     if (Auth::user()->type_user == 3) {
-                        $report->delegate_id = 1;
+                        // En produccion es usuario Soporte, Daniel Rodriguez§
+                        $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                     } else {
                         $report->delegate_id = $request->delegate;
@@ -167,7 +169,8 @@ class Report extends Controller
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
                     if (Auth::user()->type_user == 3) {
-                        $report->delegate_id = 1;
+                        // En produccion es usuario Soporte, Daniel Rodriguez§
+                        $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                     } else {
                         $report->delegate_id = $request->delegate;
@@ -211,7 +214,8 @@ class Report extends Controller
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
                     if (Auth::user()->type_user == 3) {
-                        $report->delegate_id = 1;
+                        // En produccion es usuario Soporte, Daniel Rodriguez§
+                        $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                     } else {
                         $report->delegate_id = $request->delegate;
