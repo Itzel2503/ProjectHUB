@@ -323,11 +323,9 @@
                 </tbody>
             </table>
         </div>
-        @if (Auth::user()->type_user != 3)
-            <div class="py-5">
-                {{ $reports->links() }}
-            </div>
-        @endif
+        <div class="py-5">
+            {{ $reports->links() }}
+        </div>
     </div>
     {{-- END TABLE --}}
     {{-- MODAL SHOW --}}
@@ -666,53 +664,55 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="-mx-3 mb-6 flex flex-row">
-                            <div class="m-auto mb-6 flex w-full flex-row px-3">
-                                <h5 class="mr-5 inline-flex font-semibold" for="evidenceEdit">
-                                    Evidencia
-                                </h5>
-                                <div class="flex justify-center gap-20">
-                                    <div class="flex flex-col items-center">
-                                        <input type="checkbox" wire:model="evidenceEdit" class="priority-checkbox"
-                                            style="height: 24px; width: 24px;" />
+                        @if (Auth::user()->type_user != 3)
+                            <div class="-mx-3 mb-6 flex flex-row">
+                                <div class="m-auto mb-6 flex w-full flex-row px-3">
+                                    <h5 class="mr-5 inline-flex font-semibold" for="evidenceEdit">
+                                        Evidencia
+                                    </h5>
+                                    <div class="flex justify-center gap-20">
+                                        <div class="flex flex-col items-center">
+                                            <input type="checkbox" wire:model="evidenceEdit" class="priority-checkbox"
+                                                style="height: 24px; width: 24px;" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs italic text-red-600">
+                                            @error('evidenceEdit')
+                                                <span class="pl-2 text-xs italic text-red-600">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs italic text-red-600">
+                                            @error('delegate')
+                                                <span class="pl-2 text-xs italic text-red-600">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
+                                        </span>
                                     </div>
                                 </div>
-                                <div>
-                                    <span class="text-xs italic text-red-600">
-                                        @error('evidenceEdit')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
-                                    </span>
-                                </div>
-                                <div>
-                                    <span class="text-xs italic text-red-600">
-                                        @error('delegate')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
-                                    </span>
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="expected_date">
+                                        Fecha de entrega<p class="text-red-600">*</p>
+                                    </h5>
+                                    <input wire:model='expected_date' required type="date" name="expected_date"
+                                        id="expected_date" class="inputs">
+                                    <div>
+                                        <span class="text-xs italic text-red-600">
+                                            @error('expected_date')
+                                                <span class="pl-2 text-xs italic text-red-600">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mb-6 flex w-full flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="expected_date">
-                                    Fecha de entrega<p class="text-red-600">*</p>
-                                </h5>
-                                <input wire:model='expected_date' required type="date" name="expected_date"
-                                    id="expected_date" class="inputs">
-                                <div>
-                                    <span class="text-xs italic text-red-600">
-                                        @error('expected_date')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+                        @endif
                         <div class="-mx-3 mb-6">
                             <div class="flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="tittle">

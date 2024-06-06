@@ -120,9 +120,8 @@ class TableReports extends Component
                 })
                 ->orderBy('created_at', 'desc')
                 ->with(['user', 'delegate'])
-                ->get();
+                ->paginate($this->perPage);
         }
-
         // LEADER TABLE
         foreach ($this->project->users as $projectUser) {
             if ($projectUser->id === $user->id && $projectUser->pivot->leader) {
