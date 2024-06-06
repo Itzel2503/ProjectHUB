@@ -108,7 +108,7 @@ class Projects extends Component
                         $query->withPivot('leader', 'programmer');
                     },
                 ])
-                ->orderBy('created_at', 'desc')
+                ->orderBy('projects.priority', 'asc')
                 ->get();
             if ($this->activeTab == 'Activo') {
                 $projectsSoporte = Project::select('projects.*', 'customers.name as customer_name', 'backlogs.id as backlog')
@@ -128,7 +128,7 @@ class Projects extends Component
                             $query->withPivot('leader', 'programmer');
                         },
                     ])
-                    ->orderBy('created_at', 'desc')
+                    ->orderBy('projects.priority', 'asc')
                     ->get();
             } else {
                 $projectsSoporte = null;
