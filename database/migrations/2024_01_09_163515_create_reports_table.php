@@ -41,8 +41,7 @@ class CreateReportsTable extends Migration
             $table->boolean('file');
             $table->string('count')->nullable();
             $table->boolean('repeat')->default(false);
-
-            $table->integer('hours_quote')->nullable();
+            $table->boolean('updated_expected_date')->default(true);
 
             $table->dateTime('delegated_date');
             $table->dateTime('expected_date');

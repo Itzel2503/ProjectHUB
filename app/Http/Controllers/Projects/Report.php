@@ -91,6 +91,7 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
+                        $report->updated_expected_date = false;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
@@ -132,6 +133,7 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
+                        $report->updated_expected_date = false;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
@@ -172,6 +174,7 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
+                        $report->updated_expected_date = false;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
@@ -217,6 +220,7 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
+                        $report->updated_expected_date = false;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;

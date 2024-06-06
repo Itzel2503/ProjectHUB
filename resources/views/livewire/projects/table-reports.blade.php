@@ -228,9 +228,15 @@
 
                             </td>
                             <td class="px-2 py-1">
-                                <div class="my-auto text-left">
-                                    {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
-                                </div>
+                                @if ($report->updated_expected_date == false)
+                                    <div class="my-auto text-left">
+                                        En espera
+                                    </div>
+                                @else
+                                    <div class="my-auto text-left">
+                                        {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                    </div>
+                                @endif
                             </td>
                             <td class="px-2 py-1">
                                 <div class="mx-auto text-left">

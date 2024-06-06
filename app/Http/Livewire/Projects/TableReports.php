@@ -469,7 +469,16 @@ class TableReports extends Component
 
             $report->title = $this->tittle ?? $report->tittle;
             $report->comment = $this->comment ?? $report->comment;
-            $report->expected_date = $this->expected_date ?? $report->expected_date;
+
+            $fecha = Carbon::parse($report->expected_date)->toDateString();
+            
+            if ($report->updated_expected_date == false && $this->expected_date != $fecha) {
+                $report->updated_expected_date = true;
+                $report->expected_date = $this->expected_date;
+            } else {
+                $report->expected_date = $this->expected_date ?? $report->expected_date;
+            }
+            
             $report->evidence = $this->evidenceEdit  ?? $report->evidence;
 
             if ($this->priority1) {
