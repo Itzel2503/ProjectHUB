@@ -28,14 +28,17 @@ class ActivitiesReports extends Component
     // ------------------------------ ACTIVITY ------------------------------
     // modal activity
     public $modalShowActivity = false;
-    public $showActivity = false, $showChatActivity = false;
+    public $showActivity = false,
+        $showChatActivity = false;
     public $activityShow, $messagesActivity, $messageActivity;
     // table, action's activities
     public $searchActivity;
     // ------------------------------ REPORT ------------------------------
     // modal show report
     public $modalShowReport = false;
-    public $showReport = false, $showChatReport = false, $showEvidence = false;
+    public $showReport = false,
+        $showChatReport = false,
+        $showEvidence = false;
     public $reportShow;
     // modal evidence report
     public $modalEvidence = false;
@@ -54,53 +57,57 @@ class ActivitiesReports extends Component
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
             $activities = Activity::where(function ($query) {
-                    $query->where('tittle', 'like', '%' . $this->searchActivity . '%')
-                        ->orWhere('description', 'like', '%' . $this->searchActivity . '%')
-                        ->orWhere('state', 'like', '%' . $this->searchActivity . '%')
-                        ->orWhereHas('delegate', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
-                        })
-                        ->orWhereHas('user', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
-                        });
+                $query
+                    ->where('tittle', 'like', '%' . $this->searchActivity . '%')
+                    ->orWhere('description', 'like', '%' . $this->searchActivity . '%')
+                    ->orWhere('state', 'like', '%' . $this->searchActivity . '%')
+                    ->orWhereHas('delegate', function ($subQuery) {
+                        $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
+                    })
+                    ->orWhereHas('user', function ($subQuery) {
+                        $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
+                    });
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
-                ->orderBy('created_at','desc')
+                ->orderBy('created_at', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
-            
+
             $reports = Report::where(function ($query) {
-                    $query->where('title', 'like', '%' . $this->searchReport . '%')
-                        ->orWhere('comment', 'like', '%' . $this->searchReport . '%')
-                        ->orWhere('state', 'like', '%' . $this->searchReport . '%')
-                        ->orWhereHas('delegate', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
-                        })
-                        ->orWhereHas('user', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
-                        });
+                $query
+                    ->where('title', 'like', '%' . $this->searchReport . '%')
+                    ->orWhere('comment', 'like', '%' . $this->searchReport . '%')
+                    ->orWhere('state', 'like', '%' . $this->searchReport . '%')
+                    ->orWhereHas('delegate', function ($subQuery) {
+                        $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
+                    })
+                    ->orWhereHas('user', function ($subQuery) {
+                        $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
+                    });
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
-                ->orderBy('created_at','desc')
+                ->orderBy('created_at', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
+            $reportsDukke = null;
         } else {
             $activities = Activity::where(function ($query) {
-                    $query->where('tittle', 'like', '%' . $this->searchActivity . '%')
-                        ->orWhere('description', 'like', '%' . $this->searchActivity . '%')
-                        ->orWhere('state', 'like', '%' . $this->searchActivity . '%')
-                        ->orWhereHas('delegate', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
-                        })
-                        ->orWhereHas('user', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
-                        });
+                $query
+                    ->where('tittle', 'like', '%' . $this->searchActivity . '%')
+                    ->orWhere('description', 'like', '%' . $this->searchActivity . '%')
+                    ->orWhere('state', 'like', '%' . $this->searchActivity . '%')
+                    ->orWhereHas('delegate', function ($subQuery) {
+                        $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
+                    })
+                    ->orWhereHas('user', function ($subQuery) {
+                        $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
+                    });
                 })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id);
@@ -108,13 +115,14 @@ class ActivitiesReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
-                ->orderBy('created_at','desc')
+                ->orderBy('created_at', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
 
             $reports = Report::where(function ($query) {
-                    $query->where('title', 'like', '%' . $this->searchReport . '%')
+                    $query
+                        ->where('title', 'like', '%' . $this->searchReport . '%')
                         ->orWhere('comment', 'like', '%' . $this->searchReport . '%')
                         ->orWhere('state', 'like', '%' . $this->searchReport . '%')
                         ->orWhereHas('delegate', function ($subQuery) {
@@ -124,21 +132,60 @@ class ActivitiesReports extends Component
                         $query->orWhereNotNull('count');
                     }
                 })
+                ->when(Auth::user()->area_id == 4, function ($query) {
+                    $query->whereHas('user', function ($subQuery) {
+                        $subQuery->where('type_user', '!=', 3);
+                    });
+                })
                 ->where(function ($query) use ($user_id) {
-                    $query->where('delegate_id', $user_id)
+                    $query
+                        ->where('delegate_id', $user_id)
                         // O incluir registros donde user_id es igual a user_id y video es true
                         ->orWhere(function ($subQuery) use ($user_id) {
-                            $subQuery->where('user_id', $user_id)
-                                ->where('video', true);
+                            $subQuery->where('user_id', $user_id)->where('video', true);
                         });
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
-                ->orderBy('created_at','desc')
+                ->orderBy('created_at', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
+
+            if (Auth::user()->area_id == 4) {
+                $reportsDukke = Report::where('project_id', 5)
+                    ->whereHas('user', function ($query) {
+                        $query->where('type_user', 3);
+                    })
+                    ->where(function ($query) {
+                        $query
+                            ->where('title', 'like', '%' . $this->searchReport . '%')
+                            ->orWhere('comment', 'like', '%' . $this->searchReport . '%')
+                            ->orWhere('state', 'like', '%' . $this->searchReport . '%')
+                            ->orWhereHas('delegate', function ($subQuery) {
+                                $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
+                            });
+                        if (strtolower($this->searchReport) === 'reincidencia') {
+                            $query->orWhereNotNull('count');
+                        }
+                    })
+                    ->where(function ($query) use ($user_id) {
+                        $query
+                            ->where('delegate_id', $user_id)
+                            // O incluir registros donde user_id es igual a user_id y video es true
+                            ->orWhere(function ($subQuery) use ($user_id) {
+                                $subQuery->where('user_id', $user_id)->where('video', true);
+                            });
+                    })
+                    ->when($this->selectedDelegate, function ($query) {
+                        $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->orderBy('created_at', 'desc')
+                    ->where('state', '!=', 'Resuelto')
+                    ->with(['user', 'delegate'])
+                    ->get();
+            }
         }
         // ADD ATRIBUTES ACTIVITIES
         foreach ($activities as $activity) {
@@ -218,6 +265,47 @@ class ActivitiesReports extends Component
             }
             $report->messages_count = $messages->where('look', false)->count();
         }
+        if (Auth::user()->area_id == 4) {
+            // ADD ATRIBUTES REPORTS
+            foreach ($reportsDukke as $report) {
+                // PROGRESS
+                if ($report->progress && $report->updated_at) {
+                    $progress = Carbon::parse($report->progress);
+                    $updated_at = Carbon::parse($report->updated_at);
+                    $diff = $progress->diff($updated_at);
+
+                    $units = [
+                        'año' => $diff->y,
+                        'mes' => $diff->m,
+                        'semana' => floor($diff->days / 7),
+                        'dia' => $diff->d % 7, // Días restantes después de calcular las semanas
+                        'hora' => $diff->h,
+                        'minuto' => $diff->i,
+                        'segundo' => $diff->s,
+                    ];
+
+                    $timeDifference = '';
+                    foreach ($units as $unit => $value) {
+                        if ($value > 0) {
+                            $timeDifference = $value . ' ' . $unit . ($value > 1 ? 's' : '');
+                            break;
+                        }
+                    }
+
+                    $report->timeDifference = $timeDifference;
+                } else {
+                    $report->timeDifference = null;
+                }
+                // CHAT
+                $messages = ChatReports::where('report_id', $report->id)->get();
+                // Verificar si la colección tiene al menos un mensaje
+                if ($messages->isNotEmpty()) {
+                    $lastMessage = $messages->last();
+                    $report->user_chat = $lastMessage->user_id;
+                }
+                $report->messages_count = $messages->where('look', false)->count();
+            }
+        }
         // TODOS LOS DELEGADOS
         foreach ($this->allUsers as $key => $user) {
             $this->allUsersFiltered[$user->id] = $user->name;
@@ -225,9 +313,10 @@ class ActivitiesReports extends Component
         return view('livewire.activities-reports.activities-reports', [
             'activities' => $activities,
             'reports' => $reports,
+            'reportsDukke' => $reportsDukke,
         ]);
     }
-    // INFO MODAL    
+    // INFO MODAL
     public function showActivity($id)
     {
         $this->showActivity = true;

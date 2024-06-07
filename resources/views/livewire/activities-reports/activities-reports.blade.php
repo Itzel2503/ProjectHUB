@@ -10,6 +10,12 @@
                 class="border-primaryColor @if ($activeTab === 'reportes') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 pb-4 text-sm font-medium">
                 Reportes
             </button>
+            @if (Auth::user()->area_id == 4)
+                <button wire:click="setActiveTab('dukke')"
+                    class="border-primaryColor @if ($activeTab === 'dukke') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 pb-4 text-sm font-medium">
+                    Dukke
+                </button>
+            @endif
             {{-- NAVEGADOR --}}
             <div
                 class="border-primaryColor ml-auto flex w-full flex-col gap-2 border-b-2 text-sm md:flex-row lg:text-base">
@@ -46,6 +52,9 @@
                                     style="padding-left: 3em;">
                             @elseif ($activeTab === 'reportes')
                                 <input wire:model="searchReport" type="text" placeholder="Buscar" class="inputs"
+                                    style="padding-left: 3em;">
+                            @elseif ($activeTab === 'dukke')
+                                <input wire:model="searchDukke" type="text" placeholder="Buscar" class="inputs"
                                     style="padding-left: 3em;">
                             @endif
                         </div>
@@ -322,6 +331,141 @@
                         @endforeach
                     </tbody>
                 </table>
+            @elseif ($activeTab === 'dukke')
+                <table class="whitespace-no-wrap table-hover table w-full">
+                    <thead class="headTable border-0">
+                        <tr class="text-left">
+                            <th class="w-96 px-4 py-3">Reporte</th>
+                            <th class="px-4 py-3 lg:w-48">Delegado</th>
+                            <th class="w-48 px-4 py-3 text-center">Estado</th>
+                            <th class="w-44 px-4 py-3">Fecha de entrega</th>
+                            <th class="w-56 px-4 py-3">Creado</th>
+                            <th class="w-16 px-4 py-3">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($reportsDukke as $report)
+                            <tr class="trTable">
+                                <td class="relative px-2 py-1">
+                                    <div wire:click="showReport({{ $report->id }})"
+                                        class="flex cursor-pointer flex-col justify-center text-center">
+                                        @if ($report->project)
+                                            <div class="flex flex-row">
+                                                <div class="w-12"></div>
+                                                <p class="my-auto text-left text-xs font-semibold text-gray-400">
+                                                    {{ $report->project->name }}
+                                                </p>
+                                            </div>
+                                        @else
+                                            <p class="text-justify text-xs font-semibold">
+                                                Proyecto no disponible
+                                            </p>
+                                        @endif
+                                        <div class="flex flex-row">
+                                            <div class="my-2 w-auto rounded-md px-3 text-center font-semibold">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="currentColor"
+                                                    class="icon icon-tabler icons-tabler-filled icon-tabler-circle @if ($report->priority == 'Alto') text-red-500 @endif @if ($report->priority == 'Medio') text-yellow-400 @endif @if ($report->priority == 'Bajo') text-blue-500 @endif">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path
+                                                        d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
+                                                </svg>
+                                            </div>
+                                            <p class="my-auto text-left text-xs font-semibold">
+                                                {{ $report->title }}
+                                            </p>
+                                        </div>
+                                        @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
+                                            <div class="absolute right-0 top-0 mt-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M8 9h8" />
+                                                    <path d="M8 13h6" />
+                                                    <path
+                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="px-2 py-1">
+                                    <div class="mx-auto w-full text-left">
+                                        <p class="font-semibold">
+                                            {{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
+                                        <p class="text-xs">
+                                            @if ($report->state == 'Proceso' || $report->state == 'Conflicto')
+                                                Progreso
+                                                {{ $report->progress->diffForHumans(null, false, false, 1) }}
+                                            @else
+                                                @if ($report->state == 'Resuelto')
+                                                    @if ($report->progress == null)
+                                                        Sin desarrollo
+                                                    @else
+                                                        Desarrollo {{ $report->timeDifference }}
+                                                    @endif
+                                                @else
+                                                    @if ($report->look == true)
+                                                        Visto
+                                                        {{ $report->progress->diffForHumans(null, false, false, 1) }}
+                                                    @endif
+                                                @endif
+                                            @endif
+                                        </p>
+                                    </div>
+                                </td>
+                                <td class="px-2 py-1">
+                                    <div name="state" id="state"
+                                        class="inpSelectTable inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif mx-auto w-28 text-sm font-semibold">
+                                        <option selected value={{ $report->state }}>{{ $report->state }}</option>
+                                    </div>
+                                    @if ($report->count)
+                                        <p class="text-xs text-red-600">Reincidencia {{ $report->count }}</p>
+                                    @endif
+                                </td>
+                                <td class="px-2 py-1 text-left">
+                                    <div class="mx-auto">
+                                        {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                    </div>
+                                </td>
+                                <td class="px-2 py-1">
+                                    <div class="mx-auto text-left">
+                                        <span class="font-semibold"> {{ $report->user->name }}
+                                            {{ $report->user->lastname }} </span> <br>
+                                        <span class="font-mono">
+                                            {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-2 py-1">
+                                    <div class="flex justify-center">
+                                        @if ($report->project)
+                                            <a
+                                                href="{{ route('projects.reports.index', ['project' => $report->project->id, 'reports' => $report->id]) }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-eye">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                    <path
+                                                        d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+                                                </svg>
+                                            </a>
+                                        @else
+                                            <p class="text-justify text-xs font-semibold">
+                                                Proyecto no disponible
+                                            </p>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
             @endif
         </div>
         {{-- END TABLE --}}
