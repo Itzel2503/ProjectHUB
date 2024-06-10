@@ -9,6 +9,14 @@ class ChatReports extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'receiver_id',
+        'activity_id',
+        'message',
+        'look'
+    ];
+
     public function report()
     {
         return $this->belongsTo(Report::class);

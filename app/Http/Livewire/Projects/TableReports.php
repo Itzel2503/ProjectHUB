@@ -186,7 +186,6 @@ class TableReports extends Component
                     $report->receiver_chat = $lastMessageNoView->receiver_id;
 
                     $receiver = User::find($lastMessageNoView->receiver_id);
-                    $send = User::find($lastMessageNoView->user_id);
                     
                     if ($receiver->type_user == 3) {
                         $report->client = true;
