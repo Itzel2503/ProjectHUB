@@ -739,7 +739,7 @@
                                 {!! nl2br(e($activityShow->description)) !!}<br><br>
                                 @if ($showChat)
                                     <h3 class="text-text2 text-base font-semibold">Comentarios</h3>
-                                    <div
+                                    <div id="messageContainer"
                                         class="border-primaryColor max-h-80 overflow-y-scroll rounded-br-lg border-4 px-2 py-2">
                                         @foreach ($messages as $index => $message)
                                             <div

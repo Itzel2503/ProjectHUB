@@ -112,19 +112,50 @@
                                             <p class="my-auto text-left text-xs font-semibold">{{ $activity->tittle }}
                                             </p>
                                         </div>
-                                        @if ($activity->messages_count >= 1 && $activity->user_chat != Auth::id())
-                                            <div class="absolute right-0 top-0 mt-1">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M8 9h8" />
-                                                    <path d="M8 13h6" />
-                                                    <path
-                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                                </svg>
-                                            </div>
+                                        @if ($activity->messages_count >= 1)
+                                            {{-- usuario --}}
+                                            @if ($activity->user_chat != Auth::id() && $activity->receiver_chat == Auth::id())
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                            {{-- envio varios mensajes de diversos usuarios --}}
+                                            @elseif($activity->noView == true)
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                                {{-- administrador --}}
+                                            @elseif(Auth::user()->type_user == 1 && $activity->client == false && $activity->user_id == false)
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                            @endif
                                         @endif
                                     </div>
                                 </td>
@@ -242,19 +273,50 @@
                                             <p class="my-auto text-left text-xs font-semibold">{{ $report->title }}
                                             </p>
                                         </div>
-                                        @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
-                                            <div class="absolute right-0 top-0 mt-1">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M8 9h8" />
-                                                    <path d="M8 13h6" />
-                                                    <path
-                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                                </svg>
-                                            </div>
+                                        @if ($report->messages_count >= 1)
+                                            {{-- usuario --}}
+                                            @if ($report->user_chat != Auth::id() && $report->receiver_chat == Auth::id())
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                            {{-- envio varios mensajes de diversos usuarios --}}
+                                            @elseif($report->noView == true)
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                                {{-- administrador --}}
+                                            @elseif(Auth::user()->type_user == 1 && $report->client == false && $report->user_id == false)
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                            @endif
                                         @endif
                                     </div>
                                 </td>
@@ -375,19 +437,50 @@
                                                 {{ $report->title }}
                                             </p>
                                         </div>
-                                        @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
-                                            <div class="absolute right-0 top-0 mt-1">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M8 9h8" />
-                                                    <path d="M8 13h6" />
-                                                    <path
-                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                                </svg>
-                                            </div>
+                                        @if ($report->messages_count >= 1)
+                                            {{-- usuario --}}
+                                            @if ($report->user_chat != Auth::id() && $report->receiver_chat == Auth::id())
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                            {{-- envio varios mensajes de diversos usuarios --}}
+                                            @elseif($report->noView == true)
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                                {{-- administrador --}}
+                                            @elseif(Auth::user()->type_user == 1 && $report->client == false && $report->user_id == false)
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                            @endif
                                         @endif
                                     </div>
                                 </td>
@@ -518,23 +611,36 @@
                                 {!! nl2br(e($activityShow->description)) !!}<br><br>
                                 @if ($showChatActivity)
                                     <h3 class="text-text2 text-base font-semibold">Comentarios</h3>
-                                    <div
+                                    <div id="messageContainerActivity"
                                         class="border-primaryColor max-h-80 overflow-y-scroll rounded-br-lg border-4 px-2 py-2">
-                                        @foreach ($messagesActivity as $message)
-                                            <div class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
+                                        @foreach ($messagesActivity as $index => $message)
+                                            <div
+                                                class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
                                                 <div class="inline-flex items-center">
                                                     @if ($message->user_id == Auth::user()->id)
-                                                        <p class="pr-1 text-sm text-black text-right">  
-                                                            <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        <p class="pr-1 text-right text-sm text-black">
+                                                            <span
+                                                                class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
                                                         </p>
-                                                        <p class="pr-1 text-sm text-black h-full">
+                                                        <p class="h-full pr-1 text-sm text-black">
                                                             <span class="font-semibold"> :Tú</span>
                                                         </p>
                                                     @else
-                                                        <p class="pr-1 text-sm text-black"> 
-                                                            <span class="font-semibold">{{ $message->transmitter->name }}: </span> 
-                                                            <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                        </p>
+                                                        @if (Auth::user()->type_user == 3)
+                                                            <p class="pr-1 text-sm text-black">
+                                                                <span class="font-semibold">Arten: </span>
+                                                                <span
+                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </p>
+                                                        @else
+                                                            <p class="pr-1 text-sm text-black">
+                                                                <span
+                                                                    class="font-semibold">{{ $message->transmitter->name }}:
+                                                                </span>
+                                                                <span
+                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </p>
+                                                        @endif
                                                     @endif
                                                 </div>
                                             </div>
@@ -672,23 +778,36 @@
                                 {!! nl2br(e($reportShow->comment)) !!}<br><br>
                                 @if ($showChatReport)
                                     <h3 class="text-text2 text-base font-semibold">Comentarios</h3>
-                                    <div
+                                    <div id="messageContainerReport"
                                         class="border-primaryColor max-h-80 overflow-y-scroll rounded-br-lg border-4 px-2 py-2">
-                                        @foreach ($messagesReport as $message)
-                                            <div class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
+                                        @foreach ($messagesReport as $index => $message)
+                                            <div
+                                                class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
                                                 <div class="inline-flex items-center">
                                                     @if ($message->user_id == Auth::user()->id)
-                                                        <p class="pr-1 text-sm text-black text-right">  
-                                                            <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        <p class="pr-1 text-right text-sm text-black">
+                                                            <span
+                                                                class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
                                                         </p>
-                                                        <p class="pr-1 text-sm text-black h-full">
+                                                        <p class="h-full pr-1 text-sm text-black">
                                                             <span class="font-semibold"> :Tú</span>
                                                         </p>
                                                     @else
-                                                        <p class="pr-1 text-sm text-black"> 
-                                                            <span class="font-semibold">{{ $message->transmitter->name }}: </span> 
-                                                            <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                        </p>
+                                                        @if (Auth::user()->type_user == 3)
+                                                            <p class="pr-1 text-sm text-black">
+                                                                <span class="font-semibold">Arten: </span>
+                                                                <span
+                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </p>
+                                                        @else
+                                                            <p class="pr-1 text-sm text-black">
+                                                                <span
+                                                                    class="font-semibold">{{ $message->transmitter->name }}:
+                                                                </span>
+                                                                <span
+                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </p>
+                                                        @endif
                                                     @endif
                                                 </div>
                                             </div>

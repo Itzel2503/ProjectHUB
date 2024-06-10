@@ -220,13 +220,42 @@ class ActivitiesReports extends Component
                 $activity->timeDifference = null;
             }
             // CHAT
-            $messages = ChatReports::where('activity_id', $activity->id)->get();
+            $messages = ChatReports::where('activity_id', $activity->id)->orderBy('created_at', 'asc')->get();
+            $lastMessageNoView = ChatReports::where('activity_id', $activity->id)
+                ->where('user_id', '!=', Auth::id())
+                ->where('receiver_id', Auth::id())
+                ->where('look', false)
+                ->latest()
+                ->first();
             // Verificar si la colección tiene al menos un mensaje
-            if ($messages->isNotEmpty()) {
-                $lastMessage = $messages->last();
-                $activity->user_chat = $lastMessage->user_id;
+            if ($messages) {
+                if ($lastMessageNoView) {
+                    $activity->user_chat = $lastMessageNoView->user_id;
+                    $activity->receiver_chat = $lastMessageNoView->receiver_id;
+
+                    $receiver = User::find($lastMessageNoView->receiver_id);
+                    
+                    if ($receiver->type_user == 3) {
+                        $activity->client = true;
+                    } else {
+                        $activity->client = false;
+                    }
+                } else {
+                    $lastMessage = $messages->last();
+                    if ($lastMessage) {
+                        if ($lastMessage->user_id == Auth::id()) {
+                            $activity->user_id = true;
+                        } else {
+                            if ($lastMessage->receiver->type_user == 3) {
+                                $activity->client = true;
+                            } else {
+                                $activity->client = false;
+                            }
+                            $activity->user_id = false;
+                        }
+                    }
+                }
             }
-            $activity->messages_count = $messages->where('look', false)->count();
         }
         // ADD ATRIBUTES REPORTS
         foreach ($reports as $report) {
@@ -259,11 +288,41 @@ class ActivitiesReports extends Component
                 $report->timeDifference = null;
             }
             // CHAT
-            $messages = ChatReports::where('report_id', $report->id)->get();
+            $messages = ChatReports::where('report_id', $report->id)->orderBy('created_at', 'asc')->get();
+            $lastMessageNoView = ChatReports::where('report_id', $report->id)
+                ->where('user_id', '!=', Auth::id())
+                ->where('receiver_id', Auth::id())
+                ->where('look', false)
+                ->latest()
+                ->first();
             // Verificar si la colección tiene al menos un mensaje
-            if ($messages->isNotEmpty()) {
-                $lastMessage = $messages->last();
-                $report->user_chat = $lastMessage->user_id;
+            if ($messages) {
+                if ($lastMessageNoView) {
+                    $report->user_chat = $lastMessageNoView->user_id;
+                    $report->receiver_chat = $lastMessageNoView->receiver_id;
+
+                    $receiver = User::find($lastMessageNoView->receiver_id);
+                    
+                    if ($receiver->type_user == 3) {
+                        $report->client = true;
+                    } else {
+                        $report->client = false;
+                    }
+                } else {
+                    $lastMessage = $messages->last();
+                    if ($lastMessage) {
+                        if ($lastMessage->user_id == Auth::id()) {
+                            $report->user_id = true;
+                        } else {
+                            if ($lastMessage->receiver->type_user == 3) {
+                                $report->client = true;
+                            } else {
+                                $report->client = false;
+                            }
+                            $report->user_id = false;
+                        }
+                    }
+                }
             }
             $report->messages_count = $messages->where('look', false)->count();
         }
@@ -299,11 +358,41 @@ class ActivitiesReports extends Component
                     $report->timeDifference = null;
                 }
                 // CHAT
-                $messages = ChatReports::where('report_id', $report->id)->get();
+                $messages = ChatReports::where('report_id', $report->id)->orderBy('created_at', 'asc')->get();
+                $lastMessageNoView = ChatReports::where('report_id', $report->id)
+                    ->where('user_id', '!=', Auth::id())
+                    ->where('receiver_id', Auth::id())
+                    ->where('look', false)
+                    ->latest()
+                    ->first();
                 // Verificar si la colección tiene al menos un mensaje
-                if ($messages->isNotEmpty()) {
-                    $lastMessage = $messages->last();
-                    $report->user_chat = $lastMessage->user_id;
+                if ($messages) {
+                    if ($lastMessageNoView) {
+                        $report->user_chat = $lastMessageNoView->user_id;
+                        $report->receiver_chat = $lastMessageNoView->receiver_id;
+
+                        $receiver = User::find($lastMessageNoView->receiver_id);
+                        
+                        if ($receiver->type_user == 3) {
+                            $report->client = true;
+                        } else {
+                            $report->client = false;
+                        }
+                    } else {
+                        $lastMessage = $messages->last();
+                        if ($lastMessage) {
+                            if ($lastMessage->user_id == Auth::id()) {
+                                $report->user_id = true;
+                            } else {
+                                if ($lastMessage->receiver->type_user == 3) {
+                                    $report->client = true;
+                                } else {
+                                    $report->client = false;
+                                }
+                                $report->user_id = false;
+                            }
+                        }
+                    }
                 }
                 $report->messages_count = $messages->where('look', false)->count();
             }
@@ -330,8 +419,7 @@ class ActivitiesReports extends Component
         }
 
         $this->activityShow = Activity::find($id);
-
-        $this->messagesActivity = ChatReports::where('activity_id', $this->activityShow->id)->get();
+        $this->messagesActivity = ChatReports::where('activity_id', $this->activityShow->id)->orderBy('created_at', 'asc')->get();
         // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
         $lastMessage = ChatReports::where('activity_id', $this->activityShow->id)
             ->where('user_id', '!=', Auth::id())
@@ -339,12 +427,42 @@ class ActivitiesReports extends Component
             ->latest()
             ->first();
         if ($lastMessage) {
-            $lastMessage->look = true;
-            $lastMessage->save();
+            // cliente
+            if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
+                $lastMessage->look = true;
+                $lastMessage->save();
+            }
+            // mismo usuario
+            if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
+                $lastMessage->look = true;
+                $lastMessage->save();
+            }
+            // usuario administrador
+            if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                $lastMessage->look = true;
+                $lastMessage->save();
+            } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                $lastMessage->look = true;
+                $lastMessage->save();
+            }
         }
+
         if ($this->messagesActivity) {
             $this->showChatActivity = true;
             $this->messagesActivity->messages_count = $this->messagesActivity->where('look', false)->count();
+            // Marcar como vistos los mensajes si hay dos o más sin ver
+            // dd($this->messages);
+            if ($this->messagesActivity->messages_count >= 2) {
+                // Filtrar los mensajes que no han sido vistos
+                $moreMessages = $this->messagesActivity->where('look', false);
+
+                foreach ($moreMessages as $message) {
+                    if ($message->receiver_id == Auth::id()) {
+                        $message->look = true;
+                        $message->save();
+                    }
+                }
+            }
         }
 
         $user = Auth::user();
@@ -353,7 +471,6 @@ class ActivitiesReports extends Component
             $this->activityShow->look = true;
             $this->activityShow->save();
         }
-
         // Verificar si el archivo existe en la base de datos
         if ($this->activityShow && $this->activityShow->image) {
             // Verificar si el archivo existe en la carpeta
@@ -380,22 +497,52 @@ class ActivitiesReports extends Component
 
         $this->reportShow = Report::find($id);
         $this->evidenceShow = Evidence::where('report_id', $this->reportShow->id)->first();
-        $this->messagesReport = ChatReports::where('report_id', $this->reportShow->id)->get();
+
+
+        $this->messagesReport = ChatReports::where('report_id', $this->reportShow->id)->orderBy('created_at', 'asc')->get();
         // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
         $lastMessage = ChatReports::where('report_id', $this->reportShow->id)
             ->where('user_id', '!=', Auth::id())
             ->where('look', false)
             ->latest()
             ->first();
-
         if ($lastMessage) {
-            $lastMessage->look = true;
-            $lastMessage->save();
+            // cliente
+            if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
+                $lastMessage->look = true;
+                $lastMessage->save();
+            }
+            // mismo usuario
+            if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
+                $lastMessage->look = true;
+                $lastMessage->save();
+            }
+            // usuario administrador
+            if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                $lastMessage->look = true;
+                $lastMessage->save();
+            } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                $lastMessage->look = true;
+                $lastMessage->save();
+            }
         }
 
         if ($this->messagesReport) {
             $this->showChatReport = true;
             $this->messagesReport->messages_count = $this->messagesReport->where('look', false)->count();
+            // Marcar como vistos los mensajes si hay dos o más sin ver
+            // dd($this->messages);
+            if ($this->messagesReport->messages_count >= 2) {
+                // Filtrar los mensajes que no han sido vistos
+                $moreMessages = $this->messagesReport->where('look', false);
+
+                foreach ($moreMessages as $message) {
+                    if ($message->receiver_id == Auth::id()) {
+                        $message->look = true;
+                        $message->save();
+                    }
+                }
+            }
         }
 
         if ($this->evidenceShow) {
@@ -449,20 +596,68 @@ class ActivitiesReports extends Component
         $user = Auth::user();
 
         if ($activity) {
-            $chat = new ChatReports();
-            $chat->activity_id = $activity->id;
-            $chat->user_id = $user->id;
-            $chat->message = $this->messageActivity;
-            $chat->look = false;
-            $chat->save();
+            if ($this->messageActivity != '') {
+                $lastMessage = ChatReports::where('activity_id', $activity->id)
+                    ->where('user_id', '!=', Auth::id())
+                    ->where('look', false)
+                    ->latest()
+                    ->first();
 
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Mensaje enviado',
-            ]);
+                $chat = new ChatReports();
+                if ($user->type_user == 1) {
+                    $chat->user_id = $user->id; // envia
+                    if ($activity->user->id == Auth::id()) {
+                        $chat->receiver_id = $activity->delegate->id; //recibe
+                    } else {
+                        if ($user->type_user == 1) {
+                            if ($activity->user->type_user == 3) {
+                                $chat->receiver_id = $activity->user->id; //recibe
+                            } else {
+                                $chat->receiver_id = $activity->delegate->id; //recibe
+                            }
+                        } else {
+                            $chat->receiver_id = $activity->user->id; //recibe
+                        }
+                    }
+                } elseif ($user->type_user == 2) {
+                    $chat->user_id = $user->id; // envia
+                    if ($activity->user->type_user == 3) {
+                        $chat->receiver_id = $activity->user->id; //recibe
+                    } else {
+                        $chat->receiver_id = $activity->delegate->id; //recibe
+                    }
+                } elseif ($user->type_user == 3) {
+                    $chat->user_id = $user->id; // envia
+                    $chat->receiver_id = $activity->delegate->id; //recibe
+                }
 
-            $this->messageActivity = '';
-            $this->modalShowActivity = false;
+                $chat->activity_id = $activity->id;
+                $chat->message = $this->messageActivity;
+                $chat->look = false;
+                $chat->save();
+
+                if ($lastMessage) {
+                    // administrador
+                    if ($lastMessage->transmitter->type_user == 3 && Auth::user()->type_user == 1) {
+                        $lastMessage->look = true;
+                        $lastMessage->save();
+                    }
+                }
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Mensaje enviado',
+                ]);
+
+                $this->messageActivity = '';
+                $this->modalShowActivity = false;
+            } else {
+                $this->modalShowActivity = false;
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El mensaje está vacío.',
+                ]);
+            }
         }
     }
 
@@ -472,20 +667,68 @@ class ActivitiesReports extends Component
         $user = Auth::user();
 
         if ($report) {
-            $chat = new ChatReports();
-            $chat->report_id = $report->id;
-            $chat->user_id = $user->id;
-            $chat->message = $this->messageReport;
-            $chat->look = false;
-            $chat->save();
+            if ($this->messageReport != '') {
+                $lastMessage = ChatReports::where('report_id', $report->id)
+                    ->where('user_id', '!=', Auth::id())
+                    ->where('look', false)
+                    ->latest()
+                    ->first();
 
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Mensaje enviado',
-            ]);
+                $chat = new ChatReports();
+                if ($user->type_user == 1) {
+                    $chat->user_id = $user->id; // envia
+                    if ($report->user->id == Auth::id()) {
+                        $chat->receiver_id = $report->delegate->id; //recibe
+                    } else {
+                        if ($user->type_user == 1) {
+                            if ($report->user->type_user == 3) {
+                                $chat->receiver_id = $report->user->id; //recibe
+                            } else {
+                                $chat->receiver_id = $report->delegate->id; //recibe
+                            }
+                        } else {
+                            $chat->receiver_id = $report->user->id; //recibe
+                        }
+                    }
+                } elseif ($user->type_user == 2) {
+                    $chat->user_id = $user->id; // envia
+                    if ($report->user->type_user == 3) {
+                        $chat->receiver_id = $report->user->id; //recibe
+                    } else {
+                        $chat->receiver_id = $report->delegate->id; //recibe
+                    }
+                } elseif ($user->type_user == 3) {
+                    $chat->user_id = $user->id; // envia
+                    $chat->receiver_id = $report->delegate->id; //recibe
+                }
 
-            $this->messageReport = '';
-            $this->modalShowReport = false;
+                $chat->report_id = $report->id;
+                $chat->message = $this->messageReport;
+                $chat->look = false;
+                $chat->save();
+
+                if ($lastMessage) {
+                    // administrador
+                    if ($lastMessage->transmitter->type_user == 3 && Auth::user()->type_user == 1) {
+                        $lastMessage->look = true;
+                        $lastMessage->save();
+                    }
+                }
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Mensaje enviado',
+                ]);
+
+                $this->messageReport = '';
+                $this->modalShowReport = false;
+            } else {
+                $this->modalShowReport = false;
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El mensaje está vacío.',
+                ]);
+            }
         }
     }
 
