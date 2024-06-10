@@ -521,24 +521,22 @@
                                     <div
                                         class="border-primaryColor max-h-80 overflow-y-scroll rounded-br-lg border-4 px-2 py-2">
                                         @foreach ($messagesActivity as $message)
-                                            <div class="inline-flex">
-                                                @if ($message->messages_count >= 1 && $activityShow->user_chat != Auth::id() && $message->look == false)
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        class="icon icon-tabler icon-tabler-exclamation-mark text-red-600"
-                                                        width="24" height="24" viewBox="0 0 24 24"
-                                                        stroke-width="1.5" stroke="currentColor" fill="none"
-                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                        <path d="M12 19v.01" />
-                                                        <path d="M12 15v-10" />
-                                                    </svg>
-                                                @endif
-                                                <p class="pr-1 text-sm text-black">
-                                                    <span class="font-semibold"> {{ $message->transmitter->name }}:
-                                                    </span>
-                                                    <span
-                                                        class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                </p>
+                                            <div class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
+                                                <div class="inline-flex items-center">
+                                                    @if ($message->user_id == Auth::user()->id)
+                                                        <p class="pr-1 text-sm text-black text-right">  
+                                                            <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </p>
+                                                        <p class="pr-1 text-sm text-black h-full">
+                                                            <span class="font-semibold"> :Tú</span>
+                                                        </p>
+                                                    @else
+                                                        <p class="pr-1 text-sm text-black"> 
+                                                            <span class="font-semibold">{{ $message->transmitter->name }}: </span> 
+                                                            <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </p>
+                                                    @endif
+                                                </div>
                                             </div>
                                             <br>
                                         @endforeach
@@ -677,22 +675,22 @@
                                     <div
                                         class="border-primaryColor max-h-80 overflow-y-scroll rounded-br-lg border-4 px-2 py-2">
                                         @foreach ($messagesReport as $message)
-                                            <div class="inline-flex">
-                                                @if ($message->messages_count >= 1 && $reportShow->user_chat != Auth::id() && $message->look == false)
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        class="icon icon-tabler icon-tabler-exclamation-mark text-red-600"
-                                                        width="24" height="24" viewBox="0 0 24 24"
-                                                        stroke-width="1.5" stroke="currentColor" fill="none"
-                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                        <path d="M12 19v.01" />
-                                                        <path d="M12 15v-10" />
-                                                    </svg>
-                                                @endif
-                                                <p class="pr-1 text-sm text-black"> <span class="font-semibold">
-                                                        {{ $message->transmitter->name }}: <span></span> <span
-                                                            class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                </p>
+                                            <div class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
+                                                <div class="inline-flex items-center">
+                                                    @if ($message->user_id == Auth::user()->id)
+                                                        <p class="pr-1 text-sm text-black text-right">  
+                                                            <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </p>
+                                                        <p class="pr-1 text-sm text-black h-full">
+                                                            <span class="font-semibold"> :Tú</span>
+                                                        </p>
+                                                    @else
+                                                        <p class="pr-1 text-sm text-black"> 
+                                                            <span class="font-semibold">{{ $message->transmitter->name }}: </span> 
+                                                            <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </p>
+                                                    @endif
+                                                </div>
                                             </div>
                                             <br>
                                         @endforeach
@@ -762,8 +760,11 @@
                                         @endif
                                         @if ($reportShow->file == true)
                                             <div class="md-3/4 mb-3 mt-5 flex w-full flex-col">
-                                                <iframe src="{{ asset('reportes/' . $reportShow->content) }}"
-                                                    width="auto" height="600"></iframe>
+                                                @if ($reportShow->fileExtension === 'pdf')
+                                                    <iframe src="{{ asset('reportes/' . $reportShow->content) }}" width="auto" height="600"></iframe>
+                                                @else
+                                                    <p class="text-center text-base">Vista previa no disponible para este tipo de archivo.</p>
+                                                @endif
                                             </div>
                                         @endif
                                     @else
@@ -783,7 +784,7 @@
                                             <p>Sin contenido</p>
                                         </div>
                                     @endif
-                                    @if ($reportShow->image == true || $reportShow->video == true || $reportShow->file == true)
+                                    @if ($reportShow->image == true || $reportShow->video == true || $reportShow->file == true && $reportShow->contentExists)
                                         <div class="flex items-center justify-center">
                                             <a href="{{ asset('reportes/' . $reportShow->content) }}"
                                                 download="{{ basename($reportShow->content) }}" class="btnSecondary"

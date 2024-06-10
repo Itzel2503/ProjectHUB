@@ -710,25 +710,23 @@
                                     <h3 class="text-text2 text-base font-semibold">Comentarios</h3>
                                     <div
                                         class="border-primaryColor max-h-80 overflow-y-scroll rounded-br-lg border-4 px-2 py-2">
-                                        @foreach ($messages as $message)
-                                            <div class="inline-flex">
-                                                @if ($message->messages_count >= 1 && $activityShow->user_chat != Auth::id() && $message->look == false)
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        class="icon icon-tabler icon-tabler-exclamation-mark text-red-600"
-                                                        width="24" height="24" viewBox="0 0 24 24"
-                                                        stroke-width="1.5" stroke="currentColor" fill="none"
-                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                        <path d="M12 19v.01" />
-                                                        <path d="M12 15v-10" />
-                                                    </svg>
-                                                @endif
-                                                <p class="pr-1 text-sm text-black">
-                                                    <span class="font-semibold"> {{ $message->transmitter->name }}:
-                                                    </span>
-                                                    <span
-                                                        class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                </p>
+                                        @foreach ($messages as $index => $message)
+                                            <div class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
+                                                <div class="inline-flex items-center">
+                                                    @if ($message->user_id == Auth::user()->id)
+                                                        <p class="pr-1 text-sm text-black text-right">  
+                                                            <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </p>
+                                                        <p class="pr-1 text-sm text-black h-full">
+                                                            <span class="font-semibold"> :Tú</span>
+                                                        </p>
+                                                    @else
+                                                        <p class="pr-1 text-sm text-black"> 
+                                                            <span class="font-semibold">{{ $message->transmitter->name }}: </span> 
+                                                            <span class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </p>
+                                                    @endif
+                                                </div>
                                             </div>
                                             <br>
                                         @endforeach
@@ -850,13 +848,14 @@
                 </div>
                 <div class="modalBody">
                     {{-- ACTIVITY --}}
-                    <div class="md-3/4 mb-5 flex w-full flex-col border-gray-400 px-5 md:mb-0 lg:w-1/2 lg:border-r-2">
-                        <div
+                    {{-- <div class="md-3/4 mb-5 flex w-full flex-col border-gray-400 px-5 md:mb-0 lg:w-1/2 lg:border-r-2"> --}}
+                    <div class="md-3/4 mb-5 flex w-full flex-col px-5 md:mb-0">
+                        {{-- <div
                             class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
                             <h4
                                 class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
                                 Actividad</h4>
-                        </div>
+                        </div> --}}
                         <div class="-mx-3 mb-6 flex flex-row">
                             <div class="mb-6 flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="tittle">

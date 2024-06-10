@@ -185,6 +185,8 @@ class ActivitiesReports extends Component
                     ->where('state', '!=', 'Resuelto')
                     ->with(['user', 'delegate'])
                     ->get();
+            } else {
+                $reportsDukke = null;
             }
         }
         // ADD ATRIBUTES ACTIVITIES
@@ -407,13 +409,14 @@ class ActivitiesReports extends Component
             $this->reportShow->look = true;
             $this->reportShow->save();
         }
-
         // Verificar si el archivo existe en la base de datos
         if ($this->reportShow && $this->reportShow->content) {
             // Verificar si el archivo existe en la carpeta
             $filePath = public_path('reportes/' . $this->reportShow->content);
+            $fileExtension = pathinfo($this->reportShow->content, PATHINFO_EXTENSION);
             if (file_exists($filePath)) {
                 $this->reportShow->contentExists = true;
+                $this->reportShow->fileExtension = $fileExtension;
             } else {
                 $this->reportShow->contentExists = false;
             }

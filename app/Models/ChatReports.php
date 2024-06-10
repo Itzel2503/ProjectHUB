@@ -24,8 +24,8 @@ class ChatReports extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function delegate()
+    public function receiver()
     {
-        return $this->belongsTo(User::class, 'delegate_id');
+        return $this->belongsTo(User::class, 'receiver_id');
     }
 }

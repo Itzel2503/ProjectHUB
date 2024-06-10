@@ -134,7 +134,7 @@ class TableActivities extends Component
         $user = Auth::user();
         $user_id = $user->id;
         // DELEGATE
-        $this->allUsers = User::all();
+        $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
 
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
@@ -569,7 +569,7 @@ class TableActivities extends Component
         //     $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
         //     $activity->points = $maxPoint;
         // }
-
+        $activity->points = 0;
         $activity->delegated_date = Carbon::now();
         $activity->expected_date = $this->expected_date;
         $activity->save();
@@ -627,7 +627,7 @@ class TableActivities extends Component
             throw $e;
         }
         $activity = Activity::find($id);
-
+        
         if ($this->file) {
             $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
             if (in_array($this->file->extension(), $extensionesImagen)) {
@@ -703,6 +703,7 @@ class TableActivities extends Component
             $activity->priority = 'Bajo';
         }
 
+        $activity->points = 0;
         $activity->expected_date = $this->expected_date ?? $activity->expected_date;
 
         // if ($this->changePoints == true) {

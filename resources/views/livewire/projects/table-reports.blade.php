@@ -151,19 +151,50 @@
                                         </svg>
                                     </div>
                                     <p class="my-auto text-left text-xs font-semibold">{{ $report->title }}</p>
-                                    @if ($report->messages_count >= 1 && $report->user_chat != Auth::id())
-                                        <div class="absolute right-0 top-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M8 9h8" />
-                                                <path d="M8 13h6" />
-                                                <path
-                                                    d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                            </svg>
-                                        </div>
+                                    @if ($report->messages_count >= 1)
+                                        {{-- usuario --}}
+                                        @if ($report->user_chat != Auth::id() && $report->receiver_chat == Auth::id())
+                                            <div class="absolute right-0 top-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M8 9h8" />
+                                                    <path d="M8 13h6" />
+                                                    <path
+                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                </svg>
+                                            </div>
+                                        {{-- envio varios mensajes de diversos usuarios --}}
+                                        @elseif($report->noView == true)
+                                            <div class="absolute right-0 top-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M8 9h8" />
+                                                    <path d="M8 13h6" />
+                                                    <path
+                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                </svg>
+                                            </div>
+                                            {{-- administrador --}}
+                                        @elseif(Auth::user()->type_user == 1 && $report->client == false && $report->user_id == false)
+                                            <div class="absolute right-0 top-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M8 9h8" />
+                                                    <path d="M8 13h6" />
+                                                    <path
+                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                </svg>
+                                            </div>
+                                        @endif
                                     @endif
                                 </div>
                             </td>
@@ -208,7 +239,7 @@
                             <td class="px-2 py-1">
                                 @if (Auth::user()->type_user == 3)
                                     <p
-                                        class="inpSelectTable m-auto w-1/2 text-sm font-semibold @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif">
+                                        class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif m-auto w-1/2 text-sm font-semibold">
                                         {{ $report->state }}
                                     </p>
                                 @else
@@ -338,7 +369,7 @@
     </div>
     {{-- END TABLE --}}
     {{-- MODAL SHOW --}}
-    <div
+    <div id="modalShow"
         class="@if ($modalShow) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
         <div
             class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
@@ -384,25 +415,38 @@
                                 {!! nl2br(e($reportShow->comment)) !!}<br><br>
                                 @if ($showChat)
                                     <h3 class="text-text2 text-base font-semibold">Comentarios</h3>
-                                    <div
+                                    <div id="messageContainer"
                                         class="border-primaryColor max-h-80 overflow-y-scroll rounded-br-lg border-4 px-2 py-2">
-                                        @foreach ($messages as $message)
-                                            <div class="inline-flex">
-                                                @if ($message->messages_count >= 1 && $reportShow->user_chat != Auth::id() && $message->look == false)
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        class="icon icon-tabler icon-tabler-exclamation-mark text-red-600"
-                                                        width="24" height="24" viewBox="0 0 24 24"
-                                                        stroke-width="1.5" stroke="currentColor" fill="none"
-                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                        <path d="M12 19v.01" />
-                                                        <path d="M12 15v-10" />
-                                                    </svg>
-                                                @endif
-                                                <p class="pr-1 text-sm text-black"> <span class="font-semibold">
-                                                        {{ $message->transmitter->name }}: <span></span> <span
-                                                            class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                </p>
+                                        @foreach ($messages as $index => $message)
+                                            <div
+                                                class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
+                                                <div class="inline-flex items-center">
+                                                    @if ($message->user_id == Auth::user()->id)
+                                                        <p class="pr-1 text-right text-sm text-black">
+                                                            <span
+                                                                class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </p>
+                                                        <p class="h-full pr-1 text-sm text-black">
+                                                            <span class="font-semibold"> :Tú</span>
+                                                        </p>
+                                                    @else
+                                                        @if (Auth::user()->type_user == 3)
+                                                            <p class="pr-1 text-sm text-black">
+                                                                <span class="font-semibold">Arten: </span>
+                                                                <span
+                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </p>
+                                                        @else
+                                                            <p class="pr-1 text-sm text-black">
+                                                                <span
+                                                                    class="font-semibold">{{ $message->transmitter->name }}:
+                                                                </span>
+                                                                <span
+                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </p>
+                                                        @endif
+                                                    @endif
+                                                </div>
                                             </div>
                                             <br>
                                         @endforeach
@@ -411,8 +455,14 @@
                             </div>
                             <div class="my-6 flex w-auto flex-row">
                                 <input wire:model.defer='message' type="text" name="message" id="message"
-                                    placeholder="Mensaje a los administradores" class="inputs"
-                                    style="border-radius: 0.5rem 0px 0px 0.5rem !important">
+                                    class="inputs"
+                                    style="border-radius: 0.5rem 0px 0px 0.5rem !important"
+                                    @if (Auth::user()->type_user != 3)
+                                        placeholder="Mensaje"
+                                    @else
+                                        placeholder="Mensaje para Arten"
+                                    @endif
+                                    >
                                 <button class="btnSave" style="border-radius: 0rem 0.5rem 0.5rem 0rem !important"
                                     wire:click="updateChat({{ $reportShow->id }})">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send"
@@ -472,8 +522,13 @@
                                         @endif
                                         @if ($reportShow->file == true)
                                             <div class="md-3/4 mb-3 mt-5 flex w-full flex-col">
-                                                <iframe src="{{ asset('reportes/' . $reportShow->content) }}"
-                                                    width="auto" height="600"></iframe>
+                                                @if ($reportShow->fileExtension === 'pdf')
+                                                    <iframe src="{{ asset('reportes/' . $reportShow->content) }}"
+                                                        width="auto" height="600"></iframe>
+                                                @else
+                                                    <p class="text-center text-base">Vista previa no disponible para
+                                                        este tipo de archivo.</p>
+                                                @endif
                                             </div>
                                         @endif
                                     @else
@@ -493,7 +548,10 @@
                                             <p>Sin contenido</p>
                                         </div>
                                     @endif
-                                    @if ($reportShow->image == true || $reportShow->video == true || $reportShow->file == true)
+                                    @if (
+                                        $reportShow->image == true ||
+                                            $reportShow->video == true ||
+                                            ($reportShow->file == true && $reportShow->contentExists))
                                         <div class="flex items-center justify-center">
                                             <a href="{{ asset('reportes/' . $reportShow->content) }}"
                                                 download="{{ basename($reportShow->content) }}" class="btnSecondary"
@@ -869,6 +927,34 @@
     {{-- END LOADING PAGE --}}
     @push('js')
         <script>
+            // Scroll de Comentrios de modal
+            document.addEventListener("DOMContentLoaded", function() {
+                var modal = document.getElementById("modalShow"); 
+
+                if (modal) {
+                    var observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.attributeName === "class") {
+                                var classList = mutation.target.classList;
+                                if (classList.contains("block") && !classList.contains("hidden")) {
+                                    var messageContainer = document.getElementById("messageContainer");
+                                    if (messageContainer) {
+                                        messageContainer.scrollTop = messageContainer.scrollHeight;
+                                    } else {
+                                        console.error("Element with ID 'messageContainer' not found.");
+                                    }
+                                }
+                            }
+                        });
+                    });
+
+                    observer.observe(modal, {
+                        attributes: true // Configura el observador para escuchar cambios en los atributos
+                    });
+                } else {
+                    console.error("Modal element with ID 'modalShow' not found.");
+                }
+            });
             // DROPDOWN
             function toggleDropdown(reportId) {
                 var panel = document.getElementById('dropdown-panel-' + reportId);
