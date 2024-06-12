@@ -75,7 +75,12 @@ class EffortPoints extends Component
             $point->points_assigned = $point->effort_points - $points_finish;
             // Avance porcentaje
             $percentage_progress = $point->report_points_resuelto +  $point->activity_points_resuelto;
-            $advance = $percentage_progress /  $point->effort_points;
+            // Evitar división por cero
+            if ($point->effort_points != 0) {
+                $advance = $percentage_progress / $point->effort_points;
+            } else {
+                $advance = 0; // O cualquier valor que tenga sentido en tu contexto
+            }
             // Obtener la primera palabra del nombre
             $first_name = explode(' ', trim($point->name))[0];
             // Formatear el nombre con el avance
