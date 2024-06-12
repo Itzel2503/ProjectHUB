@@ -1,2 +1,5 @@
-require('./bootstrap');
-window.$ = window.jQuery = require('jquery');
+import $ from 'jquery';
+import 'daterangepicker';
+import 'daterangepicker/daterangepicker.css';
+
+window.$ = window.jQuery = $;

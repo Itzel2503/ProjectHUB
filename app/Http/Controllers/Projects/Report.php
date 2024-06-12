@@ -69,7 +69,6 @@ class Report extends Controller
             $report = new ModelsReport();
             $now = Carbon::now();
             $dateString = $now->format("Y-m-d H_i_s");
-
             if ($project && $report) {
                 if (Auth::user()->type_user != 3) {
                     try {
@@ -92,9 +91,11 @@ class Report extends Controller
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
+                        $report->points = 0;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
+                        $report->points = $request->points;
                     }
                     $report->title = $request->title;
                     $report->content = $request->video;
@@ -114,7 +115,6 @@ class Report extends Controller
                     $report->video = true;
                     $report->file = false;
                     $report->delegated_date = Carbon::now();
-                    $report->points = 0;
                     $report->save();
                 }
 
@@ -134,9 +134,11 @@ class Report extends Controller
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
+                        $report->points = 0;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
+                        $report->points = $request->points;
                     }
                     $report->title = $request->title;
                     $report->content = $filePath;
@@ -154,7 +156,6 @@ class Report extends Controller
                     $report->video = false;
                     $report->file = false;
                     $report->delegated_date = Carbon::now();
-                    $report->points = 0;
                     $report->save();
                 }
 
@@ -175,9 +176,11 @@ class Report extends Controller
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
+                        $report->points = 0;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
+                        $report->points = $request->points;
                     }
                     $report->title = $request->title;
                     $report->content = $filePath;
@@ -209,7 +212,6 @@ class Report extends Controller
                     }
 
                     $report->delegated_date = Carbon::now();
-                    $report->points = 0;
                     $report->save();
                 }
 
@@ -221,9 +223,11 @@ class Report extends Controller
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
+                        $report->points = 0;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
+                        $report->points = $request->points;
                     }
                     $report->title = $request->title;
 
@@ -242,7 +246,6 @@ class Report extends Controller
                     $report->video = false;
                     $report->file = false;
                     $report->delegated_date = Carbon::now();
-                    $report->points = 0;
                     $report->save();
                 }
                 return redirect()->route('projects.reports.index', ['project' => $project_id]);
@@ -338,9 +341,11 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $reportNew->delegate_id = 10;
                         $reportNew->expected_date = Carbon::now();
+                        $reportNew->points = 0;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
+                        $reportNew->points = $request->points;
                     }
                     
                     $reportNew->report_id = $report->report_id;
@@ -366,7 +371,6 @@ class Report extends Controller
                     }
                     $reportNew->repeat = true;
                     $reportNew->delegated_date = Carbon::now();
-                    $reportNew->points = 0;
                     $reportNew->save();
                 }
 
@@ -386,9 +390,11 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $reportNew->delegate_id = 10;
                         $reportNew->expected_date = Carbon::now();
+                        $reportNew->points = 0;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
+                        $reportNew->points = $request->points;
                     }
 
                     $reportNew->report_id = $report->report_id;
@@ -414,7 +420,6 @@ class Report extends Controller
                     }
                     $reportNew->repeat = true;
                     $reportNew->delegated_date = Carbon::now();
-                    $reportNew->points = 0;
                     $reportNew->save();
                 }
 
@@ -435,9 +440,11 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $reportNew->delegate_id = 10;
                         $reportNew->expected_date = Carbon::now();
+                        $reportNew->points = 0;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
+                        $reportNew->points = $request->points;
                     }
 
                     $reportNew->report_id = $report->report_id;
@@ -481,7 +488,6 @@ class Report extends Controller
                     }
                     $reportNew->repeat = true;
                     $reportNew->delegated_date = Carbon::now();
-                    $reportNew->points = 0;
                     $reportNew->save();
                 }
 
@@ -493,9 +499,11 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $reportNew->delegate_id = 10;
                         $reportNew->expected_date = Carbon::now();
+                        $reportNew->points = 0;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
+                        $reportNew->points = $request->points;
                     }
                     
                     $reportNew->report_id = $report->report_id;
@@ -565,7 +573,6 @@ class Report extends Controller
                     }
                     $reportNew->repeat = true;
                     $reportNew->delegated_date = Carbon::now();
-                    $reportNew->points = 0;
                     $reportNew->save();
                 }
 

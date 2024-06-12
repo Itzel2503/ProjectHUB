@@ -76,6 +76,7 @@ class TableUsers extends Component
                 'type_user' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:8',
+                'effort_points' => 'required|numeric|between:0,100',
             ];
 
             if ($this->type_user == 3) {
@@ -164,7 +165,7 @@ class TableUsers extends Component
         if ($this->password) {
             $user->password = Hash::make($this->password);
         }
-        // $user->effort_points = $this->effort_points;
+        $user->effort_points = $this->effort_points;
         $user->effort_points = 0;
         $user->save();
         // Guardar relaciones en la tabla pivote
@@ -199,6 +200,7 @@ class TableUsers extends Component
                 'date_birthday' => 'required|date|max:255',
                 'entry_date' => 'required|date|max:255',
                 'email' => 'required|email|unique:users,email,' . $id,
+                'effort_points' => 'required|numeric|between:0,100',
             ];
 
             if ($this->type_user == 3) {
@@ -302,7 +304,7 @@ class TableUsers extends Component
                 }
             }
         }
-        // $user->effort_points = $this->effort_points ?? $user->effort_points;
+        $user->effort_points = $this->effort_points ?? $user->effort_points;
         if ($this->file) {
             $this->refreshPage();
         }
@@ -465,7 +467,7 @@ class TableUsers extends Component
         $this->date_birthday = $this->userEdit->date_birthday;
         $this->entry_date = $this->userEdit->entry_date;
         $this->email = $this->userEdit->email;
-        // $this->effort_points = $this->userEdit->effort_points;
+        $this->effort_points = $this->userEdit->effort_points;
     }
     // MODAL
     public function modalCreateEdit()
@@ -492,7 +494,7 @@ class TableUsers extends Component
         $this->type_user = '';
         $this->email = '';
         $this->password = '';
-        // $this->effort_points = '';
+        $this->effort_points = '';
         $this->type_user = [];
         $this->selectedProjects = [];
     }

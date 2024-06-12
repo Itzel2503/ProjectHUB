@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>ARTEN/KIRCOF</title>
+    <title>COMA</title>
 
     <!-- Logo -->
     <link rel="icon" href="{{ asset('logos/favicon_v2.png') }}" type="image/png">
@@ -180,7 +180,7 @@
                     Cuando reincides en un reporte, tienes la opción de agregar nueva información, como fotos o
                     grabaciones, además de actualizar el archivo adjunto si ya existe. También puedes ampliar la
                     descripción del reporte. Si es necesario, puedes delegar el reporte a otro miembro y ajustar la
-                    prioridad, la fecha o la evidencia según sea necesario.
+                    prioridad, la fecha, la evidencia o los puntos de esfuerzo según sea necesario.
                 </label>
             @endif
         </div>
@@ -246,6 +246,7 @@
                     <input hidden type="text" id="user_id" name="user_id" value="{{ $user->id }}">
                     <input hidden type="text" id="inputPhoto" name="photo">
                     <input hidden type="text" id="inputVideo" name="video">
+                    <input hidden type="text" id="inputPoints" name="points" value="{{ $report->points }}">
                     <div class="-mx-3 mb-6 flex flex-row">
                         <div id="viewText" class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
@@ -258,7 +259,7 @@
                                 Título del reporte
                             </h5>
                             <input disabled type="text" value="{{ $report->title }}" name="title"
-                                id="title" class="inputs bg-gray-100">
+                                id="title" class="inputs text-gray-500">
                             @if ($errors->has('title'))
                                 <span class="pl-2 text-xs italic text-red-600">
                                     {{ $errors->first('title') }}
@@ -272,7 +273,7 @@
                                 Descripción del reporte <p class="text-red-600">*</p>
                             </h5>
                             <textarea disabled type="text" placeholder="Describa la observación y especifique el objetivo a cumplir."
-                                class="textarea mb-2 bg-gray-100">{{ $report->comment }}</textarea>
+                                class="textarea mb-2 text-gray-500">{{ $report->comment }}</textarea>
                             <textarea required type="text" rows="6"
                                 placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" class="textarea"></textarea>
                             @if ($errors->has('comment'))
@@ -341,12 +342,17 @@
                             <input type="date" name="expected_date" id="expected_date" class="inputs"
                                 value="{{ $expectedDate }}">
                         </div>
-                        <div class="m-auto flex w-full flex-row px-3">
+                        <div class="m-auto flex w-full flex-row justify-center px-3">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Evidencia
                             </h5>
                             <input type="checkbox" name="evidence" id="evidence" class="ml-4"
                                 style="height: 24px; width: 24px; accent-color: #0062cc;">
+                        </div>
+                        <div class="m-auto flex w-full flex-row px-3">
+                            <a class="btnSave text-center" id="buttonPoints" style="display: flex">
+                                Puntos de esfuerzo
+                            </a>
                         </div>
                         @endif
                     </div>
@@ -382,7 +388,126 @@
         <video id="preview" width="100%" height="auto" autoplay muted class="mt-2"
             style="display: none;"></video>
     </div>
-
+    {{-- MODAL EDIT / CREATE SPRINT --}}
+    <div id="modalPoints" class="left-0 top-20 z-50 hidden max-h-full overflow-y-auto">
+        <div
+            class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+        </div>
+        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
+            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+                <div
+                    class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
+                    <h3
+                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                        Puntos de esfuerzo</h3>
+                    <svg id="closeModal" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div class="modalBody">
+                    <div class="md-3/4 mb-5 flex w-full flex-col px-5 md:mb-0">
+                        <div class="mb-6 flex flex-row">
+                            <span id="addPoints"
+                                class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M7 10h14l-4 -4" />
+                                    <path d="M17 14h-14l4 4" />
+                                </svg>
+                                Agregar puntos directos
+                            </span>
+                        </div>
+                        <div id="divDirect" class="-mx-3 hidden">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Puntos <p class="text-red-600">*</p>
+                                </h5>
+                                <input type="number" placeholder="1, 2, 3, 5, 8, 13" name="points"
+                                    id="directPoints" class="inputs" value="{{ $report->points }}">
+                                <span id="errorSpan" class="hidden text-xs font-light italic text-red-600">Número no
+                                    válido. Por favor, ingrese uno de los siguientes números: 1, 2, 3, 5, 8, 13.</span>
+                            </div>
+                        </div>
+                        <div id="divForm" class="block">
+                            <div class="-mx-3 mb-6">
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="name">
+                                        ¿Cuánto se conoce de la tarea?<p class="text-red-600">*</p>
+                                    </h5>
+                                    <select name="pointKnow" id="pointKnow" class="inputs">
+                                        <option value="0" selected>Selecciona...</option>
+                                        <option value="1">Todo</option>
+                                        <option value="2">Casi todo</option>
+                                        <option value="3">Algunas cosas</option>
+                                        <option value="5">Poco</option>
+                                        <option value="8">Casi nada</option>
+                                        <option value="13">Nada</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="-mx-3 mb-6">
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="name">
+                                        ¿De cuántos depende?<p class="text-red-600">*</p>
+                                    </h5>
+                                    <select name="pointMany" id="pointMany" class="inputs">
+                                        <option value="0" selected>Selecciona...</option>
+                                        <option value="1">Solo uno</option>
+                                        <option value="2">Un par</option>
+                                        <option value="3">Pocos</option>
+                                        <option value="5">Varios</option>
+                                        <option value="8">Muchos</option>
+                                        <option value="13">No se sabe</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="-mx-3 mb-6">
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="name">
+                                        ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
+                                    </h5>
+                                    <select name="pointEffort" id="pointEffort" class="inputs">
+                                        <option value="0" selected>Selecciona...</option>
+                                        <option value="1">Menos de 2 horas</option>
+                                        <option value="2">Medio dìa</option>
+                                        <option value="3">Hasta dos dìas</option>
+                                        <option value="5">Pocos dìas</option>
+                                        <option value="8">Alrededor de</option>
+                                        <option value="13">Mas de una</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <span id="formErrorSpan" class="hidden text-xs font-light italic text-red-600">Debes
+                                seleccionar una opción en cada campo.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modalFooter">
+                    <button id="modalSave" class="btnSave">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M14 4l0 4l-6 0l0 -4" />
+                        </svg>
+                        Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL EDIT / CREATE SPRINT --}}
     @if (session('error'))
         <script>
             toastr['error']("{{ session('error') }}", "Error");
@@ -420,6 +545,8 @@
         let inputUser = document.getElementById("user_id");
         let inputVideo = document.getElementById("inputVideo");
         let inputPhoto = document.getElementById("inputPhoto");
+        let inputPoints = document.getElementById("inputPoints");
+
         let file = document.getElementById("file");
         // FORM
         let formReport = document.getElementById('formReport');
@@ -433,6 +560,85 @@
         // VARIABLES GLOBALES
         let user = @json($user->id);
         let project = @json($project->name);
+        // ------------------------------ MODAL ------------------------------
+        let showingDirect = false; // Estado inicial
+        let validNumbers = [1, 2, 3, 5, 8, 13];
+        // ABRIR MODAL
+        buttonPoints.addEventListener('click', function(e) {
+            e.preventDefault();
+            modalPoints.classList.remove("hidden");
+            modalPoints.classList.add("block");
+        });
+        // CERRAR MODAL
+        closeModal.addEventListener('click', function(e) {
+            e.preventDefault();
+            modalPoints.classList.remove("block");
+            modalPoints.classList.add("hidden");
+        });
+        // CAMBIO DE FORMULARIO
+        addPoints.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (showingDirect) {
+                // Cambiar a mostrar el formulario
+                addPoints.innerHTML =
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 10h14l-4 -4" /><path d="M17 14h-14l4 4" /></svg>Agregar puntos directos';
+                divDirect.classList.add("hidden");
+                divDirect.classList.remove("block");
+                divForm.classList.add("block");
+                divForm.classList.remove("hidden");
+                // clearInputs
+                errorSpan.style.display = 'none';
+            } else {
+                // Cambiar a mostrar los puntos directos
+                addPoints.innerHTML =
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 10h14l-4 -4" /><path d="M17 14h-14l4 4" /></svg>Cuestionario';
+                divDirect.classList.remove("hidden");
+                divDirect.classList.add("block");
+                divForm.classList.remove("block");
+                divForm.classList.add("hidden");
+                // clearInputs
+                pointKnow.value = 0;
+                pointMany.value = 0;
+                pointEffort.value = 0;
+                formErrorSpan.style.display = 'none';
+            }
+
+            showingDirect = !showingDirect; // Cambiar el estado
+        });
+        // MOVER INFO AL FORMULARIO
+        modalSave.addEventListener('click', function() {
+            if (showingDirect) {
+                let value = parseInt(directPoints.value, 10);
+
+                if (validNumbers.includes(value)) {
+                    inputPoints.value = directPoints.value;
+                    errorSpan.style.display = 'none';
+                    // cerrar modal
+                    modalPoints.classList.remove("block");
+                    modalPoints.classList.add("hidden");
+                } else {
+                    errorSpan.style.display = 'block';
+                }
+            } else {
+                let pointKnow = parseInt(document.getElementById('pointKnow').value, 10) || 0;
+                let pointMany = parseInt(document.getElementById('pointMany').value, 10) || 0;
+                let pointEffort = parseInt(document.getElementById('pointEffort').value, 10) || 0;
+
+                if (!pointKnow || !pointMany || !pointEffort) {
+                    formErrorSpan.style.display = 'block';
+                } else {
+                    formErrorSpan.style.display = 'none';
+                    // Find the maximum value
+                    let maxValue = Math.max(pointKnow, pointMany, pointEffort);
+                    // Set the maximum value to inputPoints
+                    inputPoints.value = maxValue > 0 ? maxValue : '';
+                    // cerrar modal
+                    modalPoints.classList.remove("block");
+                    modalPoints.classList.add("hidden");
+                }
+            }
+        });
+        // ------------------------------ FORMULARIO ------------------------------
         // REVISION DE CHECKBOX
         checkboxes.forEach(function(checkbox) {
             checkbox.addEventListener('change', function() {

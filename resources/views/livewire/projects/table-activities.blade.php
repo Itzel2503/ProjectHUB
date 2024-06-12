@@ -865,10 +865,8 @@
         <div
             class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
         </div>
-        {{-- <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
-            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-3/4" style="max-height: 90%;"> --}}
-        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
-            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+        <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
+            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-3/4" style="max-height: 90%;">
                 <div
                     class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                     @if ($showUpdateActivity)
@@ -892,14 +890,13 @@
                 </div>
                 <div class="modalBody">
                     {{-- ACTIVITY --}}
-                    {{-- <div class="md-3/4 mb-5 flex w-full flex-col border-gray-400 px-5 md:mb-0 lg:w-1/2 lg:border-r-2"> --}}
-                    <div class="md-3/4 mb-5 flex w-full flex-col px-5 md:mb-0">
-                        {{-- <div
+                    <div class="md-3/4 mb-5 flex w-full flex-col border-gray-400 px-5 md:mb-0 lg:w-1/2 lg:border-r-2">
+                        <div
                             class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
                             <h4
                                 class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
                                 Actividad</h4>
-                        </div> --}}
+                        </div>
                         <div class="-mx-3 mb-6 flex flex-row">
                             <div class="mb-6 flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="tittle">
@@ -1059,7 +1056,7 @@
                         </div>
                     </div>
                     {{-- POINTS --}}
-                    {{-- <div class="w-full px-5 lg:w-1/2">
+                    <div class="w-full px-5 lg:w-1/2">
                         <div
                             class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
                             <h4
@@ -1179,7 +1176,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div> --}}
+                    </div>
                 </div>
                 <div class="modalFooter">
                     @if ($showUpdateActivity)

@@ -432,7 +432,7 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="-mx-3 mb-6">
+                        <div class="-mx-3 mb-6">
                             <div class="w-full flex flex-col px-3 mb-6">
                                 <h5 class="inline-flex font-semibold" for="effort_points">
                                     Puntos de esfuerzo (Mes)@if (!$showUpdate)<p class="text-red-600">*</p>@endif
@@ -449,7 +449,7 @@
                                     </span>
                                 </div>
                             </div>
-                        </div> --}}
+                        </div>
                     </div>
                 </div>
                 <div class="modalFooter">

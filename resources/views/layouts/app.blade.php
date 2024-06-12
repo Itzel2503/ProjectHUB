@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>ARTEN/KIRCOF</title>
+    <title>COMA</title>
 
     <!-- Logo -->
     <link rel="icon" href="{{ asset('logos/favicon_v2.png') }}" type="image/png">

@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivitiesReports\ActivityReport;
 use App\Http\Controllers\Projects\Activity;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Customers\Customer;
+use App\Http\Controllers\EffortPoints\EffortPoints;
 use App\Http\Controllers\Permit;
 use App\Http\Controllers\Projects\Project;
 use App\Http\Controllers\Projects\Report;
@@ -46,9 +47,8 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('projects.activities', Activity::class)->only(['index'])->middleware('user.type:1,2');
     // ACTIVITIES
     Route::resource('/activities-reports', ActivityReport::class)->only(['index'])->middleware('user.type:1,2');
-
-    // PERMITS
-    Route::resource('/permits', Permit::class);
+    // EFFORT POINTS
+    Route::resource('/effortPoints', EffortPoints::class)->only(['index'])->middleware('user.type:1');
 });
 // Rutas de autenticación generadas por Auth::routes();
 Auth::routes();
