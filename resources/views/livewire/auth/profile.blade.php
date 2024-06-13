@@ -62,26 +62,28 @@
                 </div>
             </div>
         </div>
-        <div class="w-full flex justify-center">
-            <div class="w-11/12 md:w-1/2 my-5">
-                <div class="border-dashed border-4 border-primaryColor rounded-2xl">
-                    <div class="m-5">
-                        <div class="text-left mb-2 flex items-center">
-                            <h5 class="mb-1 text-text1 font-semibold mr-2">Área:</h5>
-                            <p class="text-text1">{{ $user->area->name }}</p>
-                        </div>
-                        <div class="text-left mb-2 flex items-center">
-                            <h5 class="mb-1 text-text1 font-semibold mr-2">Fecha de nacimiento:</h5>
-                            <p class="text-text1">{{ $user->date_birthday }}</p>
-                        </div>
-                        <div class="text-left mb-2 flex items-center">
-                            <h5 class="mb-1 text-text1 font-semibold mr-2">Fecha de ingreso:</h5>
-                            <p class="text-text1">{{ $user->entry_date }}</p>
+        @if (Auth::user()->type_user != 3)
+            <div class="w-full flex justify-center">
+                <div class="w-11/12 md:w-1/2 my-5">
+                    <div class="border-dashed border-4 border-primaryColor rounded-2xl">
+                        <div class="m-5">
+                            <div class="text-left mb-2 flex items-center">
+                                <h5 class="mb-1 text-text1 font-semibold mr-2">Área:</h5>
+                                <p class="text-text1">{{ $user->area->name }}</p>
+                            </div>
+                            <div class="text-left mb-2 flex items-center">
+                                <h5 class="mb-1 text-text1 font-semibold mr-2">Fecha de nacimiento:</h5>
+                                <p class="text-text1">{{ $user->date_birthday }}</p>
+                            </div>
+                            <div class="text-left mb-2 flex items-center">
+                                <h5 class="mb-1 text-text1 font-semibold mr-2">Fecha de ingreso:</h5>
+                                <p class="text-text1">{{ $user->entry_date }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
     </div>
     @push('js')
     @if(session('errorPassword'))

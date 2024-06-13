@@ -18,7 +18,7 @@ class ActivitiesReports extends Component
     use WithFileUploads;
     use WithPagination;
     protected $paginationTheme = 'tailwind';
-
+    public $listeners = ['messageSentReport' => 'loadMessagesReport', 'messageSentActivity' => 'loadMessagesActivity'];
     // PESTAÑA
     public $activeTab = 'actividades';
     // Generales
@@ -256,6 +256,7 @@ class ActivitiesReports extends Component
                     }
                 }
             }
+            $activity->messages_count = $messages->where('look', false)->count();
         }
         // ADD ATRIBUTES REPORTS
         foreach ($reports as $report) {
@@ -416,8 +417,12 @@ class ActivitiesReports extends Component
             $this->modalShowActivity = false;
         } else {
             $this->modalShowActivity = true;
+            $this->loadMessagesActivity($id);
         }
+    }
 
+    public function loadMessagesActivity($id)
+    {
         $this->activityShow = Activity::find($id);
         $this->messagesActivity = ChatReports::where('activity_id', $this->activityShow->id)->orderBy('created_at', 'asc')->get();
         // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
@@ -493,8 +498,12 @@ class ActivitiesReports extends Component
             $this->modalShowReport = false;
         } else {
             $this->modalShowReport = true;
+            $this->loadMessagesReport($id);
         }
+    }
 
+    public function loadMessagesReport($id)
+    {
         $this->reportShow = Report::find($id);
         $this->evidenceShow = Evidence::where('report_id', $this->reportShow->id)->first();
 
@@ -643,6 +652,8 @@ class ActivitiesReports extends Component
                         $lastMessage->save();
                     }
                 }
+                // Emitir un evento después de enviar el mensaje
+                $this->emit('messageSentActivity', $activity->id);
 
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'success',
@@ -650,7 +661,6 @@ class ActivitiesReports extends Component
                 ]);
 
                 $this->messageActivity = '';
-                $this->modalShowActivity = false;
             } else {
                 $this->modalShowActivity = false;
                 $this->dispatchBrowserEvent('swal:modal', [
@@ -714,6 +724,8 @@ class ActivitiesReports extends Component
                         $lastMessage->save();
                     }
                 }
+                // Emitir un evento después de enviar el mensaje
+                $this->emit('messageSentReport', $report->id);
 
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'success',
@@ -721,7 +733,6 @@ class ActivitiesReports extends Component
                 ]);
 
                 $this->messageReport = '';
-                $this->modalShowReport = false;
             } else {
                 $this->modalShowReport = false;
                 $this->dispatchBrowserEvent('swal:modal', [

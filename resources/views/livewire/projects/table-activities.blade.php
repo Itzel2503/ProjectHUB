@@ -295,18 +295,17 @@
             @endif
         </div>
         {{-- END NAVEGADOR --}}
-
         {{-- TABLE --}}
         <div class="tableStyle">
             <table class="whitespace-no-wrap table-hover table w-full">
                 <thead class="headTable border-0">
                     <tr class="text-left">
                         <th class="w-96 px-4 py-3">Actividad</th>
-                        <th class="px-4 py-3 lg:w-48">Delegado</th>
-                        <th class="w-48 px-4 py-3 text-center">Estado</th>
-                        <th class="w-44 px-4 py-3">Fecha de entrega</th>
-                        <th class="w-56 px-4 py-3">Creado</th>
-                        <th class="w-16 px-4 py-3">Acciones</th>
+                        <th class="px-1 py-3 lg:w-48">Delegado</th>
+                        <th class="w-48 px-2 py-3">Estado</th>
+                        <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                        <th class="w-56 px-1 py-3">Creado</th>
+                        <th class="w-16 px-1 py-3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -344,7 +343,7 @@
                                                         d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
                                                 </svg>
                                             </div>
-                                        {{-- envio varios mensajes de diversos usuarios --}}
+                                            {{-- envio varios mensajes de diversos usuarios --}}
                                         @elseif($activity->noView == true)
                                             <div class="absolute right-0 top-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -416,8 +415,10 @@
                             <td class="px-2 py-1">
                                 <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
                                     name="state" id="state"
-                                    class="inpSelectTable inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif w-28 text-sm font-semibold"
-                                    @if ($firstSprint->state == 'Pendiente' && Auth::user()->type_user != 1) disabled @endif>
+                                    class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold">
+                                    @if ($firstSprint->state == 'Pendiente' && Auth::user()->type_user != 1)
+                                        disabled
+                                    @endif>
                                     <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
                                     @foreach ($activity->filteredActions as $action)
                                         <option value="{{ $action }}">{{ $action }}</option>
@@ -692,34 +693,22 @@
     </div>
     {{-- END MODAL EDIT / CREATE SPRINT --}}
     {{-- MODAL SHOW ACTIVITY --}}
-    <div
+    <div id="modalShow"
         class="@if ($modalShowActivity) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
         <div
             class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
         </div>
         <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
             <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-3/4" style="max-height: 90%;">
-                @if (!empty($activityShow->image))
+                @if ($activityShow)
                     <div
                         class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                         <h3
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
                             @php
-                                echo mb_substr($activityShow->title, 0, 25) . ' ...';
+                                echo mb_substr($activityShow->tittle, 0, 25) . ' ...';
                             @endphp
                         </h3>
-                        <svg wire:click="modalShowActivity()" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
-                            xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
-                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M18 6l-12 12"></path>
-                            <path d="M6 6l12 12"></path>
-                        </svg>
-                    </div>
-                @else
-                    <div
-                        class="bg-main-fund flex flex-row justify-end rounded-tl-lg rounded-tr-lg px-6 py-4 text-white">
                         <svg wire:click="modalShowActivity()" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
                             xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -744,35 +733,45 @@
                                         @foreach ($messages as $index => $message)
                                             <div
                                                 class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
-                                                <div class="inline-flex items-center">
+                                                <div class="mx-2 items-center">
                                                     @if ($message->user_id == Auth::user()->id)
-                                                        <p class="pr-1 text-right text-sm text-black">
+                                                        <div class="text-right">
+                                                            <span class="font-semibold text-sm text-black ">Tú</span>
+                                                        </div>
+                                                        <div class="text-right p-2 bg-primaryColor rounded-xl">
                                                             <span
-                                                                class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                        </p>
-                                                        <p class="h-full pr-1 text-sm text-black">
-                                                            <span class="font-semibold"> :Tú</span>
-                                                        </p>
+                                                                class="text-blacktext-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </div>
+                                                        <div class="text-xs text-black text-right">
+                                                            <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                        </div>
                                                     @else
                                                         @if (Auth::user()->type_user == 3)
-                                                            <p class="pr-1 text-sm text-black">
-                                                                <span class="font-semibold">Arten: </span>
+                                                            <div class="text-left">
+                                                                <span class="font-semibold text-sm text-black ">ARTEN</span>
+                                                            </div>
+                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                            </p>
+                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-xs text-black text-left">
+                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            </div>
                                                         @else
-                                                            <p class="pr-1 text-sm text-black">
+                                                            <div class="text-left">
+                                                                <span class="font-semibold text-sm text-black ">{{ $message->transmitter->name }}</span>
+                                                            </div>
+                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="font-semibold">{{ $message->transmitter->name }}:
-                                                                </span>
-                                                                <span
-                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                            </p>
+                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-xs text-black text-left">
+                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            </div>
                                                         @endif
                                                     @endif
                                                 </div>
                                             </div>
-                                            <br>
                                         @endforeach
                                     </div>
                                 @endif
@@ -1069,8 +1068,8 @@
                                     <span wire:click="changePoints"
                                         class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                             class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M7 10h14l-4 -4" />
@@ -1111,15 +1110,18 @@
                                 </h5>
                                 @if ($showUpdateActivity)
                                     @if (Auth::user()->type_user == 1 || Auth::id() == $activityEdit->user->id)
-                                        <input wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
-                                            name="points" id="points" class="inputs">
+                                        <input wire:model='points' required type="number"
+                                            placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
+                                            class="inputs">
                                     @else
-                                        <input disabled wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
-                                            name="points" id="points" class="inputs">
+                                        <input disabled wire:model='points' required type="number"
+                                            placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
+                                            class="inputs">
                                     @endif
                                 @else
-                                    <input wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
-                                            name="points" id="points" class="inputs">
+                                    <input wire:model='points' required type="number"
+                                        placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
+                                        class="inputs">
                                 @endif
                             </div>
                         </div>

@@ -70,11 +70,11 @@
                     <thead class="headTable border-0">
                         <tr class="text-left">
                             <th class="w-96 px-4 py-3">Actividad</th>
-                            <th class="px-4 py-3 lg:w-48">Delegado</th>
-                            <th class="w-48 px-4 py-3 text-center">Estado</th>
-                            <th class="w-44 px-4 py-3">Fecha de entrega</th>
-                            <th class="w-56 px-4 py-3">Creado</th>
-                            <th class="w-16 px-4 py-3">Acciones</th>
+                            <th class="lg:w-48 px-1 py-3">Delegado</th>
+                            <th class="w-48 px-2 py-3">Estado</th>
+                            <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                            <th class="w-56 px-1 py-3">Creado</th>
+                            <th class="w-16 px-1 py-3">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -127,7 +127,7 @@
                                                             d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
                                                     </svg>
                                                 </div>
-                                            {{-- envio varios mensajes de diversos usuarios --}}
+                                                {{-- envio varios mensajes de diversos usuarios --}}
                                             @elseif($activity->noView == true)
                                                 <div class="absolute right-0 top-0">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -186,7 +186,7 @@
                                 <td class="px-2 py-1">
                                     <div wire:change='updateState({{ $activity->id }}, $event.target.value)'
                                         name="state" id="state"
-                                        class="inpSelectTable inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif mx-auto w-28 text-sm font-semibold">
+                                        class="inpSelectTable flex w-24 @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif text-sm font-semibold">
                                         <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
                                     </div>
                                 </td>
@@ -235,11 +235,11 @@
                     <thead class="headTable border-0">
                         <tr class="text-left">
                             <th class="w-96 px-4 py-3">Reporte</th>
-                            <th class="px-4 py-3 lg:w-48">Delegado</th>
-                            <th class="w-48 px-4 py-3 text-center">Estado</th>
-                            <th class="w-44 px-4 py-3">Fecha de entrega</th>
-                            <th class="w-56 px-4 py-3">Creado</th>
-                            <th class="w-16 px-4 py-3">Acciones</th>
+                            <th class="lg:w-48 px-1 py-3">Delegado</th>
+                            <th class="w-48 px-2 py-3">Estado</th>
+                            <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                            <th class="w-56 px-1 py-3">Creado</th>
+                            <th class="w-16 px-1 py-3">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -346,7 +346,7 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div name="state" id="state"
-                                        class="inpSelectTable inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif mx-auto w-28 text-sm font-semibold">
+                                        class="inpSelectTable flex w-24 @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif text-sm font-semibold">
                                         <option selected value={{ $report->state }}>{{ $report->state }}</option>
                                     </div>
                                     @if ($report->count)
@@ -398,11 +398,11 @@
                     <thead class="headTable border-0">
                         <tr class="text-left">
                             <th class="w-96 px-4 py-3">Reporte</th>
-                            <th class="px-4 py-3 lg:w-48">Delegado</th>
-                            <th class="w-48 px-4 py-3 text-center">Estado</th>
-                            <th class="w-44 px-4 py-3">Fecha de entrega</th>
-                            <th class="w-56 px-4 py-3">Creado</th>
-                            <th class="w-16 px-4 py-3">Acciones</th>
+                            <th class="lg:w-48 px-1 py-3">Delegado</th>
+                            <th class="w-48 px-2 py-3">Estado</th>
+                            <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                            <th class="w-56 px-1 py-3">Creado</th>
+                            <th class="w-16 px-1 py-3">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -511,7 +511,7 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div name="state" id="state"
-                                        class="inpSelectTable inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif mx-auto w-28 text-sm font-semibold">
+                                        class="inpSelectTable flex w-24 @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif text-sm font-semibold">
                                         <option selected value={{ $report->state }}>{{ $report->state }}</option>
                                     </div>
                                     @if ($report->count)
@@ -564,7 +564,7 @@
         {{-- END TABLE --}}
     </div>
     {{-- MODAL SHOW ACTIVITY --}}
-    <div
+    <div id="modalShowActivity"
         class="@if ($modalShowActivity) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
         <div
             class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
@@ -616,35 +616,45 @@
                                         @foreach ($messagesActivity as $index => $message)
                                             <div
                                                 class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
-                                                <div class="inline-flex items-center">
+                                                <div class="mx-2 items-center">
                                                     @if ($message->user_id == Auth::user()->id)
-                                                        <p class="pr-1 text-right text-sm text-black">
+                                                        <div class="text-right">
+                                                            <span class="font-semibold text-sm text-black ">Tú</span>
+                                                        </div>
+                                                        <div class="text-right p-2 bg-primaryColor rounded-xl">
                                                             <span
-                                                                class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                        </p>
-                                                        <p class="h-full pr-1 text-sm text-black">
-                                                            <span class="font-semibold"> :Tú</span>
-                                                        </p>
+                                                                class="text-blacktext-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </div>
+                                                        <div class="text-xs text-black text-right">
+                                                            <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                        </div>
                                                     @else
                                                         @if (Auth::user()->type_user == 3)
-                                                            <p class="pr-1 text-sm text-black">
-                                                                <span class="font-semibold">Arten: </span>
+                                                            <div class="text-left">
+                                                                <span class="font-semibold text-sm text-black ">ARTEN</span>
+                                                            </div>
+                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                            </p>
+                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-xs text-black text-left">
+                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            </div>
                                                         @else
-                                                            <p class="pr-1 text-sm text-black">
+                                                            <div class="text-left">
+                                                                <span class="font-semibold text-sm text-black ">{{ $message->transmitter->name }}</span>
+                                                            </div>
+                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="font-semibold">{{ $message->transmitter->name }}:
-                                                                </span>
-                                                                <span
-                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                            </p>
+                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-xs text-black text-left">
+                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            </div>
                                                         @endif
                                                     @endif
                                                 </div>
                                             </div>
-                                            <br>
                                         @endforeach
                                     </div>
                                 @endif
@@ -732,7 +742,7 @@
     </div>
     {{-- END MODAL SHOW ACTIVITY --}}
     {{-- MODAL SHOW REPORT --}}
-    <div
+    <div id="modalShowReport"
         class="@if ($modalShowReport) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
         <div
             class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
@@ -783,35 +793,45 @@
                                         @foreach ($messagesReport as $index => $message)
                                             <div
                                                 class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
-                                                <div class="inline-flex items-center">
+                                                <div class="mx-2 items-center">
                                                     @if ($message->user_id == Auth::user()->id)
-                                                        <p class="pr-1 text-right text-sm text-black">
+                                                        <div class="text-right">
+                                                            <span class="font-semibold text-sm text-black ">Tú</span>
+                                                        </div>
+                                                        <div class="text-right p-2 bg-primaryColor rounded-xl">
                                                             <span
-                                                                class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                        </p>
-                                                        <p class="h-full pr-1 text-sm text-black">
-                                                            <span class="font-semibold"> :Tú</span>
-                                                        </p>
+                                                                class="text-blacktext-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </div>
+                                                        <div class="text-xs text-black text-right">
+                                                            <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                        </div>
                                                     @else
                                                         @if (Auth::user()->type_user == 3)
-                                                            <p class="pr-1 text-sm text-black">
-                                                                <span class="font-semibold">Arten: </span>
+                                                            <div class="text-left">
+                                                                <span class="font-semibold text-sm text-black ">ARTEN</span>
+                                                            </div>
+                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                            </p>
+                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-xs text-black text-left">
+                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            </div>
                                                         @else
-                                                            <p class="pr-1 text-sm text-black">
+                                                            <div class="text-left">
+                                                                <span class="font-semibold text-sm text-black ">{{ $message->transmitter->name }}</span>
+                                                            </div>
+                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="font-semibold">{{ $message->transmitter->name }}:
-                                                                </span>
-                                                                <span
-                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                            </p>
+                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-xs text-black text-left">
+                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            </div>
                                                         @endif
                                                     @endif
                                                 </div>
                                             </div>
-                                            <br>
                                         @endforeach
                                     </div>
                                 @endif
@@ -1092,6 +1112,59 @@
             // MODALS
             window.addEventListener('swal:modal', event => {
                 toastr[event.detail.type](event.detail.text, event.detail.title);
+            });
+            // Scroll de Comentrios de modal
+            document.addEventListener("DOMContentLoaded", function() {
+                var modalActivity = document.getElementById("modalShowActivity");
+                var modalReport = document.getElementById("modalShowReport");
+
+                if (modalActivity) {
+                    var observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.attributeName === "class") {
+                                var classList = mutation.target.classList;
+                                if (classList.contains("block") && !classList.contains("hidden")) {
+                                    var messageContainer = document.getElementById("messageContainerActivity");
+                                    if (messageContainer) {
+                                        messageContainer.scrollTop = messageContainer.scrollHeight;
+                                    } else {
+                                        console.error("Element with ID 'messageContainer' not found.");
+                                    }
+                                }
+                            }
+                        });
+                    });
+
+                    observer.observe(modalActivity, {
+                        attributes: true // Configura el observador para escuchar cambios en los atributos
+                    });
+                } else {
+                    console.error("Modal element with ID 'modalShow' not found.");
+                }
+
+                if (modalReport) {
+                    var observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.attributeName === "class") {
+                                var classList = mutation.target.classList;
+                                if (classList.contains("block") && !classList.contains("hidden")) {
+                                    var messageContainer = document.getElementById("messageContainerReport");
+                                    if (messageContainer) {
+                                        messageContainer.scrollTop = messageContainer.scrollHeight;
+                                    } else {
+                                        console.error("Element with ID 'messageContainer' not found.");
+                                    }
+                                }
+                            }
+                        });
+                    });
+
+                    observer.observe(modalReport, {
+                        attributes: true // Configura el observador para escuchar cambios en los atributos
+                    });
+                } else {
+                    console.error("Modal element with ID 'modalShow' not found.");
+                }
             });
         </script>
     @endpush

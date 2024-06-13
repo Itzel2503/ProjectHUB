@@ -20,7 +20,7 @@ class TableActivities extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['reloadPage' => 'reloadPage', 'sprintsUpdated', 'destroyActivity', 'destroySprint'];
+    public $listeners = ['reloadPage' => 'reloadPage', 'messageSent' => 'loadMessages', 'sprintsUpdated', 'destroyActivity', 'destroySprint'];
     // GENERALES
     public $project, $backlog, $allUsers, $firstSprint;
     public $sprints = [];
@@ -613,6 +613,78 @@ class TableActivities extends Component
         ]);
     }
 
+    public function updateChat($id)
+    {
+        $activity = Activity::find($id);
+        $user = Auth::user();
+
+        if ($activity) {
+            if ($this->message != '') {
+                $lastMessage = ChatReports::where('activity_id', $activity->id)
+                    ->where('user_id', '!=', Auth::id())
+                    ->where('look', false)
+                    ->latest()
+                    ->first();
+
+                $chat = new ChatReports();
+                if ($user->type_user == 1) {
+                    $chat->user_id = $user->id; // envia
+                    if ($activity->user->id == Auth::id()) {
+                        $chat->receiver_id = $activity->delegate->id; //recibe
+                    } else {
+                        if ($user->type_user == 1) {
+                            if ($activity->user->type_user == 3) {
+                                $chat->receiver_id = $activity->user->id; //recibe
+                            } else {
+                                $chat->receiver_id = $activity->delegate->id; //recibe
+                            }
+                        } else {
+                            $chat->receiver_id = $activity->user->id; //recibe
+                        }
+                    }
+                } elseif ($user->type_user == 2) {
+                    $chat->user_id = $user->id; // envia
+                    if ($activity->user->type_user == 3) {
+                        $chat->receiver_id = $activity->user->id; //recibe
+                    } else {
+                        $chat->receiver_id = $activity->delegate->id; //recibe
+                    }
+                } elseif ($user->type_user == 3) {
+                    $chat->user_id = $user->id; // envia
+                    $chat->receiver_id = $activity->delegate->id; //recibe
+                }
+
+                $chat->activity_id = $activity->id;
+                $chat->message = $this->message;
+                $chat->look = false;
+                $chat->save();
+
+                if ($lastMessage) {
+                    // administrador
+                    if ($lastMessage->transmitter->type_user == 3 && Auth::user()->type_user == 1) {
+                        $lastMessage->look = true;
+                        $lastMessage->save();
+                    }
+                }
+                // Emitir un evento después de enviar el mensaje
+                $this->emit('messageSent', $activity->id);
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Mensaje enviado',
+                ]);
+
+                $this->message = '';
+            } else {
+                $this->modalShowActivity = false;
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El mensaje está vacío.',
+                ]);
+            }
+        }
+    }
+
     public function updateActivity($id)
     {
         try {
@@ -874,8 +946,12 @@ class TableActivities extends Component
             $this->modalShowActivity = false;
         } else {
             $this->modalShowActivity = true;
+            $this->loadMessages($id);
         }
+    }
 
+    public function loadMessages($id)
+    {
         $this->activityShow = Activity::find($id);
         $this->messages = ChatReports::where('activity_id', $this->activityShow->id)->orderBy('created_at', 'asc')->get();
         // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
@@ -1070,77 +1146,6 @@ class TableActivities extends Component
             $this->priority2 = true;
         } elseif ($value === 'Bajo') {
             $this->priority3 = true;
-        }
-    }
-
-    public function updateChat($id)
-    {
-        $activity = Activity::find($id);
-        $user = Auth::user();
-
-        if ($activity) {
-            if ($this->message != '') {
-                $lastMessage = ChatReports::where('activity_id', $activity->id)
-                    ->where('user_id', '!=', Auth::id())
-                    ->where('look', false)
-                    ->latest()
-                    ->first();
-
-                $chat = new ChatReports();
-                if ($user->type_user == 1) {
-                    $chat->user_id = $user->id; // envia
-                    if ($activity->user->id == Auth::id()) {
-                        $chat->receiver_id = $activity->delegate->id; //recibe
-                    } else {
-                        if ($user->type_user == 1) {
-                            if ($activity->user->type_user == 3) {
-                                $chat->receiver_id = $activity->user->id; //recibe
-                            } else {
-                                $chat->receiver_id = $activity->delegate->id; //recibe
-                            }
-                        } else {
-                            $chat->receiver_id = $activity->user->id; //recibe
-                        }
-                    }
-                } elseif ($user->type_user == 2) {
-                    $chat->user_id = $user->id; // envia
-                    if ($activity->user->type_user == 3) {
-                        $chat->receiver_id = $activity->user->id; //recibe
-                    } else {
-                        $chat->receiver_id = $activity->delegate->id; //recibe
-                    }
-                } elseif ($user->type_user == 3) {
-                    $chat->user_id = $user->id; // envia
-                    $chat->receiver_id = $activity->delegate->id; //recibe
-                }
-
-                $chat->activity_id = $activity->id;
-                $chat->message = $this->message;
-                $chat->look = false;
-                $chat->save();
-
-                if ($lastMessage) {
-                    // administrador
-                    if ($lastMessage->transmitter->type_user == 3 && Auth::user()->type_user == 1) {
-                        $lastMessage->look = true;
-                        $lastMessage->save();
-                    }
-                }
-
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Mensaje enviado',
-                ]);
-
-                $this->message = '';
-                $this->modalShowActivity = false;
-            } else {
-                $this->modalShowActivity = false;
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'El mensaje está vacío.',
-                ]);
-            }
         }
     }
 

@@ -21,7 +21,7 @@ class TableReports extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['reloadPage' => 'reloadPage', 'delete'];
+    public $listeners = ['reloadPage' => 'reloadPage', 'messageSent' => 'loadMessages', 'delete'];
     // Generales
     public $allUsers;
     // modal
@@ -341,6 +341,8 @@ class TableReports extends Component
                         $lastMessage->save();
                     }
                 }
+                // Emitir un evento después de enviar el mensaje
+                $this->emit('messageSent', $report->id);
 
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'success',
@@ -348,9 +350,7 @@ class TableReports extends Component
                 ]);
 
                 $this->message = '';
-                $this->modalShow = false;
             } else {
-                $this->modalShow = false;
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
                     'title' => 'El mensaje está vacío.',
@@ -657,8 +657,12 @@ class TableReports extends Component
             $this->modalShow = false;
         } else {
             $this->modalShow = true;
+            $this->loadMessages($id);
         }
+    }
 
+    public function loadMessages($id)
+    {
         $this->reportShow = Report::find($id);
         $this->evidenceShow = Evidence::where('report_id', $this->reportShow->id)->first();
         $this->messages = ChatReports::where('report_id', $this->reportShow->id)->orderBy('created_at', 'asc')->get();

@@ -128,11 +128,11 @@
                 <thead class="headTable border-0">
                     <tr class="text-left">
                         <th class="w-96 px-4 py-3">Reporte</th>
-                        <th class="px-4 py-3 lg:w-48">Delegado</th>
-                        <th class="w-48 px-4 py-3 text-center">Estado</th>
-                        <th class="w-44 px-4 py-3">Fecha de entrega</th>
-                        <th class="w-56 px-4 py-3">Creado</th>
-                        <th class="w-16 px-4 py-3">Acciones</th>
+                        <th class="lg:w-48 px-1 py-3">Delegado</th>
+                        <th class="w-48 px-2 py-3">Estado</th>
+                        <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                        <th class="w-56 px-1 py-3">Creado</th>
+                        <th class="w-16 px-1 py-3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -239,14 +239,14 @@
                             <td class="px-2 py-1">
                                 @if (Auth::user()->type_user == 3)
                                     <p
-                                        class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif m-auto w-1/2 text-sm font-semibold">
+                                        class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-1/2 text-sm font-semibold">
                                         {{ $report->state }}
                                     </p>
                                 @else
                                     <select
                                         wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)'
                                         name="state" id="state"
-                                        class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-auto text-sm font-semibold">
+                                        class="inpSelectTable flex @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif text-sm font-semibold">
                                         <option selected value={{ $report->state }}>{{ $report->state }}</option>
                                         @foreach ($report->filteredActions as $action)
                                             <option value="{{ $action }}">{{ $action }}</option>
@@ -377,25 +377,13 @@
         <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
             <div class="@if ($evidenceShow) md:w-4/5 @else md:w-3/4 @endif mx-auto flex flex-col overflow-y-auto rounded-lg"
                 style="max-height: 90%;">
-                @if (!empty($reportShow->content))
+                @if ($reportShow)
                     <div
                         class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                         <h3
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
                             @php echo mb_substr( $reportShow->title, 0, 25) . " ..."; @endphp
                         </h3>
-                        <svg wire:click="modalShow" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
-                            xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
-                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M18 6l-12 12"></path>
-                            <path d="M6 6l12 12"></path>
-                        </svg>
-                    </div>
-                @else
-                    <div
-                        class="bg-main-fund flex flex-row justify-end rounded-tl-lg rounded-tr-lg px-6 py-4 text-white">
                         <svg wire:click="modalShow" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
                             xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -420,35 +408,45 @@
                                         @foreach ($messages as $index => $message)
                                             <div
                                                 class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
-                                                <div class="inline-flex items-center">
+                                                <div class="mx-2 items-center">
                                                     @if ($message->user_id == Auth::user()->id)
-                                                        <p class="pr-1 text-right text-sm text-black">
+                                                        <div class="text-right">
+                                                            <span class="font-semibold text-sm text-black ">Tú</span>
+                                                        </div>
+                                                        <div class="text-right p-2 bg-primaryColor rounded-xl">
                                                             <span
-                                                                class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                        </p>
-                                                        <p class="h-full pr-1 text-sm text-black">
-                                                            <span class="font-semibold"> :Tú</span>
-                                                        </p>
+                                                                class="text-blacktext-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                        </div>
+                                                        <div class="text-xs text-black text-right">
+                                                            <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                        </div>
                                                     @else
                                                         @if (Auth::user()->type_user == 3)
-                                                            <p class="pr-1 text-sm text-black">
-                                                                <span class="font-semibold">Arten: </span>
+                                                            <div class="text-left">
+                                                                <span class="font-semibold text-sm text-black ">ARTEN</span>
+                                                            </div>
+                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                            </p>
+                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-xs text-black text-left">
+                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            </div>
                                                         @else
-                                                            <p class="pr-1 text-sm text-black">
+                                                            <div class="text-left">
+                                                                <span class="font-semibold text-sm text-black ">{{ $message->transmitter->name }}</span>
+                                                            </div>
+                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="font-semibold">{{ $message->transmitter->name }}:
-                                                                </span>
-                                                                <span
-                                                                    class="text-sm font-extralight text-gray-600">{{ $message->message }}</span>
-                                                            </p>
+                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-xs text-black text-left">
+                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            </div>
                                                         @endif
                                                     @endif
                                                 </div>
                                             </div>
-                                            <br>
                                         @endforeach
                                     </div>
                                 @endif
@@ -661,7 +659,7 @@
             class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
         </div>
         <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
-            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-3/4" style="max-height: 90%;">
+            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg  @if (Auth::user()->type_user != 3) md:w-3/4 @else md:w-2/5 @endif" style="max-height: 90%;">
                 <div
                     class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                     <h3
@@ -678,13 +676,15 @@
                 </div>
                 <div class="modalBody">
                     {{-- REPORT --}}
-                    <div class="md-3/4 mb-5 flex w-full flex-col border-gray-400 px-5 md:mb-0 lg:w-1/2 lg:border-r-2">
-                        <div
-                            class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
-                            <h4
-                                class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
-                                Reporte</h4>
-                        </div>
+                    <div class="md-3/4 mb-5 flex w-full flex-col px-5 md:mb-0 @if (Auth::user()->type_user != 3) border-gray-400 lg:w-1/2 lg:border-r-2 @endif">
+                        @if (Auth::user()->type_user != 3)
+                            <div
+                                class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
+                                <h4
+                                    class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
+                                    Reporte</h4>
+                            </div>
+                        @endif
                         <div class="-mx-3 mb-6 flex flex-row">
                             <div class="mb-6 flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="tittle">
@@ -827,104 +827,106 @@
                             </div>
                         </div>
                     </div>
-                    {{-- POINTS --}}
-                    <div class="w-full px-5 lg:w-1/2">
-                        <div
-                            class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
-                            <h4
-                                class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
-                                Puntos de esfuerzo</h4>
-                        </div>
-                        @if ($showEdit)
-                            @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)
-                                <div class="mb-6 flex flex-row">
-                                    <span wire:click="changePoints"
-                                        class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M7 10h14l-4 -4" />
-                                            <path d="M17 14h-14l4 4" />
-                                        </svg>
-                                        @if ($changePoints)
-                                            Cuestionario
+                    @if (Auth::user()->type_user != 3)
+                        {{-- POINTS --}}
+                        <div class="w-full px-5 lg:w-1/2">
+                            <div
+                                class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
+                                <h4
+                                    class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
+                                    Puntos de esfuerzo</h4>
+                            </div>
+                            @if ($showEdit)
+                                @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)
+                                    <div class="mb-6 flex flex-row">
+                                        <span wire:click="changePoints"
+                                            class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M7 10h14l-4 -4" />
+                                                <path d="M17 14h-14l4 4" />
+                                            </svg>
+                                            @if ($changePoints)
+                                                Cuestionario
+                                            @else
+                                                Agregar puntos directos
+                                            @endif
+                                        </span>
+                                    </div>
+                                @endif
+                                <div class="@if ($changePoints) block @else hidden @endif -mx-3 mb-6">
+                                    <div class="mb-6 flex w-full flex-col px-3">
+                                        <h5 class="inline-flex font-semibold" for="name">
+                                            Puntos <p class="text-red-600">*</p>
+                                        </h5>
+                                        @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)
+                                            <input wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
+                                                name="points" id="points" class="inputs">
                                         @else
-                                            Agregar puntos directos
+                                            <input disabled wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
+                                                name="points" id="points" class="inputs">
                                         @endif
-                                    </span>
+                                    </div>
                                 </div>
                             @endif
-                            <div class="@if ($changePoints) block @else hidden @endif -mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        Puntos <p class="text-red-600">*</p>
-                                    </h5>
-                                    @if (Auth::user()->type_user == 1 || Auth::id() == $activityEdit->user->id)
-                                        <input wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
-                                            name="points" id="points" class="inputs">
-                                    @else
-                                        <input disabled wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
-                                            name="points" id="points" class="inputs">
-                                    @endif
+                            <div class="@if ($changePoints) hidden @else block @endif">
+                                <div class="-mx-3 mb-6">
+                                    <div class="mb-6 flex w-full flex-col px-3">
+                                        <h5 class="inline-flex font-semibold" for="name">
+                                            ¿Cuánto se conoce de la tarea?<p class="text-red-600">*</p>
+                                        </h5>
+                                        <select wire:model='point_know' required name="point_know" id="point_know"
+                                            class="inputs">
+                                            <option selected>Selecciona...</option>
+                                            <option value="1">Todo</option>
+                                            <option value="2">Casi todo</option>
+                                            <option value="3">Algunas cosas</option>
+                                            <option value="5">Poco</option>
+                                            <option value="8">Casi nada</option>
+                                            <option value="13">Nada</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
-                        <div class="@if ($changePoints) hidden @else block @endif">
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        ¿Cuánto se conoce de la tarea?<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select wire:model='point_know' required name="point_know" id="point_know"
-                                        class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        <option value="1">Todo</option>
-                                        <option value="2">Casi todo</option>
-                                        <option value="3">Algunas cosas</option>
-                                        <option value="5">Poco</option>
-                                        <option value="8">Casi nada</option>
-                                        <option value="13">Nada</option>
-                                    </select>
+                                <div class="-mx-3 mb-6">
+                                    <div class="mb-6 flex w-full flex-col px-3">
+                                        <h5 class="inline-flex font-semibold" for="name">
+                                            ¿De cuántos depende?<p class="text-red-600">*</p>
+                                        </h5>
+                                        <select wire:model='point_many' required name="point_many" id="point_many"
+                                            class="inputs">
+                                            <option selected>Selecciona...</option>
+                                            <option value="1">Solo uno</option>
+                                            <option value="2">Un par</option>
+                                            <option value="3">Pocos</option>
+                                            <option value="5">Varios</option>
+                                            <option value="8">Muchos</option>
+                                            <option value="13">No se sabe</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        ¿De cuántos depende?<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select wire:model='point_many' required name="point_many" id="point_many"
-                                        class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        <option value="1">Solo uno</option>
-                                        <option value="2">Un par</option>
-                                        <option value="3">Pocos</option>
-                                        <option value="5">Varios</option>
-                                        <option value="8">Muchos</option>
-                                        <option value="13">No se sabe</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select wire:model='point_effort' required name="point_effort" id="point_effort"
-                                        class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        <option value="1">Menos de 2 horas</option>
-                                        <option value="2">Medio dìa</option>
-                                        <option value="3">Hasta dos dìas</option>
-                                        <option value="5">Pocos dìas</option>
-                                        <option value="8">Alrededor de</option>
-                                        <option value="13">Mas de una</option>
-                                    </select>
+                                <div class="-mx-3 mb-6">
+                                    <div class="mb-6 flex w-full flex-col px-3">
+                                        <h5 class="inline-flex font-semibold" for="name">
+                                            ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
+                                        </h5>
+                                        <select wire:model='point_effort' required name="point_effort" id="point_effort"
+                                            class="inputs">
+                                            <option selected>Selecciona...</option>
+                                            <option value="1">Menos de 2 horas</option>
+                                            <option value="2">Medio dìa</option>
+                                            <option value="3">Hasta dos dìas</option>
+                                            <option value="5">Pocos dìas</option>
+                                            <option value="8">Alrededor de</option>
+                                            <option value="13">Mas de una</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
                 <div class="modalFooter">
                     @if ($modalEdit)
