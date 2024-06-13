@@ -185,7 +185,7 @@
                                             </button>
                                             <!-- Panel -->
                                             <div id="dropdown-panel-{{ $project->id }}" style="display: none;"
-                                                class="absolute right-10 top-3 z-10 mt-2 w-32 rounded-md bg-gray-200">
+                                                class="absolute right-10 mt-2 w-32 rounded-md bg-gray-200 @if ($user->type_user != 3) @if ($activeTab == 'Activo') top-3 @else {{ $loop->last ? '-top-16' : 'top-3' }} @endif @endif">
                                                 <!-- Botón Restaurar -->
                                                 <div wire:click="$emit('restartItem',{{ $project->id }})"
                                                     class="@if ($project->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
@@ -349,7 +349,7 @@
                                                     <!-- Panel -->
                                                     <div id="dropdown-panel-{{ $project->id }}"
                                                         style="display: none;"
-                                                        class="absolute right-10 top-3 z-10 mt-2 w-32 rounded-md bg-gray-200">
+                                                        class="absolute right-10 z-10 mt-2 w-32 rounded-md bg-gray-200 {{ $loop->last ? '-top-16' : 'top-3' }}">
                                                         <!-- Botón Restaurar -->
                                                         <div wire:click="$emit('restartItem',{{ $project->id }})"
                                                             class="@if ($project->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">

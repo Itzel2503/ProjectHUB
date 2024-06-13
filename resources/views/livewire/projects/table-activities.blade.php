@@ -457,7 +457,7 @@
                                         </button>
                                         <!-- Panel -->
                                         <div id="dropdown-panel-{{ $activity->id }}" style="display: none;"
-                                            class="absolute right-10 top-3 z-10 mt-2 w-32 rounded-md bg-gray-200">
+                                            class="absolute right-10 mt-2 w-32 rounded-md bg-gray-200 @if (Auth::user()->type_user == 1 || Auth::user()->id == $activity->user->id) {{ $loop->last ? '-top-16' : 'top-3' }} @else {{ $loop->last ? '-top-8' : 'top-3' }} @endif">
                                             <!-- Botón Editar -->
                                             <div wire:click="showEditActivity({{ $activity->id }})"
                                                 class="@if ($activity->state == 'Resuelto') hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">

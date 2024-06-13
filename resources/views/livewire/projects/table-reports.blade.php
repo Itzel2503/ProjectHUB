@@ -297,7 +297,7 @@
                                         </button>
                                         <!-- Panel -->
                                         <div id="dropdown-panel-{{ $report->id }}" style="display: none;"
-                                            class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200">
+                                            class="absolute right-10 mt-2 w-32 rounded-md bg-gray-200 @if (Auth::user()->type_user == 1 || Auth::user()->id == $report->user->id) {{ $loop->last ? '-top-16' : 'top-3' }} @else {{ $loop->last ? '-top-8' : 'top-3' }} @endif">
                                             <!-- Botón Editar -->
                                             <div wire:click="showEdit({{ $report->id }})"
                                                 class="@if ($report->state == 'Resuelto') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-black">

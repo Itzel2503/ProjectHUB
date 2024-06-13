@@ -79,7 +79,7 @@
                                     </button>
                                     <!-- Panel -->
                                     <div id="dropdown-panel-{{ $customer->id }}" style="display: none;"
-                                        class="absolute right-10 top-3 mt-2 w-32 rounded-md bg-gray-200 z-10">
+                                        class="absolute right-10 mt-2 w-32 rounded-md bg-gray-200 z-10 {{ $loop->last ? '-top-16' : 'top-3' }}">
                                         <!-- Botón Restaurar -->
                                         <div wire:click="$emit('restartItem',{{ $customer->id }})"
                                             class="@if($customer->deleted_at == null) hidden @endif flex content-center px-4 py-2 text-sm text-black cursor-pointer">
