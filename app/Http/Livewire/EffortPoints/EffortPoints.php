@@ -68,8 +68,8 @@ class EffortPoints extends Component
         
         foreach ($points as $key => $point) {
             // Puntos por terminar
-            $points_finish_report = $point->report_points_abierto + $point->report_points_proceso + $point->report_points_conflicto;
-            $points_finish_activity = $point->activity_points_abierto + $point->activity_points_proceso + $point->activity_points_conflicto;
+            $points_finish_report = $point->report_points_abierto + $point->report_points_proceso + $point->report_points_conflicto + $point->report_points_resuelto;
+            $points_finish_activity = $point->activity_points_abierto +  $point->activity_points_proceso + $point->activity_points_conflicto + $point->activity_points_resuelto;
             $points_finish = $points_finish_report + $points_finish_activity;
             // Puntos por asignar
             $point->points_assigned = $point->effort_points - $points_finish;
