@@ -18,7 +18,7 @@
                         </svg>
                         <input disabled type="text" id="daterange" class="h-0 w-0 border-none bg-gray-100 p-0"
                             wire:model="dateRange" onchange="Livewire.emit('setDate', this.value)">
-                        <span class="text-base" id="spanDate"></span>
+                        <span class="text-base" id="spanDate">{{ $startDate }} - {{ $endDate }}</span>
                     </div>
                 </label>
             </div>
