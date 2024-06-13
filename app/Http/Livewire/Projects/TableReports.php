@@ -28,6 +28,9 @@ class TableReports extends Component
     public $modalShow = false, $modalEdit = false, $modalEvidence = false;
     public $showReport = false, $showEdit = false, $showEvidence = false, $showChat = false;
     public $messages;
+    // modal activity points
+    public $changePoints = false;
+    public $points, $point_know, $point_many, $point_effort;
     // table, action's reports
     public $leader = false;
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
@@ -454,6 +457,35 @@ class TableReports extends Component
 
     public function update($id, $project_id)
     {
+        try {
+            // Verificar si al menos uno de los campos está presente
+            if ($this->changePoints == true) {
+                if (!$this->points) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Agrega puntos de esfuerzo.',
+                    ]);
+                    return;
+                }
+            } else {
+                if (!$this->point_know || !$this->point_many || !$this->point_effort) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Por favor, complete el cuestionario.',
+                    ]);
+                    return;
+                }
+            }
+            // Aquí puedes continuar con tu lógica después de la validación exitosa
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Faltan campos o campos incorrectos',
+            ]);
+            throw $e;
+        }
+
         $report = Report::find($id);
         $project = Project::find($project_id);
 
@@ -556,6 +588,24 @@ class TableReports extends Component
                 $report->priority = 'Medio';
             } elseif ($this->priority3) {
                 $report->priority = 'Bajo';
+            }
+
+            if ($this->changePoints == true) {
+                $validPoints = [1, 2, 3, 5, 8, 13];
+                $report->points = $this->points;
+    
+                if (!in_array($this->points, $validPoints)) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Puntuaje no válido.',
+                    ]);
+                    return; // O cualquier otra acción que desees realizar
+                } else {
+                    $report->points = $this->points ?? $report->points;
+                }
+            } else {
+                $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+                $report->points = $maxPoint ?? $report->points;
             }
 
             $report->save();
@@ -718,6 +768,9 @@ class TableReports extends Component
         } elseif ($this->reportEdit->priority == 'Bajo') {
             $this->priority3 = true;
         }
+
+        $this->points = $this->reportEdit->points;
+        $this->changePoints = true;
     }
 
     // MODAL
@@ -795,6 +848,21 @@ class TableReports extends Component
             $this->priority2 = true;
         } elseif ($value === 'Bajo') {
             $this->priority3 = true;
+        }
+    }
+
+    public function changePoints()
+    {
+        if ($this->changePoints == true) {
+            $this->changePoints = false;
+            if ($this->reportEdit == null) {
+                $this->points = '';
+            }
+        } else {
+            $this->changePoints = true;
+            $this->point_know = '';
+            $this->point_many = '';
+            $this->point_effort = '';
         }
     }
 

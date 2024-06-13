@@ -732,7 +732,6 @@ class TableActivities extends Component
             $activity->priority = 'Bajo';
         }
 
-        $activity->points = 0;
         $activity->expected_date = $this->expected_date ?? $activity->expected_date;
 
         if ($this->changePoints == true) {
