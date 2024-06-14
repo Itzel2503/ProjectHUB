@@ -32,12 +32,11 @@ class TableReports extends Component
     public $changePoints = false;
     public $points, $point_know, $point_many, $point_effort;
     // table, action's reports
-    public $leader = false;
+    public $leader = false, $filtered = false, $filter = false;
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
     public $perPage = '100';
-    public $selectedDelegate = '';
+    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '';
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
-    public $Filtered = false;
     // inputs
     public $tittle, $type, $file, $comment, $evidenceEdit, $expected_date, $priority1, $priority2, $priority3, $evidence, $message;
 
@@ -53,7 +52,6 @@ class TableReports extends Component
             $reports = Report::where('project_id', $this->project->id)
                 ->where(function ($query) {
                     $query->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('comment', 'like', '%' . $this->search . '%')
                         ->orWhere('state', 'like', '%' . $this->search . '%')
                         ->orWhereHas('delegate', function ($subQuery) {
                             $subQuery->where('name', 'like', '%' . $this->search . '%');
@@ -72,6 +70,9 @@ class TableReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
+                ->when($this->filter, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
                 ->orderBy('created_at', 'desc')
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
@@ -79,9 +80,8 @@ class TableReports extends Component
             $reports = Report::where('project_id', $this->project->id)
                 ->where(function ($query) {
                     $query->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('comment', 'like', '%' . $this->search . '%')
                         ->orWhere('state', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('delegate', function ($subQuery) {
+                        ->orWhereHas('user', function ($subQuery) {
                             $subQuery->where('name', 'like', '%' . $this->search . '%');
                         });
                     if (strtolower($this->search) === 'reincidencia') {
@@ -102,6 +102,9 @@ class TableReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
+                ->when($this->filter, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
                 ->orderBy('created_at', 'desc')
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
@@ -112,14 +115,16 @@ class TableReports extends Component
                 })
                 ->where(function ($query) {
                     $query->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('comment', 'like', '%' . $this->search . '%')
                         ->orWhere('state', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('delegate', function ($subQuery) {
+                        ->orWhereHas('user', function ($subQuery) {
                             $subQuery->where('name', 'like', '%' . $this->search . '%');
                         });
                 })
                 ->when($this->selectedStates, function ($query) {
                     $query->whereIn('state', $this->selectedStates);
+                })
+                ->when($this->filter, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
                 ->orderBy('created_at', 'desc')
                 ->with(['user', 'delegate'])
@@ -805,6 +810,22 @@ class TableReports extends Component
         } else {
             $this->modalEvidence = true;
         }
+    }
+    // FILTER
+    public function filterDown() 
+    {
+        $this->filter = true;
+        $this->filtered = false;
+        $this->filteredPriority = 'asc';
+        $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+    }
+
+    public function filterUp() 
+    {
+        $this->filter = true;
+        $this->filtered = true;
+        $this->filteredPriority = 'asc';
+        $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
     }
     // EXTRAS
     public function reportRepeat($project_id, $report_id)

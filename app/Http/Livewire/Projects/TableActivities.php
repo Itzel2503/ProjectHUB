@@ -49,17 +49,12 @@ class TableActivities extends Component
     // table, action's activities
     public $search;
     public $perPage = '';
-    public $priorityOrder = 'Bajo',
-        $datesOrder = 'created_at',
-        $ascOrDesc = 'desc';
-    public $selectedDelegate = '';
+    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '';
     public $usersFiltered = [],
         $allUsersFiltered = [],
         $selectedStates = [],
         $statesFiltered = [];
-    public $priorityFiltered = false,
-        $expectedFiltered = false,
-        $createdFiltered = false;
+    public $filtered = false, $filter = false;
 
     public function render()
     {
@@ -142,7 +137,6 @@ class TableActivities extends Component
                 ->where(function ($query) {
                     $query
                         ->where('tittle', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%')
                         ->orWhere('state', 'like', '%' . $this->search . '%')
                         ->orWhereHas('delegate', function ($subQuery) {
                             $subQuery->where('name', 'like', '%' . $this->search . '%');
@@ -157,6 +151,10 @@ class TableActivities extends Component
                 ->when(!empty($this->selectedStates), function ($query) {
                     $query->whereIn('state', $this->selectedStates);
                 })
+                ->when($this->filter, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->orderBy('created_at', 'desc')
                 ->with(['user', 'delegate'])
                 ->get();
         } else {
@@ -164,11 +162,7 @@ class TableActivities extends Component
                 ->where(function ($query) {
                     $query
                         ->where('tittle', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%')
                         ->orWhere('state', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('delegate', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->search . '%');
-                        })
                         ->orWhereHas('user', function ($subQuery) {
                             $subQuery->where('name', 'like', '%' . $this->search . '%');
                         });
@@ -182,6 +176,10 @@ class TableActivities extends Component
                 ->when(!empty($this->selectedStates), function ($query) {
                     $query->whereIn('state', $this->selectedStates);
                 })
+                ->when($this->filter, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->orderBy('created_at', 'desc')
                 ->with(['user', 'delegate'])
                 ->get();
         }
@@ -1168,6 +1166,22 @@ class TableActivities extends Component
     {
         $this->reset();
         $this->render();
+    }
+    // FILTER
+    public function filterDown() 
+    {
+        $this->filter = true;
+        $this->filtered = false;
+        $this->filteredPriority = 'asc';
+        $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+    }
+
+    public function filterUp() 
+    {
+        $this->filter = true;
+        $this->filtered = true;
+        $this->filteredPriority = 'asc';
+        $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
     }
     // PROTECTED
     protected function updateSprintData($id)

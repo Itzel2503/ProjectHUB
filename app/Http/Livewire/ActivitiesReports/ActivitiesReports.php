@@ -33,6 +33,8 @@ class ActivitiesReports extends Component
     public $activityShow, $messagesActivity, $messageActivity;
     // table, action's activities
     public $searchActivity;
+    public $filteredActivity = false, $filterActivity = false;
+    public $filteredPriorityActivity = '', $priorityCaseActivity = '';
     // ------------------------------ REPORT ------------------------------
     // modal show report
     public $modalShowReport = false;
@@ -46,6 +48,9 @@ class ActivitiesReports extends Component
     public $messagesReport, $messageReport;
     // table, action's reports
     public $searchReport;
+    public $filteredReport = false, $filterReport = false;
+    public $filteredDukke = false, $filterDukke = false;
+    public $filteredPriorityReport = '', $priorityCaseReport = '', $filteredPriorityDukke = '', $priorityCaseDukke = '';
 
     public function render()
     {
@@ -59,7 +64,6 @@ class ActivitiesReports extends Component
             $activities = Activity::where(function ($query) {
                 $query
                     ->where('tittle', 'like', '%' . $this->searchActivity . '%')
-                    ->orWhere('description', 'like', '%' . $this->searchActivity . '%')
                     ->orWhere('state', 'like', '%' . $this->searchActivity . '%')
                     ->orWhereHas('delegate', function ($subQuery) {
                         $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
@@ -71,6 +75,9 @@ class ActivitiesReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
+                ->when($this->filterActivity, function ($query) {
+                    $query->orderByRaw($this->priorityCaseActivity . ' ' . $this->filteredPriorityActivity);
+                })
                 ->orderBy('created_at', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
@@ -79,7 +86,6 @@ class ActivitiesReports extends Component
             $reports = Report::where(function ($query) {
                 $query
                     ->where('title', 'like', '%' . $this->searchReport . '%')
-                    ->orWhere('comment', 'like', '%' . $this->searchReport . '%')
                     ->orWhere('state', 'like', '%' . $this->searchReport . '%')
                     ->orWhereHas('delegate', function ($subQuery) {
                         $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
@@ -91,6 +97,9 @@ class ActivitiesReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
+                ->when($this->filterReport, function ($query) {
+                    $query->orderByRaw($this->priorityCaseReport . ' ' . $this->filteredPriorityReport);
+                })
                 ->orderBy('created_at', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
@@ -100,11 +109,7 @@ class ActivitiesReports extends Component
             $activities = Activity::where(function ($query) {
                 $query
                     ->where('tittle', 'like', '%' . $this->searchActivity . '%')
-                    ->orWhere('description', 'like', '%' . $this->searchActivity . '%')
                     ->orWhere('state', 'like', '%' . $this->searchActivity . '%')
-                    ->orWhereHas('delegate', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
-                    })
                     ->orWhereHas('user', function ($subQuery) {
                         $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
                     });
@@ -115,6 +120,9 @@ class ActivitiesReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
+                ->when($this->filterActivity, function ($query) {
+                    $query->orderByRaw($this->priorityCaseActivity . ' ' . $this->filteredPriorityActivity);
+                })
                 ->orderBy('created_at', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
@@ -123,9 +131,8 @@ class ActivitiesReports extends Component
             $reports = Report::where(function ($query) {
                     $query
                         ->where('title', 'like', '%' . $this->searchReport . '%')
-                        ->orWhere('comment', 'like', '%' . $this->searchReport . '%')
                         ->orWhere('state', 'like', '%' . $this->searchReport . '%')
-                        ->orWhereHas('delegate', function ($subQuery) {
+                        ->orWhereHas('user', function ($subQuery) {
                             $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
                         });
                     if (strtolower($this->searchReport) === 'reincidencia') {
@@ -148,6 +155,9 @@ class ActivitiesReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
+                ->when($this->filterReport, function ($query) {
+                    $query->orderByRaw($this->priorityCaseReport . ' ' . $this->filteredPriorityReport);
+                })
                 ->orderBy('created_at', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
@@ -161,9 +171,8 @@ class ActivitiesReports extends Component
                     ->where(function ($query) {
                         $query
                             ->where('title', 'like', '%' . $this->searchReport . '%')
-                            ->orWhere('comment', 'like', '%' . $this->searchReport . '%')
                             ->orWhere('state', 'like', '%' . $this->searchReport . '%')
-                            ->orWhereHas('delegate', function ($subQuery) {
+                            ->orWhereHas('user', function ($subQuery) {
                                 $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
                             });
                         if (strtolower($this->searchReport) === 'reincidencia') {
@@ -180,6 +189,9 @@ class ActivitiesReports extends Component
                     })
                     ->when($this->selectedDelegate, function ($query) {
                         $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when($this->filterDukke, function ($query) {
+                        $query->orderByRaw($this->priorityCaseDukke . ' ' . $this->filteredPriorityDukke);
                     })
                     ->orderBy('created_at', 'desc')
                     ->where('state', '!=', 'Resuelto')
@@ -596,6 +608,50 @@ class ActivitiesReports extends Component
             $this->modalShowReport = false;
         } else {
             $this->modalShowReport = true;
+        }
+    }
+    // FILTER
+    public function filterDown($type) 
+    {
+        if ($type == 'activity') {
+            $this->filterActivity = true;
+            $this->filteredActivity = false;
+            $this->filteredPriorityActivity = 'asc';
+            $this->priorityCaseActivity = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+        }
+        if ($type == 'report') {
+            $this->filterReport = true;
+            $this->filteredReport = false;
+            $this->filteredPriorityReport = 'asc';
+            $this->priorityCaseReport = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+        }
+        if ($type == 'reportDukke') {
+            $this->filterDukke = true;
+            $this->filteredDukke = false;
+            $this->filteredPriorityDukke = 'asc';
+            $this->priorityCaseDukke = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+        }
+    }
+
+    public function filterUp($type) 
+    {
+        if ($type == 'activity') {
+            $this->filterActivity = true;
+            $this->filteredActivity = true;
+            $this->filteredPriorityActivity = 'asc';
+            $this->priorityCaseActivity = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+        }
+        if ($type == 'report') {
+            $this->filterReport = true;
+            $this->filteredReport = true;
+            $this->filteredPriorityReport = 'asc';
+            $this->priorityCaseReport = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+        }
+        if ($type == 'reportDukke') {
+            $this->filterDukke = true;
+            $this->filteredDukke = true;
+            $this->filteredPriorityDukke = 'asc';
+            $this->priorityCaseDukke = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
         }
     }
     // EXTRAS

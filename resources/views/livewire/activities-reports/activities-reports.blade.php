@@ -69,7 +69,33 @@
                 <table class="whitespace-no-wrap table-hover table w-full">
                     <thead class="headTable border-0">
                         <tr class="text-left">
-                            <th class="w-96 px-4 py-3">Actividad</th>
+                            <th class="w-96 px-4 py-3">
+                                <div class="flex">
+                                    Actividad
+                                    {{-- down-up --}}
+                                    <svg wire:click='filterDown("activity")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up ml-2 cursor-pointer @if($filteredActivity) block @else hidden @endif">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M17 3l0 18" />
+                                        <path d="M10 18l-3 3l-3 -3" />
+                                        <path d="M7 21l0 -18" />
+                                        <path d="M20 6l-3 -3l-3 3" />
+                                    </svg>
+                                    {{-- up-down --}}
+                                    <svg wire:click='filterUp("activity")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down ml-2 cursor-pointer @if($filteredActivity) hidden @else block @endif">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 3l0 18" />
+                                        <path d="M10 6l-3 -3l-3 3" />
+                                        <path d="M20 18l-3 3l-3 -3" />
+                                        <path d="M17 21l0 -18" />
+                                    </svg>
+                                </div>
+                            </th>
                             <th class="lg:w-48 px-1 py-3">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
                             <th class="w-44 px-1 py-3">Fecha de entrega</th>
@@ -234,7 +260,33 @@
                 <table class="whitespace-no-wrap table-hover table w-full">
                     <thead class="headTable border-0">
                         <tr class="text-left">
-                            <th class="w-96 px-4 py-3">Reporte</th>
+                            <th class="w-96 px-4 py-3">
+                                <div class="flex">
+                                    Reporte
+                                    {{-- down-up --}}
+                                    <svg wire:click='filterDown("report")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up ml-2 cursor-pointer @if($filteredReport) block @else hidden @endif">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M17 3l0 18" />
+                                        <path d="M10 18l-3 3l-3 -3" />
+                                        <path d="M7 21l0 -18" />
+                                        <path d="M20 6l-3 -3l-3 3" />
+                                    </svg>
+                                    {{-- up-down --}}
+                                    <svg wire:click='filterUp("report")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down ml-2 cursor-pointer @if($filteredReport) hidden @else block @endif">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 3l0 18" />
+                                        <path d="M10 6l-3 -3l-3 3" />
+                                        <path d="M20 18l-3 3l-3 -3" />
+                                        <path d="M17 21l0 -18" />
+                                    </svg>
+                                </div>
+                            </th>
                             <th class="lg:w-48 px-1 py-3">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
                             <th class="w-44 px-1 py-3">Fecha de entrega</th>
@@ -397,7 +449,33 @@
                 <table class="whitespace-no-wrap table-hover table w-full">
                     <thead class="headTable border-0">
                         <tr class="text-left">
-                            <th class="w-96 px-4 py-3">Reporte</th>
+                            <th class="w-96 px-4 py-3">
+                                <div class="flex">
+                                    Reporte
+                                    {{-- down-up --}}
+                                    <svg wire:click='filterDown("reportDukke")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up ml-2 cursor-pointer @if($filteredDukke) block @else hidden @endif">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M17 3l0 18" />
+                                        <path d="M10 18l-3 3l-3 -3" />
+                                        <path d="M7 21l0 -18" />
+                                        <path d="M20 6l-3 -3l-3 3" />
+                                    </svg>
+                                    {{-- up-down --}}
+                                    <svg wire:click='filterUp("reportDukke")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down ml-2 cursor-pointer @if($filteredDukke) hidden @else block @endif">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 3l0 18" />
+                                        <path d="M10 6l-3 -3l-3 3" />
+                                        <path d="M20 18l-3 3l-3 -3" />
+                                        <path d="M17 21l0 -18" />
+                                    </svg>
+                                </div>
+                            </th>
                             <th class="lg:w-48 px-1 py-3">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
                             <th class="w-44 px-1 py-3">Fecha de entrega</th>
@@ -1096,7 +1174,7 @@
     </div>
     {{-- END MODAL EVIDENCE --}}
     {{-- LOADING PAGE --}}
-    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading wire:target="showActivity, setActiveTab">
+    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading wire:target="setActiveTab, filterDown, filterUp, showActivity, showReport, modalShowActivity, updateChatActivity, modalShowReport, updateChatReport, updateEvidence">
         <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
         <div class="loadingspinner relative top-1/3 z-20">
             <div id="square1"></div>

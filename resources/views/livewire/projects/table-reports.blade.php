@@ -127,8 +127,34 @@
             <table class="whitespace-no-wrap table-hover table w-full">
                 <thead class="headTable border-0">
                     <tr class="text-left">
-                        <th class="w-96 px-4 py-3">Reporte</th>
-                        <th class="lg:w-48 px-1 py-3">Delegado</th>
+                        <th class="w-96 px-4 py-3">
+                            <div class="flex">
+                                Reporte
+                                {{-- down-up --}}
+                                <svg wire:click='filterDown' xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filtered) block @else hidden @endif ml-2 cursor-pointer">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M17 3l0 18" />
+                                    <path d="M10 18l-3 3l-3 -3" />
+                                    <path d="M7 21l0 -18" />
+                                    <path d="M20 6l-3 -3l-3 3" />
+                                </svg>
+                                {{-- up-down --}}
+                                <svg wire:click='filterUp' xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filtered) hidden @else block @endif ml-2 cursor-pointer">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M7 3l0 18" />
+                                    <path d="M10 6l-3 -3l-3 3" />
+                                    <path d="M20 18l-3 3l-3 -3" />
+                                    <path d="M17 21l0 -18" />
+                                </svg>
+                            </div>
+                        </th>
+                        <th class="px-1 py-3 lg:w-48">Delegado</th>
                         <th class="w-48 px-2 py-3">Estado</th>
                         <th class="w-44 px-1 py-3">Fecha de entrega</th>
                         <th class="w-56 px-1 py-3">Creado</th>
@@ -166,7 +192,7 @@
                                                         d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
                                                 </svg>
                                             </div>
-                                        {{-- envio varios mensajes de diversos usuarios --}}
+                                            {{-- envio varios mensajes de diversos usuarios --}}
                                         @elseif($report->noView == true)
                                             <div class="absolute right-0 top-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -203,7 +229,8 @@
                                     @if (Auth::user()->type_user == 3)
                                         <p class="my-auto text-left text-xs font-semibold">Arten</p>
                                     @else
-                                        <p class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
+                                        <p
+                                            class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
                                             {{ $report->delegate->name }}</p>
                                         <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'
                                             name="delegate" id="delegate"
@@ -246,7 +273,7 @@
                                     <select
                                         wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)'
                                         name="state" id="state"
-                                        class="inpSelectTable flex @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif text-sm font-semibold">
+                                        class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold">
                                         <option selected value={{ $report->state }}>{{ $report->state }}</option>
                                         @foreach ($report->filteredActions as $action)
                                             <option value="{{ $action }}">{{ $action }}</option>
@@ -297,7 +324,7 @@
                                         </button>
                                         <!-- Panel -->
                                         <div id="dropdown-panel-{{ $report->id }}" style="display: none;"
-                                            class="absolute right-10 mt-2 w-32 rounded-md bg-gray-200 @if (Auth::user()->type_user == 1 || Auth::user()->id == $report->user->id) {{ $loop->last ? '-top-16' : 'top-3' }} @else {{ $loop->last ? '-top-8' : 'top-3' }} @endif">
+                                            class="@if (Auth::user()->type_user == 1 || Auth::user()->id == $report->user->id) {{ $loop->last ? '-top-16' : 'top-3' }} @else {{ $loop->last ? '-top-8' : 'top-3' }} @endif absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
                                             <!-- Botón Editar -->
                                             <div wire:click="showEdit({{ $report->id }})"
                                                 class="@if ($report->state == 'Resuelto') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-black">
@@ -411,37 +438,42 @@
                                                 <div class="mx-2 items-center">
                                                     @if ($message->user_id == Auth::user()->id)
                                                         <div class="text-right">
-                                                            <span class="font-semibold text-sm text-black ">Tú</span>
+                                                            <span class="text-sm font-semibold text-black">Tú</span>
                                                         </div>
-                                                        <div class="text-right p-2 bg-primaryColor rounded-xl">
+                                                        <div class="bg-primaryColor rounded-xl p-2 text-right">
                                                             <span
                                                                 class="text-blacktext-base font-extralight text-gray-600">{{ $message->message }}</span>
                                                         </div>
-                                                        <div class="text-xs text-black text-right">
-                                                            <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                        <div class="text-right text-xs text-black">
+                                                            <span
+                                                                class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                         </div>
                                                     @else
                                                         @if (Auth::user()->type_user == 3)
                                                             <div class="text-left">
-                                                                <span class="font-semibold text-sm text-black ">ARTEN</span>
-                                                            </div>
-                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                                    class="text-sm font-semibold text-black">ARTEN</span>
                                                             </div>
-                                                            <div class="text-xs text-black text-left">
-                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            <div class="rounded-xl bg-gray-200 p-2">
+                                                                <span
+                                                                    class="text-base font-extralight text-black text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-left text-xs text-black">
+                                                                <span
+                                                                    class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                             </div>
                                                         @else
                                                             <div class="text-left">
-                                                                <span class="font-semibold text-sm text-black ">{{ $message->transmitter->name }}</span>
-                                                            </div>
-                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                                    class="text-sm font-semibold text-black">{{ $message->transmitter->name }}</span>
                                                             </div>
-                                                            <div class="text-xs text-black text-left">
-                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            <div class="rounded-xl bg-gray-200 p-2">
+                                                                <span
+                                                                    class="text-base font-extralight text-black text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-left text-xs text-black">
+                                                                <span
+                                                                    class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                             </div>
                                                         @endif
                                                     @endif
@@ -453,14 +485,10 @@
                             </div>
                             <div class="my-6 flex w-auto flex-row">
                                 <input wire:model.defer='message' type="text" name="message" id="message"
-                                    class="inputs"
-                                    style="border-radius: 0.5rem 0px 0px 0.5rem !important"
-                                    @if (Auth::user()->type_user != 3)
-                                        placeholder="Mensaje"
+                                    class="inputs" style="border-radius: 0.5rem 0px 0px 0.5rem !important"
+                                    @if (Auth::user()->type_user != 3) placeholder="Mensaje"
                                     @else
-                                        placeholder="Mensaje para Arten"
-                                    @endif
-                                    >
+                                        placeholder="Mensaje para Arten" @endif>
                                 <button class="btnSave" style="border-radius: 0rem 0.5rem 0.5rem 0rem !important"
                                     wire:click="updateChat({{ $reportShow->id }})">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send"
@@ -659,7 +687,8 @@
             class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
         </div>
         <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
-            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg  @if (Auth::user()->type_user != 3) md:w-3/4 @else md:w-2/5 @endif" style="max-height: 90%;">
+            <div class="@if (Auth::user()->type_user != 3) md:w-3/4 @else md:w-2/5 @endif mx-auto flex flex-col overflow-y-auto rounded-lg"
+                style="max-height: 90%;">
                 <div
                     class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                     <h3
@@ -676,7 +705,8 @@
                 </div>
                 <div class="modalBody">
                     {{-- REPORT --}}
-                    <div class="md-3/4 mb-5 flex w-full flex-col px-5 md:mb-0 @if (Auth::user()->type_user != 3) border-gray-400 lg:w-1/2 lg:border-r-2 @endif">
+                    <div
+                        class="md-3/4 @if (Auth::user()->type_user != 3) border-gray-400 lg:w-1/2 lg:border-r-2 @endif mb-5 flex w-full flex-col px-5 md:mb-0">
                         @if (Auth::user()->type_user != 3)
                             <div
                                 class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
@@ -842,8 +872,8 @@
                                         <span wire:click="changePoints"
                                             class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                 class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                 <path d="M7 10h14l-4 -4" />
@@ -863,11 +893,13 @@
                                             Puntos <p class="text-red-600">*</p>
                                         </h5>
                                         @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)
-                                            <input wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
-                                                name="points" id="points" class="inputs">
+                                            <input wire:model='points' required type="number"
+                                                placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
+                                                class="inputs">
                                         @else
-                                            <input disabled wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
-                                                name="points" id="points" class="inputs">
+                                            <input disabled wire:model='points' required type="number"
+                                                placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
+                                                class="inputs">
                                         @endif
                                     </div>
                                 </div>
@@ -912,8 +944,8 @@
                                         <h5 class="inline-flex font-semibold" for="name">
                                             ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
                                         </h5>
-                                        <select wire:model='point_effort' required name="point_effort" id="point_effort"
-                                            class="inputs">
+                                        <select wire:model='point_effort' required name="point_effort"
+                                            id="point_effort" class="inputs">
                                             <option selected>Selecciona...</option>
                                             <option value="1">Menos de 2 horas</option>
                                             <option value="2">Medio dìa</option>
@@ -1020,7 +1052,7 @@
     {{-- END MODAL EVIDENCE --}}
     {{-- LOADING PAGE --}}
     <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-        wire:target="orderByLow, orderByHigh, showReport, showEdit, reportRepeat, modalShow, updateChat, modalEdit, update, updateEvidence">
+        wire:target="create, filterDown, filterUp, showReport, showEdit, reportRepeat, modalShow, updateChat, modalEdit, changePoints, update, updateEvidence">
         <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40">
         </div>
         <div class="loadingspinner relative top-1/3 z-20">
@@ -1036,7 +1068,7 @@
         <script>
             // Scroll de Comentrios de modal
             document.addEventListener("DOMContentLoaded", function() {
-                var modal = document.getElementById("modalShow"); 
+                var modal = document.getElementById("modalShow");
 
                 if (modal) {
                     var observer = new MutationObserver(function(mutations) {
