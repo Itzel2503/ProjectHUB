@@ -136,14 +136,7 @@ class TableActivities extends Component
             $activities = Activity::where('sprint_id', $this->selectSprint)
                 ->where(function ($query) {
                     $query
-                        ->where('tittle', 'like', '%' . $this->search . '%')
-                        ->orWhere('state', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('delegate', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->search . '%');
-                        })
-                        ->orWhereHas('user', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->search . '%');
-                        });
+                        ->where('tittle', 'like', '%' . $this->search . '%');
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
@@ -161,11 +154,7 @@ class TableActivities extends Component
             $activities = Activity::where('sprint_id', $this->selectSprint)
                 ->where(function ($query) {
                     $query
-                        ->where('tittle', 'like', '%' . $this->search . '%')
-                        ->orWhere('state', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('user', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->search . '%');
-                        });
+                        ->where('tittle', 'like', '%' . $this->search . '%');
                 })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id);

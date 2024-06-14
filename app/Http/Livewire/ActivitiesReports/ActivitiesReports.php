@@ -48,6 +48,7 @@ class ActivitiesReports extends Component
     public $messagesReport, $messageReport;
     // table, action's reports
     public $searchReport;
+    public $searchDukke;
     public $filteredReport = false, $filterReport = false;
     public $filteredDukke = false, $filterDukke = false;
     public $filteredPriorityReport = '', $priorityCaseReport = '', $filteredPriorityDukke = '', $priorityCaseDukke = '';
@@ -63,14 +64,7 @@ class ActivitiesReports extends Component
         if (Auth::user()->type_user == 1) {
             $activities = Activity::where(function ($query) {
                 $query
-                    ->where('tittle', 'like', '%' . $this->searchActivity . '%')
-                    ->orWhere('state', 'like', '%' . $this->searchActivity . '%')
-                    ->orWhereHas('delegate', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
-                    })
-                    ->orWhereHas('user', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
-                    });
+                    ->where('tittle', 'like', '%' . $this->searchActivity . '%');
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
@@ -85,14 +79,10 @@ class ActivitiesReports extends Component
 
             $reports = Report::where(function ($query) {
                 $query
-                    ->where('title', 'like', '%' . $this->searchReport . '%')
-                    ->orWhere('state', 'like', '%' . $this->searchReport . '%')
-                    ->orWhereHas('delegate', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
-                    })
-                    ->orWhereHas('user', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
-                    });
+                    ->where('title', 'like', '%' . $this->searchReport . '%');
+                    if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
+                        $query->orWhereNotNull('count');
+                    }
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
@@ -108,11 +98,7 @@ class ActivitiesReports extends Component
         } else {
             $activities = Activity::where(function ($query) {
                 $query
-                    ->where('tittle', 'like', '%' . $this->searchActivity . '%')
-                    ->orWhere('state', 'like', '%' . $this->searchActivity . '%')
-                    ->orWhereHas('user', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->searchActivity . '%');
-                    });
+                    ->where('tittle', 'like', '%' . $this->searchActivity . '%');
                 })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id);
@@ -130,12 +116,8 @@ class ActivitiesReports extends Component
 
             $reports = Report::where(function ($query) {
                     $query
-                        ->where('title', 'like', '%' . $this->searchReport . '%')
-                        ->orWhere('state', 'like', '%' . $this->searchReport . '%')
-                        ->orWhereHas('user', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
-                        });
-                    if (strtolower($this->searchReport) === 'reincidencia') {
+                        ->where('title', 'like', '%' . $this->searchReport . '%');
+                    if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
                         $query->orWhereNotNull('count');
                     }
                 })
@@ -170,12 +152,8 @@ class ActivitiesReports extends Component
                     })
                     ->where(function ($query) {
                         $query
-                            ->where('title', 'like', '%' . $this->searchReport . '%')
-                            ->orWhere('state', 'like', '%' . $this->searchReport . '%')
-                            ->orWhereHas('user', function ($subQuery) {
-                                $subQuery->where('name', 'like', '%' . $this->searchReport . '%');
-                            });
-                        if (strtolower($this->searchReport) === 'reincidencia') {
+                            ->where('title', 'like', '%' . $this->searchDukke . '%');
+                        if (strtolower($this->searchDukke) === 'reincidencia' || strtolower($this->searchDukke) === 'Reincidencia') {
                             $query->orWhereNotNull('count');
                         }
                     })
@@ -801,6 +779,9 @@ class ActivitiesReports extends Component
 
     public function setActiveTab($tab)
     {
+        $this->searchActivity = '';
+        $this->searchReport = '';
+        $this->searchDukke = '';
         $this->activeTab = $tab;
     }
 }

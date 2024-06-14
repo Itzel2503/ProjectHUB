@@ -20,7 +20,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <input wire:model="search" type="text" placeholder="Buscar" class="inputs"
+                        <input wire:model="search" type="text" placeholder="Buscar reporte" class="inputs"
                             style="padding-left: 3em;">
                     </div>
                 </div>

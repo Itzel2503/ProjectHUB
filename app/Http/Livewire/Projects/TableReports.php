@@ -51,14 +51,7 @@ class TableReports extends Component
         if (Auth::user()->type_user == 1) {
             $reports = Report::where('project_id', $this->project->id)
                 ->where(function ($query) {
-                    $query->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('state', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('delegate', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->search . '%');
-                        })
-                        ->orWhereHas('user', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->search . '%');
-                        });
+                    $query->where('title', 'like', '%' . $this->search . '%');
                     // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
                     if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
                         $query->orWhereNotNull('count');
@@ -79,12 +72,8 @@ class TableReports extends Component
         } elseif (Auth::user()->type_user == 2) {
             $reports = Report::where('project_id', $this->project->id)
                 ->where(function ($query) {
-                    $query->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('state', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('user', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->search . '%');
-                        });
-                    if (strtolower($this->search) === 'reincidencia') {
+                    $query->where('title', 'like', '%' . $this->search . '%');
+                    if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
                         $query->orWhereNotNull('count');
                     }
                 })
@@ -114,11 +103,10 @@ class TableReports extends Component
                     $query->where('type_user', 3);
                 })
                 ->where(function ($query) {
-                    $query->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('state', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('user', function ($subQuery) {
-                            $subQuery->where('name', 'like', '%' . $this->search . '%');
-                        });
+                    $query->where('title', 'like', '%' . $this->search . '%');
+                    if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
+                        $query->orWhereNotNull('count');
+                    }
                 })
                 ->when($this->selectedStates, function ($query) {
                     $query->whereIn('state', $this->selectedStates);

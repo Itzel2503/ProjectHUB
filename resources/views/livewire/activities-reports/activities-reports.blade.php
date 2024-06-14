@@ -48,13 +48,13 @@
                                 </span>
                             </div>
                             @if ($activeTab === 'actividades')
-                                <input wire:model="searchActivity" type="text" placeholder="Buscar" class="inputs"
+                                <input wire:model="searchActivity" type="text" placeholder="Buscar actividad" class="inputs"
                                     style="padding-left: 3em;">
                             @elseif ($activeTab === 'reportes')
-                                <input wire:model="searchReport" type="text" placeholder="Buscar" class="inputs"
+                                <input wire:model="searchReport" type="text" placeholder="Buscar reporte" class="inputs"
                                     style="padding-left: 3em;">
                             @elseif ($activeTab === 'dukke')
-                                <input wire:model="searchDukke" type="text" placeholder="Buscar" class="inputs"
+                                <input wire:model="searchDukke" type="text" placeholder="Buscar reporte" class="inputs"
                                     style="padding-left: 3em;">
                             @endif
                         </div>
