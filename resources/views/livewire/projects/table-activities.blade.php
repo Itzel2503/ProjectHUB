@@ -441,10 +441,8 @@
                             <td class="px-2 py-1">
                                 <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
                                     name="state" id="state"
-                                    class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold">
-                                    @if ($firstSprint->state == 'Pendiente' && Auth::user()->type_user != 1)
-                                        disabled
-                                    @endif>
+                                    class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
+                                    @if ($firstSprint->state == 'Pendiente' && Auth::user()->type_user != 1)  disabled @endif>
                                     <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
                                     @foreach ($activity->filteredActions as $action)
                                         <option value="{{ $action }}">{{ $action }}</option>
