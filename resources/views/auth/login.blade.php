@@ -33,18 +33,12 @@
             height: 45%;
         }
     }
-
-    /* sm: '640px',
-      md: '768px',
-      lg: '1024px',
-      xl: '1280px',
-      '2xl': '1536px', */
 </style>
 <div class="bg-no-repeat bg-cover py-0 m-auto h-screen w-full absolute opacity-80 ">
     <img class="mx-auto bg-cover h-screen w-full" src="{{asset('images/coma_bg_v1.jpg')}}">
 </div>
 <div class="relative h-screen flex flex-col justify-center items-start lg:ml-40 mx-5 sm:mx-10 py-5 sm:py-12">
-    <div class="relative w-full h-full">
+    <div class="relative w-full h-full flex items-center">
         <div class="relative w-full sm:w-1/2 md:w-2/5 lg:w-1/3  xl:w-1/4 min-height px-5 sm:px-14 py-10 sm:pt-14  bg-white shadow-md" style="border-radius: 150px; border-bottom-right-radius: 20px;">
             <div>
                 <img class="mx-auto" src="{{asset('logos/coma-logo-color_v1.png')}}">
