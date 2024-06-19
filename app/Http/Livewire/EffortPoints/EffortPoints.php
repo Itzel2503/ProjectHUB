@@ -35,7 +35,6 @@ class EffortPoints extends Component
                     ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
-
         // Subconsulta de Activities por mes incluyendo puntos resueltos y los demás estados
         $activitiesMonthly = Activity::select(
             'delegate_id',
@@ -47,7 +46,6 @@ class EffortPoints extends Component
                     ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
-
         // Subconsulta de Reports por semana
         $reportsWeekly = Report::select(
             'delegate_id',

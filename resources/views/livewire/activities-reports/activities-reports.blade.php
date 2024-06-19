@@ -1,5 +1,6 @@
 <div>
     <div class="px-4 py-4 sm:rounded-lg">
+        <div id="chart" class="my-5"></div>
         {{-- PESTAÑAS --}}
         <nav class="-mb-px flex">
             <button wire:click="setActiveTab('actividades')"
@@ -1265,6 +1266,104 @@
                 } else {
                     console.error("Modal element with ID 'modalShow' not found.");
                 }
+            });
+            // GRAFICA
+            document.addEventListener('livewire:load', function() {
+                var chart;
+                function renderChart(series, categories, totalEffortPoints) {
+                    if (chart) {
+                        chart.destroy();
+                    }
+
+                    var options = {
+                        series: series,
+                        chart: {
+                            type: 'bar',
+                            height: '110px',
+                            stacked: true,
+                        },
+                        colors: ['rgb(77, 124, 15)', 'rgb(250, 204, 21)', 'rgb(220, 38, 38)', 'rgb(59, 130, 246)',
+                            'rgb(243, 244, 246)'
+                        ],
+                        plotOptions: {
+                            bar: {
+                                horizontal: true,
+                                dataLabels: {
+                                    position: 'top',
+                                    total: {
+                                        enabled: true,
+                                        formatter: function(val, opt) {
+                                            return totalEffortPoints[opt.dataPointIndex];
+                                        },
+                                        offsetX: 0,
+                                        style: {
+                                            fontSize: '13px',
+                                            fontWeight: 900,
+                                            color: function({
+                                                seriesIndex
+                                            }) {
+                                                return seriesIndex === 4 ? '#000' : '#fff';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            style: {
+                                colors: ['#fff', '#fff', '#fff', '#fff', '#000']
+                            }
+                        },
+                        stroke: {
+                            width: 1,
+                            colors: ['#fff']
+                        },
+                        xaxis: {
+                            categories: categories,
+                            labels: {
+                                formatter: function(val) {
+                                    return val;
+                                }
+                            }
+                        },
+                        yaxis: {
+                            title: {
+                                text: undefined
+                            }
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function(val) {
+                                    return val;
+                                }
+                            }
+                        },
+                        fill: {
+                            opacity: 1
+                        },
+                        legend: {
+                            position: 'top',
+                            horizontalAlign: 'left',
+                            offsetX: 40
+                        }
+                    };
+
+                    chart = new ApexCharts(document.querySelector("#chart"), options);
+                    chart.render();
+                }
+
+                Livewire.on('updateChart', function() {
+                    var series = @json($series);
+                    var categories = @json($categories);
+                    var totalEffortPoints = @json($totalEffortPoints);
+                    renderChart(series, categories, totalEffortPoints);
+                });
+
+                var initialSeries = @json($series);
+                var initialCategories = @json($categories);
+                var initialTotalEffortPoints = @json($totalEffortPoints);
+                renderChart(initialSeries, initialCategories, initialTotalEffortPoints);
             });
         </script>
     @endpush

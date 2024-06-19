@@ -23,8 +23,9 @@
         </div>
         <livewire:activities-reports.activities-reports>
 
-            @livewireScripts
-            @stack('js')
-            <script src="{{ asset('vendor/livewire-alert/livewire-alert.js') }}"></script>
+        @livewireScripts
+        @stack('js')
+        <script src="{{ asset('vendor/livewire-alert/livewire-alert.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     </div>
 @endsection
