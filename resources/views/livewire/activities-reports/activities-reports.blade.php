@@ -649,13 +649,24 @@
         </div>
         <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
             <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-3/4" style="max-height: 90%;">
-                @if (!empty($activityShow->image))
+                @if ($showActivity)
                     <div
                         class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                         <h3
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                            @if ($activityShow->sprint && $activityShow->sprint->backlog && $activityShow->sprint->backlog->project)
+                                <div class="flex flex-row">
+                                    <p class="my-auto text-left text-xs font-semibold text-gray-400">
+                                        {{ $activityShow->sprint->backlog->project->name }}
+                                    </p>
+                                </div>
+                            @else
+                                <p class="text-justify text-xs font-semibold">
+                                    Proyecto no disponible
+                                </p>
+                            @endif
                             @php
-                                echo mb_substr($activityShow->title, 0, 25) . ' ...';
+                                echo mb_substr($activityShow->tittle, 0, 25) . ' ...';
                             @endphp
                         </h3>
                         <svg wire:click="modalShowActivity()" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
@@ -828,11 +839,22 @@
         <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
             <div class="@if ($evidenceShow) md:w-4/5 @else md:w-3/4 @endif mx-auto flex flex-col overflow-y-auto rounded-lg"
                 style="max-height: 90%;">
-                @if (!empty($reportShow->content))
+                @if ($showReport)
                     <div
                         class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                         <h3
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                            @if ($reportShow->project)
+                                <div class="flex flex-row">
+                                    <p class="my-auto text-left text-xs font-semibold text-gray-400">
+                                        {{ $reportShow->project->name }}
+                                    </p>
+                                </div>
+                            @else
+                                <p class="text-justify text-xs font-semibold">
+                                    Proyecto no disponible
+                                </p>
+                            @endif
                             @php echo mb_substr( $reportShow->title, 0, 25) . " ..."; @endphp
                         </h3>
                         <svg wire:click="modalShowReport" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"

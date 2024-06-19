@@ -782,6 +782,8 @@ class ActivitiesReports extends Component
         $this->searchActivity = '';
         $this->searchReport = '';
         $this->searchDukke = '';
+        $this->modalShowActivity = false;
+        $this->modalShowReport = false;
         $this->activeTab = $tab;
     }
 }

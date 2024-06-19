@@ -24,28 +24,30 @@ class EffortPoints extends Component
 
         $this->starMonth = Carbon::now()->startOfMonth()->format('Y-m-d'); // Primer día del mes actual
         $this->endMonth = Carbon::now()->endOfMonth()->format('Y-m-d'); // Último día del mes actual
-        // Subconsulta de Reports por mes
+        // Subconsulta de Reports por mes incluyendo puntos resueltos y los demás estados
         $reportsMonthly = Report::select(
             'delegate_id',
-            DB::raw("SUM(points) as total_points_reports")
+            DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_reports"),
+            DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_reports")
         )
-            ->whereIn('state', ['Abierto', 'Proceso', 'Conflicto'])
             ->where(function ($query) {
                 $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
                     ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
-        // Subconsulta de Activities por mes
+
+        // Subconsulta de Activities por mes incluyendo puntos resueltos y los demás estados
         $activitiesMonthly = Activity::select(
             'delegate_id',
-            DB::raw("SUM(points) as total_points_activities")
+            DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_activities"),
+            DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_activities")
         )
-            ->whereIn('state', ['Abierto', 'Proceso', 'Conflicto'])
             ->where(function ($query) {
                 $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
                     ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
+
         // Subconsulta de Reports por semana
         $reportsWeekly = Report::select(
             'delegate_id',
@@ -85,8 +87,11 @@ class EffortPoints extends Component
             'activities_weekly.activity_proceso',
             'activities_weekly.activity_conflicto',
             'activities_weekly.activity_resuelto',
+
             'reports_monthly.total_points_reports',
-            'activities_monthly.total_points_activities'
+            'reports_monthly.total_resuelto_reports',
+            'activities_monthly.total_points_activities',
+            'activities_monthly.total_resuelto_activities'
         )
             ->leftJoinSub($reportsWeekly, 'reports_weekly', 'users.id', '=', 'reports_weekly.delegate_id')
             ->leftJoinSub($activitiesWeekly, 'activities_weekly', 'users.id', '=', 'activities_weekly.delegate_id')
@@ -101,11 +106,11 @@ class EffortPoints extends Component
             $points_finish = $point->total_points_reports + $point->total_points_activities;
             // Puntos por asignar
             $point->points_assigned = $point->effort_points - $points_finish;
-            // Avance porcentaje
-            $percentage_progress = $point->report_resuelto +  $point->activity_resuelto;
+            // Avance porcentaje usando la suma de los puntos resueltos del mes
+            $total_resuelto_monthly = $point->total_resuelto_reports + $point->total_resuelto_activities;
             // Evitar división por cero
             if ($point->effort_points != 0) {
-                $advance = $percentage_progress / $point->effort_points;
+                $advance = $total_resuelto_monthly / $point->effort_points;
             } else {
                 $advance = 0; // O cualquier valor que tenga sentido en tu contexto
             }
