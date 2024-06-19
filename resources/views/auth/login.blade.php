@@ -9,8 +9,8 @@
     <img class="mx-auto bg-cover h-screen w-full" src="{{asset('images/coma_bg_v1.jpg')}}">
 </div>
 <div class="relative h-screen flex flex-col justify-center items-start lg:ml-40 mx-10 py-10">
-    <div class="relative w-full lg:w-2/5 h-full lg:h-3/4">
-        <div class="relative w-full h-5/6 px-14 lg:pt-14 py-8 bg-white shadow-md" style="border-radius: 150px; border-bottom-right-radius: 20px;">
+    <div class="relative w-full lg:w-2/5 h-full">
+        <div class="relative w-full h-5/6 px-14 md:pt-14 py-8 bg-white shadow-md" style="border-radius: 150px; border-bottom-right-radius: 20px;">
             <div class="mb-10">
                 <img class="mx-auto" src="{{asset('logos/coma-logo-color_v1.png')}}">
             </div>
