@@ -1279,7 +1279,7 @@
                         series: series,
                         chart: {
                             type: 'bar',
-                            height: '110px',
+                            height: '135px',
                             stacked: true,
                         },
                         colors: ['rgb(77, 124, 15)', 'rgb(250, 204, 21)', 'rgb(220, 38, 38)', 'rgb(59, 130, 246)',
@@ -1318,6 +1318,9 @@
                         stroke: {
                             width: 1,
                             colors: ['#fff']
+                        },
+                        title: {
+                            text: 'Puntos de esfuerzo por mes'
                         },
                         xaxis: {
                             categories: categories,

@@ -15,15 +15,19 @@ class EffortPoints extends Component
     // Fecha
     public $dateRange;
     public $startDate, $endDate, $starMonth, $endMonth;
-    public $qty = 7;
+    public $qty = 0;
 
     public function render()
     {
+        // FECHAS
         $this->startDate = Carbon::now()->startOfWeek()->format('Y-m-d'); // Lunes de esta semana
         $this->endDate = Carbon::now()->endOfWeek()->format('Y-m-d'); // Domingo de esta semana
-
         $this->starMonth = Carbon::now()->startOfMonth()->format('Y-m-d'); // Primer día del mes actual
         $this->endMonth = Carbon::now()->endOfMonth()->format('Y-m-d'); // Último día del mes actual
+        // QTY DIAS
+        $startDate = Carbon::parse($this->starMonth);
+        $endDate = Carbon::parse($this->endMonth);
+        $this->qty = $startDate->diffInDays($endDate) + 1; // Calculate number of days inclusive
         // Subconsulta de Reports por mes incluyendo puntos resueltos y los demás estados
         $reportsMonthly = Report::select(
             'delegate_id',
@@ -55,8 +59,8 @@ class EffortPoints extends Component
             DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as report_resuelto")
         )
             ->where(function ($query) {
-                $query->whereBetween('updated_at', [$this->startDate, $this->endDate])
-                    ->orWhereBetween('expected_date', [$this->startDate, $this->endDate]);
+                $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
         // Subconsulta de Activities por semana
@@ -68,8 +72,8 @@ class EffortPoints extends Component
             DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as activity_resuelto")
         )
             ->where(function ($query) {
-                $query->whereBetween('updated_at', [$this->startDate, $this->endDate])
-                    ->orWhereBetween('expected_date', [$this->startDate, $this->endDate]);
+                $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
         // Consulta principal unificada
@@ -170,17 +174,17 @@ class EffortPoints extends Component
 
     public function setDate($dateRange)
     {
+        // Actualizar el rango de fechas
+        $this->dateRange = $dateRange;
         // Suponiendo que $dateRange ya contiene las fechas en formato 'YYYY-MM-DD - YYYY-MM-DD'
-        $dateRange = explode(' - ', $dateRange);
-        $startDate = Carbon::parse($dateRange[0]);
-        $endDate = Carbon::parse($dateRange[1]);
+        $dates = explode(' - ', $dateRange);
+        $startDate = Carbon::parse($dates[0]);
+        $endDate = Carbon::parse($dates[1]);
         // Calcular el número total de días
         $this->qty = $endDate->diffInDays($startDate) + 1;
         // filtro
         $this->startDate = $startDate->format('Y-m-d');
         $this->endDate = $endDate->format('Y-m-d');
-        // Actualizar el rango de fechas
-        $this->dateRange = $dateRange;
         // Forzar actualización de la vista
         $this->emit('updateChart');
     }

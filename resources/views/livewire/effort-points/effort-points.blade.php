@@ -34,11 +34,14 @@
             document.addEventListener('livewire:load', function() {
                 // FILTRO FECHA
                 var today = moment();
-                var dayOfWeek = today.day();
-                var startOfWeek = moment().subtract(dayOfWeek - 1, 'days');
-                var endOfWeek = moment().add(7 - dayOfWeek, 'days');
-                var start = startOfWeek.format('YYYY-MM-DD');
-                var end = endOfWeek.format('YYYY-MM-DD');
+                // var dayOfWeek = today.day();
+                // var startOfWeek = moment().subtract(dayOfWeek - 1, 'days');
+                // var endOfWeek = moment().add(7 - dayOfWeek, 'days');
+                var startOfMonth = today.startOf('month').format('YYYY-MM-DD');
+                var endOfMonth = today.endOf('month').format('YYYY-MM-DD');
+
+                var start = startOfMonth;
+                var end = endOfMonth;
 
                 $('#daterange').daterangepicker({
                     locale: {
@@ -69,9 +72,9 @@
                     Livewire.emit('setDate', picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate
                         .format('YYYY-MM-DD'));
                 });
-
                 // GRAFICA
                 var chart;
+
                 function renderChart(series, categories, totalEffortPoints) {
                     if (chart) {
                         chart.destroy();

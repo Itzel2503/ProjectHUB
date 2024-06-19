@@ -102,8 +102,8 @@ class ActivitiesReports extends Component
         )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
-                $query->whereBetween('updated_at', [$this->startDate, $this->endDate])
-                    ->orWhereBetween('expected_date', [$this->startDate, $this->endDate]);
+                $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
         // Subconsulta de Activities por semana
@@ -116,8 +116,8 @@ class ActivitiesReports extends Component
         )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
-                $query->whereBetween('updated_at', [$this->startDate, $this->endDate])
-                    ->orWhereBetween('expected_date', [$this->startDate, $this->endDate]);
+                $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
         // Consulta principal unificada
