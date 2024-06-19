@@ -6,14 +6,15 @@
     }
 </style>
 <div class="bg-no-repeat bg-cover py-0 m-auto h-screen w-full absolute opacity-80 ">
+    <img class="mx-auto bg-cover h-screen w-full" src="{{asset('images/coma_bg_v1.jpg')}}">
 </div>
-<div class="relative min-h-screen flex flex-col justify-center items-center">
-    <div class="relative sm:max-w-sm w-full">
-        <div>
-            <img class="mx-auto" src="{{asset('logos/coma-logo-color_v1.png')}}">
-        </div>
-        <div class="relative w-full rounded-3xl px-6 py-4 bg-secundaryColor shadow-md">
-            <h1 class="block text-lg text-center font-semibold text-white">Inicia sesión</h1>
+<div class="relative h-screen flex flex-col justify-center items-start lg:ml-40 mx-10 py-10">
+    <div class="relative w-full lg:w-2/5 h-full lg:h-3/4">
+        <div class="relative w-full h-5/6 px-14 lg:pt-14 py-8 bg-white shadow-md" style="border-radius: 150px; border-bottom-right-radius: 20px;">
+            <div class="mb-10">
+                <img class="mx-auto" src="{{asset('logos/coma-logo-color_v1.png')}}">
+            </div>
+            <h1 class="block text-lg text-center font-semibold text-text1">Inicia sesión</h1>
             <br>
             <form method="POST" action="{{ route('login') }}">
                 @csrf
@@ -22,7 +23,7 @@
                         class="inputs block appearance-none focus:outline-none focus:ring-0 peer"
                         style="border-radius: 5rem;" :value="old('email')" id="email" required />
                     <label for="email" value="{{ __('Email') }}"
-                        class="ml-3 peer-focus:font-medium absolute text-sm text-gray-300  duration-300 transform -translate-y-8 scale-75 top-3 z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-300 peer-focus: peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8">Correo
+                        class="ml-3 peer-focus:font-medium absolute text-sm text-text1  duration-300 transform -translate-y-8 scale-75 top-3 z-10 origin-[0] peer-focus:left-0 peer-focus:text-text1 peer-focus: peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8">Correo
                         electrónico</label>
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
@@ -30,7 +31,7 @@
                         class="inputs block appearance-none focus:outline-none focus:ring-0 peer"
                         style="border-radius: 5rem;" required autocomplete="current-password" />
                     <label for="password" value="{{ __('Password') }}"
-                        class="ml-3 peer-focus:font-medium absolute text-sm text-gray-300  duration-300 transform -translate-y-8 scale-75 top-3 z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-300 peer-focus: peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8">Contraseña</label>
+                        class="ml-3 peer-focus:font-medium absolute text-sm text-text1  duration-300 transform -translate-y-8 scale-75 top-3 z-10 origin-[0] peer-focus:left-0 peer-focus:text-text1 peer-focus: peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8">Contraseña</label>
                     <div id="noViewPassword"
                         class="hidden absolute inset-y-0 right-0 flex items-center text-sm leading-5 cursor-pointer mr-2">
                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -70,8 +71,7 @@
                     @enderror
                 </div>
                 <div class="mt-10 flex justify-center">
-                    <button type="submit" class="btnSave text-xl"
-                        style="border-radius: 5rem;background-color: rgb(59 130 246)">
+                    <button type="submit" class="btnSave">
                         Ingresar
                     </button>
                 </div>
@@ -90,14 +90,6 @@
                     </div>
                 </div> --}}
             </form>
-            <!-- Imagen de ubicación posicionada en la esquina inferior derecha -->
-            <div class="absolute -bottom-4 -right-16 p-2">
-                <img src="{{asset('images/ubicacion.png')}}" alt="Ubicación" class="h-28 w-28">
-            </div>
-        </div>
-        <!-- Imagen colocada en la parte inferior de la pantalla, centrada horizontalmente -->
-        <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2">
-            <img src="{{asset('logos/evolve-ArtenLogo_v1.png')}}" alt="Evolve Logo" class="h-40 w-auto">
         </div>
     </div>
 </div>
