@@ -1,6 +1,6 @@
 <div>
     <div class="px-4 py-4 sm:rounded-lg">
-        <div id="chart" class="my-5"></div>
+        <div wire:ignore id="chart" class="my-5"></div>
         {{-- PESTAÑAS --}}
         <nav class="-mb-px flex">
             <button wire:click="setActiveTab('actividades')"
