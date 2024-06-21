@@ -79,7 +79,7 @@ class ActivitiesReports extends Component
             'delegate_id',
             DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_reports"),
             DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_reports")
-            )
+        )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
                 $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
@@ -88,10 +88,10 @@ class ActivitiesReports extends Component
             ->groupBy('delegate_id');
         // Subconsulta de Activities por mes incluyendo puntos resueltos y los demás estados
         $activitiesMonthly = Activity::select(
-                'delegate_id',
-                DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_activities"),
-                DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_activities")
-            )
+            'delegate_id',
+            DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_activities"),
+            DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_activities")
+        )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
                 $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
@@ -100,12 +100,12 @@ class ActivitiesReports extends Component
             ->groupBy('delegate_id');
         // Subconsulta de Reports por semana
         $reportsWeekly = Report::select(
-                'delegate_id',
-                DB::raw("SUM(CASE WHEN state = 'Abierto' THEN points ELSE 0 END) as report_abierto"),
-                DB::raw("SUM(CASE WHEN state = 'Proceso' THEN points ELSE 0 END) as report_proceso"),
-                DB::raw("SUM(CASE WHEN state = 'Conflicto' THEN points ELSE 0 END) as report_conflicto"),
-                DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as report_resuelto")
-            )
+            'delegate_id',
+            DB::raw("SUM(CASE WHEN state = 'Abierto' THEN points ELSE 0 END) as report_abierto"),
+            DB::raw("SUM(CASE WHEN state = 'Proceso' THEN points ELSE 0 END) as report_proceso"),
+            DB::raw("SUM(CASE WHEN state = 'Conflicto' THEN points ELSE 0 END) as report_conflicto"),
+            DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as report_resuelto")
+        )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
                 $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
@@ -114,12 +114,12 @@ class ActivitiesReports extends Component
             ->groupBy('delegate_id');
         // Subconsulta de Activities por semana
         $activitiesWeekly = Activity::select(
-                'delegate_id',
-                DB::raw("SUM(CASE WHEN state = 'Abierto' THEN points ELSE 0 END) as activity_abierto"),
-                DB::raw("SUM(CASE WHEN state = 'Proceso' THEN points ELSE 0 END) as activity_proceso"),
-                DB::raw("SUM(CASE WHEN state = 'Conflicto' THEN points ELSE 0 END) as activity_conflicto"),
-                DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as activity_resuelto")
-            )
+            'delegate_id',
+            DB::raw("SUM(CASE WHEN state = 'Abierto' THEN points ELSE 0 END) as activity_abierto"),
+            DB::raw("SUM(CASE WHEN state = 'Proceso' THEN points ELSE 0 END) as activity_proceso"),
+            DB::raw("SUM(CASE WHEN state = 'Conflicto' THEN points ELSE 0 END) as activity_conflicto"),
+            DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as activity_resuelto")
+        )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
                 $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
@@ -128,23 +128,23 @@ class ActivitiesReports extends Component
             ->groupBy('delegate_id');
         // Consulta principal unificada
         $points = User::select(
-                'users.id',
-                'users.name',
-                'users.effort_points',
-                'reports_weekly.report_abierto',
-                'reports_weekly.report_proceso',
-                'reports_weekly.report_conflicto',
-                'reports_weekly.report_resuelto',
-                'activities_weekly.activity_abierto',
-                'activities_weekly.activity_proceso',
-                'activities_weekly.activity_conflicto',
-                'activities_weekly.activity_resuelto',
+            'users.id',
+            'users.name',
+            'users.effort_points',
+            'reports_weekly.report_abierto',
+            'reports_weekly.report_proceso',
+            'reports_weekly.report_conflicto',
+            'reports_weekly.report_resuelto',
+            'activities_weekly.activity_abierto',
+            'activities_weekly.activity_proceso',
+            'activities_weekly.activity_conflicto',
+            'activities_weekly.activity_resuelto',
 
-                'reports_monthly.total_points_reports',
-                'reports_monthly.total_resuelto_reports',
-                'activities_monthly.total_points_activities',
-                'activities_monthly.total_resuelto_activities'
-            )
+            'reports_monthly.total_points_reports',
+            'reports_monthly.total_resuelto_reports',
+            'activities_monthly.total_points_activities',
+            'activities_monthly.total_resuelto_activities'
+        )
             ->leftJoinSub($reportsWeekly, 'reports_weekly', 'users.id', '=', 'reports_weekly.delegate_id')
             ->leftJoinSub($activitiesWeekly, 'activities_weekly', 'users.id', '=', 'activities_weekly.delegate_id')
             ->leftJoinSub($reportsMonthly, 'reports_monthly', 'users.id', '=', 'reports_monthly.delegate_id')
@@ -249,10 +249,11 @@ class ActivitiesReports extends Component
                 ->get();
             $reportsDukke = null;
             // Obtener los reports del usuario
-            $reportsAdmin = User::select('users.id as user_id', 
-                    'users.name as user_name', 
-                    'reports.*'
-                )
+            $reportsAdmin = User::select(
+                'users.id as user_id',
+                'users.name as user_name',
+                'reports.*'
+            )
                 ->leftJoin('reports', 'users.id', '=', 'reports.delegate_id')
                 ->where('reports.delegate_id', $user_id)
                 ->where('reports.title', 'like', '%' . $this->searchTask . '%')
@@ -260,10 +261,11 @@ class ActivitiesReports extends Component
                 ->orderBy('reports.created_at', 'desc')
                 ->get();
             // Obtener las activities del usuario
-            $activitiesAdmin = User::select('users.id as user_id', 
-                    'users.name as user_name', 
-                    'activities.*'
-                )
+            $activitiesAdmin = User::select(
+                'users.id as user_id',
+                'users.name as user_name',
+                'activities.*'
+            )
                 ->leftJoin('activities', 'users.id', '=', 'activities.delegate_id')
                 ->where('activities.delegate_id', $user_id)
                 ->where('activities.title', 'like', '%' . $this->searchTask . '%')
@@ -275,9 +277,9 @@ class ActivitiesReports extends Component
             // dd($tasks);
         } else {
             $activities = Activity::where(function ($query) {
-                    $query
-                        ->where('title', 'like', '%' . $this->searchActivity . '%');
-                })
+                $query
+                    ->where('title', 'like', '%' . $this->searchActivity . '%');
+            })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id);
                 })
@@ -293,12 +295,12 @@ class ActivitiesReports extends Component
                 ->get();
 
             $reports = Report::where(function ($query) {
-                    $query
-                        ->where('title', 'like', '%' . $this->searchReport . '%');
-                    if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
-                        $query->orWhereNotNull('count');
-                    }
-                })
+                $query
+                    ->where('title', 'like', '%' . $this->searchReport . '%');
+                if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
+                    $query->orWhereNotNull('count');
+                }
+            })
                 ->when(Auth::user()->area_id == 4, function ($query) {
                     $query->whereHas('user', function ($subQuery) {
                         $subQuery->where('type_user', '!=', 3);
@@ -496,98 +498,101 @@ class ActivitiesReports extends Component
             }
             $report->messages_count = $messages->where('look', false)->count();
         }
-        // ADD ATRIBUTES REPORTS
-        foreach ($tasks as $task) {
-            // PROGRESS
-            if ($task->progress && $task->updated_at) {
-                $progress = Carbon::parse($task->progress);
-                $updated_at = Carbon::parse($task->updated_at);
-                $diff = $progress->diff($updated_at);
+        if (Auth::user()->type_user == 1) {
+            // ADD ATRIBUTES REPORTS
+            foreach ($tasks as $task) {
+                // PROGRESS
+                if ($task->progress && $task->updated_at) {
+                    $progress = Carbon::parse($task->progress);
+                    $updated_at = Carbon::parse($task->updated_at);
+                    $diff = $progress->diff($updated_at);
 
-                $units = [
-                    'año' => $diff->y,
-                    'mes' => $diff->m,
-                    'semana' => floor($diff->days / 7),
-                    'dia' => $diff->d % 7, // Días restantes después de calcular las semanas
-                    'hora' => $diff->h,
-                    'minuto' => $diff->i,
-                    'segundo' => $diff->s,
-                ];
+                    $units = [
+                        'año' => $diff->y,
+                        'mes' => $diff->m,
+                        'semana' => floor($diff->days / 7),
+                        'dia' => $diff->d % 7, // Días restantes después de calcular las semanas
+                        'hora' => $diff->h,
+                        'minuto' => $diff->i,
+                        'segundo' => $diff->s,
+                    ];
 
-                $timeDifference = '';
-                foreach ($units as $unit => $value) {
-                    if ($value > 0) {
-                        $timeDifference = $value . ' ' . $unit . ($value > 1 ? 's' : '');
-                        break;
+                    $timeDifference = '';
+                    foreach ($units as $unit => $value) {
+                        if ($value > 0) {
+                            $timeDifference = $value . ' ' . $unit . ($value > 1 ? 's' : '');
+                            break;
+                        }
                     }
-                }
 
-                $task->timeDifference = $timeDifference;
-            } else {
-                $task->timeDifference = null;
-            }
-            // CHAT ACTIVITY
-            if ($task->sprint_id) {
-                $messages = ChatReports::where('activity_id', $task->id)->orderBy('created_at', 'asc')->get();
-                $lastMessageNoView = ChatReports::where('activity_id', $task->id)
-                    ->where('user_id', '!=', Auth::id())
-                    ->where('receiver_id', Auth::id())
-                    ->where('look', false)
-                    ->latest()
-                    ->first();
-               $sprint = Sprint::where('id', $task->sprint_id)->first(); // Obtener solo un modelo, no una colección
-                if ($sprint) {
-                    if ($sprint->backlog) {
-                        // Acceder al proyecto asociado al backlog
-                        $task->project_name = $sprint->backlog->project->name;
-                    } else {
-                        // Manejar caso donde no hay backlog asociado
-                        $task->project_name = 'Backlog no disponible';
-                    }
+                    $task->timeDifference = $timeDifference;
                 } else {
-                    // Manejar caso donde no se encuentra el sprint
-                    $task->project_name = 'Sprint no encontrado';
+                    $task->timeDifference = null;
                 }
-            } else {
-                $messages = ChatReports::where('report_id', $task->id)->orderBy('created_at', 'asc')->get();
-                $lastMessageNoView = ChatReports::where('report_id', $task->id)
-                    ->where('user_id', '!=', Auth::id())
-                    ->where('receiver_id', Auth::id())
-                    ->where('look', false)
-                    ->latest()
-                    ->first();
-            }
-            // Verificar si la colección tiene al menos un mensaje
-            if ($messages) {
-                if ($lastMessageNoView) {
-                    $task->user_chat = $lastMessageNoView->user_id;
-                    $task->receiver_chat = $lastMessageNoView->receiver_id;
-
-                    $receiver = User::find($lastMessageNoView->receiver_id);
-
-                    if ($receiver->type_user == 3) {
-                        $task->client = true;
-                    } else {
-                        $task->client = false;
-                    }
-                } else {
-                    $lastMessage = $messages->last();
-                    if ($lastMessage) {
-                        if ($lastMessage->user_id == Auth::id()) {
-                            $task->user_id = true;
+                // CHAT ACTIVITY
+                if ($task->sprint_id) {
+                    $messages = ChatReports::where('activity_id', $task->id)->orderBy('created_at', 'asc')->get();
+                    $lastMessageNoView = ChatReports::where('activity_id', $task->id)
+                        ->where('user_id', '!=', Auth::id())
+                        ->where('receiver_id', Auth::id())
+                        ->where('look', false)
+                        ->latest()
+                        ->first();
+                    $sprint = Sprint::where('id', $task->sprint_id)->first(); // Obtener solo un modelo, no una colección
+                    if ($sprint) {
+                        if ($sprint->backlog) {
+                            // Acceder al proyecto asociado al backlog
+                            $task->project_name = $sprint->backlog->project->name;
                         } else {
-                            if ($lastMessage->receiver->type_user == 3) {
-                                $task->client = true;
+                            // Manejar caso donde no hay backlog asociado
+                            $task->project_name = 'Backlog no disponible';
+                        }
+                    } else {
+                        // Manejar caso donde no se encuentra el sprint
+                        $task->project_name = 'Sprint no encontrado';
+                    }
+                } else {
+                    $messages = ChatReports::where('report_id', $task->id)->orderBy('created_at', 'asc')->get();
+                    $lastMessageNoView = ChatReports::where('report_id', $task->id)
+                        ->where('user_id', '!=', Auth::id())
+                        ->where('receiver_id', Auth::id())
+                        ->where('look', false)
+                        ->latest()
+                        ->first();
+                }
+                // Verificar si la colección tiene al menos un mensaje
+                if ($messages) {
+                    if ($lastMessageNoView) {
+                        $task->user_chat = $lastMessageNoView->user_id;
+                        $task->receiver_chat = $lastMessageNoView->receiver_id;
+
+                        $receiver = User::find($lastMessageNoView->receiver_id);
+
+                        if ($receiver->type_user == 3) {
+                            $task->client = true;
+                        } else {
+                            $task->client = false;
+                        }
+                    } else {
+                        $lastMessage = $messages->last();
+                        if ($lastMessage) {
+                            if ($lastMessage->user_id == Auth::id()) {
+                                $task->user_id = true;
                             } else {
-                                $task->client = false;
+                                if ($lastMessage->receiver->type_user == 3) {
+                                    $task->client = true;
+                                } else {
+                                    $task->client = false;
+                                }
+                                $task->user_id = false;
                             }
-                            $task->user_id = false;
                         }
                     }
                 }
+                $task->messages_count = $messages->where('look', false)->count();
             }
-            $task->messages_count = $messages->where('look', false)->count();
         }
+
         if (Auth::user()->area_id == 4) {
             // ADD ATRIBUTES REPORTS
             foreach ($reportsDukke as $report) {
