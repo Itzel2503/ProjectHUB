@@ -450,23 +450,26 @@ class TableReports extends Component
 
     public function update($id, $project_id)
     {
+
         try {
-            // Verificar si al menos uno de los campos está presente
-            if ($this->changePoints == true) {
-                if (!$this->points) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Agrega puntos de esfuerzo.',
-                    ]);
-                    return;
-                }
-            } else {
-                if (!$this->point_know || !$this->point_many || !$this->point_effort) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Por favor, complete el cuestionario.',
-                    ]);
-                    return;
+            if (Auth::id() != 10 && Auth::user()->type_user != 3) {
+                // Verificar si al menos uno de los campos está presente
+                if ($this->changePoints == true) {
+                    if (!$this->points) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Agrega puntos de esfuerzo.',
+                        ]);
+                        return;
+                    }
+                } else {
+                    if (!$this->point_know || !$this->point_many || !$this->point_effort) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Por favor, complete el cuestionario.',
+                        ]);
+                        return;
+                    }
                 }
             }
             // Aquí puedes continuar con tu lógica después de la validación exitosa
@@ -583,23 +586,28 @@ class TableReports extends Component
                 $report->priority = 'Bajo';
             }
 
-            if ($this->changePoints == true) {
-                $validPoints = [1, 2, 3, 5, 8, 13];
-                $report->points = $this->points;
-    
-                if (!in_array($this->points, $validPoints)) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Puntuaje no válido.',
-                    ]);
-                    return; // O cualquier otra acción que desees realizar
-                } else {
-                    $report->points = $this->points ?? $report->points;
-                }
+            if (Auth::id() == 10 || Auth::user()->type_user == 3) {
+                $report->points = 0;
             } else {
-                $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
-                $report->points = $maxPoint ?? $report->points;
+                if ($this->changePoints == true) {
+                    $validPoints = [1, 2, 3, 5, 8, 13];
+                    $report->points = $this->points;
+        
+                    if (!in_array($this->points, $validPoints)) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Puntuaje no válido.',
+                        ]);
+                        return; // O cualquier otra acción que desees realizar
+                    } else {
+                        $report->points = $this->points ?? $report->points;
+                    }
+                } else {
+                    $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+                    $report->points = $maxPoint ?? $report->points;
+                }
             }
+            
 
             $report->save();
 
