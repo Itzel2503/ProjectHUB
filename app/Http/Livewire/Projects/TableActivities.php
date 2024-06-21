@@ -42,7 +42,7 @@ class TableActivities extends Component
         $showActivity = false,
         $showChat = false;
     public $activityShow, $messages, $activityEdit, $moveActivity;
-    public $tittle, $file, $description, $delegate, $expected_date, $priority1, $priority2, $priority3, $message;
+    public $title, $file, $description, $delegate, $expected_date, $priority1, $priority2, $priority3, $message;
     // modal activity points
     public $changePoints = false;
     public $points, $point_know, $point_many, $point_effort;
@@ -136,7 +136,7 @@ class TableActivities extends Component
             $activities = Activity::where('sprint_id', $this->selectSprint)
                 ->where(function ($query) {
                     $query
-                        ->where('tittle', 'like', '%' . $this->search . '%');
+                        ->where('title', 'like', '%' . $this->search . '%');
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
@@ -154,7 +154,7 @@ class TableActivities extends Component
             $activities = Activity::where('sprint_id', $this->selectSprint)
                 ->where(function ($query) {
                     $query
-                        ->where('tittle', 'like', '%' . $this->search . '%');
+                        ->where('title', 'like', '%' . $this->search . '%');
                 })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id);
@@ -474,13 +474,13 @@ class TableActivities extends Component
         try {
             $this->validate(
                 [
-                    'tittle' => 'required|max:255',
+                    'title' => 'required|max:255',
                     'delegate' => 'required',
                     'expected_date' => 'required|date',
                 ],
                 [
-                    'tittle.required' => 'El título es obligatorio.',
-                    'tittle.max:255' => 'El título no debe tener más caracteres que 255.',
+                    'title.required' => 'El título es obligatorio.',
+                    'title.max:255' => 'El título no debe tener más caracteres que 255.',
                     'delegate.required' => 'El delegado es obligatorio.',
                     'expected_date.required' => 'La fecha esperada es obligatoria.',
                     'expected_date.date' => 'La fecha esperada debe ser una fecha válida.',
@@ -557,7 +557,7 @@ class TableActivities extends Component
         $activity->sprint_id = $this->selectSprint;
         $activity->delegate_id = $this->delegate;
         $activity->user_id = Auth::id();
-        $activity->tittle = $this->tittle;
+        $activity->title = $this->title;
         $activity->description = $this->description;
 
         if ($this->priority1) {
@@ -677,12 +677,12 @@ class TableActivities extends Component
         try {
             $this->validate(
                 [
-                    'tittle' => 'required|max:255',
+                    'title' => 'required|max:255',
                     'expected_date' => 'required|date',
                 ],
                 [
-                    'tittle.required' => 'El título es obligatorio.',
-                    'tittle.max:255' => 'El título no debe tener más caracteres que 255.',
+                    'title.required' => 'El título es obligatorio.',
+                    'title.max:255' => 'El título no debe tener más caracteres que 255.',
                     'expected_date.required' => 'La fecha esperada es obligatoria.',
                     'expected_date.date' => 'La fecha esperada debe ser una fecha válida.',
                 ],
@@ -780,7 +780,7 @@ class TableActivities extends Component
                 return;
             }
         }
-        $activity->tittle = $this->tittle ?? $activity->tittle;
+        $activity->title = $this->title ?? $activity->title;
         $activity->description = $this->description ?? $activity->description;
 
         if ($this->priority1) {
@@ -1018,7 +1018,7 @@ class TableActivities extends Component
 
         $this->activityEdit = Activity::find($id);
         $this->moveActivity = $this->activityEdit->sprint_id;
-        $this->tittle = $this->activityEdit->tittle;
+        $this->title = $this->activityEdit->title;
         $this->description = $this->activityEdit->description;
 
         $fecha_expected = Carbon::parse($this->activityEdit->expected_date);
@@ -1092,7 +1092,7 @@ class TableActivities extends Component
         $this->start_date = '';
         $this->end_date = '';
 
-        $this->tittle = '';
+        $this->title = '';
         $this->dispatchBrowserEvent('file-reset');
         $this->description = '';
         $this->delegate = '';

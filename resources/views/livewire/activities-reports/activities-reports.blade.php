@@ -17,6 +17,12 @@
                     Dukke
                 </button>
             @endif
+            @if (Auth::user()->type_user == 1)
+                <button wire:click="setActiveTab('task')"
+                    class="border-primaryColor @if ($activeTab === 'task') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 pb-4 text-sm font-medium">
+                    Mis tareas
+                </button>
+            @endif
             {{-- NAVEGADOR --}}
             <div
                 class="border-primaryColor ml-auto flex w-full flex-col gap-2 border-b-2 text-sm md:flex-row lg:text-base">
@@ -49,14 +55,19 @@
                                 </span>
                             </div>
                             @if ($activeTab === 'actividades')
-                                <input wire:model="searchActivity" type="text" placeholder="Buscar actividad" class="inputs"
-                                    style="padding-left: 3em;">
+                                <input wire:model="searchActivity" type="text" placeholder="Buscar actividad"
+                                    class="inputs" style="padding-left: 3em;">
                             @elseif ($activeTab === 'reportes')
-                                <input wire:model="searchReport" type="text" placeholder="Buscar reporte" class="inputs"
-                                    style="padding-left: 3em;">
+                                <input wire:model="searchReport" type="text" placeholder="Buscar reporte"
+                                    class="inputs" style="padding-left: 3em;">
                             @elseif ($activeTab === 'dukke')
-                                <input wire:model="searchDukke" type="text" placeholder="Buscar reporte" class="inputs"
-                                    style="padding-left: 3em;">
+                                <input wire:model="searchDukke" type="text" placeholder="Buscar reporte"
+                                    class="inputs" style="padding-left: 3em;">
+                            @elseif ($activeTab === 'task')
+                                @if (Auth::user()->type_user == 1)
+                                    <input wire:model="searchTask" type="text" placeholder="Buscar tarea" class="inputs"
+                                        style="padding-left: 3em;">
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -74,10 +85,11 @@
                                 <div class="flex">
                                     Actividad
                                     {{-- down-up --}}
-                                    <svg wire:click='filterDown("activity")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up ml-2 cursor-pointer @if($filteredActivity) block @else hidden @endif">
+                                    <svg wire:click='filterDown("activity")' xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredActivity) block @else hidden @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M17 3l0 18" />
                                         <path d="M10 18l-3 3l-3 -3" />
@@ -85,10 +97,11 @@
                                         <path d="M20 6l-3 -3l-3 3" />
                                     </svg>
                                     {{-- up-down --}}
-                                    <svg wire:click='filterUp("activity")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down ml-2 cursor-pointer @if($filteredActivity) hidden @else block @endif">
+                                    <svg wire:click='filterUp("activity")' xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredActivity) hidden @else block @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M7 3l0 18" />
                                         <path d="M10 6l-3 -3l-3 3" />
@@ -97,7 +110,7 @@
                                     </svg>
                                 </div>
                             </th>
-                            <th class="lg:w-48 px-1 py-3">Delegado</th>
+                            <th class="px-1 py-3 lg:w-48">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
                             <th class="w-44 px-1 py-3">Fecha de entrega</th>
                             <th class="w-56 px-1 py-3">Creado</th>
@@ -136,16 +149,17 @@
                                             @else
                                                 <div class="w-12"></div>
                                             @endif
-                                            <p class="my-auto text-left text-xs font-semibold">{{ $activity->tittle }}
+                                            <p class="my-auto text-left text-xs font-semibold">{{ $activity->title }}
                                             </p>
                                         </div>
                                         @if ($activity->messages_count >= 1)
                                             {{-- usuario --}}
                                             @if ($activity->user_chat != Auth::id() && $activity->receiver_chat == Auth::id())
                                                 <div class="absolute right-0 top-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                         <path d="M8 9h8" />
@@ -157,9 +171,10 @@
                                                 {{-- envio varios mensajes de diversos usuarios --}}
                                             @elseif($activity->noView == true)
                                                 <div class="absolute right-0 top-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                         <path d="M8 9h8" />
@@ -171,9 +186,10 @@
                                                 {{-- administrador --}}
                                             @elseif(Auth::user()->type_user == 1 && $activity->client == false && $activity->user_id == false)
                                                 <div class="absolute right-0 top-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                         <path d="M8 9h8" />
@@ -189,7 +205,7 @@
                                 <td class="px-2 py-1">
                                     <div class="mx-auto w-auto text-left">
                                         <p class="font-semibold">
-                                            {{ $activity->delegate->name }} {{ $activity->delegate->lastname }}</p>
+                                            {{ $activity->delegate->name }}</p>
                                         <p class="text-xs">
                                             @if ($activity->state == 'Proceso' || $activity->state == 'Conflicto')
                                                 Progreso {{ $activity->progress->diffForHumans(null, false, false, 1) }}
@@ -213,7 +229,7 @@
                                 <td class="px-2 py-1">
                                     <div wire:change='updateState({{ $activity->id }}, $event.target.value)'
                                         name="state" id="state"
-                                        class="inpSelectTable flex w-24 @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif text-sm font-semibold">
+                                        class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex w-24 text-sm font-semibold">
                                         <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
                                     </div>
                                 </td>
@@ -224,8 +240,8 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto text-left">
-                                        <span class="font-semibold"> {{ $activity->user->name }}
-                                            {{ $activity->user->lastname }} </span> <br>
+                                        <span class="font-semibold"> {{ $activity->user->name }}</span> 
+                                        <br>
                                         <span class="font-mono">
                                             {{ \Carbon\Carbon::parse($activity->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                         </span>
@@ -265,10 +281,11 @@
                                 <div class="flex">
                                     Reporte
                                     {{-- down-up --}}
-                                    <svg wire:click='filterDown("report")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up ml-2 cursor-pointer @if($filteredReport) block @else hidden @endif">
+                                    <svg wire:click='filterDown("report")' xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredReport) block @else hidden @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M17 3l0 18" />
                                         <path d="M10 18l-3 3l-3 -3" />
@@ -276,10 +293,11 @@
                                         <path d="M20 6l-3 -3l-3 3" />
                                     </svg>
                                     {{-- up-down --}}
-                                    <svg wire:click='filterUp("report")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down ml-2 cursor-pointer @if($filteredReport) hidden @else block @endif">
+                                    <svg wire:click='filterUp("report")' xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredReport) hidden @else block @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M7 3l0 18" />
                                         <path d="M10 6l-3 -3l-3 3" />
@@ -288,7 +306,7 @@
                                     </svg>
                                 </div>
                             </th>
-                            <th class="lg:w-48 px-1 py-3">Delegado</th>
+                            <th class="px-1 py-3 lg:w-48">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
                             <th class="w-44 px-1 py-3">Fecha de entrega</th>
                             <th class="w-56 px-1 py-3">Creado</th>
@@ -330,9 +348,10 @@
                                             {{-- usuario --}}
                                             @if ($report->user_chat != Auth::id() && $report->receiver_chat == Auth::id())
                                                 <div class="absolute right-0 top-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                         <path d="M8 9h8" />
@@ -341,12 +360,13 @@
                                                             d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
                                                     </svg>
                                                 </div>
-                                            {{-- envio varios mensajes de diversos usuarios --}}
+                                                {{-- envio varios mensajes de diversos usuarios --}}
                                             @elseif($report->noView == true)
                                                 <div class="absolute right-0 top-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                         <path d="M8 9h8" />
@@ -358,9 +378,10 @@
                                                 {{-- administrador --}}
                                             @elseif(Auth::user()->type_user == 1 && $report->client == false && $report->user_id == false)
                                                 <div class="absolute right-0 top-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                         <path d="M8 9h8" />
@@ -376,7 +397,7 @@
                                 <td class="px-2 py-1">
                                     <div class="mx-auto w-full text-left">
                                         <p class="font-semibold">
-                                            {{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
+                                            {{ $report->delegate->name }}</p>
                                         <p class="text-xs">
                                             @if ($report->state == 'Proceso' || $report->state == 'Conflicto')
                                                 Progreso {{ $report->progress->diffForHumans(null, false, false, 1) }}
@@ -399,7 +420,7 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div name="state" id="state"
-                                        class="inpSelectTable flex w-24 @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif text-sm font-semibold">
+                                        class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif flex w-24 text-sm font-semibold">
                                         <option selected value={{ $report->state }}>{{ $report->state }}</option>
                                     </div>
                                     @if ($report->count)
@@ -413,8 +434,8 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto text-left">
-                                        <span class="font-semibold"> {{ $report->user->name }}
-                                            {{ $report->user->lastname }} </span> <br>
+                                        <span class="font-semibold"> {{ $report->user->name }}</span> 
+                                        <br>
                                         <span class="font-mono">
                                             {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                         </span>
@@ -454,10 +475,11 @@
                                 <div class="flex">
                                     Reporte
                                     {{-- down-up --}}
-                                    <svg wire:click='filterDown("reportDukke")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up ml-2 cursor-pointer @if($filteredDukke) block @else hidden @endif">
+                                    <svg wire:click='filterDown("reportDukke")' xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredDukke) block @else hidden @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M17 3l0 18" />
                                         <path d="M10 18l-3 3l-3 -3" />
@@ -465,10 +487,11 @@
                                         <path d="M20 6l-3 -3l-3 3" />
                                     </svg>
                                     {{-- up-down --}}
-                                    <svg wire:click='filterUp("reportDukke")' xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down ml-2 cursor-pointer @if($filteredDukke) hidden @else block @endif">
+                                    <svg wire:click='filterUp("reportDukke")' xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredDukke) hidden @else block @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M7 3l0 18" />
                                         <path d="M10 6l-3 -3l-3 3" />
@@ -477,7 +500,7 @@
                                     </svg>
                                 </div>
                             </th>
-                            <th class="lg:w-48 px-1 py-3">Delegado</th>
+                            <th class="px-1 py-3 lg:w-48">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
                             <th class="w-44 px-1 py-3">Fecha de entrega</th>
                             <th class="w-56 px-1 py-3">Creado</th>
@@ -520,9 +543,10 @@
                                             {{-- usuario --}}
                                             @if ($report->user_chat != Auth::id() && $report->receiver_chat == Auth::id())
                                                 <div class="absolute right-0 top-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                         <path d="M8 9h8" />
@@ -531,12 +555,13 @@
                                                             d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
                                                     </svg>
                                                 </div>
-                                            {{-- envio varios mensajes de diversos usuarios --}}
+                                                {{-- envio varios mensajes de diversos usuarios --}}
                                             @elseif($report->noView == true)
                                                 <div class="absolute right-0 top-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                         <path d="M8 9h8" />
@@ -548,9 +573,10 @@
                                                 {{-- administrador --}}
                                             @elseif(Auth::user()->type_user == 1 && $report->client == false && $report->user_id == false)
                                                 <div class="absolute right-0 top-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                         <path d="M8 9h8" />
@@ -566,7 +592,7 @@
                                 <td class="px-2 py-1">
                                     <div class="mx-auto w-full text-left">
                                         <p class="font-semibold">
-                                            {{ $report->delegate->name }} {{ $report->delegate->lastname }}</p>
+                                            {{ $report->delegate->name }}</p>
                                         <p class="text-xs">
                                             @if ($report->state == 'Proceso' || $report->state == 'Conflicto')
                                                 Progreso
@@ -590,7 +616,7 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div name="state" id="state"
-                                        class="inpSelectTable flex w-24 @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif text-sm font-semibold">
+                                        class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif flex w-24 text-sm font-semibold">
                                         <option selected value={{ $report->state }}>{{ $report->state }}</option>
                                     </div>
                                     @if ($report->count)
@@ -604,8 +630,8 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto text-left">
-                                        <span class="font-semibold"> {{ $report->user->name }}
-                                            {{ $report->user->lastname }} </span> <br>
+                                        <span class="font-semibold"> {{ $report->user->name }}</span> 
+                                        <br>
                                         <span class="font-mono">
                                             {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                         </span>
@@ -637,7 +663,209 @@
                         @endforeach
                     </tbody>
                 </table>
-
+            @elseif ($activeTab === 'task')
+                <table class="whitespace-no-wrap table-hover table w-full">
+                    <thead class="headTable border-0">
+                        <tr class="text-left">
+                            <th class="w-96 px-4 py-3">
+                                <div class="flex">
+                                    Tareas
+                                    {{-- down-up --}}
+                                    <svg wire:click='filterDown("reportDukke")' xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredDukke) block @else hidden @endif ml-2 cursor-pointer">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M17 3l0 18" />
+                                        <path d="M10 18l-3 3l-3 -3" />
+                                        <path d="M7 21l0 -18" />
+                                        <path d="M20 6l-3 -3l-3 3" />
+                                    </svg>
+                                    {{-- up-down --}}
+                                    <svg wire:click='filterUp("reportDukke")' xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredDukke) hidden @else block @endif ml-2 cursor-pointer">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 3l0 18" />
+                                        <path d="M10 6l-3 -3l-3 3" />
+                                        <path d="M20 18l-3 3l-3 -3" />
+                                        <path d="M17 21l0 -18" />
+                                    </svg>
+                                </div>
+                            </th>
+                            <th class="px-1 py-3 lg:w-48">Delegado</th>
+                            <th class="w-48 px-2 py-3">Estado</th>
+                            <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                            <th class="w-56 px-1 py-3">Creado</th>
+                            <th class="w-16 px-1 py-3">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($tasks as $task)
+                            <tr class="trTable">
+                                <td class="relative px-2 py-1">
+                                    <div wire:click="showReport({{ $task->id }})"
+                                        class="flex cursor-pointer flex-col justify-center text-center">
+                                        @if ($task->sprint_id)
+                                            <p class="text-justify text-xs font-semibold">
+                                                Actividades
+                                            </p>
+                                        @else
+                                            @if ($task->project)
+                                                <div class="flex flex-row">
+                                                    <div class="w-12"></div>
+                                                    <p class="my-auto text-left text-xs font-semibold text-gray-400">
+                                                        {{ $task->project->name }}
+                                                    </p>
+                                                </div>
+                                            @else
+                                                <p class="text-justify text-xs font-semibold">
+                                                    Proyecto no disponible
+                                                </p>
+                                            @endif
+                                        @endif
+                                        
+                                        <div class="flex flex-row">
+                                            <div class="my-2 w-auto rounded-md px-3 text-center font-semibold">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="currentColor"
+                                                    class="icon icon-tabler icons-tabler-filled icon-tabler-circle @if ($task->priority == 'Alto') text-red-500 @endif @if ($task->priority == 'Medio') text-yellow-400 @endif @if ($task->priority == 'Bajo') text-blue-500 @endif">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path
+                                                        d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
+                                                </svg>
+                                            </div>
+                                            <p class="my-auto text-left text-xs font-semibold">
+                                                {{ $task->title }}
+                                            </p>
+                                        </div>
+                                        @if ($task->messages_count >= 1)
+                                            {{-- usuario --}}
+                                            @if ($task->user_chat != Auth::id() && $task->receiver_chat == Auth::id())
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                                {{-- envio varios mensajes de diversos usuarios --}}
+                                            @elseif($task->noView == true)
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                                {{-- administrador --}}
+                                            @elseif(Auth::user()->type_user == 1 && $task->client == false && $task->user_id == false)
+                                                <div class="absolute right-0 top-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M8 9h8" />
+                                                        <path d="M8 13h6" />
+                                                        <path
+                                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                    </svg>
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="px-2 py-1">
+                                    <div class="mx-auto w-full text-left">
+                                        <p class="font-semibold">
+                                            {{ $task->user_name }}</p>
+                                        <p class="text-xs">
+                                            @if ($task->state == 'Proceso' || $task->state == 'Conflicto')
+                                                Progreso
+                                                {{-- {{ $task->progress->diffForHumans(null, false, false, 1) }} --}}
+                                            @else
+                                                @if ($task->state == 'Resuelto')
+                                                    @if ($task->progress == null)
+                                                        Sin desarrollo
+                                                    @else
+                                                        Desarrollo {{ $task->timeDifference }}
+                                                    @endif
+                                                @else
+                                                    @if ($task->look == true)
+                                                        Visto
+                                                        {{-- {{ $task->progress->diffForHumans(null, false, false, 1) }} --}}
+                                                    @endif
+                                                @endif
+                                            @endif
+                                        </p>
+                                    </div>
+                                </td>
+                                <td class="px-2 py-1">
+                                    <div name="state" id="state"
+                                        class="inpSelectTable @if ($task->state == 'Abierto') bg-blue-500 text-white @endif @if ($task->state == 'Proceso') bg-yellow-400 @endif @if ($task->state == 'Resuelto') bg-lime-700 text-white @endif @if ($task->state == 'Conflicto') bg-red-600 text-white @endif flex w-24 text-sm font-semibold">
+                                        <option selected value={{ $task->state }}>{{ $task->state }}</option>
+                                    </div>
+                                    @if ($task->count)
+                                        <p class="text-xs text-red-600">Reincidencia {{ $task->count }}</p>
+                                    @endif
+                                </td>
+                                <td class="px-2 py-1 text-left">
+                                    <div class="mx-auto">
+                                        {{ \Carbon\Carbon::parse($task->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                    </div>
+                                </td>
+                                <td class="px-2 py-1">
+                                    <div class="mx-auto text-left">
+                                        {{-- <span class="font-semibold"> {{ $task->user->name }}</span>  --}}
+                                        <br>
+                                        <span class="font-mono">
+                                            {{ \Carbon\Carbon::parse($task->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-2 py-1">
+                                    <div class="flex justify-center">
+                                        @if ($task->project)
+                                            <a
+                                                href="{{ route('projects.reports.index', ['project' => $task->project->id, 'reports' => $task->id]) }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-eye">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                    <path
+                                                        d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+                                                </svg>
+                                            </a>
+                                        @else
+                                            <p class="text-justify text-xs font-semibold">
+                                                Proyecto no disponible
+                                            </p>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             @endif
         </div>
         {{-- END TABLE --}}
@@ -667,7 +895,7 @@
                                 </p>
                             @endif
                             @php
-                                echo mb_substr($activityShow->tittle, 0, 25) . ' ...';
+                                echo mb_substr($activityShow->title, 0, 25) . ' ...';
                             @endphp
                         </h3>
                         <svg wire:click="modalShowActivity()" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
@@ -709,37 +937,42 @@
                                                 <div class="mx-2 items-center">
                                                     @if ($message->user_id == Auth::user()->id)
                                                         <div class="text-right">
-                                                            <span class="font-semibold text-sm text-black ">Tú</span>
+                                                            <span class="text-sm font-semibold text-black">Tú</span>
                                                         </div>
-                                                        <div class="text-right p-2 bg-primaryColor rounded-xl">
+                                                        <div class="bg-primaryColor rounded-xl p-2 text-right">
                                                             <span
                                                                 class="text-blacktext-base font-extralight text-gray-600">{{ $message->message }}</span>
                                                         </div>
-                                                        <div class="text-xs text-black text-right">
-                                                            <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                        <div class="text-right text-xs text-black">
+                                                            <span
+                                                                class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                         </div>
                                                     @else
                                                         @if (Auth::user()->type_user == 3)
                                                             <div class="text-left">
-                                                                <span class="font-semibold text-sm text-black ">ARTEN</span>
-                                                            </div>
-                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                                    class="text-sm font-semibold text-black">ARTEN</span>
                                                             </div>
-                                                            <div class="text-xs text-black text-left">
-                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            <div class="rounded-xl bg-gray-200 p-2">
+                                                                <span
+                                                                    class="text-base font-extralight text-black text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-left text-xs text-black">
+                                                                <span
+                                                                    class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                             </div>
                                                         @else
                                                             <div class="text-left">
-                                                                <span class="font-semibold text-sm text-black ">{{ $message->transmitter->name }}</span>
-                                                            </div>
-                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                                    class="text-sm font-semibold text-black">{{ $message->transmitter->name }}</span>
                                                             </div>
-                                                            <div class="text-xs text-black text-left">
-                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            <div class="rounded-xl bg-gray-200 p-2">
+                                                                <span
+                                                                    class="text-base font-extralight text-black text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-left text-xs text-black">
+                                                                <span
+                                                                    class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                             </div>
                                                         @endif
                                                     @endif
@@ -897,37 +1130,42 @@
                                                 <div class="mx-2 items-center">
                                                     @if ($message->user_id == Auth::user()->id)
                                                         <div class="text-right">
-                                                            <span class="font-semibold text-sm text-black ">Tú</span>
+                                                            <span class="text-sm font-semibold text-black">Tú</span>
                                                         </div>
-                                                        <div class="text-right p-2 bg-primaryColor rounded-xl">
+                                                        <div class="bg-primaryColor rounded-xl p-2 text-right">
                                                             <span
                                                                 class="text-blacktext-base font-extralight text-gray-600">{{ $message->message }}</span>
                                                         </div>
-                                                        <div class="text-xs text-black text-right">
-                                                            <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                        <div class="text-right text-xs text-black">
+                                                            <span
+                                                                class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                         </div>
                                                     @else
                                                         @if (Auth::user()->type_user == 3)
                                                             <div class="text-left">
-                                                                <span class="font-semibold text-sm text-black ">ARTEN</span>
-                                                            </div>
-                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                                    class="text-sm font-semibold text-black">ARTEN</span>
                                                             </div>
-                                                            <div class="text-xs text-black text-left">
-                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            <div class="rounded-xl bg-gray-200 p-2">
+                                                                <span
+                                                                    class="text-base font-extralight text-black text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-left text-xs text-black">
+                                                                <span
+                                                                    class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                             </div>
                                                         @else
                                                             <div class="text-left">
-                                                                <span class="font-semibold text-sm text-black ">{{ $message->transmitter->name }}</span>
-                                                            </div>
-                                                            <div class="p-2 bg-gray-200 rounded-xl">
                                                                 <span
-                                                                    class="text-black text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                                    class="text-sm font-semibold text-black">{{ $message->transmitter->name }}</span>
                                                             </div>
-                                                            <div class="text-xs text-black text-left">
-                                                                <span class="italic font-light">{{ $message->created_at->format('H:i') }}</span>
+                                                            <div class="rounded-xl bg-gray-200 p-2">
+                                                                <span
+                                                                    class="text-base font-extralight text-black text-gray-600">{{ $message->message }}</span>
+                                                            </div>
+                                                            <div class="text-left text-xs text-black">
+                                                                <span
+                                                                    class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                             </div>
                                                         @endif
                                                     @endif
@@ -1001,9 +1239,11 @@
                                         @if ($reportShow->file == true)
                                             <div class="md-3/4 mb-3 mt-5 flex w-full flex-col">
                                                 @if ($reportShow->fileExtension === 'pdf')
-                                                    <iframe src="{{ asset('reportes/' . $reportShow->content) }}" width="auto" height="600"></iframe>
+                                                    <iframe src="{{ asset('reportes/' . $reportShow->content) }}"
+                                                        width="auto" height="600"></iframe>
                                                 @else
-                                                    <p class="text-center text-base">Vista previa no disponible para este tipo de archivo.</p>
+                                                    <p class="text-center text-base">Vista previa no disponible para
+                                                        este tipo de archivo.</p>
                                                 @endif
                                             </div>
                                         @endif
@@ -1024,7 +1264,10 @@
                                             <p>Sin contenido</p>
                                         </div>
                                     @endif
-                                    @if ($reportShow->image == true || $reportShow->video == true || $reportShow->file == true && $reportShow->contentExists)
+                                    @if (
+                                        $reportShow->image == true ||
+                                            $reportShow->video == true ||
+                                            ($reportShow->file == true && $reportShow->contentExists))
                                         <div class="flex items-center justify-center">
                                             <a href="{{ asset('reportes/' . $reportShow->content) }}"
                                                 download="{{ basename($reportShow->content) }}" class="btnSecondary"
@@ -1197,7 +1440,8 @@
     </div>
     {{-- END MODAL EVIDENCE --}}
     {{-- LOADING PAGE --}}
-    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading wire:target="setActiveTab, filterDown, filterUp, showActivity, showReport, modalShowActivity, updateChatActivity, modalShowReport, updateChatReport, updateEvidence">
+    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
+        wire:target="setActiveTab, filterDown, filterUp, showActivity, showReport, modalShowActivity, updateChatActivity, modalShowReport, updateChatReport, updateEvidence">
         <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
         <div class="loadingspinner relative top-1/3 z-20">
             <div id="square1"></div>
@@ -1225,7 +1469,8 @@
                             if (mutation.attributeName === "class") {
                                 var classList = mutation.target.classList;
                                 if (classList.contains("block") && !classList.contains("hidden")) {
-                                    var messageContainer = document.getElementById("messageContainerActivity");
+                                    var messageContainer = document.getElementById(
+                                        "messageContainerActivity");
                                     if (messageContainer) {
                                         messageContainer.scrollTop = messageContainer.scrollHeight;
                                     } else {
@@ -1249,7 +1494,8 @@
                             if (mutation.attributeName === "class") {
                                 var classList = mutation.target.classList;
                                 if (classList.contains("block") && !classList.contains("hidden")) {
-                                    var messageContainer = document.getElementById("messageContainerReport");
+                                    var messageContainer = document.getElementById(
+                                        "messageContainerReport");
                                     if (messageContainer) {
                                         messageContainer.scrollTop = messageContainer.scrollHeight;
                                     } else {
@@ -1270,6 +1516,7 @@
             // GRAFICA
             document.addEventListener('livewire:load', function() {
                 var chart;
+
                 function renderChart(series, categories, totalEffortPoints) {
                     if (chart) {
                         chart.destroy();

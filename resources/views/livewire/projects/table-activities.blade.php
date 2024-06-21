@@ -353,7 +353,7 @@
                                     @else
                                         <div class="w-12"></div>
                                     @endif
-                                    <p class="my-auto text-left text-xs font-semibold">{{ $activity->tittle }}</p>
+                                    <p class="my-auto text-left text-xs font-semibold">{{ $activity->title }}</p>
                                     @if ($activity->messages_count >= 1)
                                         {{-- usuario --}}
                                         @if ($activity->user_chat != Auth::id() && $activity->receiver_chat == Auth::id())
@@ -730,7 +730,7 @@
                         <h3
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
                             @php
-                                echo mb_substr($activityShow->tittle, 0, 25) . ' ...';
+                                echo mb_substr($activityShow->title, 0, 25) . ' ...';
                             @endphp
                         </h3>
                         <svg wire:click="modalShowActivity()" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
@@ -927,14 +927,14 @@
                         </div>
                         <div class="-mx-3 mb-6 flex flex-row">
                             <div class="mb-6 flex w-full flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="tittle">
+                                <h5 class="inline-flex font-semibold" for="title">
                                     Titulo<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='tittle' required type="text" placeholder="Título"
-                                    name="tittle" id="tittle" class="inputs">
+                                <input wire:model='title' required type="text" placeholder="Título"
+                                    name="title" id="title" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
-                                        @error('tittle')
+                                        @error('title')
                                             <span class="pl-2 text-xs italic text-red-600">
                                                 {{ $message }}
                                             </span>

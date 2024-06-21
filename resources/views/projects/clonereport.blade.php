@@ -564,11 +564,13 @@
         let showingDirect = false; // Estado inicial
         let validNumbers = [1, 2, 3, 5, 8, 13];
         // ABRIR MODAL
-        buttonPoints.addEventListener('click', function(e) {
-            e.preventDefault();
-            modalPoints.classList.remove("hidden");
-            modalPoints.classList.add("block");
-        });
+        if (buttonPoints && modalPoints) {
+            buttonPoints.addEventListener('click', function(e) {
+                e.preventDefault();
+                modalPoints.classList.remove("hidden");
+                modalPoints.classList.add("block");
+            });
+        }
         // CERRAR MODAL
         closeModal.addEventListener('click', function(e) {
             e.preventDefault();
