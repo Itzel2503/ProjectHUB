@@ -76,10 +76,10 @@ class ActivitiesReports extends Component
         $this->endMonth = Carbon::now()->endOfMonth()->format('Y-m-d'); // Último día del mes actual
         // Subconsulta de Reports por mes incluyendo puntos resueltos y los demás estados
         $reportsMonthly = Report::select(
-            'delegate_id',
-            DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_reports"),
-            DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_reports")
-        )
+                'delegate_id',
+                DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_reports"),
+                DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_reports")
+            )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
                 $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
@@ -88,10 +88,10 @@ class ActivitiesReports extends Component
             ->groupBy('delegate_id');
         // Subconsulta de Activities por mes incluyendo puntos resueltos y los demás estados
         $activitiesMonthly = Activity::select(
-            'delegate_id',
-            DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_activities"),
-            DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_activities")
-        )
+                'delegate_id',
+                DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_activities"),
+                DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_activities")
+            )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
                 $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
@@ -100,12 +100,12 @@ class ActivitiesReports extends Component
             ->groupBy('delegate_id');
         // Subconsulta de Reports por semana
         $reportsWeekly = Report::select(
-            'delegate_id',
-            DB::raw("SUM(CASE WHEN state = 'Abierto' THEN points ELSE 0 END) as report_abierto"),
-            DB::raw("SUM(CASE WHEN state = 'Proceso' THEN points ELSE 0 END) as report_proceso"),
-            DB::raw("SUM(CASE WHEN state = 'Conflicto' THEN points ELSE 0 END) as report_conflicto"),
-            DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as report_resuelto")
-        )
+                'delegate_id',
+                DB::raw("SUM(CASE WHEN state = 'Abierto' THEN points ELSE 0 END) as report_abierto"),
+                DB::raw("SUM(CASE WHEN state = 'Proceso' THEN points ELSE 0 END) as report_proceso"),
+                DB::raw("SUM(CASE WHEN state = 'Conflicto' THEN points ELSE 0 END) as report_conflicto"),
+                DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as report_resuelto")
+            )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
                 $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
@@ -114,12 +114,12 @@ class ActivitiesReports extends Component
             ->groupBy('delegate_id');
         // Subconsulta de Activities por semana
         $activitiesWeekly = Activity::select(
-            'delegate_id',
-            DB::raw("SUM(CASE WHEN state = 'Abierto' THEN points ELSE 0 END) as activity_abierto"),
-            DB::raw("SUM(CASE WHEN state = 'Proceso' THEN points ELSE 0 END) as activity_proceso"),
-            DB::raw("SUM(CASE WHEN state = 'Conflicto' THEN points ELSE 0 END) as activity_conflicto"),
-            DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as activity_resuelto")
-        )
+                'delegate_id',
+                DB::raw("SUM(CASE WHEN state = 'Abierto' THEN points ELSE 0 END) as activity_abierto"),
+                DB::raw("SUM(CASE WHEN state = 'Proceso' THEN points ELSE 0 END) as activity_proceso"),
+                DB::raw("SUM(CASE WHEN state = 'Conflicto' THEN points ELSE 0 END) as activity_conflicto"),
+                DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as activity_resuelto")
+            )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
                 $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
@@ -128,23 +128,23 @@ class ActivitiesReports extends Component
             ->groupBy('delegate_id');
         // Consulta principal unificada
         $points = User::select(
-            'users.id',
-            'users.name',
-            'users.effort_points',
-            'reports_weekly.report_abierto',
-            'reports_weekly.report_proceso',
-            'reports_weekly.report_conflicto',
-            'reports_weekly.report_resuelto',
-            'activities_weekly.activity_abierto',
-            'activities_weekly.activity_proceso',
-            'activities_weekly.activity_conflicto',
-            'activities_weekly.activity_resuelto',
+                'users.id',
+                'users.name',
+                'users.effort_points',
+                'reports_weekly.report_abierto',
+                'reports_weekly.report_proceso',
+                'reports_weekly.report_conflicto',
+                'reports_weekly.report_resuelto',
+                'activities_weekly.activity_abierto',
+                'activities_weekly.activity_proceso',
+                'activities_weekly.activity_conflicto',
+                'activities_weekly.activity_resuelto',
 
-            'reports_monthly.total_points_reports',
-            'reports_monthly.total_resuelto_reports',
-            'activities_monthly.total_points_activities',
-            'activities_monthly.total_resuelto_activities'
-        )
+                'reports_monthly.total_points_reports',
+                'reports_monthly.total_resuelto_reports',
+                'activities_monthly.total_points_activities',
+                'activities_monthly.total_resuelto_activities'
+            )
             ->leftJoinSub($reportsWeekly, 'reports_weekly', 'users.id', '=', 'reports_weekly.delegate_id')
             ->leftJoinSub($activitiesWeekly, 'activities_weekly', 'users.id', '=', 'activities_weekly.delegate_id')
             ->leftJoinSub($reportsMonthly, 'reports_monthly', 'users.id', '=', 'reports_monthly.delegate_id')
@@ -216,9 +216,9 @@ class ActivitiesReports extends Component
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
             $activities = Activity::where(function ($query) {
-                $query
-                    ->where('title', 'like', '%' . $this->searchActivity . '%');
-            })
+                    $query
+                        ->where('title', 'like', '%' . $this->searchActivity . '%');
+                })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
@@ -231,12 +231,12 @@ class ActivitiesReports extends Component
                 ->get();
 
             $reports = Report::where(function ($query) {
-                $query
-                    ->where('title', 'like', '%' . $this->searchReport . '%');
-                if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
-                    $query->orWhereNotNull('count');
-                }
-            })
+                    $query
+                        ->where('title', 'like', '%' . $this->searchReport . '%');
+                    if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
+                        $query->orWhereNotNull('count');
+                    }
+                })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
@@ -250,10 +250,10 @@ class ActivitiesReports extends Component
             $reportsDukke = null;
             // Obtener los reports del usuario
             $reportsAdmin = User::select(
-                'users.id as user_id',
-                'users.name as user_name',
-                'reports.*'
-            )
+                    'users.id as user',
+                    'users.name as user_name',
+                    'reports.*'
+                )
                 ->leftJoin('reports', 'users.id', '=', 'reports.delegate_id')
                 ->where('reports.delegate_id', $user_id)
                 ->where('reports.title', 'like', '%' . $this->searchTask . '%')
@@ -262,10 +262,10 @@ class ActivitiesReports extends Component
                 ->get();
             // Obtener las activities del usuario
             $activitiesAdmin = User::select(
-                'users.id as user_id',
-                'users.name as user_name',
-                'activities.*'
-            )
+                    'users.id as user',
+                    'users.name as user_name',
+                    'activities.*'
+                )
                 ->leftJoin('activities', 'users.id', '=', 'activities.delegate_id')
                 ->where('activities.delegate_id', $user_id)
                 ->where('activities.title', 'like', '%' . $this->searchTask . '%')
@@ -274,7 +274,6 @@ class ActivitiesReports extends Component
                 ->get();
             // Combinar los resultados en una colección
             $tasks = $activitiesAdmin->merge($reportsAdmin);
-            // dd($tasks);
         } else {
             $activities = Activity::where(function ($query) {
                 $query
@@ -498,11 +497,13 @@ class ActivitiesReports extends Component
             }
             $report->messages_count = $messages->where('look', false)->count();
         }
+        // ADD ATRIBUTES TASK ADMIN
         if (Auth::user()->type_user == 1) {
             // ADD ATRIBUTES REPORTS
             foreach ($tasks as $task) {
                 // PROGRESS
                 if ($task->progress && $task->updated_at) {
+                    $task->progress = Carbon::parse($task->progress);
                     $progress = Carbon::parse($task->progress);
                     $updated_at = Carbon::parse($task->updated_at);
                     $diff = $progress->diff($updated_at);
@@ -529,6 +530,9 @@ class ActivitiesReports extends Component
                 } else {
                     $task->timeDifference = null;
                 }
+                // NAME USUARIO CREADOR
+                $user_created = User::where('id', $task->user_id)->first();
+                $task->user_created = $user_created->name;
                 // CHAT ACTIVITY
                 if ($task->sprint_id) {
                     $messages = ChatReports::where('activity_id', $task->id)->orderBy('created_at', 'asc')->get();
@@ -538,18 +542,23 @@ class ActivitiesReports extends Component
                         ->where('look', false)
                         ->latest()
                         ->first();
+                    // Datos del proyecto
                     $sprint = Sprint::where('id', $task->sprint_id)->first(); // Obtener solo un modelo, no una colección
                     if ($sprint) {
                         if ($sprint->backlog) {
                             // Acceder al proyecto asociado al backlog
-                            $task->project_name = $sprint->backlog->project->name;
+                            $task->project_name = $sprint->backlog->project->name . ' (Actividad)';
+                            $task->project_id = $sprint->backlog->project->id;
+                            $task->project_activity = true;
                         } else {
                             // Manejar caso donde no hay backlog asociado
                             $task->project_name = 'Backlog no disponible';
+                            $task->project_activity = false;
                         }
                     } else {
                         // Manejar caso donde no se encuentra el sprint
                         $task->project_name = 'Sprint no encontrado';
+                        $task->project_activity = false;
                     }
                 } else {
                     $messages = ChatReports::where('report_id', $task->id)->orderBy('created_at', 'asc')->get();
@@ -559,6 +568,18 @@ class ActivitiesReports extends Component
                         ->where('look', false)
                         ->latest()
                         ->first();
+                    // Datos del proyecto
+                    $project = Project::where('id', $task->project_id)->first(); // Obtener solo un modelo, no una colección
+                    if ($project) {
+                        // Acceder al proyecto a
+                        $task->project_name = $project->name . ' (Reporte)';
+                        $task->project_id = $project->id;
+                        $task->project_report = true;
+                    } else {
+                        // Manejar caso donde no se encuentra el proyecto
+                        $task->project_name = 'Proyecto no encontrado';
+                        $task->project_report = false;
+                    }
                 }
                 // Verificar si la colección tiene al menos un mensaje
                 if ($messages) {
@@ -592,7 +613,7 @@ class ActivitiesReports extends Component
                 $task->messages_count = $messages->where('look', false)->count();
             }
         }
-
+        // ADD ATRIBUTES REPORTS DUKKE
         if (Auth::user()->area_id == 4) {
             // ADD ATRIBUTES REPORTS
             foreach ($reportsDukke as $report) {

@@ -707,27 +707,14 @@
                         @foreach ($tasks as $task)
                             <tr class="trTable">
                                 <td class="relative px-2 py-1">
-                                    <div wire:click="showReport({{ $task->id }})"
+                                    <div @if($task->project_activity) wire:click='showActivity({{ $task->id }})' @elseif($task->project_report) wire:click='showReport({{ $task->id }})' @endif
                                         class="flex cursor-pointer flex-col justify-center text-center">
-                                        @if ($task->sprint_id)
-                                            <p class="text-justify text-xs font-semibold">
-                                                Actividades
+                                        <div class="flex flex-row">
+                                            <div class="w-12"></div>
+                                            <p class="my-auto text-left text-xs font-semibold text-gray-400">
+                                                {{ $task->project_name }}
                                             </p>
-                                        @else
-                                            @if ($task->project)
-                                                <div class="flex flex-row">
-                                                    <div class="w-12"></div>
-                                                    <p class="my-auto text-left text-xs font-semibold text-gray-400">
-                                                        {{ $task->project->name }}
-                                                    </p>
-                                                </div>
-                                            @else
-                                                <p class="text-justify text-xs font-semibold">
-                                                    Proyecto no disponible
-                                                </p>
-                                            @endif
-                                        @endif
-                                        
+                                        </div>
                                         <div class="flex flex-row">
                                             <div class="my-2 w-auto rounded-md px-3 text-center font-semibold">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -794,12 +781,11 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto w-full text-left">
-                                        <p class="font-semibold">
-                                            {{ $task->user_name }}</p>
+                                        <p class="font-semibold">{{ $task->user_name }}</p>
                                         <p class="text-xs">
                                             @if ($task->state == 'Proceso' || $task->state == 'Conflicto')
                                                 Progreso
-                                                {{-- {{ $task->progress->diffForHumans(null, false, false, 1) }} --}}
+                                                {{ $task->progress->diffForHumans(null, false, false, 1) }}
                                             @else
                                                 @if ($task->state == 'Resuelto')
                                                     @if ($task->progress == null)
@@ -810,7 +796,7 @@
                                                 @else
                                                     @if ($task->look == true)
                                                         Visto
-                                                        {{-- {{ $task->progress->diffForHumans(null, false, false, 1) }} --}}
+                                                        {{ $task->progress->diffForHumans(null, false, false, 1) }}
                                                     @endif
                                                 @endif
                                             @endif
@@ -833,7 +819,7 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto text-left">
-                                        {{-- <span class="font-semibold"> {{ $task->user->name }}</span>  --}}
+                                        <span class="font-semibold"> {{ $task->user_created }}</span> 
                                         <br>
                                         <span class="font-mono">
                                             {{ \Carbon\Carbon::parse($task->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
@@ -842,9 +828,22 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="flex justify-center">
-                                        @if ($task->project)
+                                        @if ($task->project_activity)
                                             <a
-                                                href="{{ route('projects.reports.index', ['project' => $task->project->id, 'reports' => $task->id]) }}">
+                                            href="{{ route('projects.activities.index', ['project' => $task->project_id, 'activity' => $task->id]) }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-eye">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                    <path
+                                                        d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+                                                </svg>
+                                            </a>
+                                        @elseif($task->project_report)
+                                            <a
+                                            href="{{ route('projects.reports.index', ['project' => $task->project_id, 'reports' => $task->id]) }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
