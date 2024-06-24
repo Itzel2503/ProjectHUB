@@ -3,6 +3,12 @@
         <div wire:ignore id="chart" class="my-5"></div>
         {{-- PESTAÑAS --}}
         <nav class="-mb-px flex">
+            @if (Auth::user()->type_user == 1)
+                <button wire:click="setActiveTab('task')"
+                    class="border-primaryColor @if ($activeTab === 'task') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 pb-4 text-sm font-medium">
+                    Mis tareas
+                </button>
+            @endif
             <button wire:click="setActiveTab('actividades')"
                 class="border-primaryColor @if ($activeTab === 'actividades') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 pb-4 text-sm font-medium">
                 Actividades
@@ -15,12 +21,6 @@
                 <button wire:click="setActiveTab('dukke')"
                     class="border-primaryColor @if ($activeTab === 'dukke') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 pb-4 text-sm font-medium">
                     Dukke
-                </button>
-            @endif
-            @if (Auth::user()->type_user == 1)
-                <button wire:click="setActiveTab('task')"
-                    class="border-primaryColor @if ($activeTab === 'task') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 pb-4 text-sm font-medium">
-                    Mis tareas
                 </button>
             @endif
             {{-- NAVEGADOR --}}

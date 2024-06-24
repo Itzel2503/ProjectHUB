@@ -62,6 +62,19 @@ class ActivitiesReports extends Component
     // ------------------------------ TASK ADMIN ------------------------------
     public $searchTask;
 
+    public function mount()
+    {
+        $user = Auth::user();
+
+        if ($user && $user->type_user == 1) {
+            $this->activeTab = 'task';
+        } else {
+            $this->activeTab = 'actividades';
+        }
+        $this->modalShowActivity = false;
+        $this->modalShowReport = false;
+    }
+
     public function render()
     {
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
@@ -706,6 +719,9 @@ class ActivitiesReports extends Component
 
         if ($this->modalShowActivity == true) {
             $this->modalShowActivity = false;
+            $this->modalShowReport = false;
+            $this->showActivity = false;
+            $this->showReport = false;
         } else {
             $this->modalShowActivity = true;
             $this->loadMessagesActivity($id);
@@ -786,7 +802,10 @@ class ActivitiesReports extends Component
         $this->showReport = true;
 
         if ($this->modalShowReport == true) {
+            $this->modalShowActivity = false;
             $this->modalShowReport = false;
+            $this->showActivity = false;
+            $this->showReport = false;
         } else {
             $this->modalShowReport = true;
             $this->loadMessagesReport($id);
@@ -876,6 +895,9 @@ class ActivitiesReports extends Component
     {
         if ($this->modalShowActivity == true) {
             $this->modalShowActivity = false;
+            $this->modalShowReport = false;
+            $this->showActivity = false;
+            $this->showReport = false;
         } else {
             $this->modalShowActivity = true;
         }
@@ -884,7 +906,10 @@ class ActivitiesReports extends Component
     public function modalShowReport()
     {
         if ($this->modalShowReport == true) {
+            $this->modalShowActivity = false;
             $this->modalShowReport = false;
+            $this->showActivity = false;
+            $this->showReport = false;
         } else {
             $this->modalShowReport = true;
         }
