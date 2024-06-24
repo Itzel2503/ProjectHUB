@@ -71,8 +71,6 @@ class ActivitiesReports extends Component
         } else {
             $this->activeTab = 'actividades';
         }
-        $this->modalShowActivity = false;
-        $this->modalShowReport = false;
     }
 
     public function render()

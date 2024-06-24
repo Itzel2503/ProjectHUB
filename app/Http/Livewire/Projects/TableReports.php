@@ -250,6 +250,7 @@ class TableReports extends Component
                     $this->reportEvidence = $report;
                 } else {
                     $report->state = $state;
+                    $report->end_date = Carbon::now();
                     $report->repeat = true;
                     $report->save();
 
@@ -434,7 +435,7 @@ class TableReports extends Component
                     'type' => 'success',
                     'title' => 'Evidencia actualizada',
                 ]);
-
+                $report->end_date = Carbon::now();
                 $report->state = 'Resuelto';
                 $report->repeat = true;
                 $report->save();
@@ -783,6 +784,7 @@ class TableReports extends Component
     {
         if ($this->modalShow == true) {
             $this->modalShow = false;
+            $this->showReport = false;
         } else {
             $this->modalShow = true;
         }

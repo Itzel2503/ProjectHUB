@@ -35,8 +35,9 @@ class EffortPoints extends Component
             DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_reports")
         )
             ->where(function ($query) {
-                $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
-                    ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
+                $query->whereBetween('expected_date', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('progress', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('end_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
         // Subconsulta de Activities por mes incluyendo puntos resueltos y los demás estados
@@ -46,8 +47,9 @@ class EffortPoints extends Component
             DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_activities")
         )
             ->where(function ($query) {
-                $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
-                    ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
+                $query->whereBetween('expected_date', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('progress', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('end_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
         // Subconsulta de Reports por semana
@@ -59,8 +61,9 @@ class EffortPoints extends Component
             DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as report_resuelto")
         )
             ->where(function ($query) {
-                $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
-                    ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
+                $query->whereBetween('expected_date', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('progress', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('end_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
         // Subconsulta de Activities por semana
@@ -72,8 +75,9 @@ class EffortPoints extends Component
             DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as activity_resuelto")
         )
             ->where(function ($query) {
-                $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
-                    ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
+                $query->whereBetween('expected_date', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('progress', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('end_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
         // Consulta principal unificada

@@ -40,11 +40,6 @@ class User extends Authenticatable
         return $this->belongsTo(Area::class);
     }
 
-    public function permits()
-    {
-        return $this->belongsToMany(Permit::class)->withPivot(['approved', 'created_at']);
-    }
-
     public function projects()
     {
         return $this->belongsToMany(Project::class)

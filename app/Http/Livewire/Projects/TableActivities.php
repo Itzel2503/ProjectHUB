@@ -894,6 +894,7 @@ class TableActivities extends Component
             }
 
             if ($state == 'Resuelto') {
+                $activity->end_date = Carbon::now();
                 $activity->state = $state;
                 $activity->save();
 

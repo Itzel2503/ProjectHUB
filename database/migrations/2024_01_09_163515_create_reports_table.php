@@ -46,6 +46,7 @@ class CreateReportsTable extends Migration
             $table->dateTime('delegated_date');
             $table->dateTime('expected_date');
             $table->dateTime('progress')->nullable();
+            $table->dateTime('end_date')->nullable();
 
             $table->timestamps();
         });
