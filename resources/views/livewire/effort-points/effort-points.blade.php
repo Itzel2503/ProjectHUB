@@ -158,7 +158,7 @@
                     chart.render();
                 }
 
-                Livewire.on('updateChart', function() {
+                livewire.on('updateChart', function() {
                     var series = @json($series);
                     var categories = @json($categories);
                     var totalEffortPoints = @json($totalEffortPoints);

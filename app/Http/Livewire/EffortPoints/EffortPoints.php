@@ -31,7 +31,7 @@ class EffortPoints extends Component
         // Subconsulta de Reports por mes incluyendo puntos resueltos y los demás estados
         $reportsMonthly = Report::select(
             'delegate_id',
-            DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_reports"),
+            DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto', 'Resuelto') THEN points ELSE 0 END) as total_points_reports"),
             DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_reports")
         )
             ->where(function ($query) {
@@ -42,7 +42,7 @@ class EffortPoints extends Component
         // Subconsulta de Activities por mes incluyendo puntos resueltos y los demás estados
         $activitiesMonthly = Activity::select(
             'delegate_id',
-            DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto') THEN points ELSE 0 END) as total_points_activities"),
+            DB::raw("SUM(CASE WHEN state IN ('Abierto', 'Proceso', 'Conflicto', 'Resuelto') THEN points ELSE 0 END) as total_points_activities"),
             DB::raw("SUM(CASE WHEN state = 'Resuelto' THEN points ELSE 0 END) as total_resuelto_activities")
         )
             ->where(function ($query) {
