@@ -31,8 +31,8 @@ class Priority extends Component
             // Proyectos Activos
             $activo = Project::select(
                 'projects.*',
-                DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.leader = true LIMIT 1) as leader_name"),
-                DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.programmer = true LIMIT 1) as programmer_name")
+                DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.leader = 1 LIMIT 1) as leader_name"),
+                DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.programmer = 1 LIMIT 1) as programmer_name")
             )
                 ->where('type', 'Activo')
                 ->orderBy('priority', 'asc')
@@ -40,8 +40,8 @@ class Priority extends Component
             // Proyectos soporte
             $soporte = Project::select(
                 'projects.*',
-                DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.leader = true LIMIT 1) as leader_name"),
-                DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.programmer = true LIMIT 1) as programmer_name")
+                DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.leader = 1 LIMIT 1) as leader_name"),
+                DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.programmer = 1 LIMIT 1) as programmer_name")
             )
                 ->where('type', 'Soporte')
                 ->orderBy('priority', 'asc')
