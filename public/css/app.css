@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.4.3 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.4 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -1159,6 +1159,10 @@ select {
   display: table;
 }
 
+.grid {
+  display: grid;
+}
+
 .hidden {
   display: none;
 }
@@ -1460,6 +1464,10 @@ select {
           appearance: none;
 }
 
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
 .flex-row {
   flex-direction: row;
 }
@@ -1518,6 +1526,10 @@ select {
 
 .gap-20 {
   gap: 5rem;
+}
+
+.gap-4 {
+  gap: 1rem;
 }
 
 .space-x-4 > :not([hidden]) ~ :not([hidden]) {
@@ -1838,6 +1850,10 @@ select {
   padding: 0.5rem;
 }
 
+.p-3 {
+  padding: 0.75rem;
+}
+
 .p-4 {
   padding: 1rem;
 }
@@ -2117,6 +2133,11 @@ select {
 .text-green-800 {
   --tw-text-opacity: 1;
   color: rgb(22 101 52 / var(--tw-text-opacity));
+}
+
+.text-lime-600 {
+  --tw-text-opacity: 1;
+  color: rgb(101 163 13 / var(--tw-text-opacity));
 }
 
 .text-primaryColor-dark {
@@ -2423,13 +2444,13 @@ select {
 .btnSave {
   width: auto;
   cursor: pointer;
-  border-radius: 9999px;
+  border-radius: 0.5rem;
   --tw-bg-opacity: 1;
   background-color: rgb(46 76 95 / var(--tw-bg-opacity));
-  padding-left: 2rem;
-  padding-right: 2rem;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   font-weight: 600;
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
@@ -2459,6 +2480,8 @@ select {
 }
 
 .btnSecondary {
+  width: auto;
+  cursor: pointer;
   border-radius: 0.5rem;
   --tw-bg-opacity: 1;
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));
@@ -2836,6 +2859,11 @@ select {
   padding-left: 0.75rem;
 }
 
+.hover\:text-xl:hover {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
 .hover\:text-blue-400:hover {
   --tw-text-opacity: 1;
   color: rgb(96 165 250 / var(--tw-text-opacity));
@@ -3031,6 +3059,10 @@ select {
     flex: 1 1 0%;
   }
 
+  .sm\:grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
   .sm\:flex-row {
     flex-direction: row;
   }
@@ -3051,10 +3083,6 @@ select {
     border-radius: 0.5rem;
   }
 
-  .sm\:p-6 {
-    padding: 1.5rem;
-  }
-
   .sm\:px-14 {
     padding-left: 3.5rem;
     padding-right: 3.5rem;
@@ -3071,10 +3099,6 @@ select {
 }
 
 @media (min-width: 768px) {
-  .md\:col-span-1 {
-    grid-column: span 1 / span 1;
-  }
-
   .md\:mx-3 {
     margin-left: 0.75rem;
     margin-right: 0.75rem;
@@ -3176,12 +3200,20 @@ select {
     width: 60%;
   }
 
+  .lg\:w-4\/5 {
+    width: 80%;
+  }
+
   .lg\:w-48 {
     width: 12rem;
   }
 
   .lg\:w-auto {
     width: auto;
+  }
+
+  .lg\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .lg\:flex-row {
@@ -3216,6 +3248,10 @@ select {
     display: block;
   }
 
+  .xl\:flex {
+    display: flex;
+  }
+
   .xl\:hidden {
     display: none;
   }
@@ -3226,6 +3262,14 @@ select {
 
   .xl\:w-1\/4 {
     width: 25%;
+  }
+
+  .xl\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .xl\:justify-center {
+    justify-content: center;
   }
 }
 

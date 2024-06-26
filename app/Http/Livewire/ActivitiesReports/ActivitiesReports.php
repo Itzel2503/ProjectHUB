@@ -93,8 +93,9 @@ class ActivitiesReports extends Component
             )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
-                $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
-                    ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
+                $query->whereBetween('expected_date', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('progress', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('end_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
         // Subconsulta de Activities por mes incluyendo puntos resueltos y los demás estados
@@ -105,8 +106,9 @@ class ActivitiesReports extends Component
             )
             ->where('delegate_id', $user_id)
             ->where(function ($query) {
-                $query->whereBetween('updated_at', [$this->starMonth, $this->endMonth])
-                    ->orWhereBetween('expected_date', [$this->starMonth, $this->endMonth]);
+                $query->whereBetween('expected_date', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('progress', [$this->starMonth, $this->endMonth])
+                    ->orWhereBetween('end_date', [$this->starMonth, $this->endMonth]);
             })
             ->groupBy('delegate_id');
         // Subconsulta de Reports por semana

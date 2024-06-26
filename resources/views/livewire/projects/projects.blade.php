@@ -28,9 +28,21 @@
                         style="padding-left: 3em;">
                 </div>
             </div>
+            <!-- BTN PRIORITY -->
+            <div class="inline-flex h-12 w-1/2 bg-transparent px-2 md:w-1/4 md:px-0">
+                <button wire:click="showProjectPriority()" class="btnNuevo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-star mr-2">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path
+                            d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z" />
+                    </svg>
+                    <span>Prioridades</span>
+                </button>
+            </div>
             <!-- BTN NEW -->
             @if ($user->type_user == 1)
-                <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:w-1/4 md:px-0">
+                <div class="inline-flex h-12 w-1/2 bg-transparent px-2 md:w-1/4 md:px-0">
                     <button wire:click="modalCreateEdit()" class="btnNuevo">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2"
                             width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -91,7 +103,7 @@
                         @if ($user->type_user != 3)
                             <th class="w-16 px-4 py-3">Prioridad</th>
                         @endif
-                        <th class="@if ($user->type_user !=3) w-2/6 @endif px-4 py-3">Proyecto</th>
+                        <th class="@if ($user->type_user != 3) w-2/6 @endif px-4 py-3">Proyecto</th>
                         @if ($user->type_user != 3)
                             <th class="px-4 py-3">Cliente</th>
                             <th class="px-4 py-3">Líder y Scrum Master</th>
@@ -103,7 +115,10 @@
                     @foreach ($projects as $project)
                         <tr class="trTable">
                             @if ($user->type_user != 3)
-                                <th class="px-4 py-2">K{{ $project->priority }}</th>
+                                <th class="px-4 py-2">
+                                    <a wire:click="showPriority({{ $project->id }})"
+                                        class="hover:text-secondary cursor-pointer p-3 hover:text-xl">K{{ $project->priority }}</a>
+                                </th>
                             @endif
                             <td class="px-4 py-2">
                                 <div
@@ -185,7 +200,7 @@
                                             </button>
                                             <!-- Panel -->
                                             <div id="dropdown-panel-{{ $project->id }}" style="display: none;"
-                                                class="absolute right-10 mt-2 w-32 rounded-md bg-gray-200 @if ($user->type_user != 3) @if ($activeTab == 'Activo') top-3 @else {{ $loop->last ? '-top-16' : 'top-3' }} @endif @endif">
+                                                class="@if ($user->type_user != 3) @if ($activeTab == 'Activo') top-3 @else {{ $loop->last ? '-top-16' : 'top-3' }} @endif @endif absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
                                                 <!-- Botón Restaurar -->
                                                 <div wire:click="$emit('restartItem',{{ $project->id }})"
                                                     class="@if ($project->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
@@ -270,7 +285,10 @@
                         <tbody>
                             @foreach ($projectsSoporte as $project)
                                 <tr class="trTable">
-                                    <th class="px-4 py-2">K{{ $project->priority }}</th>
+                                    <th class="px-4 py-2">
+                                        <a wire:click="showPriority({{ $project->id }})"
+                                            class="hover:text-secondary cursor-pointer p-3 hover:text-xl">K{{ $project->priority }}</a>
+                                    </th>
                                     <td class="px-4 py-2">
                                         <div class="mx-auto text-justify">
                                             <span class="font-semibold">{{ $project->name }} @if (Auth::user()->area_id == 1)
@@ -349,7 +367,7 @@
                                                     <!-- Panel -->
                                                     <div id="dropdown-panel-{{ $project->id }}"
                                                         style="display: none;"
-                                                        class="absolute right-10 z-10 mt-2 w-32 rounded-md bg-gray-200 {{ $loop->last ? '-top-16' : 'top-3' }}">
+                                                        class="{{ $loop->last ? '-top-16' : 'top-3' }} absolute right-10 z-10 mt-2 w-32 rounded-md bg-gray-200">
                                                         <!-- Botón Restaurar -->
                                                         <div wire:click="$emit('restartItem',{{ $project->id }})"
                                                             class="@if ($project->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
@@ -428,7 +446,7 @@
         </div>
     </div>
     {{-- END TABLE --}}
-    {{-- MODAL EDIT / CREATE --}}
+    {{-- MODAL EDIT / CREATE PROJECT --}}
     <div
         class="@if ($modalCreateEdit) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
         <div
@@ -743,7 +761,6 @@
                                                 {{ $message }}
                                             </span>
                                         @enderror
-
                                         @error('file')
                                             <span class="pl-2 text-xs italic text-red-600">
                                                 {{ $message }}
@@ -839,10 +856,238 @@
             </div>
         </div>
     </div>
-    {{-- END MODAL EDIT / CREATE --}}
+    {{-- END MODAL EDIT / CREATE PROJECT --}}
+    {{-- MODAL EDIT / CREATE PRIORITY --}}
+    <div
+        class="@if ($modalPriority) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+        <div
+            class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+        </div>
+        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
+            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+                <div
+                    class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
+                    <h3
+                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                        Editar prioridad @if ($showPriority)
+                            "{{ $projectPrioriry->name }}"@endif
+                    </h3>
+                    <svg wire:click="modalPriority()" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div class="modalBody">
+                    <div class="md-3/4 mb-5 flex w-full flex-col px-5 md:mb-0">
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Gravedad<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointKnow" id="pointKnow" class="inputs" wire:model='severity'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - No afecta de ninguna manera</option>
+                                    <option value="6">Bajo - Se le queda mal al cliente</option>
+                                    <option value="18">Alto - Daña la posibilidad de trabajar con el cliente
+                                    </option>
+                                    <option value="24">Crítico - Se pierde la relación con el cliente</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('severity')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Impacto<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='impact'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - No tiene beneficio</option>
+                                    <option value="10">Medio - Representa beneficio sin impacto</option>
+                                    <option value="15">Alto - Representa beneficio con impacto</option>
+                                    <option value="20">Crítico - Para no tener perdidas</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('impact')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Satisfacción<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='satisfaction'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - No afecta en ninguna manera</option>
+                                    <option value="6">Bajo - Entregamos más de los esperado</option>
+                                    <option value="12">Medio - Mantenemos relación</option>
+                                    <option value="18">Alto - Abre la posibilidad a más proyectos</option>
+                                    <option value="24">Crítico- Ganamos un nuevo cliente / generamos lealtad
+                                    </option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('satisfaction')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Temporalidad<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='temporality'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - Indefinido</option>
+                                    <option value="4">2 o más veces el tiempo que se requiere</option>
+                                    <option value="12">Tiempo exacto para hacerlo</option>
+                                    <option value="16">Menos del tiempo que se requiere para hacer</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('temporality')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Magnitud<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='magnitude'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - 1 persona</option>
+                                    <option value="2">Bajo - Departamento</option>
+                                    <option value="6">Alto - Gente externa</option>
+                                    <option value="8">Crítico - Cliente</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('magnitude')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Estrategia<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='strategy'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - No se alinea en ninguna manera</option>
+                                    <option value="6">Medio - Es lo que hacemos</option>
+                                    <option value="9">Alto - Nos ayuda a avanzar</option>
+                                    <option value="12">Crítico - Nos lleva a donde queremos llegar</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('strategy')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Etapa<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='stage'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Iniciativa - Idea que se empieza a desarrollar que no tiene
+                                        el cliente</option>
+                                    <option value="1">Actualización - Cambios que no pide el cliente, que Kircof
+                                        propone</option>
+                                    <option value="2">Cambios - Cambios por decisión del cliente</option>
+                                    <option value="3">Correción - Cambios por error interno</option>
+                                    <option value="4">Nuevo - Primera vez que se hace</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('stage')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modalFooter">
+                    @if ($showPriority)
+                        <button class="btnSave" wire:click="updatePriority({{ $projectPrioriry->id }})">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M14 4l0 4l-6 0l0 -4" />
+                            </svg>
+                            Guardar
+                        </button>
+                    @else
+                        <button class="btnSave" wire:click="modalPriority">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M14 4l0 4l-6 0l0 -4" />
+                            </svg>
+                            Guardar
+                        </button>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL EDIT / CREATE PRIORITY --}}
     {{-- LOADING PAGE --}}
     <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-        wire:target="modalCreateEdit, showReports, showActivities, showUpdate, modalCreateEdit, addInput, removeInput, update, create">
+        wire:target="showProjectPriority,modalCreateEdit, showReports, showActivities, showUpdate, modalCreateEdit, addInput, removeInput, update, create, modalPriority, updatePriority">
         <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
         <div class="loadingspinner relative top-1/3 z-20">
             <div id="square1"></div>

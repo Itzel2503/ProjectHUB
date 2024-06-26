@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Customers\Customer;
 use App\Http\Controllers\EffortPoints\EffortPoints;
 use App\Http\Controllers\Permit;
+use App\Http\Controllers\Projects\Priority;
 use App\Http\Controllers\Projects\Project;
 use App\Http\Controllers\Projects\Report;
 use App\Http\Controllers\Users\UserCatalog;
@@ -43,6 +44,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('customers', Customer::class)->middleware('user.type:1');
     // PROJECTS
     Route::resource('projects', Project::class)->only(['index']);
+    Route::resource('priority', Priority::class)->middleware('user.type:1,2');
     Route::resource('projects.reports', Report::class);
     Route::resource('projects.activities', Activity::class)->only(['index'])->middleware('user.type:1,2');
     // ACTIVITIES

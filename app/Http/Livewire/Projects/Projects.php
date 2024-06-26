@@ -23,20 +23,24 @@ class Projects extends Component
     public $listeners = ['reloadPage' => 'reloadPage', 'destroy', 'restore'];
     // PESTAÑA
     public $activeTab = 'Activo';
-    // modal
+    // MODAL CREATE EDIT
     public $modalCreateEdit = false,
         $createBacklog = false;
     public $showUpdate = false;
     public $customers = [],
         $selectedFiles = [];
     public $projectCustomer, $projectEdit, $backlogEdit;
-    // table
+    // MODAL PRIORITY
+    public $modalPriority = false, $showPriority = false;
+    public $projectPrioriry;
+    // TABLE
     public $search;
     public $allType = ['Activo', 'Soporte', 'No activo', 'Entregado', 'Cerrado'];
     public $typeProject = 'Activo';
     // inputs
     public $code, $name, $type, $priority, $customer, $leader, $programmer, $general_objective, $scopes, $start_date, $closing_date, $passwords;
     public $files = [];
+    public $severity, $impact, $satisfaction, $temporality, $magnitude, $strategy, $stage;
 
     public function render()
     {
@@ -805,6 +809,71 @@ class Projects extends Component
         ]);
     }
 
+    public function updatePriority($id)
+    {
+        try {
+            $this->validate([
+                'severity' => 'required',
+                'impact' => 'required',
+                'satisfaction' => 'required',
+                'temporality' => 'required',
+                'magnitude' => 'required',
+                'strategy' => 'required',
+                'stage' => 'required',
+            ]);
+            // Aquí puedes continuar con tu lógica después de la validación exitosa
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Faltan campos o campos incorrectos',
+            ]);
+            throw $e;
+        }
+
+        $total = $this->severity + $this->impact + $this->satisfaction + $this->temporality + $this->magnitude + $this->strategy + $this->stage;
+
+        $project = Project::find($id);
+        if($project) {
+            if ($total >= 80 && $total <= 108) {
+                $project->priority = 1;
+            } elseif ($total >= 72 && $total <= 79) {
+                $project->priority = 2;
+            } elseif ($total >= 65 && $total <= 71) {
+                $project->priority = 3;
+            } elseif ($total >= 57 && $total <= 64) {
+                $project->priority = 4;
+            } elseif ($total >= 50 && $total <= 56) {
+                $project->priority = 5;
+            } elseif ($total >= 42 && $total <= 49) {
+                $project->priority = 6;
+            } elseif ($total >= 35 && $total <= 41) {
+                $project->priority = 7;
+            } elseif ($total >= 27 && $total <= 34) {
+                $project->priority = 8;
+            } elseif ($total >= 20 && $total <= 26) {
+                $project->priority = 9;
+            } elseif ($total >= 0 && $total <= 19) {
+                $project->priority = 10;
+            }
+            $project->save();
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Prioridad actualizada',
+            ]);
+            $this->clearInputs();
+            $this->modalPriority = false;
+            $this->showPriority = false;
+        } else {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Proyecto no existe',
+            ]);
+        }
+    }
+
     public function destroy($id)
     {
         $project = Project::find($id);
@@ -888,6 +957,20 @@ class Projects extends Component
 
         $this->passwords = $this->backlogEdit->passwords ?? '';
     }
+
+    public function showPriority($id)
+    {
+        $this->showPriority = true;
+
+        if ($this->modalPriority == true) {
+            $this->modalPriority = false;
+            $this->showPriority = false;
+        } else {
+            $this->modalPriority = true;
+        }
+
+        $this->projectPrioriry = Project::find($id);
+    }
     // MODAL
     public function modalCreateEdit()
     {
@@ -901,6 +984,19 @@ class Projects extends Component
         $this->clearInputs();
         $this->resetErrorBag();
         $this->dispatchBrowserEvent('file-reset');
+    }
+
+    public function modalPriority()
+    {
+        if ($this->modalPriority == true) {
+            $this->modalPriority = false;
+            $this->showPriority = false;
+        } else {
+            $this->modalPriority = true;
+        }
+
+        $this->clearInputs();
+        $this->resetErrorBag();
     }
     // EXTRAS
     public function addInput()
@@ -924,6 +1020,11 @@ class Projects extends Component
         return redirect()->route('projects.activities.index', ['project' => $project_id]);
     }
 
+    public function showProjectPriority()
+    {
+        return redirect()->route('priority.index');
+    }
+
     public function clearInputs()
     {
         $this->code = '';
@@ -941,6 +1042,13 @@ class Projects extends Component
         $this->start_date = '';
         $this->closing_date = '';
         $this->passwords = '';
+        $this->severity = '';
+        $this->impact = '';
+        $this->satisfaction = '';
+        $this->temporality = '';
+        $this->magnitude = '';
+        $this->strategy = '';
+        $this->stage = '';
         $this->dispatchBrowserEvent('file-reset');
     }
 
