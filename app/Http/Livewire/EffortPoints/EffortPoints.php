@@ -111,7 +111,18 @@ class EffortPoints extends Component
             // Puntos por terminar
             $points_finish = $point->total_points_reports + $point->total_points_activities;
             // Puntos por asignar
-            $point->points_assigned = $point->effort_points - $points_finish;
+            $points_assigned = $point->effort_points - $points_finish;
+            if ($points_assigned < 0) {
+                // Crear el nuevo atributo extrapoints y establecerlo como el valor positivo del número negativo
+                $point->extrapoints = abs($points_assigned);
+                // Asignar el valor de points_assigned al objeto point
+                $point->points_assigned = 0;
+            } else {
+                // Si points_assigned no es negativo, asegúrate de que extrapoints esté vacío o nulo
+                $point->extrapoints = 0;
+                // Asignar el valor de points_assigned al objeto point
+                $point->points_assigned = $points_assigned;
+            }
             // Avance porcentaje usando la suma de los puntos resueltos del mes
             $total_resuelto_monthly = $point->total_resuelto_reports + $point->total_resuelto_activities;
             // Evitar división por cero
@@ -158,7 +169,15 @@ class EffortPoints extends Component
                 'data' => $points->map(function ($point) {
                     return $point->points_assigned;
                 })->toArray(),
-            ]
+            ],
+            [
+                'name' => 'Extras',
+                'data' => $points
+                    ->map(function ($point) {
+                        return $point->extrapoints;
+                    })
+                    ->toArray(),
+            ],
         ];
         // Preparar los datos para el gráfico
         $categories = $points->map(function ($point) {

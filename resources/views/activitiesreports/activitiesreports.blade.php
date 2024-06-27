@@ -17,11 +17,101 @@
                 <span class="ml-4 text-xl">Actividades y Reportes</span>
             </h1>
         </div>
+        <div id="chart" class="my-5"></div>
         <livewire:activities-reports.activities-reports>
 
-        @livewireScripts
-        @stack('js')
-        <script src="{{ asset('vendor/livewire-alert/livewire-alert.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+            @livewireScripts
+            @stack('js')
+            <script src="{{ asset('vendor/livewire-alert/livewire-alert.js') }}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     </div>
+    <script>
+        // GRAFICA
+        document.addEventListener('DOMContentLoaded', function() {
+            // Datos para el gráfico de Proyectos Activos
+            var categories = @json($categories);
+            var series = @json($series);
+            var totalEffortPoints = @json($totalEffortPoints);
+
+            var options = {
+                series: series,
+                chart: {
+                    type: 'bar',
+                    height: '135px',
+                    stacked: true,
+                },
+                colors: ['rgb(77, 124, 15)', 'rgb(250, 204, 21)', 'rgb(220, 38, 38)', 'rgb(59, 130, 246)',
+                    'rgb(243, 244, 246)', 'rgb(0,0,0)'
+                ],
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        dataLabels: {
+                            position: 'top',
+                            total: {
+                                enabled: true,
+                                formatter: function(val, opt) {
+                                    return totalEffortPoints[opt.dataPointIndex];
+                                },
+                                offsetX: 0,
+                                style: {
+                                    fontSize: '13px',
+                                    fontWeight: 900,
+                                    color: function({
+                                        seriesIndex
+                                    }) {
+                                        return seriesIndex === 4 ? '#000' : '#fff';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        colors: ['#fff', '#fff', '#fff', '#fff', '#000']
+                    }
+                },
+                stroke: {
+                    width: 1,
+                    colors: ['#fff']
+                },
+                title: {
+                    text: 'Story Points por mes'
+                },
+                xaxis: {
+                    categories: categories,
+                    labels: {
+                        formatter: function(val) {
+                            return val;
+                        }
+                    }
+                },
+                yaxis: {
+                    title: {
+                        text: undefined
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(val) {
+                            return val;
+                        }
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'left',
+                    offsetX: 40
+                }
+            };
+
+            chart = new ApexCharts(document.querySelector("#chart"), options);
+            chart.render();
+        });
+    </script>
 @endsection
