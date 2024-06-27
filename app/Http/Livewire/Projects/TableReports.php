@@ -459,7 +459,7 @@ class TableReports extends Component
                     if (!$this->points) {
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'error',
-                            'title' => 'Agrega puntos de esfuerzo.',
+                            'title' => 'Agrega story points.',
                         ]);
                         return;
                     }

@@ -130,7 +130,6 @@
                 <ul class="mt-5">
                     @if ($user->type_user == 1)
                         <li class="menu {{ request()->routeIs('userCatalog.index') ? 'active' : '' }}">
-                            @yield('userCatalog')
                             <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
                                 href="{{ route('userCatalog.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group"
@@ -148,7 +147,6 @@
                             </a>
                         </li>
                         <li class="menu {{ request()->routeIs('customers.index') ? 'active' : '' }}">
-                            @yield('customers')
                             <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
                                 href="{{ route('customers.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users"
@@ -165,7 +163,6 @@
                         </li>
                     @endif
                     <li class="menu {{ request()->routeIs('projects.index') ? 'active' : '' }}">
-                        @yield('projects')
                         <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
                             href="{{ route('projects.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-books"
@@ -188,7 +185,6 @@
                     </li>
                     @if ($user->type_user != 3)
                         <li class="menu {{ request()->routeIs('activities-reports.index') ? 'active' : '' }}">
-                            @yield('all-activities')
                             <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
                                 href="{{ route('activities-reports.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -208,7 +204,6 @@
                     @endif
                     @if ($user->type_user == 1)
                         <li class="menu {{ request()->routeIs('effortPoints.index') ? 'active' : '' }}">
-                            @yield('effort-points')
                             <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
                                 href="{{ route('effortPoints.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -227,62 +222,11 @@
                                     <path d="M15.97 17.25l1.3 .75" />
                                     <path d="M20.733 20l1.3 .75" />
                                 </svg>
-                                <span class="ml-4">Puntos de esfuerzo</span>
+                                <span class="ml-4">Story Points</span>
                             </a>
                         </li>
                     @endif
-                    {{-- <li class="menu">
-                        @yield('permits')
-                        <a class=" inline-flex items-center w-full text-base font-semibold transition-colors duration-150   @yield('black5')"
-                            href="{{ route('permits.index') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-run" width="24"
-                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M13 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                                <path d="M4 17l5 1l.75 -1.5"></path>
-                                <path d="M15 21l0 -4l-4 -3l1 -6"></path>
-                                <path d="M7 12l0 -3l5 -1l3 3l3 1"></path>
-                            </svg>
-                            <span class="ml-4">Permisos</span>
-                        </a>
-                    </li> --}}
-                    {{-- <li class="menu">
-                        @yield('control_activities')
-                        <a class=" inline-flex items-center w-full text-base font-semibold transition-colors duration-150   @yield('black6')"
-                            href="">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-user"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M12 21h-6a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4.5"></path>
-                                <path d="M16 3v4"></path>
-                                <path d="M8 3v4"></path>
-                                <path d="M4 11h16"></path>
-                                <path d="M19 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                                <path d="M22 22a2 2 0 0 0 -2 -2h-2a2 2 0 0 0 -2 2"></path>
-                            </svg>
-                            <span class="ml-4">Control de actividades</span>
-                        </a>
-                    </li> --}}
-                    {{-- <li class="menu">
-                        @yield('petty_cash')
-                        <a class=" inline-flex items-center w-full text-base font-semibold transition-colors duration-150   @yield('black7')"
-                            href="">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-currency-dollar"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path
-                                    d="M16.7 8a3 3 0 0 0 -2.7 -2h-4a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6h-4a3 3 0 0 1 -2.7 -2">
-                                </path>
-                                <path d="M12 3v3m0 12v3"></path>
-                            </svg>
-                            <span class="ml-4">Caja chica</span>
-                        </a>
-                    </li> --}}
                 </ul>
-
                 <form method="POST" action="{{ route('logout') }}" x-data>
                     @csrf
                     <div class="pt-20 text-center">
@@ -358,9 +302,8 @@
                 style="display: none;"
                 class="bg-primaryColor textg-white absolute z-40 w-full rounded-b-md py-4 shadow-md">
                 <ul>
-                    <li class="menu">
-                        @yield('profile')
-                        <a class="@yield('black1') inline-flex w-full text-base font-semibold transition-colors duration-150"
+                    <li class="menu {{ request()->routeIs('profile.index') ? 'active' : '' }}">
+                        <a class="inline-flex w-full text-base font-semibold transition-colors duration-150"
                             href="{{ route('profile.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-circle"
                                 width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -374,9 +317,8 @@
                         </a>
                     </li>
                     @if (Auth::user()->type_user == 1)
-                        <li class="menu">
-                            @yield('userCatalog')
-                            <a class="@yield('black2') inline-flex w-full text-base font-semibold transition-colors duration-150"
+                        <li class="menu {{ request()->routeIs('userCatalog.index') ? 'active' : '' }}">
+                            <a class="inline-flex w-full text-base font-semibold transition-colors duration-150"
                                 href="{{ route('userCatalog.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="icon icon-tabler icon-tabler-users-group" width="24" height="24"
@@ -393,9 +335,8 @@
                                 <span class="ml-4">Usuarios</span>
                             </a>
                         </li>
-                        <li class="menu">
-                            @yield('customers')
-                            <a class="@yield('black3') inline-flex w-full text-base font-semibold transition-colors duration-150"
+                        <li class="menu {{ request()->routeIs('customers.index') ? 'active' : '' }}">
+                            <a class="inline-flex w-full text-base font-semibold transition-colors duration-150"
                                 href="{{ route('customers.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users"
                                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -411,9 +352,8 @@
                             </a>
                         </li>
                     @endif
-                    <li class="menu">
-                        @yield('projects')
-                        <a class="@yield('black4') inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                    <li class="menu {{ request()->routeIs('projects.index') ? 'active' : '' }}">
+                        <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
                             href="{{ route('projects.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-books"
                                 width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -433,9 +373,8 @@
                             <span class="ml-4">Proyectos</span>
                         </a>
                     </li>
-                    <li class="menu">
-                        @yield('activities-reports')
-                        <a class="@yield('black5') inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                    <li class="menu {{ request()->routeIs('activities-reports.index') ? 'active' : '' }}">
+                        <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
                             href="{{ route('activities-reports.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -451,56 +390,28 @@
                             <span class="ml-4">Actividades / Reportes</span>
                         </a>
                     </li>
-                    {{-- <li class="menu">
-                        @yield('permits')
-                        <a class=" inline-flex items-center w-full text-base font-semibold transition-colors duration-150   @yield('black5')"
-                            href="{{ route('permits.index') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-run" width="24"
-                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M13 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                                <path d="M4 17l5 1l.75 -1.5"></path>
-                                <path d="M15 21l0 -4l-4 -3l1 -6"></path>
-                                <path d="M7 12l0 -3l5 -1l3 3l3 1"></path>
-                            </svg>
-                            <span class="ml-4">Permisos</span>
+                    <li class="menu {{ request()->routeIs('effortPoints.index') ? 'active' : '' }}">
+                        <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            href="{{ route('effortPoints.index') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-settings-cog">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M12.003 21c-.732 .001 -1.465 -.438 -1.678 -1.317a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c.886 .215 1.325 .957 1.318 1.694" />
+                                    <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                                    <path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M19.001 15.5v1.5" />
+                                    <path d="M19.001 21v1.5" />
+                                    <path d="M22.032 17.25l-1.299 .75" />
+                                    <path d="M17.27 20l-1.3 .75" />
+                                    <path d="M15.97 17.25l1.3 .75" />
+                                    <path d="M20.733 20l1.3 .75" />
+                                </svg>
+                                <span class="ml-4">Story Points</span>
                         </a>
-                    </li> --}}
-                    {{-- <li class="menu">
-                        @yield('control_activities')
-                        <a class=" inline-flex items-center w-full text-base font-semibold transition-colors duration-150   @yield('black6')"
-                            href="">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-user"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M12 21h-6a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4.5"></path>
-                                <path d="M16 3v4"></path>
-                                <path d="M8 3v4"></path>
-                                <path d="M4 11h16"></path>
-                                <path d="M19 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                                <path d="M22 22a2 2 0 0 0 -2 -2h-2a2 2 0 0 0 -2 2"></path>
-                            </svg>
-                            <span class="ml-4">Control de actividades</span>
-                        </a>
-                    </li> --}}
-                    {{-- <li class="menu">
-                        @yield('petty_cash')
-                        <a class=" inline-flex items-center w-full text-base font-semibold transition-colors duration-150   @yield('black7')"
-                            href="">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-currency-dollar"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path
-                                    d="M16.7 8a3 3 0 0 0 -2.7 -2h-4a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6h-4a3 3 0 0 1 -2.7 -2">
-                                </path>
-                                <path d="M12 3v3m0 12v3"></path>
-                            </svg>
-                            <span class="ml-4">Caja chica</span>
-                        </a>
-                    </li> --}}
+                    </li>
                     <li class="menu">
                         <form method="POST" action="{{ route('logout') }}" x-data>
                             @csrf

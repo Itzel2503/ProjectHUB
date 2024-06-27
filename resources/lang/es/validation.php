@@ -145,7 +145,7 @@ return [
         'description'              => 'descripción',
         'district'                 => 'distrito',
         'duration'                 => 'duración',
-        'effort_points'            => 'puntos de esfuerzo',
+        'effort_points'            => 'story points',
         'email'                    => 'correo electrónico',
         'excerpt'                  => 'extracto',
         'file'                     => 'archivo',

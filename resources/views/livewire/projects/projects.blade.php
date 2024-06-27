@@ -103,10 +103,13 @@
                         @if ($user->type_user != 3)
                             <th class="w-16 px-4 py-3">Prioridad</th>
                         @endif
-                        <th class="@if ($user->type_user != 3) w-2/6 @endif px-4 py-3">Proyecto</th>
+                        <th class="@if ($user->type_user != 3) w-1/4 @endif px-4 py-3">Proyecto</th>
                         @if ($user->type_user != 3)
                             <th class="px-4 py-3">Cliente</th>
                             <th class="px-4 py-3">Líder y Scrum Master</th>
+                            @if ($user->type_user == 1)
+                                <th class="w-8 px-4 py-3">Estatus</th>
+                            @endif
                         @endif
                         <th class="@if ($user->type_user != 3) w-2 @endif px-4 py-2">Acciones</th>
                     </tr>
@@ -131,19 +134,31 @@
                             </td>
                             @if ($user->type_user != 3)
                                 <td class="px-4 py-2">
-                                    <div class="mx-auto text-justify">
+                                    <div class="mx-auto text-left">
                                         <span class="font-bold">{{ $project->customer_name }}</span><br>
                                     </div>
                                 </td>
                                 <td class="px-4 py-2">
-                                    <div class="mx-auto text-justify">
+                                    <div class="mx-auto text-left">
                                         - {{ $project->leader->name }}<br>
                                         - {{ $project->programmer->name }}
                                     </div>
                                 </td>
+                                @if ($user->type_user == 1)
+                                    <td class="px-4 py-1">
+                                        <div name="deleted_at" id="deleted_at"
+                                            class="inpSelectTable inpSelectTable @if ($project->deleted_at == null) bg-lime-700 text-white @else bg-red-600 text-white @endif text-sm font-semibold">
+                                            @if ($project->deleted_at == null)
+                                                <option selected>Activo</option>
+                                            @else
+                                                <option selected>Inactivo</option>
+                                            @endif
+                                        </div>
+                                    </td>
+                                @endif
                             @endif
                             <td
-                                class="@if ($user->type_user != 3) justify-end @else justify-center @endif flex px-4 py-2">
+                                class="@if ($user->type_user != 3) @if ($project->deleted_at == null) justify-end @else justify-center @endif  @else justify-center @endif flex px-4 py-2">
                                 @if ($project->deleted_at == null)
                                     @if ($project->backlog != null)
                                         @if ($user->type_user != 3)
@@ -165,10 +180,10 @@
                                     @endif
                                     <button wire:click="showReports({{ $project->id }})"
                                         class="bg-secondary mx-1 mt-1 rounded-lg px-2 py-1 font-bold text-white">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-bug"
-                                            width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="icon icon-tabler icon-tabler-bug" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
                                             <path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
@@ -276,9 +291,12 @@
                         <thead class="headTable border-0">
                             <tr class="text-left">
                                 <th class="w-16 px-4 py-3">Prioridad</th>
-                                <th class="w-2/6 px-4 py-3">Proyecto</th>
+                                <th class="w-1/4 px-4 py-3">Proyecto</th>
                                 <th class="px-4 py-3">Cliente</th>
                                 <th class="px-4 py-3">Líder y Scrum Master</th>
+                                @if ($user->type_user == 1)
+                                    <th class="w-8 px-4 py-3">Estatus</th>
+                                @endif
                                 <th class="w-2 px-4 py-2">Acciones</th>
                             </tr>
                         </thead>
@@ -298,17 +316,29 @@
                                         </div>
                                     </td>
                                     <td class="px-4 py-2">
-                                        <div class="mx-auto text-justify">
+                                        <div class="mx-auto text-left">
                                             <span class="font-bold">{{ $project->customer_name }}</span><br>
                                         </div>
                                     </td>
                                     <td class="px-4 py-2">
-                                        <div class="mx-auto text-justify">
+                                        <div class="mx-auto text-left">
                                             - {{ $project->leader->name }}<br>
                                             - {{ $project->programmer->name }}
                                         </div>
                                     </td>
-                                    <td class="flex justify-end px-4 py-2">
+                                    @if ($user->type_user == 1)
+                                        <td class="px-4 py-1">
+                                            <div name="deleted_at" id="deleted_at"
+                                                class="inpSelectTable inpSelectTable @if ($project->deleted_at == null) bg-lime-700 text-white @else bg-red-600 text-white @endif text-sm font-semibold">
+                                                @if ($project->deleted_at == null)
+                                                    <option selected>Activo</option>
+                                                @else
+                                                    <option selected>Inactivo</option>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    @endif
+                                    <td class="flex @if ($project->deleted_at == null) justify-end @else justify-center @endif px-4 py-2">
                                         @if ($project->deleted_at == null)
                                             @if ($project->backlog != null)
                                                 <button wire:click="showActivities({{ $project->id }})"

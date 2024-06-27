@@ -403,21 +403,39 @@
                             </td>
                             <td class="px-2 py-1">
                                 <div class="mx-auto w-auto text-left">
-                                    <p class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
-                                        {{ $activity->delegate->name }}</p>
-                                    <select
-                                        wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
-                                        name="delegate" id="delegate"
-                                        class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm"
-                                        @if ($firstSprint->state == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif>
-                                        <option selected value={{ $activity->delegate->id }}>
-                                            {{ $activity->delegate->name }}
-                                        </option>
-                                        @foreach ($activity->usersFiltered as $userFiltered)
-                                            <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                    @if ($activity->delegate)
+                                        <p class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
+                                            {{ $activity->delegate->name }}</p>
+                                        <select
+                                            wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
+                                            name="delegate" id="delegate"
+                                            class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm"
+                                            @if ($firstSprint->state == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif>
+                                            <option selected value={{ $activity->delegate->id }}>
+                                                {{ $activity->delegate->name }}
                                             </option>
-                                        @endforeach
-                                    </select>
+                                            @foreach ($activity->usersFiltered as $userFiltered)
+                                                <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <p class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
+                                            Usuario eliminado</p>
+                                        <select
+                                            wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
+                                            name="delegate" id="delegate"
+                                            class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm"
+                                            @if ($firstSprint->state == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif>
+                                            <option selected>
+                                                Seleccionar...
+                                            </option>
+                                            @foreach ($activity->usersFiltered as $userFiltered)
+                                                <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    @endif
                                     <p class="text-xs">
                                         @if ($activity->state == 'Proceso' || $activity->state == 'Conflicto')
                                             Progreso {{ $activity->progress->diffForHumans(null, false, false, 1) }}
@@ -456,7 +474,11 @@
                             </td>
                             <td class="px-2 py-1">
                                 <div class="mx-auto text-left">
-                                    <span class="font-semibold"> {{ $activity->user->name }}</span> <br>
+                                    @if ($activity->user)
+                                        <span class="font-semibold"> {{ $activity->user->name }}</span> <br>
+                                    @else
+                                        <span class="font-semibold"> Usuario eliminado</span> <br>
+                                    @endif
                                     <span class="font-mono">
                                         {{ \Carbon\Carbon::parse($activity->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                     </span>
@@ -1089,7 +1111,7 @@
                             class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
                             <h4
                                 class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
-                                Puntos de esfuerzo</h4>
+                                Story Points</h4>
                         </div>
                         @if ($showUpdateActivity)
                             @if (Auth::user()->type_user == 1 || Auth::id() == $activityEdit->user->id)

@@ -180,7 +180,7 @@
                     Cuando reincides en un reporte, tienes la opción de agregar nueva información, como fotos o
                     grabaciones, además de actualizar el archivo adjunto si ya existe. También puedes ampliar la
                     descripción del reporte. Si es necesario, puedes delegar el reporte a otro miembro y ajustar la
-                    prioridad, la fecha, la evidencia o los puntos de esfuerzo según sea necesario.
+                    prioridad, la fecha, la evidencia o los story points según sea necesario.
                 </label>
             @endif
         </div>
@@ -351,7 +351,7 @@
                         </div>
                         <div class="m-auto flex w-full flex-row px-3">
                             <a class="btnSave text-center" id="buttonPoints" style="display: flex">
-                                Puntos de esfuerzo
+                                Story Points
                             </a>
                         </div>
                         @endif
@@ -399,7 +399,7 @@
                     class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                     <h3
                         class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                        Puntos de esfuerzo</h3>
+                        Story Points</h3>
                     <svg id="closeModal" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
                         xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"

@@ -19,7 +19,7 @@
                     <path d="M15.97 17.25l1.3 .75" />
                     <path d="M20.733 20l1.3 .75" />
                 </svg>
-                <span class="ml-4 text-xl">Puntos de esfuerzo</span>
+                <span class="ml-4 text-xl">Story Points</span>
             </h1>
         </div>
         <livewire:effort-points.effort-points/>

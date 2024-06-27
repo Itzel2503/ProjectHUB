@@ -229,19 +229,37 @@
                                     @if (Auth::user()->type_user == 3)
                                         <p class="my-auto text-left text-xs font-semibold">Arten</p>
                                     @else
-                                        <p
-                                            class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
-                                            {{ $report->delegate->name }}</p>
-                                        <select wire:change='updateDelegate({{ $report->id }}, $event.target.value)'
-                                            name="delegate" id="delegate"
-                                            class="inpSelectTable @if ($report->state == 'Resuelto') hidden @endif w-full text-sm">
-                                            <option selected value={{ $report->delegate->id }}>
-                                                {{ $report->delegate->name }} </option>
-                                            @foreach ($report->usersFiltered as $userFiltered)
-                                                <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        @if ($report->delegate)
+                                            <p
+                                                class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
+                                                {{ $report->delegate->name }}</p>
+                                            <select
+                                                wire:change='updateDelegate({{ $report->id }}, $event.target.value)'
+                                                name="delegate" id="delegate"
+                                                class="inpSelectTable @if ($report->state == 'Resuelto') hidden @endif w-full text-sm">
+                                                <option selected value={{ $report->delegate->id }}>
+                                                    {{ $report->delegate->name }} </option>
+                                                @foreach ($report->usersFiltered as $userFiltered)
+                                                    <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        @else
+                                            <p
+                                                class="@if ($report->state == 'Resuelto') font-semibold @else hidden @endif">
+                                                Usuario eliminado</p>
+                                            <select
+                                                wire:change='updateDelegate({{ $report->id }}, $event.target.value)'
+                                                name="delegate" id="delegate"
+                                                class="inpSelectTable @if ($report->state == 'Resuelto') hidden @endif w-full text-sm">
+                                                <option selected>
+                                                    Seleccionar...</option>
+                                                @foreach ($report->usersFiltered as $userFiltered)
+                                                    <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        @endif
                                     @endif
                                     <p class="text-xs">
                                         @if ($report->state == 'Proceso' || $report->state == 'Conflicto')
@@ -281,7 +299,7 @@
                                     </select>
                                 @endif
                                 @if ($report->count)
-                                    <p class="text-xs text-red-600">Reincidencia {{ $report->count }}</p>
+                                    <p class="text-xs text-red-600 text-left">Reincidencia {{ $report->count }}</p>
                                 @endif
 
                             </td>
@@ -298,7 +316,11 @@
                             </td>
                             <td class="px-2 py-1">
                                 <div class="mx-auto text-left">
-                                    <span class="font-semibold"> {{ $report->user->name }} </span> <br>
+                                    @if ($report->user)
+                                        <span class="font-semibold"> {{ $report->user->name }} </span> <br>
+                                    @else
+                                        <span class="font-semibold"> Usuario eliminado </span> <br>
+                                    @endif
                                     <span class="font-mono">
                                         {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                     </span>
@@ -860,7 +882,7 @@
                             class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
                             <h4
                                 class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
-                                Puntos de esfuerzo</h4>
+                                Story Points</h4>
                         </div>
                         @if ($showEdit)
                             @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)

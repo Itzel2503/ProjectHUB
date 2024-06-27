@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Customers;
 
 use App\Models\Customer;
+use App\Models\Project;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -11,7 +12,8 @@ class TableCustomers extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['reloadPage' => 'reloadPage'];
+    public $listeners = ['reloadPage' => 'reloadPage', 'destroy', 'restore'];
+
     // modal
     public $modalCreateEdit = false, $modalDelete = false, $modalRestore = false;
     public $showUpdate = false, $showDelete = false, $showRestore = false;
@@ -102,12 +104,23 @@ class TableCustomers extends Component
         $customer = Customer::find($id);
 
         if ($customer) {
-            $customer->delete();
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Cliente eliminado',
-            ]);
+            // Verificar si existe algún registro en proyectos
+            $existingProjec = Project::where('customer_id', $customer->id)->get();
+            if (count($existingProjec) > 0) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Cliente asignado a proyecto',
+                    'text' => 'Eliminar cliente del proyecto asignado antes de realizar cambios.',
+                ]);
+                return;
+            } else {
+                $customer->delete();
+                // Emitir un evento de navegador
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Cliente eliminado',
+                ]);
+            }
         } else {
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
@@ -115,8 +128,6 @@ class TableCustomers extends Component
                 'title' => 'Cliente no existe',
             ]);
         }
-
-        $this->modalDelete = false;
     }
 
     public function restore($id)
@@ -154,33 +165,6 @@ class TableCustomers extends Component
         $this->customerEdit = Customer::find($id);
         $this->name = $this->customerEdit->name;
     }
-
-    public function showDelete($id)
-    {
-        $this->showDelete = true;
-
-        if ($this->modalDelete == true) {
-            $this->modalDelete = false;
-        } else {
-            $this->modalDelete = true;
-        }
-
-        $this->customerDelete = Customer::find($id);
-    }
-
-    public function showRestore($id)
-    {
-        $this->showRestore = true;
-
-        if ($this->modalRestore == true) {
-            $this->modalRestore = false;
-        } else {
-            $this->modalRestore = true;
-        }
-
-        $this->customerRestore = Customer::withTrashed()->find($id);
-    }
-
     // MODAL
     public function modalCreateEdit()
     {
@@ -193,25 +177,6 @@ class TableCustomers extends Component
         }
 
         $this->clearInputs();
-        $this->resetErrorBag();
-    }
-
-    public function modalDelete()
-    {
-        if ($this->modalDelete == true) {
-            $this->modalDelete = false;
-        } else {
-            $this->modalDelete = true;
-        }
-    }
-
-    public function modalRestore()
-    {
-        if ($this->modalRestore == true) {
-            $this->modalRestore = false;
-        } else {
-            $this->modalRestore = true;
-        }
         $this->resetErrorBag();
     }
     // EXTRAS

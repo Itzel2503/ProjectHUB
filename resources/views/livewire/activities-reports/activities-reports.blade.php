@@ -204,8 +204,13 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto w-auto text-left">
-                                        <p class="font-semibold">
-                                            {{ $activity->delegate->name }}</p>
+                                        @if ($activity->delegate)
+                                            <p class="font-semibold">
+                                                {{ $activity->delegate->name }}</p>
+                                        @else
+                                            <p class="font-semibold">
+                                                Usuario eliminado</p>
+                                        @endif
                                         <p class="text-xs">
                                             @if ($activity->state == 'Proceso' || $activity->state == 'Conflicto')
                                                 Progreso {{ $activity->progress->diffForHumans(null, false, false, 1) }}
@@ -240,7 +245,11 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto text-left">
-                                        <span class="font-semibold"> {{ $activity->user->name }}</span> 
+                                        @if ($activity->user)
+                                            <span class="font-semibold"> {{ $activity->user->name }}</span> 
+                                        @else
+                                            <span class="font-semibold">Usuario eliminado</span> 
+                                        @endif
                                         <br>
                                         <span class="font-mono">
                                             {{ \Carbon\Carbon::parse($activity->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
@@ -396,8 +405,13 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto w-full text-left">
-                                        <p class="font-semibold">
-                                            {{ $report->delegate->name }}</p>
+                                        @if ($report->delegate)
+                                            <p class="font-semibold">
+                                                {{ $report->delegate->name }}</p>
+                                        @else
+                                            <p class="font-semibold">
+                                                Usuario eliminado</p>
+                                        @endif
                                         <p class="text-xs">
                                             @if ($report->state == 'Proceso' || $report->state == 'Conflicto')
                                                 Progreso {{ $report->progress->diffForHumans(null, false, false, 1) }}
@@ -434,7 +448,11 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto text-left">
-                                        <span class="font-semibold"> {{ $report->user->name }}</span> 
+                                        @if ($report->user)
+                                            <span class="font-semibold"> {{ $report->user->name }}</span> 
+                                        @else
+                                            <span class="font-semibold">Usuario eliminado</span> 
+                                        @endif
                                         <br>
                                         <span class="font-mono">
                                             {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
@@ -591,8 +609,13 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto w-full text-left">
-                                        <p class="font-semibold">
-                                            {{ $report->delegate->name }}</p>
+                                        @if ($report->delegate)
+                                            <p class="font-semibold">
+                                                {{ $report->delegate->name }}</p>
+                                        @else
+                                            <p class="font-semibold">
+                                                Usuario eliminado</p>
+                                        @endif
                                         <p class="text-xs">
                                             @if ($report->state == 'Proceso' || $report->state == 'Conflicto')
                                                 Progreso
@@ -630,7 +653,11 @@
                                 </td>
                                 <td class="px-2 py-1">
                                     <div class="mx-auto text-left">
-                                        <span class="font-semibold"> {{ $report->user->name }}</span> 
+                                        @if ($report->user)
+                                            <span class="font-semibold"> {{ $report->user->name }}</span> 
+                                        @else
+                                            <span class="font-semibold">Usuario eliminado</span> 
+                                        @endif
                                         <br>
                                         <span class="font-mono">
                                             {{ \Carbon\Carbon::parse($report->created_at)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
@@ -1570,7 +1597,7 @@
                             colors: ['#fff']
                         },
                         title: {
-                            text: 'Puntos de esfuerzo por mes'
+                            text: 'Story Points por mes'
                         },
                         xaxis: {
                             categories: categories,

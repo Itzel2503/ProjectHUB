@@ -435,7 +435,7 @@
                         <div class="-mx-3 mb-6">
                             <div class="w-full flex flex-col px-3 mb-6">
                                 <h5 class="inline-flex font-semibold" for="effort_points">
-                                    Puntos de esfuerzo (Mes)@if (!$showUpdate)<p class="text-red-600">*</p>@endif
+                                    Story Points (Mes)@if (!$showUpdate)<p class="text-red-600">*</p>@endif
                                 </h5>
                                 <input wire:model='effort_points' required type="number" placeholder="0-100"
                                     name="effort_points" id="effort_points" class="inputs">

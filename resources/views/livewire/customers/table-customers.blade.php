@@ -55,6 +55,7 @@
                 <thead class="border-0 headTable">
                     <tr>
                         <th class="px-4 py-3">Nombre</th>
+                        <th class="w-8 px-4 py-3">Estatus</th>
                         <th class="px-4 py-3">Acciones</th>
                     </tr>
                 </thead>
@@ -62,6 +63,16 @@
                     @foreach($customers as $customer)
                     <tr class="trTable">
                         <td class="px-4 py-1">{{ $customer->name }}</td>
+                        <td class="px-4 py-1">
+                            <div name="deleted_at" id="deleted_at"
+                                class="inpSelectTable inpSelectTable @if ($customer->deleted_at == null) bg-lime-700 text-white @else bg-red-600 text-white @endif w-28 text-sm font-semibold">
+                                @if ($customer->deleted_at == null)
+                                    <option selected>Activo</option>
+                                @else
+                                    <option selected>Inactivo</option>
+                                @endif
+                            </div>
+                        </td>
                         <td class="px-4 py-1 flex justify-center">
                             <div class="flex justify-center">
                                 <div id="dropdown-button-{{ $customer->id }}" class="relative">

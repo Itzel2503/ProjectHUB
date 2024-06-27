@@ -1,9 +1,5 @@
 @extends('layouts.header')
 
-@section('activities-reports')
-    <span class="absolute inset-y-0 left-0 w-1 rounded-br-lg rounded-tr-lg" aria-hidden="true"></span>
-@endsection
-
 @section('content')
     <div class="mx-auto mt-4 w-full">
         <div class="w-full space-y-6 px-4 py-3">
