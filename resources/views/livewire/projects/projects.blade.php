@@ -29,6 +29,7 @@
                 </div>
             </div>
             <!-- BTN PRIORITY -->
+            @if ($user->type_user != 3)
             <div class="inline-flex h-12 w-1/2 bg-transparent px-2 md:w-1/4 md:px-0">
                 <button wire:click="showProjectPriority()" class="btnNuevo">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -40,6 +41,7 @@
                     <span>Prioridades</span>
                 </button>
             </div>
+            @endif
             <!-- BTN NEW -->
             @if ($user->type_user == 1)
                 <div class="inline-flex h-12 w-1/2 bg-transparent px-2 md:w-1/4 md:px-0">
@@ -158,7 +160,7 @@
                                 @endif
                             @endif
                             <td
-                                class="@if ($user->type_user != 3) @if ($project->deleted_at == null) justify-end @else justify-center @endif  @else justify-center @endif flex px-4 py-2">
+                                class="@if ($user->type_user != 3) justify-end @else justify-center @endif flex px-4 py-2">
                                 @if ($project->deleted_at == null)
                                     @if ($project->backlog != null)
                                         @if ($user->type_user != 3)
@@ -338,7 +340,7 @@
                                             </div>
                                         </td>
                                     @endif
-                                    <td class="flex @if ($project->deleted_at == null) justify-end @else justify-center @endif px-4 py-2">
+                                    <td class="flex justify-end px-4 py-2">
                                         @if ($project->deleted_at == null)
                                             @if ($project->backlog != null)
                                                 <button wire:click="showActivities({{ $project->id }})"
