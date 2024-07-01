@@ -451,38 +451,6 @@ class TableReports extends Component
 
     public function update($id, $project_id)
     {
-
-        try {
-            if (Auth::id() != 10 && Auth::user()->type_user != 3) {
-                // Verificar si al menos uno de los campos está presente
-                if ($this->changePoints == true) {
-                    if (!$this->points) {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'error',
-                            'title' => 'Agrega story points.',
-                        ]);
-                        return;
-                    }
-                } else {
-                    if (!$this->point_know || !$this->point_many || !$this->point_effort) {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'error',
-                            'title' => 'Por favor, complete el cuestionario.',
-                        ]);
-                        return;
-                    }
-                }
-            }
-            // Aquí puedes continuar con tu lógica después de la validación exitosa
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Faltan campos o campos incorrectos',
-            ]);
-            throw $e;
-        }
-
         $report = Report::find($id);
         $project = Project::find($project_id);
 
@@ -587,11 +555,11 @@ class TableReports extends Component
                 $report->priority = 'Bajo';
             }
 
-            if (Auth::id() == 10 || Auth::user()->type_user == 3) {
-                $report->points = 0;
+            if (Auth::user()->type_user == 3) {
+                $report->points = $report->points ?? 0;
             } else {
                 if ($this->changePoints == true) {
-                    $validPoints = [1, 2, 3, 5, 8, 13];
+                    $validPoints = [0, 1, 2, 3, 5, 8, 13];
                     $report->points = $this->points;
         
                     if (!in_array($this->points, $validPoints)) {
@@ -603,17 +571,51 @@ class TableReports extends Component
                     } else {
                         $report->points = $this->points ?? $report->points;
                     }
+                    // Crear un array asociativo con los valores
+                    $questionsPoints = [
+                        'pointKnow' => null,
+                        'pointMany' => null,
+                        'pointEffort' => null,
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPointsJson = json_encode($questionsPoints);
+                    // Asignar y guardar 
+                    $report->questions_points = $questionsPointsJson;
                 } else {
-                    $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
-                    $report->points = $maxPoint ?? $report->points;
+                    if (!$this->point_know || !$this->point_many || !$this->point_effort) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'warning',
+                            'title' => 'El formulario está incompleto o no se han seleccionado los puntos necesarios.',
+                        ]);
+                        $report->points = $report->points ?? 0;
+                        $questionsPoints = [
+                            'pointKnow' => null,
+                            'pointMany' => null,
+                            'pointEffort' => null,
+                        ];
+                        // Convertir el array a JSON
+                        $questionsPointsJson = json_encode($questionsPoints);
+                        // Asignar y guardar 
+                        $report->questions_points = $questionsPointsJson;
+                    } else {
+                        $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+                        $report->points = $maxPoint;
+                        // Crear un array asociativo con los valores
+                        $questionsPoints = [
+                            'pointKnow' => $this->point_know,
+                            'pointMany' => $this->point_many,
+                            'pointEffort' => $this->point_effort,
+                        ];
+                        // Convertir el array a JSON
+                        $questionsPointsJson = json_encode($questionsPoints);
+                        // Asignar y guardar 
+                        $report->questions_points = $questionsPointsJson;
+                    }
                 }
             }
             
-
             $report->save();
-
             $this->modalEdit = false;
-
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
                 'title' => 'Guardado exitoso',
@@ -774,9 +776,13 @@ class TableReports extends Component
         } elseif ($this->reportEdit->priority == 'Bajo') {
             $this->priority3 = true;
         }
-
+        // EFFORT PONTS
         $this->points = $this->reportEdit->points;
         $this->changePoints = true;
+        $questionsPoints = json_decode($this->reportEdit->questions_points, true);
+        $this->point_know = $questionsPoints['pointKnow'] ?? null;
+        $this->point_many = $questionsPoints['pointMany'] ?? null;
+        $this->point_effort = $questionsPoints['pointEffort'] ?? null;
     }
 
     // MODAL
@@ -878,14 +884,8 @@ class TableReports extends Component
     {
         if ($this->changePoints == true) {
             $this->changePoints = false;
-            if ($this->reportEdit == null) {
-                $this->points = '';
-            }
         } else {
             $this->changePoints = true;
-            $this->point_know = '';
-            $this->point_many = '';
-            $this->point_effort = '';
         }
     }
 

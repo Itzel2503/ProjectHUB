@@ -299,9 +299,8 @@
                                     </select>
                                 @endif
                                 @if ($report->count)
-                                    <p class="text-xs text-red-600 text-left">Reincidencia {{ $report->count }}</p>
+                                    <p class="text-left text-xs text-red-600">Reincidencia {{ $report->count }}</p>
                                 @endif
-
                             </td>
                             <td class="px-2 py-1">
                                 @if ($report->updated_expected_date == false)
@@ -431,7 +430,7 @@
                         class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                         <h3
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                            @php echo mb_substr( $reportShow->title, 0, 25) . " ..."; @endphp
+                            {{ $reportShow->title }}
                         </h3>
                         <svg wire:click="modalShow" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
                             xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
@@ -526,8 +525,8 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="photos w-full px-5 lg:w-1/2">
-                            <div id="example" class="mb-6 w-auto">
+                        <div id="example" class="photos w-full px-5 lg:w-1/2">
+                            <div  class="mb-6 w-auto">
                                 <div class="md-3/4 mb-5 mt-5 flex w-full flex-row justify-between">
                                     <div class="text-text2 text-center text-xl font-semibold md:flex">Detalle</div>
                                     @if ($reportShow->evidence == true)
@@ -619,197 +618,134 @@
                                             </a>
                                         </div>
                                     @endif
-                            </div>
-                        @else
-                            <div class="my-5 w-full text-center text-lg">
-                                <p class="text-red my-5">Sin archivo</p>
-                            </div>
-                @endif
-            </div>
-            <div id="evidence" class="hidden">
-                @if ($evidenceShow)
-                    <div class="flex flex-col">
-                        <div class="md-3/4 mb-5 mt-5 flex w-full flex-row justify-between">
-                            <div class="text-center text-xl font-semibold text-gray-700 md:flex">
-                                Evidencia
-                            </div>
-                            <div class="btnIcon cursor-pointer font-semibold text-red-500 hover:text-red-500"
-                                onclick="toogleEvidence()" id="textToogle">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-x"
-                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                                    <path
-                                        d="M13.048 17.942a9.298 9.298 0 0 1 -1.048 .058c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6a17.986 17.986 0 0 1 -1.362 1.975" />
-                                    <path d="M22 22l-5 -5" />
-                                    <path d="M17 22l5 -5" />
-                                </svg> &nbsp; Evidencia
+                                @else
+                                    <div class="my-5 w-full text-center text-lg">
+                                        <p class="text-red my-5">Sin archivo</p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
-                        @if (!empty($evidenceShow->content))
-                            @if ($evidenceShow->image == true)
-                                <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                    <img src="{{ asset('evidence/' . $evidenceShow->content) }}" alt="Report Image">
+                        <div id="evidence" class="hidden photos w-full px-5 lg:w-1/2">
+                            @if ($evidenceShow)
+                                <div class="flex flex-col">
+                                    <div class="md-3/4 mb-5 mt-5 flex w-full flex-row justify-between">
+                                        <div class="text-center text-xl font-semibold text-gray-700 md:flex">
+                                            Evidencia
+                                        </div>
+                                        <div class="btnIcon cursor-pointer font-semibold text-red-500 hover:text-red-500"
+                                            onclick="toogleEvidence()" id="textToogle">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-eye-x" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                <path
+                                                    d="M13.048 17.942a9.298 9.298 0 0 1 -1.048 .058c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6a17.986 17.986 0 0 1 -1.362 1.975" />
+                                                <path d="M22 22l-5 -5" />
+                                                <path d="M17 22l5 -5" />
+                                            </svg> &nbsp; Evidencia
+                                        </div>
+                                    </div>
+                                    @if (!empty($evidenceShow->content))
+                                        @if ($evidenceShow->image == true)
+                                            <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
+                                                <img src="{{ asset('evidence/' . $evidenceShow->content) }}"
+                                                    alt="Report Image">
+                                            </div>
+                                        @endif
+                                        @if ($evidenceShow->video == true)
+                                            <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
+                                                <video src="{{ asset('evidence/' . $evidenceShow->content) }}" loop
+                                                    autoplay alt="Report Video"></video>
+                                            </div>
+                                        @endif
+                                        @if ($evidenceShow->file == true)
+                                            <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
+                                                <iframe src="{{ asset('evidence/' . $evidenceShow->content) }}"
+                                                    width="auto" height="800"></iframe>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="my-5 w-full text-center text-lg text-red-500">
+                                            <p class="text-red my-5">Sin evidencia</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="md-3/4 mb-5 mt-5 flex w-full flex-row justify-end">
+                                    <div class="btnIcon cursor-pointer font-semibold text-red-500 hover:text-red-500"
+                                        onclick="toogleEvidence()" id="textToogle">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="icon icon-tabler icon-tabler-eye-x" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                            <path
+                                                d="M13.048 17.942a9.298 9.298 0 0 1 -1.048 .058c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6a17.986 17.986 0 0 1 -1.362 1.975" />
+                                            <path d="M22 22l-5 -5" />
+                                            <path d="M17 22l5 -5" />
+                                        </svg> &nbsp; Evidencia
+                                    </div>
+                                </div>
+                                <div class="mt-10 animate-bounce text-center text-2xl font-bold text-red-500">
+                                    Sin evidencia
                                 </div>
                             @endif
-                            @if ($evidenceShow->video == true)
-                                <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                    <video src="{{ asset('evidence/' . $evidenceShow->content) }}" loop autoplay
-                                        alt="Report Video"></video>
-                                </div>
-                            @endif
-                            @if ($evidenceShow->file == true)
-                                <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                    <iframe src="{{ asset('evidence/' . $evidenceShow->content) }}" width="auto"
-                                        height="800"></iframe>
-                                </div>
-                            @endif
-                        @else
-                            <div class="my-5 w-full text-center text-lg text-red-500">
-                                <p class="text-red my-5">Sin evidencia</p>
-                            </div>
-                        @endif
-                    </div>
-                @else
-                    <div class="md-3/4 mb-5 mt-5 flex w-full flex-row justify-end">
-                        <div class="btnIcon cursor-pointer font-semibold text-red-500 hover:text-red-500"
-                            onclick="toogleEvidence()" id="textToogle">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-x"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                                <path
-                                    d="M13.048 17.942a9.298 9.298 0 0 1 -1.048 .058c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6a17.986 17.986 0 0 1 -1.362 1.975" />
-                                <path d="M22 22l-5 -5" />
-                                <path d="M17 22l5 -5" />
-                            </svg> &nbsp; Evidencia
                         </div>
-                    </div>
-                    <div class="mt-10 animate-bounce text-center text-2xl font-bold text-red-500">
-                        Sin evidencia
                     </div>
                 @endif
             </div>
         </div>
-        @endif
     </div>
-</div>
-</div>
-{{-- END MODAL SHOW --}}
-{{-- MODAL EDIT / CREATE REPORT --}}
-<div
-    class="@if ($modalEdit) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+    {{-- END MODAL SHOW --}}
+    {{-- MODAL EDIT / CREATE REPORT --}}
     <div
-        class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
-    </div>
-    <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
-        <div class="@if (Auth::user()->type_user != 3) md:w-3/4 @else md:w-2/5 @endif mx-auto flex flex-col overflow-y-auto rounded-lg"
-            style="max-height: 90%;">
-            <div class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
-                <h3
-                    class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                    Editar reporte</h3>
-                <svg wire:click="modalEdit" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
-                    xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
-                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M18 6l-12 12"></path>
-                    <path d="M6 6l12 12"></path>
-                </svg>
-            </div>
-            <div class="modalBody">
-                {{-- REPORT --}}
+        class="@if ($modalEdit) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+        <div
+            class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+        </div>
+        <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
+            <div class="@if (Auth::user()->type_user != 3) md:w-3/4 @else md:w-2/5 @endif mx-auto flex flex-col overflow-y-auto rounded-lg"
+                style="max-height: 90%;">
                 <div
-                    class="md-3/4 @if (Auth::user()->type_user != 3) border-gray-400 lg:w-1/2 lg:border-r-2 @endif mb-5 flex w-full flex-col px-5 md:mb-0">
-                    @if (Auth::user()->type_user != 3)
-                        <div
-                            class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
-                            <h4
-                                class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
-                                Reporte</h4>
-                        </div>
-                    @endif
-                    <div class="-mx-3 mb-6 flex flex-row">
-                        <div class="mb-6 flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="tittle">
-                                Titulo<p class="text-red-600">*</p>
-                            </h5>
-                            <input wire:model='tittle' required type="text" placeholder="Título" name="tittle"
-                                id="tittle" class="inputs">
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('tittle')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
+                    class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
+                    <h3
+                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                        Editar reporte</h3>
+                    <svg wire:click="modalEdit" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div class="modalBody">
+                    {{-- REPORT --}}
+                    <div
+                        class="md-3/4 @if (Auth::user()->type_user != 3) border-gray-400 lg:w-1/2 lg:border-r-2 @endif mb-5 flex w-full flex-col px-5 md:mb-0">
+                        @if (Auth::user()->type_user != 3)
+                            <div
+                                class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
+                                <h4
+                                    class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
+                                    Reporte</h4>
                             </div>
-                        </div>
-                        <div class="mb-6 flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="file">
-                                Seleccionar archivo
-                            </h5>
-                            <input wire:model='file' required type="file" name="file" id="file"
-                                class="inputs">
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('file')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="-mx-3 mb-6">
-                        <div class="mb-6 flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="tittle">
-                                Descripción<p class="text-red-600">*</p>
-                            </h5>
-                            <textarea wire:model='comment' type="text" rows="6"
-                                placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" id="comment"
-                                class="textarea"></textarea>
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('comment')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    @if (Auth::user()->type_user != 3)
+                        @endif
                         <div class="-mx-3 mb-6 flex flex-row">
-                            <div class="m-auto mb-6 flex w-full flex-row px-3">
-                                <h5 class="mr-5 inline-flex font-semibold" for="evidenceEdit">
-                                    Evidencia
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="tittle">
+                                    Titulo<p class="text-red-600">*</p>
                                 </h5>
-                                <div class="flex justify-center gap-20">
-                                    <div class="flex flex-col items-center">
-                                        <input type="checkbox" wire:model="evidenceEdit" class="priority-checkbox"
-                                            style="height: 24px; width: 24px;" />
-                                    </div>
-                                </div>
+                                <input wire:model='tittle' required type="text" placeholder="Título"
+                                    name="tittle" id="tittle" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
-                                        @error('evidenceEdit')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
-                                    </span>
-                                </div>
-                                <div>
-                                    <span class="text-xs italic text-red-600">
-                                        @error('delegate')
+                                        @error('tittle')
                                             <span class="pl-2 text-xs italic text-red-600">
                                                 {{ $message }}
                                             </span>
@@ -818,14 +754,14 @@
                                 </div>
                             </div>
                             <div class="mb-6 flex w-full flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="expected_date">
-                                    Fecha de entrega<p class="text-red-600">*</p>
+                                <h5 class="inline-flex font-semibold" for="file">
+                                    Seleccionar archivo
                                 </h5>
-                                <input wire:model='expected_date' required type="date" name="expected_date"
-                                    id="expected_date" class="inputs">
+                                <input wire:model='file' required type="file" name="file" id="file"
+                                    class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
-                                        @error('expected_date')
+                                        @error('file')
                                             <span class="pl-2 text-xs italic text-red-600">
                                                 {{ $message }}
                                             </span>
@@ -834,362 +770,423 @@
                                 </div>
                             </div>
                         </div>
-                    @endif
-                    <div class="-mx-3 mb-6">
-                        <div class="flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="tittle">
-                                Prioridad<p class="text-red-600">*</p>
-                            </h5>
-                            <div class="flex justify-center gap-20">
-                                <div class="flex flex-col items-center">
-                                    <input type="checkbox" wire:model="priority1"
-                                        wire:change="selectPriority($event.target.value)" value="Alto"
-                                        class="priority-checkbox border-red-600 bg-red-600"
-                                        style="height: 24px; width: 24px; accent-color: #dd4231;" />
-                                    <label for="priority1" class="mt-2">Alto</label>
-                                </div>
-                                <div class="flex flex-col items-center">
-                                    <input type="checkbox" wire:model="priority2"
-                                        wire:change="selectPriority($event.target.value)" value="Medio"
-                                        class="priority-checkbox border-yellow-400 bg-yellow-400"
-                                        style="height: 24px; width: 24px; accent-color: #f6c03e;" />
-                                    <label for="priority2" class="mt-2">Medio</label>
-                                </div>
-                                <div class="flex flex-col items-center">
-                                    <input type="checkbox" wire:model="priority3"
-                                        wire:change="selectPriority($event.target.value)" value="Bajo"
-                                        class="priority-checkbox border-secondary bg-secondary"
-                                        style="height: 24px; width: 24px; accent-color: #0062cc;" />
-                                    <label for="priority3" class="mt-2">Bajo</label>
-                                </div>
-                            </div>
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('priority')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @if (Auth::user()->type_user != 3)
-                    {{-- POINTS --}}
-                    <div class="w-full px-5 lg:w-1/2">
-                        <div
-                            class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
-                            <h4
-                                class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
-                                Story Points</h4>
-                        </div>
-                        @if ($showEdit)
-                            @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)
-                                <div class="mb-6 flex flex-row">
-                                    <span wire:click="changePoints"
-                                        class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M7 10h14l-4 -4" />
-                                            <path d="M17 14h-14l4 4" />
-                                        </svg>
-                                        @if ($changePoints)
-                                            Cuestionario
-                                        @else
-                                            Agregar puntos directos
-                                        @endif
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="tittle">
+                                    Descripción<p class="text-red-600">*</p>
+                                </h5>
+                                <textarea wire:model='comment' type="text" rows="6"
+                                    placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" id="comment"
+                                    class="textarea"></textarea>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('comment')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
                                     </span>
                                 </div>
-                            @endif
-                            <div class="@if ($changePoints) block @else hidden @endif -mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        Puntos <p class="text-red-600">*</p>
+                            </div>
+                        </div>
+                        @if (Auth::user()->type_user != 3)
+                            <div class="-mx-3 mb-6 flex flex-row">
+                                <div class="m-auto mb-6 flex w-full flex-row px-3">
+                                    <h5 class="mr-5 inline-flex font-semibold" for="evidenceEdit">
+                                        Evidencia
                                     </h5>
-                                    @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)
-                                        <input wire:model='points' required type="number"
-                                            placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
-                                            class="inputs">
-                                    @else
-                                        <input disabled wire:model='points' required type="number"
-                                            placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
-                                            class="inputs">
-                                    @endif
+                                    <div class="flex justify-center gap-20">
+                                        <div class="flex flex-col items-center">
+                                            <input type="checkbox" wire:model="evidenceEdit"
+                                                class="priority-checkbox" style="height: 24px; width: 24px;" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs italic text-red-600">
+                                            @error('evidenceEdit')
+                                                <span class="pl-2 text-xs italic text-red-600">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs italic text-red-600">
+                                            @error('delegate')
+                                                <span class="pl-2 text-xs italic text-red-600">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mb-6 flex w-full flex-col px-3">
+                                    <h5 class="inline-flex font-semibold" for="expected_date">
+                                        Fecha de entrega<p class="text-red-600">*</p>
+                                    </h5>
+                                    <input wire:model='expected_date' required type="date" name="expected_date"
+                                        id="expected_date" class="inputs">
+                                    <div>
+                                        <span class="text-xs italic text-red-600">
+                                            @error('expected_date')
+                                                <span class="pl-2 text-xs italic text-red-600">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         @endif
-                        <div class="@if ($changePoints) hidden @else block @endif">
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        ¿Cuánto se conoce de la tarea?<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select wire:model='point_know' required name="point_know" id="point_know"
-                                        class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        <option value="1">Todo</option>
-                                        <option value="2">Casi todo</option>
-                                        <option value="3">Algunas cosas</option>
-                                        <option value="5">Poco</option>
-                                        <option value="8">Casi nada</option>
-                                        <option value="13">Nada</option>
-                                    </select>
+                        <div class="-mx-3 mb-6">
+                            <div class="flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="tittle">
+                                    Prioridad<p class="text-red-600">*</p>
+                                </h5>
+                                <div class="flex justify-center gap-20">
+                                    <div class="flex flex-col items-center">
+                                        <input type="checkbox" wire:model="priority1"
+                                            wire:change="selectPriority($event.target.value)" value="Alto"
+                                            class="priority-checkbox border-red-600 bg-red-600"
+                                            style="height: 24px; width: 24px; accent-color: #dd4231;" />
+                                        <label for="priority1" class="mt-2">Alto</label>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <input type="checkbox" wire:model="priority2"
+                                            wire:change="selectPriority($event.target.value)" value="Medio"
+                                            class="priority-checkbox border-yellow-400 bg-yellow-400"
+                                            style="height: 24px; width: 24px; accent-color: #f6c03e;" />
+                                        <label for="priority2" class="mt-2">Medio</label>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <input type="checkbox" wire:model="priority3"
+                                            wire:change="selectPriority($event.target.value)" value="Bajo"
+                                            class="priority-checkbox border-secondary bg-secondary"
+                                            style="height: 24px; width: 24px; accent-color: #0062cc;" />
+                                        <label for="priority3" class="mt-2">Bajo</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        ¿De cuántos depende?<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select wire:model='point_many' required name="point_many" id="point_many"
-                                        class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        <option value="1">Solo uno</option>
-                                        <option value="2">Un par</option>
-                                        <option value="3">Pocos</option>
-                                        <option value="5">Varios</option>
-                                        <option value="8">Muchos</option>
-                                        <option value="13">No se sabe</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select wire:model='point_effort' required name="point_effort" id="point_effort"
-                                        class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        <option value="1">Menos de 2 horas</option>
-                                        <option value="2">Medio dìa</option>
-                                        <option value="3">Hasta dos dìas</option>
-                                        <option value="5">Pocos dìas</option>
-                                        <option value="8">Alrededor de</option>
-                                        <option value="13">Mas de una</option>
-                                    </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('priority')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                @endif
-            </div>
-            <div class="modalFooter">
-                @if ($modalEdit)
-                    <button class="btnSave" wire:click="update({{ $reportEdit->id }}, {{ $project->id }})">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                            <path d="M14 4l0 4l-6 0l0 -4" />
-                        </svg>
-                        Guardar
-                    </button>
-                @endif
+                    @if (Auth::user()->type_user != 3)
+                        {{-- POINTS --}}
+                        <div class="w-full px-5 lg:w-1/2">
+                            <div
+                                class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
+                                <h4
+                                    class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
+                                    Story Points</h4>
+                            </div>
+                            @if ($showEdit)
+                                @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)
+                                    <div class="mb-6 flex flex-row">
+                                        <span wire:click="changePoints"
+                                            class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M7 10h14l-4 -4" />
+                                                <path d="M17 14h-14l4 4" />
+                                            </svg>
+                                            @if ($changePoints)
+                                                Cuestionario
+                                            @else
+                                                Agregar puntos directos
+                                            @endif
+                                        </span>
+                                    </div>
+                                @endif
+                                <div class="@if ($changePoints) block @else hidden @endif -mx-3 mb-6">
+                                    <div class="mb-6 flex w-full flex-col px-3">
+                                        <h5 class="inline-flex font-semibold" for="name">
+                                            Puntos <p class="text-red-600">*</p>
+                                        </h5>
+                                        @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)
+                                            <input wire:model='points' required type="number"
+                                                placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
+                                                class="inputs">
+                                        @else
+                                            <input disabled wire:model='points' required type="number"
+                                                placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
+                                                class="inputs">
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="@if ($changePoints) hidden @else block @endif">
+                                <div class="-mx-3 mb-6">
+                                    <div class="mb-6 flex w-full flex-col px-3">
+                                        <h5 class="inline-flex font-semibold" for="name">
+                                            ¿Cuánto se conoce de la tarea?<p class="text-red-600">*</p>
+                                        </h5>
+                                        <select wire:model='point_know' required name="point_know" id="point_know"
+                                            class="inputs">
+                                            <option selected>Selecciona...</option>
+                                            <option value="1">Todo</option>
+                                            <option value="2">Casi todo</option>
+                                            <option value="3">Algunas cosas</option>
+                                            <option value="5">Poco</option>
+                                            <option value="8">Casi nada</option>
+                                            <option value="13">Nada</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="-mx-3 mb-6">
+                                    <div class="mb-6 flex w-full flex-col px-3">
+                                        <h5 class="inline-flex font-semibold" for="name">
+                                            ¿De cuántos depende?<p class="text-red-600">*</p>
+                                        </h5>
+                                        <select wire:model='point_many' required name="point_many" id="point_many"
+                                            class="inputs">
+                                            <option selected>Selecciona...</option>
+                                            <option value="1">Solo uno</option>
+                                            <option value="2">Un par</option>
+                                            <option value="3">Pocos</option>
+                                            <option value="5">Varios</option>
+                                            <option value="8">Muchos</option>
+                                            <option value="13">No se sabe</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="-mx-3 mb-6">
+                                    <div class="mb-6 flex w-full flex-col px-3">
+                                        <h5 class="inline-flex font-semibold" for="name">
+                                            ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
+                                        </h5>
+                                        <select wire:model='point_effort' required name="point_effort"
+                                            id="point_effort" class="inputs">
+                                            <option selected>Selecciona...</option>
+                                            <option value="1">Menos de 2 horas</option>
+                                            <option value="2">Medio dìa</option>
+                                            <option value="3">Hasta dos dìas</option>
+                                            <option value="5">Pocos dìas</option>
+                                            <option value="8">Alrededor de</option>
+                                            <option value="13">Mas de una</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+                <div class="modalFooter">
+                    @if ($modalEdit)
+                        <button class="btnSave" wire:click="update({{ $reportEdit->id }}, {{ $project->id }})">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M14 4l0 4l-6 0l0 -4" />
+                            </svg>
+                            Guardar
+                        </button>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
-</div>
-{{-- END MODAL EDIT / CREATE REPORT --}}
-{{-- END MODAL DELETE --}}
-{{-- MODAL EVIDENCE --}}
-<div
-    class="@if ($modalEvidence) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+    {{-- END MODAL EDIT / CREATE REPORT --}}
+    {{-- END MODAL DELETE --}}
+    {{-- MODAL EVIDENCE --}}
     <div
-        class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
-    </div>
-    <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
-        <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
-            <div class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
-                <h3
-                    class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                    Evidencia</h3>
-                <svg id="modalEvidence"
-                    data-id="@if ($modalEvidence) {{ $reportEvidence->id }} @endif"
-                    data-project_id="@if ($modalEvidence) {{ $reportEvidence->project_id }} @endif"
-                    data-state="@if ($modalEvidence) {{ $reportEvidence->state }} @endif"
-                    class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2" xmlns="http://www.w3.org/2000/svg"
-                    class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24"
-                    stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M18 6l-12 12"></path>
-                    <path d="M6 6l12 12"></path>
-                </svg>
-            </div>
-            <div class="modalBody">
-                <div class="md-3/4 mt-5 flex w-full flex-col">
-                    <div class="-mx-3 flex flex-row">
-                        <div class="w-full px-3">
-                            <h5 class="inline-flex font-semibold" for="evidence">
-                                Para completar tu reporte, por favor, sube el archivo de evidencia.
-                            </h5>
-                            <input wire:model='evidence' required type="file" name="evidence" id="evidence"
-                                class="inputs">
-                            <div>
-                                <span class="text-xs italic text-red-600">
-                                    @error('evidence')
-                                        <span class="pl-2 text-xs italic text-red-600">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </span>
+        class="@if ($modalEvidence) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
+        <div
+            class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+        </div>
+        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
+            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+                <div
+                    class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
+                    <h3
+                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                        Evidencia</h3>
+                    <svg id="modalEvidence"
+                        class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div class="modalBody">
+                    <div class="md-3/4 mt-5 flex w-full flex-col">
+                        <div class="-mx-3 flex flex-row">
+                            <div class="w-full px-3">
+                                <h5 class="inline-flex font-semibold" for="evidence">
+                                    Para completar tu reporte, por favor, sube el archivo de evidencia.
+                                </h5>
+                                <input wire:model='evidence' required type="file" name="evidence" id="evidence"
+                                    class="inputs">
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('evidence')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modalFooter">
-                @if ($modalEvidence)
-                    <button class="btnSave"
-                        wire:click="updateEvidence({{ $reportEvidence->id }}, {{ $reportEvidence->project_id }})">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                            <path d="M14 4l0 4l-6 0l0 -4" />
-                        </svg>
-                        Guardar
-                    </button>
-                @endif
+                <div class="modalFooter">
+                    @if ($modalEvidence)
+                        <button class="btnSave"
+                            wire:click="updateEvidence({{ $reportEvidence->id }}, {{ $reportEvidence->project_id }})">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M14 4l0 4l-6 0l0 -4" />
+                            </svg>
+                            Guardar
+                        </button>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
-</div>
-{{-- END MODAL EVIDENCE --}}
-{{-- LOADING PAGE --}}
-<div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-    wire:target="create, filterDown, filterUp updateDelegate,, showReport, showEdit, reportRepeat, modalShow, updateChat, modalEdit, changePoints, update, updateEvidence">
-    <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40">
+    {{-- END MODAL EVIDENCE --}}
+    {{-- LOADING PAGE --}}
+    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
+        wire:target="create, filterDown, filterUp updateDelegate,, showReport, showEdit, reportRepeat, modalShow, updateChat, modalEdit, changePoints, update, updateEvidence">
+        <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40">
+        </div>
+        <div class="loadingspinner relative top-1/3 z-20">
+            <div id="square1"></div>
+            <div id="square2"></div>
+            <div id="square3"></div>
+            <div id="square4"></div>
+            <div id="square5"></div>
+        </div>
     </div>
-    <div class="loadingspinner relative top-1/3 z-20">
-        <div id="square1"></div>
-        <div id="square2"></div>
-        <div id="square3"></div>
-        <div id="square4"></div>
-        <div id="square5"></div>
-    </div>
-</div>
-{{-- END LOADING PAGE --}}
-@push('js')
-    <script>
-        // Scroll de Comentrios de modal
-        document.addEventListener("DOMContentLoaded", function() {
-            var modal = document.getElementById("modalShow");
+    {{-- END LOADING PAGE --}}
+    @push('js')
+        <script>
+            // Scroll de Comentrios de modal
+            document.addEventListener("DOMContentLoaded", function() {
+                var modal = document.getElementById("modalShow");
 
-            if (modal) {
-                var observer = new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        if (mutation.attributeName === "class") {
-                            var classList = mutation.target.classList;
-                            if (classList.contains("block") && !classList.contains("hidden")) {
-                                var messageContainer = document.getElementById("messageContainer");
-                                if (messageContainer) {
-                                    messageContainer.scrollTop = messageContainer.scrollHeight;
-                                } else {
-                                    console.error("Element with ID 'messageContainer' not found.");
+                if (modal) {
+                    var observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.attributeName === "class") {
+                                var classList = mutation.target.classList;
+                                if (classList.contains("block") && !classList.contains("hidden")) {
+                                    var messageContainer = document.getElementById("messageContainer");
+                                    if (messageContainer) {
+                                        messageContainer.scrollTop = messageContainer.scrollHeight;
+                                    } else {
+                                        console.error("Element with ID 'messageContainer' not found.");
+                                    }
                                 }
                             }
-                        }
+                        });
                     });
-                });
 
-                observer.observe(modal, {
-                    attributes: true // Configura el observador para escuchar cambios en los atributos
-                });
-            } else {
-                console.error("Modal element with ID 'modalShow' not found.");
-            }
-        });
-        // DROPDOWN
-        function toggleDropdown(reportId) {
-            var panel = document.getElementById('dropdown-panel-' + reportId);
-            if (panel.style.display === 'none') {
-                // Oculta todos los paneles de dropdown
-                var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
-                allPanels.forEach(function(panel) {
-                    panel.style.display = 'none';
-                });
-
-                panel.style.display = 'block';
-            } else {
-                panel.style.display = 'none';
-            }
-        }
-
-        window.addEventListener('file-reset', () => {
-            document.getElementById('file').value = null;
-        });
-        // MODALS
-        window.addEventListener('swal:modal', event => {
-            toastr[event.detail.type](event.detail.text, event.detail.title);
-        });
-
-        Livewire.on('deleteReport', (id, project_id) => {
-            Swal.fire({
-                title: '¿Seguro que deseas eliminar este elemento?',
-                text: "Esta acción es irreversible",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#202a33',
-                cancelButtonColor: '#ef4444',
-                confirmButtonText: 'Eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.livewire.emit('delete', id, project_id);
-                    Swal.fire(
-                        '¡Eliminado!',
-                        'Reporte eliminado',
-                        'Exito'
-                    )
-                }
-            })
-        });
-
-        let modalEvidence = document.getElementById('modalEvidence');
-        modalEvidence.addEventListener('click', function() {
-            let id = modalEvidence.getAttribute('data-id');
-            let project_id = modalEvidence.getAttribute('data-project_id');
-            let state = modalEvidence.getAttribute('data-state');
-            console.log(modalEvidence, id, project_id, state);
-
-            Swal.fire({
-                title: 'Confirmación de cierre',
-                text: "Si cierras sin subir evidencia, el reporte permanecerá sin actualizar. ¿Seguro que quieres continuar?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#4faead',
-                cancelButtonColor: '#0062cc',
-                confirmButtonText: 'Sí, cerrar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    location.reload();
+                    observer.observe(modal, {
+                        attributes: true // Configura el observador para escuchar cambios en los atributos
+                    });
                 } else {
-
+                    console.error("Modal element with ID 'modalShow' not found.");
                 }
             });
-        });
+            // DROPDOWN
+            function toggleDropdown(reportId) {
+                var panel = document.getElementById('dropdown-panel-' + reportId);
+                if (panel.style.display === 'none') {
+                    // Oculta todos los paneles de dropdown
+                    var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
+                    allPanels.forEach(function(panel) {
+                        panel.style.display = 'none';
+                    });
 
-        let banEvidence = false;
+                    panel.style.display = 'block';
+                } else {
+                    panel.style.display = 'none';
+                }
+            }
 
-        function toogleEvidence() {
-            let evidence = document.getElementById('evidence');
-            let example = document.getElementById('example');
-            evidence.classList.toggle("hidden");
-            example.classList.toggle("hidden");
-        }
-    </script>
-@endpush
+            window.addEventListener('file-reset', () => {
+                document.getElementById('file').value = null;
+            });
+            // MODALS
+            window.addEventListener('swal:modal', event => {
+                toastr[event.detail.type](event.detail.text, event.detail.title);
+            });
+
+            Livewire.on('deleteReport', (id, project_id) => {
+                Swal.fire({
+                    title: '¿Seguro que deseas eliminar este elemento?',
+                    text: "Esta acción es irreversible",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#202a33',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.livewire.emit('delete', id, project_id);
+                        Swal.fire(
+                            '¡Eliminado!',
+                            'Reporte eliminado',
+                            'Exito'
+                        )
+                    }
+                })
+            });
+
+            let modalEvidence = document.getElementById('modalEvidence');
+            modalEvidence.addEventListener('click', function() {
+
+                Swal.fire({
+                    title: 'Confirmación de cierre',
+                    text: "Si cierras sin subir evidencia, el reporte permanecerá sin actualizar. ¿Seguro que quieres continuar?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4faead',
+                    cancelButtonColor: '#0062cc',
+                    confirmButtonText: 'Sí, cerrar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.reload();
+                    } else {
+
+                    }
+                });
+            });
+
+            let banEvidence = false;
+
+            function toogleEvidence() {
+                let evidence = document.getElementById('evidence');
+                let example = document.getElementById('example');
+                evidence.classList.toggle("hidden");
+                example.classList.toggle("hidden");
+            }
+        </script>
+    @endpush
 </div>

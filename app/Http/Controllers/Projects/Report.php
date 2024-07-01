@@ -91,11 +91,9 @@ class Report extends Controller
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
-                        $report->points = 0;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
-                        $report->points = $request->points;
                     }
                     $report->title = $request->title;
                     $report->content = $request->video;
@@ -111,6 +109,17 @@ class Report extends Controller
                     $report->state = "Abierto";
                     $report->comment = $request->comment;
                     $report->evidence = ($request->evidence) ? true : false;
+                    $report->points = $request->points ?? 0;
+                    // Crear un array asociativo con los valores
+                    $questionsPoints = [
+                        'pointKnow' => $request->pointKnow,
+                        'pointMany' => $request->pointMany,
+                        'pointEffort' => $request->pointEffort
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPointsJson = json_encode($questionsPoints);
+                    // Asignar y guardar 
+                    $report->questions_points = $questionsPointsJson;
                     $report->image = false;
                     $report->video = true;
                     $report->file = false;
@@ -134,11 +143,9 @@ class Report extends Controller
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
-                        $report->points = 0;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
-                        $report->points = $request->points;
                     }
                     $report->title = $request->title;
                     $report->content = $filePath;
@@ -152,6 +159,17 @@ class Report extends Controller
                     $report->state = "Abierto";
                     $report->comment = $request->comment;
                     $report->evidence = ($request->evidence) ? true : false;
+                    $report->points = $request->points ?? 0;
+                    // Crear un array asociativo con los valores
+                    $questionsPriority = [
+                        'pointKnow' => $request->pointKnow,
+                        'pointMany' => $request->pointMany,
+                        'pointEffort' => $request->pointEffort
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPriorityJson = json_encode($questionsPriority);
+                    // Asignar y guardar 
+                    $report->questions_points = $questionsPriorityJson;
                     $report->image = true;
                     $report->video = false;
                     $report->file = false;
@@ -176,11 +194,9 @@ class Report extends Controller
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
-                        $report->points = 0;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
-                        $report->points = $request->points;
                     }
                     $report->title = $request->title;
                     $report->content = $filePath;
@@ -196,7 +212,17 @@ class Report extends Controller
                     $report->state = "Abierto";
                     $report->comment = $request->comment;
                     $report->evidence = ($request->evidence) ? true : false;
-
+                    $report->points = $request->points ?? 0;
+                    // Crear un array asociativo con los valores
+                    $questionsPriority = [
+                        'pointKnow' => $request->pointKnow,
+                        'pointMany' => $request->pointMany,
+                        'pointEffort' => $request->pointEffort
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPriorityJson = json_encode($questionsPriority);
+                    // Asignar y guardar 
+                    $report->questions_points = $questionsPriorityJson;
                     if (in_array($file->extension(), $extensionesImagen)) {
                         $report->image = true;
                         $report->video = false;
@@ -223,11 +249,9 @@ class Report extends Controller
                         $report->delegate_id = 10;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
-                        $report->points = 0;
                     } else {
                         $report->delegate_id = $request->delegate;
                         $report->expected_date = $request->expected_date;
-                        $report->points = $request->points;
                     }
                     $report->title = $request->title;
 
@@ -242,6 +266,17 @@ class Report extends Controller
                     $report->state = "Abierto";
                     $report->comment = $request->comment;
                     $report->evidence = ($request->evidence) ? true : false;
+                    $report->points = $request->points ?? 0;
+                    // Crear un array asociativo con los valores
+                    $questionsPriority = [
+                        'pointKnow' => $request->pointKnow,
+                        'pointMany' => $request->pointMany,
+                        'pointEffort' => $request->pointEffort
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPriorityJson = json_encode($questionsPriority);
+                    // Asignar y guardar 
+                    $report->questions_points = $questionsPriorityJson;
                     $report->image = false;
                     $report->video = false;
                     $report->file = false;
@@ -341,11 +376,9 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $reportNew->delegate_id = 10;
                         $reportNew->expected_date = Carbon::now();
-                        $reportNew->points = 0;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
-                        $reportNew->points = $request->points;
                     }
                     
                     $reportNew->report_id = $report->report_id;
@@ -361,6 +394,17 @@ class Report extends Controller
                     $reportNew->state = "Abierto";
                     $reportNew->comment = $request->comment;
                     $reportNew->evidence = $request->evidence ?? $report->evidence;
+                    $reportNew->points = $request->points ?? 0;
+                    // Crear un array asociativo con los valores
+                    $questionsPriority = [
+                        'pointKnow' => $request->pointKnow,
+                        'pointMany' => $request->pointMany,
+                        'pointEffort' => $request->pointEffort
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPriorityJson = json_encode($questionsPriority);
+                    // Asignar y guardar 
+                    $reportNew->questions_points = $questionsPriorityJson;
                     $reportNew->image = false;
                     $reportNew->video = true;
                     $reportNew->file = false;
@@ -390,11 +434,9 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $reportNew->delegate_id = 10;
                         $reportNew->expected_date = Carbon::now();
-                        $reportNew->points = 0;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
-                        $reportNew->points = $request->points;
                     }
 
                     $reportNew->report_id = $report->report_id;
@@ -410,6 +452,17 @@ class Report extends Controller
                     $reportNew->state = "Abierto";
                     $reportNew->comment = $request->comment;
                     $reportNew->evidence = $request->evidence ?? $report->evidence;
+                    $reportNew->points = $request->points ?? 0;
+                    // Crear un array asociativo con los valores
+                    $questionsPriority = [
+                        'pointKnow' => $request->pointKnow,
+                        'pointMany' => $request->pointMany,
+                        'pointEffort' => $request->pointEffort
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPriorityJson = json_encode($questionsPriority);
+                    // Asignar y guardar 
+                    $reportNew->questions_points = $questionsPriorityJson;
                     $reportNew->image = true;
                     $reportNew->video = false;
                     $reportNew->file = false;
@@ -440,11 +493,9 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $reportNew->delegate_id = 10;
                         $reportNew->expected_date = Carbon::now();
-                        $reportNew->points = 0;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
-                        $reportNew->points = $request->points;
                     }
 
                     $reportNew->report_id = $report->report_id;
@@ -460,7 +511,17 @@ class Report extends Controller
                     $reportNew->state = "Abierto";
                     $reportNew->comment = $request->comment;
                     $reportNew->evidence = $request->evidence ?? $report->evidence;
-
+                    $reportNew->points = $request->points ?? 0;
+                    // Crear un array asociativo con los valores
+                    $questionsPriority = [
+                        'pointKnow' => $request->pointKnow,
+                        'pointMany' => $request->pointMany,
+                        'pointEffort' => $request->pointEffort
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPriorityJson = json_encode($questionsPriority);
+                    // Asignar y guardar 
+                    $reportNew->questions_points = $questionsPriorityJson;
                     if (in_array($fileExtension, $extensionesImagen)) {
                         $reportNew->image = true;
                         $reportNew->video = false;
@@ -499,11 +560,9 @@ class Report extends Controller
                         // En produccion es usuario Soporte, Daniel Rodriguez§
                         $reportNew->delegate_id = 10;
                         $reportNew->expected_date = Carbon::now();
-                        $reportNew->points = 0;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
-                        $reportNew->points = $request->points;
                     }
                     
                     $reportNew->report_id = $report->report_id;
@@ -566,6 +625,17 @@ class Report extends Controller
                     $reportNew->state = "Abierto";
                     $reportNew->comment = $request->comment;
                     $reportNew->evidence = $request->evidence ?? $report->evidence;
+                    $reportNew->points = $request->points ?? 0;
+                    // Crear un array asociativo con los valores
+                    $questionsPriority = [
+                        'pointKnow' => $request->pointKnow,
+                        'pointMany' => $request->pointMany,
+                        'pointEffort' => $request->pointEffort
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPriorityJson = json_encode($questionsPriority);
+                    // Asignar y guardar 
+                    $reportNew->questions_points = $questionsPriorityJson;
                     if ($report->count == null) {
                         $reportNew->count = 1;
                     } else {

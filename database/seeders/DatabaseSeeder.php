@@ -35,22 +35,6 @@ class DatabaseSeeder extends Seeder
             'name' => 'Cliente'
         ]);
 
-        Permit::create([
-            'name' => 'Home Office'
-        ]);
-        Permit::create([
-            'name' => 'Horas fuera de oficina'
-        ]);
-        Permit::create([
-            'name' => 'Permiso de ausencia'
-        ]);
-        Permit::create([
-            'name' => 'Vacaciones'
-        ]);
-        Permit::create([
-            'name' => 'Tiempo extra'
-        ]);
-
         User::create([
             'name' => 'Administrador ArtenKircof',
             'email' => 'admin@artendigital.mx',

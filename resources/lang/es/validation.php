@@ -17,7 +17,7 @@ return [
     'between'              => [
         'array'   => 'The :attribute must have between :min and :max items.',
         'file'    => 'The :attribute must be between :min and :max kilobytes.',
-        'numeric' => 'The :attribute must be between :min and :max.',
+        'numeric' => 'El/La :attribute debe estar entre :min y :max.',
         'string'  => 'The :attribute must be between :min and :max characters.',
     ],
     'boolean'              => 'The :attribute field must be true or false.',

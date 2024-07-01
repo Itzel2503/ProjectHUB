@@ -211,6 +211,9 @@
                     <input hidden type="text" id="inputPhoto" name="photo">
                     <input hidden type="text" id="inputVideo" name="video">
                     <input hidden type="text" id="inputPoints" name="points">
+                    <input hidden type="text" id="inputPointKnow" name="pointKnow">
+                    <input hidden type="text" id="inputPointMany" name="pointMany">
+                    <input hidden type="text" id="inputPointEffort" name="pointEffort">
                     <div class="-mx-3 mb-6 flex flex-row">
                         <div id="viewText" class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
@@ -516,6 +519,9 @@
         let inputVideo = document.getElementById("inputVideo");
         let inputPhoto = document.getElementById("inputPhoto");
         let inputPoints = document.getElementById("inputPoints");
+        let inputPointKnow = document.getElementById("inputPointKnow");
+        let inputPointMany = document.getElementById("inputPointMany");
+        let inputPointEffort = document.getElementById("inputPointEffort");
         let file = document.getElementById("file");
         let delegateSelect = document.getElementById('delegate');
         // FORM
@@ -604,6 +610,10 @@
                 if (validNumbers.includes(value)) {
                     inputPoints.value = directPoints.value;
                     errorSpan.style.display = 'none';
+                    // Questionary
+                    inputPointKnow.value = '';
+                    inputPointMany.value =  '';
+                    inputPointEffort.value =  '';
                     // cerrar modal
                     modalPoints.classList.remove("block");
                     modalPoints.classList.add("hidden");
@@ -623,6 +633,10 @@
                     let maxValue = Math.max(pointKnow, pointMany, pointEffort);
                     // Set the maximum value to inputPoints
                     inputPoints.value = maxValue > 0 ? maxValue : '';
+                    // Questionary
+                    inputPointKnow.value = pointKnow;
+                    inputPointMany.value =  pointMany;
+                    inputPointEffort.value =  pointEffort;
                     // cerrar modal
                     modalPoints.classList.remove("block");
                     modalPoints.classList.add("hidden");
@@ -666,14 +680,13 @@
                 // Verificar si se ha seleccionado una opción diferente de "Selecciona..."
                 const selectedValue = delegateSelect.value;
                 // Verificar si se cumplen todas las condiciones
-                if (selectedValue === '0' || !isChecked) {
-                    toastr['error']("Faltan campos o campos incorrectos.");
+                if (selectedValue === '0') {
+                    toastr['error']("Selecciona un delegado.");
                     return false; // Retorna false si no se cumplen todas las condiciones
                 }
-                // Verificar si el campo inputPoints está vacío
-                if (!inputPoints.value) {
-                    toastr['error']("Faltan los story points.");
-                    return false; // Retorna false si el campo está vacío
+                if (!isChecked) {
+                    toastr['error']("Selecciona una prioridad.");
+                    return false; // Retorna false si no se cumplen todas las condiciones
                 }
             } else {
                 if (!isChecked) {

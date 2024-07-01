@@ -31,6 +31,7 @@ class CreateActivitiesTable extends Migration
             $table->string('priority')->nullable();
             $table->string('state')->nullable();
             $table->integer('points');
+            $table->json('questions_points')->nullable();
 
             $table->boolean('look')->default(false);
 

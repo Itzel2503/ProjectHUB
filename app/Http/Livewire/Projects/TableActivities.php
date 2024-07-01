@@ -486,24 +486,6 @@ class TableActivities extends Component
                     'expected_date.date' => 'La fecha esperada debe ser una fecha válida.',
                 ],
             );
-            // Verificar si al menos uno de los campos está presente
-            if ($this->changePoints == true) {
-                if (!$this->points) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Agrega story points.',
-                    ]);
-                    return;
-                }
-            } else {
-                if (!$this->point_know || !$this->point_many || !$this->point_effort) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Por favor, complete el cuestionario.',
-                    ]);
-                    return;
-                }
-            }
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -570,21 +552,61 @@ class TableActivities extends Component
         $activity->state = 'Abierto';
 
         if ($this->changePoints == true) {
-            $validPoints = [1, 2, 3, 5, 8, 13];
-            $activity->points = $this->points;
-
-            if (!in_array($this->points, $validPoints)) {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'Puntuaje no válido.',
-                ]);
-                return; // O cualquier otra acción que desees realizar
+            if (!$this->points) {
+                $activity->points = 0;
             } else {
+                $validPoints = [1, 2, 3, 5, 8, 13];
                 $activity->points = $this->points;
+
+                if (!in_array($this->points, $validPoints)) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Puntuaje no válido.',
+                    ]);
+                    return; // O cualquier otra acción que desees realizar
+                } else {
+                    $activity->points = $this->points;
+                }
             }
+            $questionsPoints = [
+                'pointKnow' => null,
+                'pointMany' => null,
+                'pointEffort' => null,
+            ];
+            // Convertir el array a JSON
+            $questionsPointsJson = json_encode($questionsPoints);
+            // Asignar y guardar 
+            $activity->questions_points = $questionsPointsJson;
         } else {
-            $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
-            $activity->points = $maxPoint;
+            if (!$this->point_know && !$this->point_many && !$this->point_effort) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'warning',
+                    'title' => 'El formulario está incompleto o no se han seleccionado los puntos necesarios.',
+                ]);
+                $activity->points = 0;
+                $questionsPoints = [
+                    'pointKnow' => null,
+                    'pointMany' => null,
+                    'pointEffort' => null,
+                ];
+                // Convertir el array a JSON
+                $questionsPointsJson = json_encode($questionsPoints);
+                // Asignar y guardar 
+                $activity->questions_points = $questionsPointsJson;
+            } else {
+                $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+                $activity->points = $maxPoint;
+                // Crear un array asociativo con los valores
+                $questionsPoints = [
+                    'pointKnow' => $this->point_know,
+                    'pointMany' => $this->point_many,
+                    'pointEffort' => $this->point_effort,
+                ];
+                // Convertir el array a JSON
+                $questionsPointsJson = json_encode($questionsPoints);
+                // Asignar y guardar 
+                $activity->questions_points = $questionsPointsJson;
+            }
         }
         $activity->delegated_date = Carbon::now();
         $activity->expected_date = $this->expected_date;
@@ -687,24 +709,6 @@ class TableActivities extends Component
                     'expected_date.date' => 'La fecha esperada debe ser una fecha válida.',
                 ],
             );
-            // Verificar si al menos uno de los campos está presente
-            if ($this->changePoints == true) {
-                if (!$this->points) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Agrega story points.',
-                    ]);
-                    return;
-                }
-            } else {
-                if (!$this->point_know || !$this->point_many || !$this->point_effort) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Por favor, complete el cuestionario.',
-                    ]);
-                    return;
-                }
-            }
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -794,7 +798,7 @@ class TableActivities extends Component
         $activity->expected_date = $this->expected_date ?? $activity->expected_date;
 
         if ($this->changePoints == true) {
-            $validPoints = [1, 2, 3, 5, 8, 13];
+            $validPoints = [0, 1, 2, 3, 5, 8, 13];
             $activity->points = $this->points;
 
             if (!in_array($this->points, $validPoints)) {
@@ -806,11 +810,47 @@ class TableActivities extends Component
             } else {
                 $activity->points = $this->points ?? $activity->points;
             }
+            // Crear un array asociativo con los valores
+            $questionsPoints = [
+                'pointKnow' => null,
+                'pointMany' => null,
+                'pointEffort' => null,
+            ];
+            // Convertir el array a JSON
+            $questionsPointsJson = json_encode($questionsPoints);
+            // Asignar y guardar 
+            $activity->questions_points = $questionsPointsJson;
         } else {
-            $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
-            $activity->points = $maxPoint ?? $activity->points;
+            if (!$this->point_know || !$this->point_many || !$this->point_effort) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'warning',
+                    'title' => 'El formulario está incompleto o no se han seleccionado los puntos necesarios.',
+                ]);
+                $activity->points = $activity->points ?? 0;
+                $questionsPoints = [
+                    'pointKnow' => null,
+                    'pointMany' => null,
+                    'pointEffort' => null,
+                ];
+                // Convertir el array a JSON
+                $questionsPointsJson = json_encode($questionsPoints);
+                // Asignar y guardar 
+                $activity->questions_points = $questionsPointsJson;
+            } else {
+                $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+                $activity->points = $maxPoint;
+                // Crear un array asociativo con los valores
+                $questionsPoints = [
+                    'pointKnow' => $this->point_know,
+                    'pointMany' => $this->point_many,
+                    'pointEffort' => $this->point_effort,
+                ];
+                // Convertir el array a JSON
+                $questionsPointsJson = json_encode($questionsPoints);
+                // Asignar y guardar 
+                $activity->questions_points = $questionsPointsJson;
+            }
         }
-
         $activity->save();
 
         $this->clearInputs();
@@ -1036,9 +1076,13 @@ class TableActivities extends Component
         } elseif ($this->activityEdit->priority == 'Bajo') {
             $this->priority3 = true;
         }
-
+        // EFFORT PONTS
         $this->points = $this->activityEdit->points;
         $this->changePoints = true;
+        $questionsPoints = json_decode($this->activityEdit->questions_points, true);
+        $this->point_know = $questionsPoints['pointKnow'] ?? null;
+        $this->point_many = $questionsPoints['pointMany'] ?? null;
+        $this->point_effort = $questionsPoints['pointEffort'] ?? null;
     }
     // MODAL
     public function modalBacklog()

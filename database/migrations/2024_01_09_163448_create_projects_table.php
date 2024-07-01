@@ -23,6 +23,7 @@ class CreateProjectsTable extends Migration
             $table->string('type');
             $table->string('name');
             $table->integer('priority');
+            $table->json('questions_priority');
 
             $table->softDeletes();
             $table->timestamps();

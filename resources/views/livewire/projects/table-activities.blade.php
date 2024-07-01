@@ -751,9 +751,7 @@
                         class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                         <h3
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                            @php
-                                echo mb_substr($activityShow->title, 0, 25) . ' ...';
-                            @endphp
+                            {{ $activityShow->title }}
                         </h3>
                         <svg wire:click="modalShowActivity()" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
                             xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"

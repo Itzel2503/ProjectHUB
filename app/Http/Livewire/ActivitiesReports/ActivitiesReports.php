@@ -12,6 +12,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -28,7 +29,8 @@ class ActivitiesReports extends Component
     public $activeTab = 'actividades';
     // Generales
     public $allUsers;
-    public $allUsersFiltered = [];
+    public $usersFiltered = [],
+        $allUsersFiltered = [];
     public $selectedDelegate = '';
     // FILTRO PUNTOS
     public $startDate, $endDate, $starMonth, $endMonth;
@@ -39,7 +41,7 @@ class ActivitiesReports extends Component
         $showChatActivity = false;
     public $activityShow, $messagesActivity, $messageActivity;
     // table, action's activities
-    public $searchActivity;
+    public $searchActivity, $firstSprint;
     public $filteredActivity = false, $filterActivity = false;
     public $filteredPriorityActivity = '', $priorityCaseActivity = '';
     // ------------------------------ REPORT ------------------------------
@@ -49,17 +51,27 @@ class ActivitiesReports extends Component
         $showChatReport = false,
         $showEvidence = false;
     public $reportShow;
+    public $messagesReport, $messageReport;
     // modal evidence report
     public $modalEvidence = false;
     public $evidenceShow;
-    public $messagesReport, $messageReport;
+    // modal edit report
+    public $modalEditReport = false;
+    public $showEditReport = false;
+    public $reportEdit, $clientDukke;
+    // modal activity points
+    public $changePoints = false;
+    public $points, $point_know, $point_many, $point_effort;
+    // inputs
+    public $tittle, $type, $file, $comment, $evidenceEdit, $expected_date, $priority1, $priority2, $priority3, $evidence, $message;
     // table, action's reports
-    public $searchReport;
+    public $searchReport, $reportEvidenceReport;
     public $searchDukke;
     public $filteredReport = false, $filterReport = false;
     public $filteredDukke = false, $filterDukke = false;
     public $filteredPriorityReport = '', $priorityCaseReport = '', $filteredPriorityDukke = '', $priorityCaseDukke = '';
     // ------------------------------ TASK ADMIN ------------------------------
+    public $allUsersTask;
     public $searchTask;
 
     public function mount()
@@ -76,16 +88,18 @@ class ActivitiesReports extends Component
     public function render()
     {
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
-        $this->allUsers = User::all();
+        // DELEGATE
+        $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
+        $this->allUsersTask = User::where('type_user', '!=', 3)->where('id', '!=', Auth::id())->orderBy('name', 'asc')->get();
         // Filtro de consulta
         $user = Auth::user();
         $user_id = $user->id;
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
             $activities = Activity::where(function ($query) {
-                    $query
-                        ->where('title', 'like', '%' . $this->searchActivity . '%');
-                })
+                $query
+                    ->where('title', 'like', '%' . $this->searchActivity . '%');
+            })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
@@ -98,12 +112,12 @@ class ActivitiesReports extends Component
                 ->get();
 
             $reports = Report::where(function ($query) {
-                    $query
-                        ->where('title', 'like', '%' . $this->searchReport . '%');
-                    if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
-                        $query->orWhereNotNull('count');
-                    }
-                })
+                $query
+                    ->where('title', 'like', '%' . $this->searchReport . '%');
+                if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
+                    $query->orWhereNotNull('count');
+                }
+            })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
@@ -117,10 +131,10 @@ class ActivitiesReports extends Component
             $reportsDukke = null;
             // Obtener los reports del usuario
             $reportsAdmin = User::select(
-                    'users.id as user',
-                    'users.name as user_name',
-                    'reports.*'
-                )
+                'users.id as user',
+                'users.name as user_name',
+                'reports.*'
+            )
                 ->leftJoin('reports', 'users.id', '=', 'reports.delegate_id')
                 ->where('reports.delegate_id', $user_id)
                 ->where('reports.title', 'like', '%' . $this->searchTask . '%')
@@ -129,10 +143,10 @@ class ActivitiesReports extends Component
                 ->get();
             // Obtener las activities del usuario
             $activitiesAdmin = User::select(
-                    'users.id as user',
-                    'users.name as user_name',
-                    'activities.*'
-                )
+                'users.id as user',
+                'users.name as user_name',
+                'activities.*'
+            )
                 ->leftJoin('activities', 'users.id', '=', 'activities.delegate_id')
                 ->where('activities.delegate_id', $user_id)
                 ->where('activities.title', 'like', '%' . $this->searchTask . '%')
@@ -211,9 +225,6 @@ class ActivitiesReports extends Component
                                 $subQuery->where('user_id', $user_id)->where('video', true);
                             });
                     })
-                    ->when($this->selectedDelegate, function ($query) {
-                        $query->where('delegate_id', $this->selectedDelegate);
-                    })
                     ->when($this->filterDukke, function ($query) {
                         $query->orderByRaw($this->priorityCaseDukke . ' ' . $this->filteredPriorityDukke);
                     })
@@ -228,6 +239,27 @@ class ActivitiesReports extends Component
         }
         // ADD ATRIBUTES ACTIVITIES
         foreach ($activities as $activity) {
+            // SPRINT
+            if ($activity->sprint) {
+                $state = $activity->sprint->state;
+                if ($state == 'Pendiente') {
+                    $activity->sprint_status = 'Pendiente';
+                }elseif ($state == 'Curso') {
+                    $activity->sprint_status = 'Curso';
+                }elseif ($state == 'Cerrado') {
+                    $activity->sprint_status = 'Cerrado';
+                }
+            } else {
+                $activity->sprint_status = null;
+            }
+            // ACTIONS
+            $activity->filteredActions = $this->getFilteredActions($activity->state);
+            // DELEGATE
+            $activity->usersFiltered = $this->allUsers
+                ->reject(function ($user) use ($activity) {
+                    return $user->id === $activity->delegate_id;
+                })
+                ->values();
             // PROGRESS
             if ($activity->progress && $activity->updated_at) {
                 $progress = Carbon::parse($activity->progress);
@@ -297,6 +329,14 @@ class ActivitiesReports extends Component
         }
         // ADD ATRIBUTES REPORTS
         foreach ($reports as $report) {
+            // ACTIONS
+            $report->filteredActions = $this->getFilteredActions($report->state);
+            // DELEGATE
+            $report->usersFiltered = $this->allUsers
+                ->reject(function ($user) use ($report) {
+                    return $user->id === $report->delegate_id;
+                })
+                ->values();
             // PROGRESS
             if ($report->progress && $report->updated_at) {
                 $progress = Carbon::parse($report->progress);
@@ -368,6 +408,12 @@ class ActivitiesReports extends Component
         if (Auth::user()->type_user == 1) {
             // ADD ATRIBUTES REPORTS
             foreach ($tasks as $task) {
+                // ACTIONS
+                $task->filteredActions = $this->getFilteredActions($task->state);
+                // DELEGATE
+                $task->usersFiltered = $this->allUsersTask->reject(function ($user) use ($task) {
+                    return $user->id === $task->delegate_id || $user->id === Auth::id();
+                })->values();
                 // PROGRESS
                 if ($task->progress && $task->updated_at) {
                     $task->progress = Carbon::parse($task->progress);
@@ -397,9 +443,17 @@ class ActivitiesReports extends Component
                 } else {
                     $task->timeDifference = null;
                 }
-                // NAME USUARIO CREADOR
+                // NAME USUARIO CREO
                 $user_created = User::where('id', $task->user_id)->first();
-                $task->user_created = $user_created->name;
+                if ($user_created) {
+                    $task->created_name = $user_created->name;
+                } else  {
+                    $task->created_name = 'Usuario eliminado';
+                }
+                // NAME USUARIO
+                $user_delegate = User::where('id', $user_id)->first();
+                $task->delegate_id = $user_delegate->id;
+                $task->delegate_name = $user_delegate->name;
                 // CHAT ACTIVITY
                 if ($task->sprint_id) {
                     $messages = ChatReports::where('activity_id', $task->id)->orderBy('created_at', 'asc')->get();
@@ -413,10 +467,16 @@ class ActivitiesReports extends Component
                     $sprint = Sprint::where('id', $task->sprint_id)->first(); // Obtener solo un modelo, no una colección
                     if ($sprint) {
                         if ($sprint->backlog) {
-                            // Acceder al proyecto asociado al backlog
-                            $task->project_name = $sprint->backlog->project->name . ' (Actividad)';
-                            $task->project_id = $sprint->backlog->project->id;
-                            $task->project_activity = true;
+                            if ($sprint->backlog->project) {
+                                // Acceder al proyecto asociado al backlog
+                                $task->project_name = $sprint->backlog->project->name . ' (Actividad)';
+                                $task->project_id = $sprint->backlog->project->id;
+                                $task->project_activity = true;
+                            } else {
+                                // Manejar caso donde no hay backlog asociado
+                                $task->project_name = 'Proyecto no disponible';
+                                $task->project_activity = false;
+                            }
                         } else {
                             // Manejar caso donde no hay backlog asociado
                             $task->project_name = 'Backlog no disponible';
@@ -484,6 +544,14 @@ class ActivitiesReports extends Component
         if (Auth::user()->area_id == 4) {
             // ADD ATRIBUTES REPORTS
             foreach ($reportsDukke as $report) {
+                // ACTIONS
+                $report->filteredActions = $this->getFilteredActions($report->state);
+                // DELEGATE
+                $report->usersFiltered = $this->allUsers
+                    ->reject(function ($user) use ($report) {
+                        return $user->id === $report->delegate_id;
+                    })
+                    ->values();
                 // PROGRESS
                 if ($report->progress && $report->updated_at) {
                     $progress = Carbon::parse($report->progress);
@@ -556,12 +624,421 @@ class ActivitiesReports extends Component
         foreach ($this->allUsers as $key => $user) {
             $this->allUsersFiltered[$user->id] = $user->name;
         }
+
         return view('livewire.activities-reports.activities-reports', [
             'activities' => $activities,
             'reports' => $reports,
             'reportsDukke' => $reportsDukke,
             'tasks' => $tasks
         ]);
+    }
+    // ACTIONS
+    public function updateDelegateActivity($id, $delegate)
+    {
+        $activity = Activity::find($id);
+        if ($activity) {
+            $activity->delegate_id = $delegate;
+            $activity->delegated_date = Carbon::now();
+            $activity->progress = null;
+            $activity->look = false;
+            $activity->state = 'Abierto';
+            $activity->save();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Delegado actualizado',
+            ]);
+        } else{
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Actividad no encontrada',
+            ]);
+        }
+    }
+
+    public function updateStateActivity($id, $state)
+    {
+        $activity = Activity::find($id);
+
+        if ($activity) {
+            if ($state == 'Proceso' || $state == 'Conflicto') {
+                if ($activity->progress == null && $activity->look == false && $activity->state == 'Abierto') {
+                    $activity->progress = Carbon::now();
+                    $activity->look = true;
+                }
+                if ($activity->progress != null && $activity->look == true && $activity->state == 'Abierto') {
+                    $activity->progress = Carbon::now();
+                    $activity->look = false;
+                }
+
+                $activity->state = $state;
+                $activity->save();
+
+                // Emitir un evento de navegador
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Estado actualizado',
+                ]);
+            }
+
+            if ($state == 'Resuelto') {
+                $activity->end_date = Carbon::now();
+                $activity->state = $state;
+                $activity->save();
+
+                // Emitir un evento de navegador
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Estado actualizado',
+                ]);
+            }
+        } else{
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Actividad no encontrada',
+            ]);
+        }
+    }
+
+    public function updateReport($id, $project_id)
+    {
+        try {
+            if (Auth::id() != 10 && Auth::user()->type_user != 3) {
+                // Verificar si al menos uno de los campos está presente
+                if ($this->changePoints == true) {
+                    if (!$this->points) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Agrega story points.',
+                        ]);
+                        return;
+                    }
+                } else {
+                    if (!$this->point_know || !$this->point_many || !$this->point_effort) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Por favor, complete el cuestionario.',
+                        ]);
+                        return;
+                    }
+                }
+            }
+            // Aquí puedes continuar con tu lógica después de la validación exitosa
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Faltan campos o campos incorrectos',
+            ]);
+            throw $e;
+        }
+
+        $report = Report::find($id);
+        $project = Project::find($project_id);
+
+        if ($report) {
+            if ($this->file) {
+                $extension = $this->file->extension();
+                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+
+                if (in_array($extension, $extensionesImagen)) {
+                    $maxSize = 5 * 1024 * 1024; // 5 MB
+                    // Verificar el tamaño del archivo
+                    if ($this->file->getSize() > $maxSize) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                        ]);
+                        return;
+                    }
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fileName = $this->file->getClientOriginalName();
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Procesar la imagen
+                    $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
+                    // Redimensionar la imagen si es necesario
+                    $image->resize(800, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    // Guardar la imagen temporalmente
+                    $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                    $image->save(storage_path('app/' . $tempPath));
+                    // Eliminar imagen anterior
+                    if (Storage::disk('reports')->exists($report->content)) {
+                        Storage::disk('reports')->delete($report->content);
+                    }
+                    // Guardar la imagen redimensionada en el almacenamiento local
+                    Storage::disk('reports')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                    // // Eliminar la imagen temporal
+                    Storage::disk('local')->delete($tempPath);
+
+                    $report->image = true;
+                    $report->video = false;
+                    $report->file = false;
+                } elseif (in_array($extension, $extensionesVideo)) {
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fileName = $this->file->getClientOriginalName();
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
+                    if ($report->content && Storage::disk('reports')->exists($report->content)) {
+                        $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
+                        if ($existingFilePath == $filePath) {
+                            Storage::disk('reports')->delete($report->content);
+                        }
+                    }
+                    // Guardar el archivo en el disco 'reports'
+                    $this->file->storeAs($filePath, $fileName, 'reports');
+
+                    $report->image = false;
+                    $report->video = true;
+                    $report->file = false;
+                } else {
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fileName = $this->file->getClientOriginalName();
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
+                    if ($report->content && Storage::disk('reports')->exists($report->content)) {
+                        $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
+                        if ($existingFilePath == $filePath) {
+                            Storage::disk('reports')->delete($report->content);
+                        }
+                    }
+                    // Guardar el archivo en el disco 'reports'
+                    $this->file->storeAs($filePath, $fileName, 'reports');
+
+                    $report->image = false;
+                    $report->video = false;
+                    $report->file = true;
+                }
+
+                $report->content = $fullNewFilePath;
+            }
+
+            $report->title = $this->tittle ?? $report->tittle;
+            $report->comment = $this->comment ?? $report->comment;
+
+            $fecha = Carbon::parse($report->expected_date)->toDateString();
+
+            if ($report->updated_expected_date == false && $this->expected_date != $fecha) {
+                $report->updated_expected_date = true;
+                $report->expected_date = $this->expected_date;
+            } else {
+                $report->expected_date = $this->expected_date ?? $report->expected_date;
+            }
+
+            $report->evidence = $this->evidenceEdit  ?? $report->evidence;
+
+            if ($this->priority1) {
+                $report->priority = 'Alto';
+            } elseif ($this->priority2) {
+                $report->priority = 'Medio';
+            } elseif ($this->priority3) {
+                $report->priority = 'Bajo';
+            }
+
+            if ($this->changePoints == true) {
+                $validPoints = [0, 1, 2, 3, 5, 8, 13];
+                $report->points = $this->points;
+    
+                if (!in_array($this->points, $validPoints)) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Puntuaje no válido.',
+                    ]);
+                    return;
+                } else {
+                    $report->points = $this->points ?? $report->points;
+                }
+            } else {
+                if (!$this->point_know || !$this->point_many || !$this->point_effort) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Por favor, complete el cuestionario.',
+                    ]);
+                    return;
+                    $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+                    $report->points = $maxPoint ?? $report->points;
+                } else {
+                    $report->points = $report->points ?? 0;
+                }
+            }
+            
+            $report->save();
+            $this->modalEditReport = false;
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Guardado exitoso',
+            ]);
+        }
+    }
+
+    public function updateDelegateReport($id, $delegate)
+    {
+        $report = Report::find($id);
+
+        if ($report) {
+            $report->delegate_id = $delegate;
+            $report->delegated_date = Carbon::now();
+            $report->progress = null;
+            $report->look = false;
+            $report->state = 'Abierto';
+            $report->save();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Delegado actualizado',
+            ]);
+        } else{
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Reporte no encontrado',
+            ]);
+        }
+    }
+
+    public function updateStateReport($id, $project_id, $state)
+    {
+        $report = Report::find($id);
+
+        if ($report) {
+            if ($state == 'Proceso' || $state == 'Conflicto') {
+                if ($report->progress == null && $report->look == false && $report->state == 'Abierto') {
+                    $report->progress = Carbon::now();
+                    $report->look = true;
+                }
+                if ($report->progress != null && $report->look == true && $report->state == 'Abierto') {
+                    $report->progress = Carbon::now();
+                    $report->look = false;
+                }
+
+                $report->state = $state;
+                $report->save();
+                // Emitir un evento de navegador
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Estado actualizado',
+                ]);
+            }
+
+            if ($state == 'Resuelto') {
+                if ($report->evidence == true) {
+                    $this->modalEvidence = true;
+
+                    $project = Project::find($project_id);
+                    $report->project_id = $project->id;
+                    $this->reportEvidenceReport = $report;
+                } else {
+                    $report->state = $state;
+                    $report->end_date = Carbon::now();
+                    $report->repeat = true;
+                    $report->save();
+                    // Emitir un evento de navegador
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Estado actualizado',
+                    ]);
+                }
+            }
+        }
+    }
+
+    public function updateEvidence($id, $project_id)
+    {
+        $report = Report::find($id);
+        $project = Project::find($project_id);
+
+        if ($report) {
+            if ($this->evidence) {
+                $now = Carbon::now();
+                $dateString = $now->format("Y-m-d H_i_s");
+
+                $fileExtension = $this->evidence->extension();
+                $evidence = new Evidence;
+                $evidence->report_id = $report->id;
+
+                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+                if (in_array($fileExtension, $extensionesImagen)) {
+                    $maxSize = 5 * 1024 * 1024; // 5 MB
+                    // Verificar el tamaño del archivo
+                    if ($this->evidence->getSize() > $maxSize) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                        ]);
+                        return;
+                    }
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fileName = $this->evidence->getClientOriginalName();
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Procesar la imagen
+                    $image = \Intervention\Image\Facades\Image::make($this->evidence->getRealPath());
+                    // Redimensionar la imagen si es necesario
+                    $image->resize(800, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    // Guardar la imagen temporalmente
+                    $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                    $image->save(storage_path('app/' . $tempPath));
+                    // Guardar la imagen redimensionada en el almacenamiento local
+                    Storage::disk('evidence')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                    // // Eliminar la imagen temporal
+                    Storage::disk('local')->delete($tempPath);
+
+                    $evidence->image = true;
+                    $evidence->video = false;
+                    $evidence->file = false;
+                } elseif (in_array($fileExtension, $extensionesVideo)) {
+                    $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Verificar si la ruta existe, si no, crearla
+                    if (!Storage::disk('evidence')->exists($filePath)) {
+                        Storage::disk('evidence')->makeDirectory($filePath);
+                    }
+                    // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
+                    $this->evidence->storeAs($filePath, $fileName, 'evidence');
+
+                    $evidence->image = false;
+                    $evidence->video = true;
+                    $evidence->file = false;
+                } else {
+                    $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Verificar si la ruta existe, si no, crearla
+                    if (!Storage::disk('evidence')->exists($filePath)) {
+                        Storage::disk('evidence')->makeDirectory($filePath);
+                    }
+                    // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
+                    $this->evidence->storeAs($filePath, $fileName, 'evidence');
+
+                    $evidence->image = false;
+                    $evidence->video = false;
+                    $evidence->file = true;
+                }
+                $evidence->content = $fullNewFilePath;
+                $evidence->save();
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Evidencia actualizada',
+                ]);
+                $report->end_date = Carbon::now();
+                $report->state = 'Resuelto';
+                $report->repeat = true;
+                $report->save();
+                $this->modalEvidence = false;
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Selecciona un archivo',
+                ]);
+            }
+        }
     }
     // INFO MODAL
     public function showActivity($id)
@@ -741,6 +1218,44 @@ class ActivitiesReports extends Component
             $this->reportShow->contentExists = false;
         }
     }
+
+    public function showEditReport($id)
+    {
+        $this->showEditReport = true;
+
+        if ($this->modalEditReport == true) {
+            $this->modalEditReport = false;
+        } else {
+            $this->modalEditReport = true;
+        }
+
+        $this->reportEdit = Report::find($id);
+        $this->tittle = $this->reportEdit->title;
+        $this->comment = $this->reportEdit->comment;
+
+        $fecha = Carbon::parse($this->reportEdit->expected_date);
+        $this->expected_date = $fecha->toDateString();
+
+        $this->evidenceEdit = false;
+        if ($this->reportEdit->evidence == true) {
+            $this->evidenceEdit = true;
+        }
+
+        $this->priority1 = false;
+        $this->priority2 = false;
+        $this->priority3 = false;
+
+        if ($this->reportEdit->priority == 'Alto') {
+            $this->priority1 = true;
+        } elseif ($this->reportEdit->priority == 'Medio') {
+            $this->priority2 = true;
+        } elseif ($this->reportEdit->priority == 'Bajo') {
+            $this->priority3 = true;
+        }
+
+        $this->points = $this->reportEdit->points;
+        $this->changePoints = true;
+    }
     // MODAL
     public function modalShowActivity()
     {
@@ -763,6 +1278,26 @@ class ActivitiesReports extends Component
             $this->showReport = false;
         } else {
             $this->modalShowReport = true;
+        }
+    }
+
+    public function modalEditReport()
+    {
+        $this->showEditReport = false;
+
+        if ($this->modalEditReport == true) {
+            $this->modalEditReport = false;
+        } else {
+            $this->modalEditReport = true;
+        }
+    }
+
+    public function modalEvidence()
+    {
+        if ($this->modalEvidence == true) {
+            $this->modalEvidence = false;
+        } else {
+            $this->modalEvidence = true;
         }
     }
     // FILTER
@@ -956,11 +1491,60 @@ class ActivitiesReports extends Component
 
     public function setActiveTab($tab)
     {
+        $this->activeTab = $tab;
+        $this->resetComponentState();
+    }
+
+    public function changePoints()
+    {
+        if ($this->changePoints == true) {
+            $this->changePoints = false;
+            if ($this->reportEdit == null) {
+                $this->points = '';
+            }
+        } else {
+            $this->changePoints = true;
+            $this->point_know = '';
+            $this->point_many = '';
+            $this->point_effort = '';
+        }
+    }
+    // PROTECTED
+    protected function getFilteredActions($currentState)
+    {
+        $actions = ['Abierto', 'Proceso', 'Resuelto', 'Conflicto'];
+
+        if ($currentState == 'Abierto') {
+            return ['Proceso', 'Conflicto'];
+        }
+
+        if ($currentState == 'Conflicto') {
+            return ['Resuelto'];
+        }
+
+        if ($currentState == 'Resuelto') {
+            return [];
+        }
+
+        if ($currentState == 'Proceso') {
+            return array_filter($actions, function ($action) {
+                return !in_array($action, ['Abierto', 'Proceso']);
+            });
+        }
+
+        // En cualquier otro caso, elimina el estado actual del arreglo
+        return array_filter($actions, function ($action) use ($currentState) {
+            return $action != $currentState;
+        });
+    }
+    // PRIVATE
+    private function resetComponentState()
+    {
         $this->searchActivity = '';
         $this->searchReport = '';
         $this->searchDukke = '';
         $this->modalShowActivity = false;
         $this->modalShowReport = false;
-        $this->activeTab = $tab;
     }
+
 }

@@ -34,6 +34,7 @@ class CreateReportsTable extends Migration
             $table->longText('comment');
             $table->boolean('evidence');
             $table->integer('points');
+            $table->json('questions_points')->nullable();
 
             $table->boolean('look')->default(false);
             $table->boolean('image');

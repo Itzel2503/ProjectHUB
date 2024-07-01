@@ -32,7 +32,7 @@ class Projects extends Component
     public $projectCustomer, $projectEdit, $backlogEdit;
     // MODAL PRIORITY
     public $modalPriority = false, $showPriority = false;
-    public $projectPrioriry;
+    public $projectPriority;
     // TABLE
     public $search;
     public $allType = ['Activo', 'Soporte', 'No activo', 'Entregado', 'Cerrado'];
@@ -142,7 +142,7 @@ class Projects extends Component
                 ->where('projects.name', 'like', '%' . $this->search . '%')
                 ->orderBy('created_at', 'desc')
                 ->get();
-                
+
             $projectsSoporte = null;
         }
 
@@ -182,7 +182,6 @@ class Projects extends Component
                 'code' => 'required|numeric',
                 'name' => 'required|max:255',
                 'type' => 'required|max:255',
-                'priority' => 'required|numeric|between:0,99',
                 'customer' => 'required',
                 'leader' => 'required',
                 'programmer' => 'required',
@@ -191,6 +190,14 @@ class Projects extends Component
                 'scopes' => 'nullable',
                 'start_date' => 'required|date|max:255',
                 'closing_date' => 'required|date|max:255',
+
+                'severity' => 'required',
+                'impact' => 'required',
+                'satisfaction' => 'required',
+                'temporality' => 'required',
+                'magnitude' => 'required',
+                'strategy' => 'required',
+                'stage' => 'required',
             ]);
 
             // Verificar si al menos uno de los campos está presente
@@ -224,7 +231,42 @@ class Projects extends Component
                 $project->code = $this->code;
                 $project->type = $this->type;
                 $project->name = $this->name;
-                $project->priority = $this->priority;
+                $total = $this->severity + $this->impact + $this->satisfaction + $this->temporality + $this->magnitude + $this->strategy + $this->stage;
+                if ($total >= 80 && $total <= 108) {
+                    $project->priority = 1;
+                } elseif ($total >= 72 && $total <= 79) {
+                    $project->priority = 2;
+                } elseif ($total >= 65 && $total <= 71) {
+                    $project->priority = 3;
+                } elseif ($total >= 57 && $total <= 64) {
+                    $project->priority = 4;
+                } elseif ($total >= 50 && $total <= 56) {
+                    $project->priority = 5;
+                } elseif ($total >= 42 && $total <= 49) {
+                    $project->priority = 6;
+                } elseif ($total >= 35 && $total <= 41) {
+                    $project->priority = 7;
+                } elseif ($total >= 27 && $total <= 34) {
+                    $project->priority = 8;
+                } elseif ($total >= 20 && $total <= 26) {
+                    $project->priority = 9;
+                } elseif ($total >= 0 && $total <= 19) {
+                    $project->priority = 10;
+                }
+                // Crear un array asociativo con los valores
+                $questionsPriority = [
+                    'severity' => $this->severity,
+                    'impact' => $this->impact,
+                    'satisfaction' => $this->satisfaction,
+                    'temporality' => $this->temporality,
+                    'magnitude' => $this->magnitude,
+                    'strategy' => $this->strategy,
+                    'stage' => $this->stage,
+                ];
+                // Convertir el array a JSON
+                $questionsPriorityJson = json_encode($questionsPriority);
+                // Asignar y guardar 
+                $project->questions_priority = $questionsPriorityJson;
                 $project->save();
                 // Asocia el usuario al proyecto
                 $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false, 'client' => false]);
@@ -245,7 +287,42 @@ class Projects extends Component
             $project->code = $this->code;
             $project->type = $this->type;
             $project->name = $this->name;
-            $project->priority = $this->priority;
+            $total = $this->severity + $this->impact + $this->satisfaction + $this->temporality + $this->magnitude + $this->strategy + $this->stage;
+            if ($total >= 80 && $total <= 108) {
+                $project->priority = 1;
+            } elseif ($total >= 72 && $total <= 79) {
+                $project->priority = 2;
+            } elseif ($total >= 65 && $total <= 71) {
+                $project->priority = 3;
+            } elseif ($total >= 57 && $total <= 64) {
+                $project->priority = 4;
+            } elseif ($total >= 50 && $total <= 56) {
+                $project->priority = 5;
+            } elseif ($total >= 42 && $total <= 49) {
+                $project->priority = 6;
+            } elseif ($total >= 35 && $total <= 41) {
+                $project->priority = 7;
+            } elseif ($total >= 27 && $total <= 34) {
+                $project->priority = 8;
+            } elseif ($total >= 20 && $total <= 26) {
+                $project->priority = 9;
+            } elseif ($total >= 0 && $total <= 19) {
+                $project->priority = 10;
+            }
+            // Crear un array asociativo con los valores
+            $questionsPriority = [
+                'severity' => $this->severity,
+                'impact' => $this->impact,
+                'satisfaction' => $this->satisfaction,
+                'temporality' => $this->temporality,
+                'magnitude' => $this->magnitude,
+                'strategy' => $this->strategy,
+                'stage' => $this->stage,
+            ];
+            // Convertir el array a JSON
+            $questionsPriorityJson = json_encode($questionsPriority);
+            // Asignar y guardar 
+            $project->questions_priority = $questionsPriorityJson;
             $project->save();
             // Asocia el usuario al proyecto
             $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false, 'client' => false]);
@@ -334,7 +411,6 @@ class Projects extends Component
             $this->validate([
                 'code' => 'required|numeric',
                 'name' => 'required|max:255',
-                'priority' => 'required|numeric|between:0,99',
                 'general_objective' => 'required|max:255',
                 'start_date' => 'required|date|max:255',
                 'closing_date' => 'required|date|max:255',
@@ -367,7 +443,6 @@ class Projects extends Component
                         $project->code = $this->code ?? $project->code;
                         $project->type = $this->type != null ? $this->type : $project->type;
                         $project->name = $this->name ?? $project->name;
-                        $project->priority = $this->priority ?? $project->priority;
                         $project->save();
                         // Primero, quita las relaciones existentes para estos roles
                         $project->users()->wherePivot('leader', true)->detach();
@@ -389,7 +464,6 @@ class Projects extends Component
                     $project->code = $this->code ?? $project->code;
                     $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
-                    $project->priority = $this->priority ?? $project->priority;
                     $project->save();
                     // Primero, quita las relaciones existentes para estos roles
                     $project->users()->wherePivot('leader', true)->detach();
@@ -470,7 +544,6 @@ class Projects extends Component
                     $project->code = $this->code ?? $project->code;
                     $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
-                    $project->priority = $this->priority ?? $project->priority;
                     $project->save();
                     // Primero, quita las relaciones existentes para estos roles
                     $project->users()->wherePivot('leader', true)->detach();
@@ -563,7 +636,6 @@ class Projects extends Component
                                 $project->code = $this->code ?? $project->code;
                                 $project->type = $this->type != null ? $this->type : $project->type;
                                 $project->name = $this->name ?? $project->name;
-                                $project->priority = $this->priority ?? $project->priority;
                                 $project->save();
                                 // Primero, quita las relaciones existentes para estos roles
                                 $project->users()->wherePivot('leader', true)->detach();
@@ -599,7 +671,6 @@ class Projects extends Component
                     $project->code = $this->code ?? $project->code;
                     $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
-                    $project->priority = $this->priority ?? $project->priority;
                     $project->save();
                     // Primero, quita las relaciones existentes para estos roles
                     $project->users()->wherePivot('leader', true)->detach();
@@ -696,7 +767,6 @@ class Projects extends Component
                         $project->code = $this->code ?? $project->code;
                         $project->type = $this->type != null ? $this->type : $project->type;
                         $project->name = $this->name ?? $project->name;
-                        $project->priority = $this->priority ?? $project->priority;
                         $project->save();
                         // Primero, quita las relaciones existentes para estos roles
                         $project->users()->wherePivot('leader', true)->detach();
@@ -720,7 +790,6 @@ class Projects extends Component
                     $project->code = $this->code ?? $project->code;
                     $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
-                    $project->priority = $this->priority ?? $project->priority;
                     $project->save();
                     // Primero, quita las relaciones existentes para estos roles
                     $project->users()->wherePivot('leader', true)->detach();
@@ -834,7 +903,7 @@ class Projects extends Component
         $total = $this->severity + $this->impact + $this->satisfaction + $this->temporality + $this->magnitude + $this->strategy + $this->stage;
 
         $project = Project::find($id);
-        if($project) {
+        if ($project) {
             if ($total >= 80 && $total <= 108) {
                 $project->priority = 1;
             } elseif ($total >= 72 && $total <= 79) {
@@ -856,6 +925,20 @@ class Projects extends Component
             } elseif ($total >= 0 && $total <= 19) {
                 $project->priority = 10;
             }
+            // Crear un array asociativo con los valores
+            $questionsPriority = [
+                'severity' => $this->severity,
+                'impact' => $this->impact,
+                'satisfaction' => $this->satisfaction,
+                'temporality' => $this->temporality,
+                'magnitude' => $this->magnitude,
+                'strategy' => $this->strategy,
+                'stage' => $this->stage,
+            ];
+            // Convertir el array a JSON
+            $questionsPriorityJson = json_encode($questionsPriority);
+            // Asignar y guardar 
+            $project->questions_priority = $questionsPriorityJson;
             $project->save();
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
@@ -928,7 +1011,6 @@ class Projects extends Component
         $this->projectEdit = Project::find($id);
         $this->code = $this->projectEdit->code;
         $this->name = $this->projectEdit->name;
-        $this->priority = $this->projectEdit->priority;
 
         // TYPE PROJECT
         $this->type = $this->projectEdit ? $this->projectEdit->type : null;
@@ -969,7 +1051,19 @@ class Projects extends Component
             $this->modalPriority = true;
         }
 
-        $this->projectPrioriry = Project::find($id);
+        $this->projectPriority = Project::find($id);
+
+        if ($this->projectPriority) {
+            $questionsPriority = json_decode($this->projectPriority->questions_priority, true);
+
+            $this->severity = $questionsPriority['severity'] ?? null;
+            $this->impact = $questionsPriority['impact'] ?? null;
+            $this->satisfaction = $questionsPriority['satisfaction'] ?? null;
+            $this->temporality = $questionsPriority['temporality'] ?? null;
+            $this->magnitude = $questionsPriority['magnitude'] ?? null;
+            $this->strategy = $questionsPriority['strategy'] ?? null;
+            $this->stage = $questionsPriority['stage'] ?? null;
+        }
     }
     // MODAL
     public function modalCreateEdit()

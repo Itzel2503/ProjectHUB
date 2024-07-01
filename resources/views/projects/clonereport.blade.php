@@ -246,7 +246,10 @@
                     <input hidden type="text" id="user_id" name="user_id" value="{{ $user->id }}">
                     <input hidden type="text" id="inputPhoto" name="photo">
                     <input hidden type="text" id="inputVideo" name="video">
-                    <input hidden type="text" id="inputPoints" name="points" value="{{ $report->points }}">
+                    <input hidden type="text" id="inputPoints" name="points">
+                    <input hidden type="text" id="inputPointKnow" name="pointKnow">
+                    <input hidden type="text" id="inputPointMany" name="pointMany">
+                    <input hidden type="text" id="inputPointEffort" name="pointEffort">
                     <div class="-mx-3 mb-6 flex flex-row">
                         <div id="viewText" class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
@@ -546,7 +549,9 @@
         let inputVideo = document.getElementById("inputVideo");
         let inputPhoto = document.getElementById("inputPhoto");
         let inputPoints = document.getElementById("inputPoints");
-
+        let inputPointKnow = document.getElementById("inputPointKnow");
+        let inputPointMany = document.getElementById("inputPointMany");
+        let inputPointEffort = document.getElementById("inputPointEffort");
         let file = document.getElementById("file");
         // FORM
         let formReport = document.getElementById('formReport');
@@ -615,6 +620,10 @@
                 if (validNumbers.includes(value)) {
                     inputPoints.value = directPoints.value;
                     errorSpan.style.display = 'none';
+                    // Questionary
+                    inputPointKnow.value = '';
+                    inputPointMany.value =  '';
+                    inputPointEffort.value =  '';
                     // cerrar modal
                     modalPoints.classList.remove("block");
                     modalPoints.classList.add("hidden");
@@ -634,6 +643,10 @@
                     let maxValue = Math.max(pointKnow, pointMany, pointEffort);
                     // Set the maximum value to inputPoints
                     inputPoints.value = maxValue > 0 ? maxValue : '';
+                    // Questionary
+                    inputPointKnow.value = pointKnow;
+                    inputPointMany.value =  pointMany;
+                    inputPointEffort.value =  pointEffort;
                     // cerrar modal
                     modalPoints.classList.remove("block");
                     modalPoints.classList.add("hidden");
