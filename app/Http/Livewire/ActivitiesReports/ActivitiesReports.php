@@ -106,7 +106,7 @@ class ActivitiesReports extends Component
                 ->when($this->filterActivity, function ($query) {
                     $query->orderByRaw($this->priorityCaseActivity . ' ' . $this->filteredPriorityActivity);
                 })
-                ->orderBy('created_at', 'desc')
+                ->orderBy('expected_date', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
@@ -124,7 +124,7 @@ class ActivitiesReports extends Component
                 ->when($this->filterReport, function ($query) {
                     $query->orderByRaw($this->priorityCaseReport . ' ' . $this->filteredPriorityReport);
                 })
-                ->orderBy('created_at', 'desc')
+                ->orderBy('expected_date', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
@@ -139,7 +139,7 @@ class ActivitiesReports extends Component
                 ->where('reports.delegate_id', $user_id)
                 ->where('reports.title', 'like', '%' . $this->searchTask . '%')
                 ->where('reports.state', '!=', 'Resuelto')
-                ->orderBy('reports.created_at', 'desc')
+                ->orderBy('reports.expected_date', 'desc')
                 ->get();
             // Obtener las activities del usuario
             $activitiesAdmin = User::select(
@@ -151,7 +151,7 @@ class ActivitiesReports extends Component
                 ->where('activities.delegate_id', $user_id)
                 ->where('activities.title', 'like', '%' . $this->searchTask . '%')
                 ->where('activities.state', '!=', 'Resuelto')
-                ->orderBy('activities.created_at', 'desc')
+                ->orderBy('activities.expected_date', 'desc')
                 ->get();
             // Combinar los resultados en una colección
             $tasks = $activitiesAdmin->merge($reportsAdmin);
@@ -169,7 +169,7 @@ class ActivitiesReports extends Component
                 ->when($this->filterActivity, function ($query) {
                     $query->orderByRaw($this->priorityCaseActivity . ' ' . $this->filteredPriorityActivity);
                 })
-                ->orderBy('created_at', 'desc')
+                ->orderBy('expected_date', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
@@ -200,7 +200,7 @@ class ActivitiesReports extends Component
                 ->when($this->filterReport, function ($query) {
                     $query->orderByRaw($this->priorityCaseReport . ' ' . $this->filteredPriorityReport);
                 })
-                ->orderBy('created_at', 'desc')
+                ->orderBy('expected_date', 'desc')
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
@@ -228,7 +228,7 @@ class ActivitiesReports extends Component
                     ->when($this->filterDukke, function ($query) {
                         $query->orderByRaw($this->priorityCaseDukke . ' ' . $this->filteredPriorityDukke);
                     })
-                    ->orderBy('created_at', 'desc')
+                    ->orderBy('expected_date', 'desc')
                     ->where('state', '!=', 'Resuelto')
                     ->with(['user', 'delegate'])
                     ->get();

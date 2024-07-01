@@ -131,7 +131,7 @@
                             <div class="flex">
                                 Reporte
                                 {{-- down-up --}}
-                                <svg wire:click='filterDown' xmlns="http://www.w3.org/2000/svg" width="24"
+                                <svg wire:click="filterDown('priority')" xmlns="http://www.w3.org/2000/svg" width="24"
                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                     class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filtered) block @else hidden @endif ml-2 cursor-pointer">
@@ -142,7 +142,7 @@
                                     <path d="M20 6l-3 -3l-3 3" />
                                 </svg>
                                 {{-- up-down --}}
-                                <svg wire:click='filterUp' xmlns="http://www.w3.org/2000/svg" width="24"
+                                <svg wire:click="filterUp('priority')" xmlns="http://www.w3.org/2000/svg" width="24"
                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                     class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filtered) hidden @else block @endif ml-2 cursor-pointer">
@@ -156,7 +156,33 @@
                         </th>
                         <th class="px-1 py-3 lg:w-48">Delegado</th>
                         <th class="w-48 px-2 py-3">Estado</th>
-                        <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                        <th class="w-44 px-1 py-3">
+                            <div class="flex items-center">
+                                Fecha de entrega
+                                {{-- down-up --}}
+                                <svg wire:click="filterDown('expected_date')" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filtered) block @else hidden @endif ml-2 cursor-pointer">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M17 3l0 18" />
+                                    <path d="M10 18l-3 3l-3 -3" />
+                                    <path d="M7 21l0 -18" />
+                                    <path d="M20 6l-3 -3l-3 3" />
+                                </svg>
+                                {{-- up-down --}}
+                                <svg wire:click="filterUp('expected_date')" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filtered) hidden @else block @endif ml-2 cursor-pointer">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M7 3l0 18" />
+                                    <path d="M10 6l-3 -3l-3 3" />
+                                    <path d="M20 18l-3 3l-3 -3" />
+                                    <path d="M17 21l0 -18" />
+                                </svg>
+                            </div>
+                        </th>
                         <th class="w-56 px-1 py-3">Creado</th>
                         <th class="w-16 px-1 py-3">Acciones</th>
                     </tr>

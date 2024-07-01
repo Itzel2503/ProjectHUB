@@ -49,12 +49,12 @@ class TableActivities extends Component
     // table, action's activities
     public $search;
     public $perPage = '';
-    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '';
+    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc';
     public $usersFiltered = [],
         $allUsersFiltered = [],
         $selectedStates = [],
         $statesFiltered = [];
-    public $filtered = false, $filter = false;
+    public $filtered = false, $filter = false, $filterPriotiry = false;
 
     public function render()
     {
@@ -144,10 +144,10 @@ class TableActivities extends Component
                 ->when(!empty($this->selectedStates), function ($query) {
                     $query->whereIn('state', $this->selectedStates);
                 })
-                ->when($this->filter, function ($query) {
+                ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
-                ->orderBy('created_at', 'desc')
+                ->orderBy('expected_date', $this->filteredExpected)
                 ->with(['user', 'delegate'])
                 ->get();
         } else {
@@ -165,10 +165,10 @@ class TableActivities extends Component
                 ->when(!empty($this->selectedStates), function ($query) {
                     $query->whereIn('state', $this->selectedStates);
                 })
-                ->when($this->filter, function ($query) {
+                ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
-                ->orderBy('created_at', 'desc')
+                ->orderBy('expected_date', $this->filteredExpected)
                 ->with(['user', 'delegate'])
                 ->get();
         }
@@ -1202,20 +1202,38 @@ class TableActivities extends Component
         $this->render();
     }
     // FILTER
-    public function filterDown() 
+    public function filterDown($type) 
     {
         $this->filter = true;
         $this->filtered = false;
-        $this->filteredPriority = 'asc';
-        $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+
+        if ($type == 'priority') {
+            $this->filterPriotiry = true;
+            $this->filteredPriority = 'asc';
+            $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+        }
+        
+        if ($type == 'expected_date') {
+            $this->filterPriotiry = false;
+            $this->filteredExpected = 'desc';
+        }
     }
 
-    public function filterUp() 
+    public function filterUp($type) 
     {
         $this->filter = true;
         $this->filtered = true;
-        $this->filteredPriority = 'asc';
-        $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+
+        if ($type == 'priority') {
+            $this->filterPriotiry = true;
+            $this->filteredPriority = 'asc';
+            $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+        }
+        
+        if ($type == 'expected_date') {
+            $this->filterPriotiry = false;
+            $this->filteredExpected = 'asc';
+        }
     }
     // PROTECTED
     protected function updateSprintData($id)

@@ -32,10 +32,10 @@ class TableReports extends Component
     public $changePoints = false;
     public $points, $point_know, $point_many, $point_effort;
     // table, action's reports
-    public $leader = false, $filtered = false, $filter = false;
+    public $leader = false, $filtered = false, $filter = false, $filterPriotiry = false;
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
     public $perPage = '100';
-    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '';
+    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc';
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
     // inputs
     public $tittle, $type, $file, $comment, $evidenceEdit, $expected_date, $priority1, $priority2, $priority3, $evidence, $message;
@@ -63,10 +63,10 @@ class TableReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
-                ->when($this->filter, function ($query) {
+                ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
-                ->orderBy('created_at', 'desc')
+                ->orderBy('expected_date', $this->filteredExpected)
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
         } elseif (Auth::user()->type_user == 2) {
@@ -91,10 +91,10 @@ class TableReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
-                ->when($this->filter, function ($query) {
+                ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
-                ->orderBy('created_at', 'desc')
+                ->orderBy('expected_date', $this->filteredExpected)
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
         } elseif (Auth::user()->type_user == 3) {
@@ -111,10 +111,10 @@ class TableReports extends Component
                 ->when($this->selectedStates, function ($query) {
                     $query->whereIn('state', $this->selectedStates);
                 })
-                ->when($this->filter, function ($query) {
+                ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
-                ->orderBy('created_at', 'desc')
+                ->orderBy('expected_date', $this->filteredExpected)
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
         }
@@ -816,20 +816,38 @@ class TableReports extends Component
         }
     }
     // FILTER
-    public function filterDown() 
+    public function filterDown($type) 
     {
         $this->filter = true;
         $this->filtered = false;
-        $this->filteredPriority = 'asc';
-        $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+
+        if ($type == 'priority') {
+            $this->filterPriotiry = true;
+            $this->filteredPriority = 'asc';
+            $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+        }
+        
+        if ($type == 'expected_date') {
+            $this->filterPriotiry = false;
+            $this->filteredExpected = 'desc';
+        }
     }
 
-    public function filterUp() 
+    public function filterUp($type) 
     {
         $this->filter = true;
         $this->filtered = true;
-        $this->filteredPriority = 'asc';
-        $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+
+        if ($type == 'priority') {
+            $this->filterPriotiry = true;
+            $this->filteredPriority = 'asc';
+            $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+        }
+        
+        if ($type == 'expected_date') {
+            $this->filterPriotiry = false;
+            $this->filteredExpected = 'asc';
+        }
     }
     // EXTRAS
     public function reportRepeat($project_id, $report_id)
