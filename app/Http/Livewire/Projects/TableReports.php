@@ -35,7 +35,7 @@ class TableReports extends Component
     public $leader = false, $filtered = false, $filter = false, $filterPriotiry = false;
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
     public $perPage = '100';
-    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc';
+    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'asc';
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
     // inputs
     public $tittle, $type, $file, $comment, $evidenceEdit, $expected_date, $priority1, $priority2, $priority3, $evidence, $message;
@@ -829,7 +829,7 @@ class TableReports extends Component
         
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
-            $this->filteredExpected = 'desc';
+            $this->filteredExpected = 'asc';
         }
     }
 
@@ -846,7 +846,7 @@ class TableReports extends Component
         
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
-            $this->filteredExpected = 'asc';
+            $this->filteredExpected = 'desc';
         }
     }
     // EXTRAS

@@ -49,7 +49,7 @@ class TableActivities extends Component
     // table, action's activities
     public $search;
     public $perPage = '';
-    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc';
+    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'asc';
     public $usersFiltered = [],
         $allUsersFiltered = [],
         $selectedStates = [],
@@ -1215,7 +1215,7 @@ class TableActivities extends Component
         
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
-            $this->filteredExpected = 'desc';
+            $this->filteredExpected = 'asc';
         }
     }
 
@@ -1232,7 +1232,7 @@ class TableActivities extends Component
         
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
-            $this->filteredExpected = 'asc';
+            $this->filteredExpected = 'desc';
         }
     }
     // PROTECTED

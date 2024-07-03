@@ -111,7 +111,33 @@
                             </th>
                             <th class="px-1 py-3 lg:w-48">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
-                            <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                            <th class="w-44 px-1 py-3">
+                                <div class="flex items-center">
+                                    Fecha de entrega
+                                    {{-- down-up --}}
+                                    <svg wire:click="filterDown('expected_dateActivity')" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredActivity) block @else hidden @endif ml-2 cursor-pointer">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M17 3l0 18" />
+                                        <path d="M10 18l-3 3l-3 -3" />
+                                        <path d="M7 21l0 -18" />
+                                        <path d="M20 6l-3 -3l-3 3" />
+                                    </svg>
+                                    {{-- up-down --}}
+                                    <svg wire:click="filterUp('expected_dateActivity')" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredActivity) hidden @else block @endif ml-2 cursor-pointer">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 3l0 18" />
+                                        <path d="M10 6l-3 -3l-3 3" />
+                                        <path d="M20 18l-3 3l-3 -3" />
+                                        <path d="M17 21l0 -18" />
+                                    </svg>
+                                </div>
+                            </th>
                             <th class="w-56 px-1 py-3">Creado</th>
                             <th class="w-16 px-1 py-3">Acciones</th>
                         </tr>
@@ -385,7 +411,33 @@
                             </th>
                             <th class="px-1 py-3 lg:w-48">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
-                            <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                            <th class="w-44 px-1 py-3">
+                                <div class="flex items-center">
+                                    Fecha de entrega
+                                    {{-- down-up --}}
+                                    <svg wire:click="filterDown('expected_dateReport')" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredReport) block @else hidden @endif ml-2 cursor-pointer">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M17 3l0 18" />
+                                        <path d="M10 18l-3 3l-3 -3" />
+                                        <path d="M7 21l0 -18" />
+                                        <path d="M20 6l-3 -3l-3 3" />
+                                    </svg>
+                                    {{-- up-down --}}
+                                    <svg wire:click="filterUp('expected_dateReport')" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredReport) hidden @else block @endif ml-2 cursor-pointer">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 3l0 18" />
+                                        <path d="M10 6l-3 -3l-3 3" />
+                                        <path d="M20 18l-3 3l-3 -3" />
+                                        <path d="M17 21l0 -18" />
+                                    </svg>
+                                </div>
+                            </th>
                             <th class="w-56 px-1 py-3">Creado</th>
                             <th class="w-16 px-1 py-3">Acciones</th>
                         </tr>
@@ -643,7 +695,33 @@
                             </th>
                             <th class="px-1 py-3 lg:w-48">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
-                            <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                            <th class="w-44 px-1 py-3">
+                                <div class="flex items-center">
+                                    Fecha de entrega
+                                    {{-- down-up --}}
+                                    <svg wire:click="filterDown('expected_dateDukke')" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredDukke) block @else hidden @endif ml-2 cursor-pointer">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M17 3l0 18" />
+                                        <path d="M10 18l-3 3l-3 -3" />
+                                        <path d="M7 21l0 -18" />
+                                        <path d="M20 6l-3 -3l-3 3" />
+                                    </svg>
+                                    {{-- up-down --}}
+                                    <svg wire:click="filterUp('expected_dateDukke')" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredDukke) hidden @else block @endif ml-2 cursor-pointer">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 3l0 18" />
+                                        <path d="M10 6l-3 -3l-3 3" />
+                                        <path d="M20 18l-3 3l-3 -3" />
+                                        <path d="M17 21l0 -18" />
+                                    </svg>
+                                </div>
+                            </th>
                             <th class="w-56 px-1 py-3">Creado</th>
                             <th class="w-16 px-1 py-3">Acciones</th>
                         </tr>
@@ -915,35 +993,7 @@
                 <table class="whitespace-no-wrap table-hover table w-full">
                     <thead class="headTable border-0">
                         <tr class="text-left">
-                            <th class="w-96 px-4 py-3">
-                                <div class="flex">
-                                    Tareas
-                                    {{-- down-up --}}
-                                    <svg wire:click='filterDown("reportDukke")' xmlns="http://www.w3.org/2000/svg"
-                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredDukke) block @else hidden @endif ml-2 cursor-pointer">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M17 3l0 18" />
-                                        <path d="M10 18l-3 3l-3 -3" />
-                                        <path d="M7 21l0 -18" />
-                                        <path d="M20 6l-3 -3l-3 3" />
-                                    </svg>
-                                    {{-- up-down --}}
-                                    <svg wire:click='filterUp("reportDukke")' xmlns="http://www.w3.org/2000/svg"
-                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredDukke) hidden @else block @endif ml-2 cursor-pointer">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M7 3l0 18" />
-                                        <path d="M10 6l-3 -3l-3 3" />
-                                        <path d="M20 18l-3 3l-3 -3" />
-                                        <path d="M17 21l0 -18" />
-                                    </svg>
-                                </div>
-                            </th>
+                            <th class="w-96 px-4 py-3">Tareas</th>
                             <th class="px-1 py-3 lg:w-48">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
                             <th class="w-44 px-1 py-3">Fecha de entrega</th>
@@ -1440,13 +1490,13 @@
                                 @endif
                             </div>
                             <div class="my-6 flex w-auto flex-row">
-                                <input wire:model.defer='message' type="text" name="message" id="message"
+                                <input wire:model.defer='messageReport' type="text" name="message" id="message"
                                     class="inputs" style="border-radius: 0.5rem 0px 0px 0.5rem !important"
                                     @if (Auth::user()->type_user != 3) placeholder="Mensaje"
                                  @else
                                      placeholder="Mensaje para Arten" @endif>
                                 <button class="btnSave" style="border-radius: 0rem 0.5rem 0.5rem 0rem !important"
-                                    wire:click="updateChat({{ $reportShow->id }})">
+                                    wire:click="updateChatReport({{ $reportShow->id }})">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send"
                                         width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                                         stroke="currentColor" fill="none" stroke-linecap="round"

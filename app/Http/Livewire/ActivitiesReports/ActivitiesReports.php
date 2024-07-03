@@ -43,7 +43,7 @@ class ActivitiesReports extends Component
     // table, action's activities
     public $searchActivity, $firstSprint;
     public $filteredActivity = false, $filterActivity = false;
-    public $filteredPriorityActivity = '', $priorityCaseActivity = '';
+    public $filteredPriorityActivity = '', $priorityCaseActivity = '', $expected_dateActivity = 'asc';
     // ------------------------------ REPORT ------------------------------
     // modal show report
     public $modalShowReport = false;
@@ -69,7 +69,7 @@ class ActivitiesReports extends Component
     public $searchDukke;
     public $filteredReport = false, $filterReport = false;
     public $filteredDukke = false, $filterDukke = false;
-    public $filteredPriorityReport = '', $priorityCaseReport = '', $filteredPriorityDukke = '', $priorityCaseDukke = '';
+    public $filteredPriorityReport = '', $priorityCaseReport = '', $expected_dateReport = 'asc', $filteredPriorityDukke = '', $priorityCaseDukke = '', $expected_dateDukke = 'asc';
     // ------------------------------ TASK ADMIN ------------------------------
     public $allUsersTask;
     public $searchTask;
@@ -97,69 +97,69 @@ class ActivitiesReports extends Component
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
             $activities = Activity::where(function ($query) {
-                $query
-                    ->where('title', 'like', '%' . $this->searchActivity . '%');
-            })
+                    $query
+                        ->where('title', 'like', '%' . $this->searchActivity . '%');
+                })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->when($this->filterActivity, function ($query) {
                     $query->orderByRaw($this->priorityCaseActivity . ' ' . $this->filteredPriorityActivity);
                 })
-                ->orderBy('expected_date', 'desc')
+                ->orderBy('expected_date', $this->expected_dateActivity)
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
 
             $reports = Report::where(function ($query) {
-                $query
-                    ->where('title', 'like', '%' . $this->searchReport . '%');
-                if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
-                    $query->orWhereNotNull('count');
-                }
-            })
+                    $query
+                        ->where('title', 'like', '%' . $this->searchReport . '%');
+                    if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
+                        $query->orWhereNotNull('count');
+                    }
+                })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->when($this->filterReport, function ($query) {
                     $query->orderByRaw($this->priorityCaseReport . ' ' . $this->filteredPriorityReport);
                 })
-                ->orderBy('expected_date', 'desc')
+                ->orderBy('expected_date', $this->expected_dateReport)
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
             $reportsDukke = null;
             // Obtener los reports del usuario
             $reportsAdmin = User::select(
-                'users.id as user',
-                'users.name as user_name',
-                'reports.*'
-            )
+                    'users.id as user',
+                    'users.name as user_name',
+                    'reports.*'
+                )
                 ->leftJoin('reports', 'users.id', '=', 'reports.delegate_id')
                 ->where('reports.delegate_id', $user_id)
                 ->where('reports.title', 'like', '%' . $this->searchTask . '%')
                 ->where('reports.state', '!=', 'Resuelto')
-                ->orderBy('reports.expected_date', 'desc')
+                ->orderBy('reports.expected_date', 'asc')
                 ->get();
             // Obtener las activities del usuario
             $activitiesAdmin = User::select(
-                'users.id as user',
-                'users.name as user_name',
-                'activities.*'
-            )
+                    'users.id as user',
+                    'users.name as user_name',
+                    'activities.*'
+                )
                 ->leftJoin('activities', 'users.id', '=', 'activities.delegate_id')
                 ->where('activities.delegate_id', $user_id)
                 ->where('activities.title', 'like', '%' . $this->searchTask . '%')
                 ->where('activities.state', '!=', 'Resuelto')
-                ->orderBy('activities.expected_date', 'desc')
+                ->orderBy('activities.expected_date', 'asc')
                 ->get();
             // Combinar los resultados en una colección
             $tasks = $activitiesAdmin->merge($reportsAdmin);
         } else {
             $activities = Activity::where(function ($query) {
-                $query
-                    ->where('title', 'like', '%' . $this->searchActivity . '%');
-            })
+                    $query
+                        ->where('title', 'like', '%' . $this->searchActivity . '%');
+                })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id);
                 })
@@ -169,18 +169,18 @@ class ActivitiesReports extends Component
                 ->when($this->filterActivity, function ($query) {
                     $query->orderByRaw($this->priorityCaseActivity . ' ' . $this->filteredPriorityActivity);
                 })
-                ->orderBy('expected_date', 'desc')
+                ->orderBy('expected_date', $this->expected_dateActivity)
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
 
             $reports = Report::where(function ($query) {
-                $query
-                    ->where('title', 'like', '%' . $this->searchReport . '%');
-                if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
-                    $query->orWhereNotNull('count');
-                }
-            })
+                    $query
+                        ->where('title', 'like', '%' . $this->searchReport . '%');
+                    if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
+                        $query->orWhereNotNull('count');
+                    }
+                })
                 ->when(Auth::user()->area_id == 4, function ($query) {
                     $query->whereHas('user', function ($subQuery) {
                         $subQuery->where('type_user', '!=', 3);
@@ -200,7 +200,7 @@ class ActivitiesReports extends Component
                 ->when($this->filterReport, function ($query) {
                     $query->orderByRaw($this->priorityCaseReport . ' ' . $this->filteredPriorityReport);
                 })
-                ->orderBy('expected_date', 'desc')
+                ->orderBy('expected_date', $this->expected_dateReport)
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
@@ -228,7 +228,7 @@ class ActivitiesReports extends Component
                     ->when($this->filterDukke, function ($query) {
                         $query->orderByRaw($this->priorityCaseDukke . ' ' . $this->filteredPriorityDukke);
                     })
-                    ->orderBy('expected_date', 'desc')
+                    ->orderBy('expected_date', $this->expected_dateDukke)
                     ->where('state', '!=', 'Resuelto')
                     ->with(['user', 'delegate'])
                     ->get();
@@ -1309,17 +1309,34 @@ class ActivitiesReports extends Component
             $this->filteredPriorityActivity = 'asc';
             $this->priorityCaseActivity = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
         }
+        if ($type == 'expected_dateActivity') {
+            $this->filterActivity = false;
+            $this->filteredActivity = false;
+            $this->expected_dateActivity = 'asc';
+        }
+
         if ($type == 'report') {
             $this->filterReport = true;
             $this->filteredReport = false;
             $this->filteredPriorityReport = 'asc';
             $this->priorityCaseReport = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
         }
+        if ($type == 'expected_dateReport') {
+            $this->filterReport = false;
+            $this->filteredReport = false;
+            $this->expected_dateReport = 'asc';
+        }
+
         if ($type == 'reportDukke') {
             $this->filterDukke = true;
             $this->filteredDukke = false;
             $this->filteredPriorityDukke = 'asc';
             $this->priorityCaseDukke = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+        }
+        if ($type == 'expected_dateDukke') {
+            $this->filterDukke = false;
+            $this->filteredDukke = false;
+            $this->expected_dateDukke = 'asc';
         }
     }
 
@@ -1331,17 +1348,34 @@ class ActivitiesReports extends Component
             $this->filteredPriorityActivity = 'asc';
             $this->priorityCaseActivity = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
         }
+        if ($type == 'expected_dateActivity') {
+            $this->filterActivity = false;
+            $this->filteredActivity = true;
+            $this->expected_dateActivity = 'desc';
+        }
+
         if ($type == 'report') {
             $this->filterReport = true;
             $this->filteredReport = true;
             $this->filteredPriorityReport = 'asc';
             $this->priorityCaseReport = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
         }
+        if ($type == 'expected_dateReport') {
+            $this->filterReport = false;
+            $this->filteredReport = true;
+            $this->expected_dateReport = 'desc';
+        }
+
         if ($type == 'reportDukke') {
             $this->filterDukke = true;
             $this->filteredDukke = true;
             $this->filteredPriorityDukke = 'asc';
             $this->priorityCaseDukke = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+        }
+        if ($type == 'expected_dateDukke') {
+            $this->filterDukke = false;
+            $this->filteredDukke = true;
+            $this->expected_dateDukke = 'desc';
         }
     }
     // EXTRAS
