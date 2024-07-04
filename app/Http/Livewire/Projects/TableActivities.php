@@ -49,7 +49,7 @@ class TableActivities extends Component
     // table, action's activities
     public $search;
     public $perPage = '';
-    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'asc';
+    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc';
     public $usersFiltered = [],
         $allUsersFiltered = [],
         $selectedStates = [],

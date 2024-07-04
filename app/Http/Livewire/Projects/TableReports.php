@@ -35,7 +35,7 @@ class TableReports extends Component
     public $leader = false, $filtered = false, $filter = false, $filterPriotiry = false;
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
     public $perPage = '100';
-    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'asc';
+    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc';
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
     // inputs
     public $tittle, $type, $file, $comment, $evidenceEdit, $expected_date, $priority1, $priority2, $priority3, $evidence, $message;
@@ -182,7 +182,7 @@ class TableReports extends Component
                     $report->receiver_chat = $lastMessageNoView->receiver_id;
 
                     $receiver = User::find($lastMessageNoView->receiver_id);
-                    
+
                     if ($receiver->type_user == 3) {
                         $report->client = true;
                     } else {
@@ -561,7 +561,7 @@ class TableReports extends Component
                 if ($this->changePoints == true) {
                     $validPoints = [0, 1, 2, 3, 5, 8, 13];
                     $report->points = $this->points;
-        
+
                     if (!in_array($this->points, $validPoints)) {
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'error',
@@ -613,7 +613,7 @@ class TableReports extends Component
                     }
                 }
             }
-            
+
             $report->save();
             $this->modalEdit = false;
             $this->dispatchBrowserEvent('swal:modal', [
@@ -816,7 +816,7 @@ class TableReports extends Component
         }
     }
     // FILTER
-    public function filterDown($type) 
+    public function filterDown($type)
     {
         $this->filter = true;
         $this->filtered = false;
@@ -826,14 +826,14 @@ class TableReports extends Component
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
         }
-        
+
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
             $this->filteredExpected = 'asc';
         }
     }
 
-    public function filterUp($type) 
+    public function filterUp($type)
     {
         $this->filter = true;
         $this->filtered = true;
@@ -843,7 +843,7 @@ class TableReports extends Component
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
         }
-        
+
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
             $this->filteredExpected = 'desc';
