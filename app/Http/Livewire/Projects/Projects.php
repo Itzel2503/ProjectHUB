@@ -216,75 +216,44 @@ class Projects extends Component
             $project->developer2 = $developer2;
 
             $topUser = $this->getUserWithMostActivitiesReports($project->id);
+            
             if ($topUser[0]) {
-                // Verificar si el usuario ya está asociado como desarrollador
-                $existingPivot = $project->users()->wherePivot('user_id', $topUser[0]->id)
-                    ->wherePivot('leader', false)
-                    ->wherePivot('product_owner', false)
+                // Verificar si ya existe algún registro con developer1 en true para el proyecto actual
+                    $existingPivot = $project->users()
                     ->wherePivot('developer1', true)
-                    ->wherePivot('developer2', false)
-                    ->wherePivot('client', false)
-                    ->first();
-                // Si no existe, asociar el usuario como desarrollador
-                if ($existingPivot != null) {
-                    // Eliminar registros existentes con los mismos campos booleanos
-                    $project->users()->wherePivot('leader', false)
-                        ->wherePivot('product_owner', false)
-                        ->wherePivot('developer1', true)
-                        ->wherePivot('developer2', false)
-                        ->wherePivot('client', false)
-                        ->detach();
-                    $project->users()->syncWithoutDetaching([$topUser[0]->id => [
-                        'leader' => false,
-                        'product_owner' => false,
-                        'developer1' => true,
-                        'developer2' => false,
-                        'client' => false
-                    ]]);
-                } else {
-                    $project->users()->syncWithoutDetaching([$topUser[0]->id => [
-                        'leader' => false,
-                        'product_owner' => false,
-                        'developer1' => true,
-                        'developer2' => false,
-                        'client' => false
-                    ]]);
+                    ->exists();
+
+                if ($existingPivot) {
+                    // Eliminar los registros existentes donde developer1 es true para el proyecto actual
+                    $project->users()->wherePivot('developer1', true)->detach();
                 }
+                // Agregar el nuevo registro
+                $project->users()->attach($topUser[0]->id, [
+                    'leader' => false,
+                    'product_owner' => false,
+                    'developer1' => true,
+                    'developer2' => false,
+                    'client' => false
+                ]);
             }
             if ($topUser[1]) {
-                // Verificar si el usuario ya está asociado como desarrollador
-                $existingPivot = $project->users()->wherePivot('user_id', $topUser[1]->id)
-                    ->wherePivot('leader', false)
-                    ->wherePivot('product_owner', false)
-                    ->wherePivot('developer1', false)
+                // Verificar si ya existe algún registro con developer1 en true para el proyecto actual
+                $existingPivot = $project->users()
                     ->wherePivot('developer2', true)
-                    ->wherePivot('client', false)
-                    ->first();
-                // Si no existe, asociar el usuario como desarrollador
-                if ($existingPivot != null) {
-                    // Eliminar registros existentes con los mismos campos booleanos
-                    $project->users()->wherePivot('leader', false)
-                        ->wherePivot('product_owner', false)
-                        ->wherePivot('developer1', false)
-                        ->wherePivot('developer2', true)
-                        ->wherePivot('client', false)
-                        ->detach();
-                    $project->users()->syncWithoutDetaching([$topUser[1]->id => [
-                        'leader' => false,
-                        'product_owner' => false,
-                        'developer1' => false,
-                        'developer2' => true,
-                        'client' => false
-                    ]]);
-                } else {
-                    $project->users()->syncWithoutDetaching([$topUser[1]->id => [
-                        'leader' => false,
-                        'product_owner' => false,
-                        'developer1' => false,
-                        'developer2' => true,
-                        'client' => false
-                    ]]);
+                    ->exists();
+
+                if ($existingPivot) {
+                    // Eliminar los registros existentes donde developer1 es true para el proyecto actual
+                    $project->users()->wherePivot('developer2', true)->detach();
                 }
+                // Agregar el nuevo registro
+                $project->users()->attach($topUser[1]->id, [
+                    'leader' => false,
+                    'product_owner' => false,
+                    'developer1' => false,
+                    'developer2' => true,
+                    'client' => false
+                ]);
             }
         }
 
@@ -302,75 +271,44 @@ class Projects extends Component
                 $projectSoporte->developer2 = $developer2;
 
                 $topUser = $this->getUserWithMostActivitiesReports($projectSoporte->id);
+
                 if ($topUser[0]) {
-                    // Verificar si el usuario ya está asociado como desarrollador
-                    $existingPivot = $projectSoporte->users()->wherePivot('user_id', $topUser[0]->id)
-                        ->wherePivot('leader', false)
-                        ->wherePivot('product_owner', false)
+                    // Verificar si ya existe algún registro con developer1 en true para el proyecto actual
+                        $existingPivot = $projectSoporte->users()
                         ->wherePivot('developer1', true)
-                        ->wherePivot('developer2', false)
-                        ->wherePivot('client', false)
-                        ->first();
-                    // Si no existe, asociar el usuario como desarrollador
-                    if ($existingPivot != null) {
-                        // Eliminar registros existentes con los mismos campos booleanos
-                        $projectSoporte->users()->wherePivot('leader', false)
-                            ->wherePivot('product_owner', false)
-                            ->wherePivot('developer1', true)
-                            ->wherePivot('developer2', false)
-                            ->wherePivot('client', false)
-                            ->detach();
-                        $projectSoporte->users()->syncWithoutDetaching([$topUser[0]->id => [
-                            'leader' => false,
-                            'product_owner' => false,
-                            'developer1' => true,
-                            'developer2' => false,
-                            'client' => false
-                        ]]);
-                    } else {
-                        $projectSoporte->users()->syncWithoutDetaching([$topUser[0]->id => [
-                            'leader' => false,
-                            'product_owner' => false,
-                            'developer1' => true,
-                            'developer2' => false,
-                            'client' => false
-                        ]]);
+                        ->exists();
+    
+                    if ($existingPivot) {
+                        // Eliminar los registros existentes donde developer1 es true para el proyecto actual
+                        $projectSoporte->users()->wherePivot('developer1', true)->detach();
                     }
+                    // Agregar el nuevo registro
+                    $projectSoporte->users()->attach($topUser[0]->id, [
+                        'leader' => false,
+                        'product_owner' => false,
+                        'developer1' => true,
+                        'developer2' => false,
+                        'client' => false
+                    ]);
                 }
                 if ($topUser[1]) {
-                    // Verificar si el usuario ya está asociado como desarrollador
-                    $existingPivot = $projectSoporte->users()->wherePivot('user_id', $topUser[1]->id)
-                        ->wherePivot('leader', false)
-                        ->wherePivot('product_owner', false)
-                        ->wherePivot('developer1', false)
+                    // Verificar si ya existe algún registro con developer1 en true para el proyecto actual
+                    $existingPivot = $projectSoporte->users()
                         ->wherePivot('developer2', true)
-                        ->wherePivot('client', false)
-                        ->first();
-                    // Si no existe, asociar el usuario como desarrollador
-                    if ($existingPivot != null) {
-                        // Eliminar registros existentes con los mismos campos booleanos
-                        $projectSoporte->users()->wherePivot('leader', false)
-                            ->wherePivot('product_owner', false)
-                            ->wherePivot('developer1', false)
-                            ->wherePivot('developer2', true)
-                            ->wherePivot('client', false)
-                            ->detach();
-                        $projectSoporte->users()->syncWithoutDetaching([$topUser[1]->id => [
-                            'leader' => false,
-                            'product_owner' => false,
-                            'developer1' => false,
-                            'developer2' => true,
-                            'client' => false
-                        ]]);
-                    } else {
-                        $projectSoporte->users()->syncWithoutDetaching([$topUser[1]->id => [
-                            'leader' => false,
-                            'product_owner' => false,
-                            'developer1' => false,
-                            'developer2' => true,
-                            'client' => false
-                        ]]);
+                        ->exists();
+    
+                    if ($existingPivot) {
+                        // Eliminar los registros existentes donde developer1 es true para el proyecto actual
+                        $projectSoporte->users()->wherePivot('developer2', true)->detach();
                     }
+                    // Agregar el nuevo registro
+                    $projectSoporte->users()->attach($topUser[1]->id, [
+                        'leader' => false,
+                        'product_owner' => false,
+                        'developer1' => false,
+                        'developer2' => true,
+                        'client' => false
+                    ]);
                 }
             }
         }

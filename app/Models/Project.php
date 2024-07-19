@@ -14,7 +14,7 @@ class Project extends Model
     {
         return $this->belongsToMany(User::class, 'project_user')
                     ->withTimestamps()
-                    ->withPivot(['leader', 'product_owner', 'client']);
+                    ->withPivot(['leader', 'product_owner', 'developer1', 'developer2', 'client']);
     }
 
     // La relación para obtener solo el líder del proyecto.
