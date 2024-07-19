@@ -25,87 +25,57 @@ class Priority extends Component
             $endDate = Carbon::now()->endOfWeek(Carbon::FRIDAY);
             // Formatea las fechas como "Semana día - div de Mes"
             $startDateFormatted = $startDate->isoFormat('dddd D ');
-            $endDateFormatted = $endDate->isoFormat('dddd D - MMMM');
+            $endDateFormatted = $endDate->isoFormat('dddd D');
+            $endMonthFormatted = $endDate->isoFormat('MMMM');
             // Formato final de la semana
-            $weekText = "Semana $startDateFormatted a $endDateFormatted";
+            $weekText = "Semana: $startDateFormatted a $endDateFormatted de $endMonthFormatted";
             // Proyectos Activos
             // PRODUCCION
-            $activo = Project::select(
+            $activos = Project::select(
                 'projects.*',
                 DB::raw("(SELECT SUBSTRING_INDEX(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.leader = true LIMIT 1) as leader_name"),
-                DB::raw("(SELECT SUBSTRING_INDEX(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.programmer = true LIMIT 1) as programmer_name")
+                DB::raw("(SELECT SUBSTRING_INDEX(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.product_owner = true LIMIT 1) as product_owner_name"),
+                DB::raw("(SELECT SUBSTRING_INDEX(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.developer1 = true LIMIT 1) as developer1_name"),
+                DB::raw("(SELECT SUBSTRING_INDEX(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.developer2 = true LIMIT 1) as developer2_name"),
             )
                 ->where('type', 'Activo')
                 ->orderBy('priority', 'asc')
                 ->get();
             // Proyectos soporte
-            $soporte = Project::select(
+            $soportes = Project::select(
                 'projects.*',
                 DB::raw("(SELECT SUBSTRING_INDEX(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.leader = true LIMIT 1) as leader_name"),
-                DB::raw("(SELECT SUBSTRING_INDEX(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.programmer = true LIMIT 1) as programmer_name")
+                DB::raw("(SELECT SUBSTRING_INDEX(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.product_owner = true LIMIT 1) as product_owner_name"),
+                DB::raw("(SELECT SUBSTRING_INDEX(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.developer1 = true LIMIT 1) as developer1_name"),
+                DB::raw("(SELECT SUBSTRING_INDEX(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.developer2 = true LIMIT 1) as developer2_name"),
             )
                 ->where('type', 'Soporte')
                 ->orderBy('priority', 'asc')
                 ->get();
             // LOCAL
-            // $activo = Project::select(
+            // $activos = Project::select(
             //     'projects.*',
             //     DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.leader = true LIMIT 1) as leader_name"),
-            //     DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.programmer = true LIMIT 1) as programmer_name")
-            // )
+            //     DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.product_owner = true LIMIT 1) as product_owner_name"),
+            //     DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.developer1 = true LIMIT 1) as developer1_name"),
+            //     DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.developer2 = true LIMIT 1) as developer2_name")
+            //     )
             //     ->where('type', 'Activo')
             //     ->orderBy('priority', 'asc')
             //     ->get();
             // // Proyectos soporte
-            // $soporte = Project::select(
+            // $soportes = Project::select(
             //     'projects.*',
             //     DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.leader = true LIMIT 1) as leader_name"),
-            //     DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.programmer = true LIMIT 1) as programmer_name")
+            //     DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.product_owner = true LIMIT 1) as product_owner_name"),
+            //     DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.developer1 = true LIMIT 1) as developer1_name"),
+            //     DB::raw("(SELECT split_part(name, ' ', 1) FROM users JOIN project_user ON users.id = project_user.user_id WHERE project_user.project_id = projects.id AND project_user.developer2 = true LIMIT 1) as developer2_name")
             // )
             //     ->where('type', 'Soporte')
             //     ->orderBy('priority', 'asc')
             //     ->get();
-            // Proyectos cerrado
-            $cerrado = Project::select('projects.*', 'customers.name as customer_name', 'backlogs.id as backlog')
-                ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
-                ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
-                ->withTrashed()
-                ->where('type', 'Cerrado')
-                ->with([
-                    'users' => function ($query) {
-                        $query->withPivot('leader', 'programmer');
-                    },
-                ])
-                ->orderBy('projects.priority', 'asc')
-                ->get();
-            // Proyectos entregado
-            $entregado = Project::select('projects.*', 'customers.name as customer_name', 'backlogs.id as backlog')
-                ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
-                ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
-                ->withTrashed()
-                ->where('type', 'Soporte')
-                ->with([
-                    'users' => function ($query) {
-                        $query->withPivot('leader', 'programmer');
-                    },
-                ])
-                ->orderBy('projects.priority', 'asc')
-                ->get();
-            // Proyectos No Activo
-            $noActivo = Project::select('projects.*', 'customers.name as customer_name', 'backlogs.id as backlog')
-                ->leftJoin('customers', 'projects.customer_id', '=', 'customers.id')
-                ->leftJoin('backlogs', 'projects.id', '=', 'backlogs.project_id')
-                ->withTrashed()
-                ->where('type', 'Soporte')
-                ->with([
-                    'users' => function ($query) {
-                        $query->withPivot('leader', 'programmer');
-                    },
-                ])
-                ->orderBy('projects.priority', 'asc')
-                ->get();
 
-            return view('projects.priority', compact('weekText', 'activo', 'soporte', 'cerrado', 'entregado', 'noActivo'));
+            return view('projects.priority', compact('weekText', 'activos', 'soportes'));
         } else {
             return redirect('/login');
         }

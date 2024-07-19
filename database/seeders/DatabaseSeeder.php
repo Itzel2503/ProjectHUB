@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Area;
-use App\Models\Permit;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -44,6 +44,41 @@ class DatabaseSeeder extends Seeder
             'area_id' => '1',
             'entry_date' => Carbon::now(),
             'effort_points' => 40,
+        ]);
+
+        DB::table('priorities')->insert([
+            'id' => '1',
+            'section' => 'Avisos',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        DB::table('priorities')->insert([
+            'id' => '2',
+            'section' => 'Seguimiento',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        DB::table('priorities')->insert([
+            'id' => '3',
+            'section' => 'Pruebas piloto',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        DB::table('priorities')->insert([
+            'id' => '4',
+            'section' => 'Resolución piloto',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        DB::table('priorities')->insert([
+            'id' => '5',
+            'section' => 'Entregado',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ]);
 
         $this->call(UsersTableSeeder::class,);

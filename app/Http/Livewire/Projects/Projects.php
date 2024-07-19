@@ -2,13 +2,16 @@
 
 namespace App\Http\Livewire\Projects;
 
+use App\Models\Activity;
 use App\Models\Backlog;
 use App\Models\BacklogFiles;
 use App\Models\Customer;
 use App\Models\Project;
+use App\Models\Report;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -38,9 +41,63 @@ class Projects extends Component
     public $allType = ['Activo', 'Soporte', 'No activo', 'Entregado', 'Cerrado'];
     public $typeProject = 'Activo';
     // inputs
-    public $code, $name, $type, $priority, $customer, $leader, $programmer, $general_objective, $scopes, $start_date, $closing_date, $passwords;
+    public $code, $name, $type, $priority, $customer, $leader, $product_owner, $general_objective, $scopes, $start_date, $closing_date, $passwords;
     public $files = [];
     public $severity, $impact, $satisfaction, $temporality, $magnitude, $strategy, $stage;
+
+    public function getUserWithMostActivitiesReports($projectId)
+    {
+        // Subconsulta de Reports
+        $reportsTotal = Report::select(
+                'delegate_id',
+                DB::raw("COUNT(*) as total_reports")
+            )
+            ->where('project_id', $projectId) // Filtrar por project_id
+            ->groupBy('delegate_id');
+        // Subconsulta de Activities
+        $activitiesTotal = Activity::select(
+                'delegate_id',
+                DB::raw("COUNT(*) as total_activities")
+            )
+            ->whereHas('sprint.backlog.project', function ($query) use ($projectId) {
+                $query->where('id', $projectId);
+            }) // Filtrar por project_id a través de sprint y backlog
+            ->groupBy('delegate_id');
+
+        $users = User::select(
+                'users.id',
+                'users.name',
+                DB::raw("COALESCE(reports_total.total_reports, 0) + COALESCE(activities_total.total_activities, 0) as total_delegated")
+            )
+            ->leftJoinSub($reportsTotal, 'reports_total', 'users.id', '=', 'reports_total.delegate_id')
+            ->leftJoinSub($activitiesTotal, 'activities_total', 'users.id', '=', 'activities_total.delegate_id')
+            ->where('type_user', '!=', 3)
+            ->orderBy('total_delegated', 'desc')
+            ->take(2) // Obtener solo los primeros dos resultados
+            ->get(); // Obtener los resultados como una colección
+        // Asignar usuarios o null si no existen
+        if ($users->get(0)) {
+            if ($users->get(0)->total_delegated == 0) {
+                $user1 = null;
+            } else {
+                $user1 = $users->get(0); // Primer usuario
+            }
+        } else {
+            $user1 = null;
+        }
+
+        if ($users->get(1)) {
+            if ($users->get(1)->total_delegated == 0) {
+                $user2 = null;
+            } else {
+                $user2 = $users->get(1); // Primer usuario
+            }
+        } else {
+            $user2 = null;
+        }
+
+        return [$user1, $user2];
+    }
 
     public function render()
     {
@@ -64,7 +121,7 @@ class Projects extends Component
                 ->where('type', $this->typeProject)
                 ->with([
                     'users' => function ($query) {
-                        $query->withPivot('leader', 'programmer');
+                        $query->withPivot('leader', 'product_owner', 'developer1', 'developer2');
                     },
                 ])
                 ->orderBy('projects.priority', 'asc')
@@ -86,7 +143,7 @@ class Projects extends Component
                     ->where('type', 'Soporte')
                     ->with([
                         'users' => function ($query) {
-                            $query->withPivot('leader', 'programmer');
+                            $query->withPivot('leader', 'product_owner', 'developer1', 'developer2');
                         },
                     ])
                     ->orderBy('projects.priority', 'asc')
@@ -109,7 +166,7 @@ class Projects extends Component
                 ->where('type', $this->typeProject)
                 ->with([
                     'users' => function ($query) {
-                        $query->withPivot('leader', 'programmer');
+                        $query->withPivot('leader', 'product_owner', 'developer1', 'developer2');
                     },
                 ])
                 ->orderBy('projects.priority', 'asc')
@@ -129,7 +186,7 @@ class Projects extends Component
                     ->where('type', 'Soporte')
                     ->with([
                         'users' => function ($query) {
-                            $query->withPivot('leader', 'programmer');
+                            $query->withPivot('leader', 'product_owner', 'developer1', 'developer2');
                         },
                     ])
                     ->orderBy('projects.priority', 'asc')
@@ -145,25 +202,176 @@ class Projects extends Component
 
             $projectsSoporte = null;
         }
-
         // ADD ATRIBUTES
         foreach ($projects as $project) {
             // Encuentra al líder y al programador dentro de los usuarios relacionados
             $leader = $project->users->where('pivot.leader', true)->first();
-            $programmer = $project->users->where('pivot.programmer', true)->first();
+            $product_owner = $project->users->where('pivot.product_owner', true)->first();
+            $developer1 = $project->users->where('pivot.developer1', true)->first();
+            $developer2 = $project->users->where('pivot.developer2', true)->first();
 
             $project->leader = $leader;
-            $project->programmer = $programmer;
+            $project->product_owner = $product_owner;
+            $project->developer1 = $developer1;
+            $project->developer2 = $developer2;
+
+            $topUser = $this->getUserWithMostActivitiesReports($project->id);
+            if ($topUser[0]) {
+                // Verificar si el usuario ya está asociado como desarrollador
+                $existingPivot = $project->users()->wherePivot('user_id', $topUser[0]->id)
+                    ->wherePivot('leader', false)
+                    ->wherePivot('product_owner', false)
+                    ->wherePivot('developer1', true)
+                    ->wherePivot('developer2', false)
+                    ->wherePivot('client', false)
+                    ->first();
+                // Si no existe, asociar el usuario como desarrollador
+                if ($existingPivot != null) {
+                    // Eliminar registros existentes con los mismos campos booleanos
+                    $project->users()->wherePivot('leader', false)
+                        ->wherePivot('product_owner', false)
+                        ->wherePivot('developer1', true)
+                        ->wherePivot('developer2', false)
+                        ->wherePivot('client', false)
+                        ->detach();
+                    $project->users()->syncWithoutDetaching([$topUser[0]->id => [
+                        'leader' => false,
+                        'product_owner' => false,
+                        'developer1' => true,
+                        'developer2' => false,
+                        'client' => false
+                    ]]);
+                } else {
+                    $project->users()->syncWithoutDetaching([$topUser[0]->id => [
+                        'leader' => false,
+                        'product_owner' => false,
+                        'developer1' => true,
+                        'developer2' => false,
+                        'client' => false
+                    ]]);
+                }
+            }
+            if ($topUser[1]) {
+                // Verificar si el usuario ya está asociado como desarrollador
+                $existingPivot = $project->users()->wherePivot('user_id', $topUser[1]->id)
+                    ->wherePivot('leader', false)
+                    ->wherePivot('product_owner', false)
+                    ->wherePivot('developer1', false)
+                    ->wherePivot('developer2', true)
+                    ->wherePivot('client', false)
+                    ->first();
+                // Si no existe, asociar el usuario como desarrollador
+                if ($existingPivot != null) {
+                    // Eliminar registros existentes con los mismos campos booleanos
+                    $project->users()->wherePivot('leader', false)
+                        ->wherePivot('product_owner', false)
+                        ->wherePivot('developer1', false)
+                        ->wherePivot('developer2', true)
+                        ->wherePivot('client', false)
+                        ->detach();
+                    $project->users()->syncWithoutDetaching([$topUser[1]->id => [
+                        'leader' => false,
+                        'product_owner' => false,
+                        'developer1' => false,
+                        'developer2' => true,
+                        'client' => false
+                    ]]);
+                } else {
+                    $project->users()->syncWithoutDetaching([$topUser[1]->id => [
+                        'leader' => false,
+                        'product_owner' => false,
+                        'developer1' => false,
+                        'developer2' => true,
+                        'client' => false
+                    ]]);
+                }
+            }
         }
 
         if ($projectsSoporte != null) {
             foreach ($projectsSoporte as $projectSoporte) {
                 // Encuentra al líder y al programador dentro de los usuarios relacionados
                 $leader = $projectSoporte->users->where('pivot.leader', true)->first();
-                $programmer = $projectSoporte->users->where('pivot.programmer', true)->first();
+                $product_owner = $projectSoporte->users->where('pivot.product_owner', true)->first();
+                $developer1 = $projectSoporte->users->where('pivot.developer1', true)->first();
+                $developer2 = $projectSoporte->users->where('pivot.developer2', true)->first();
 
                 $projectSoporte->leader = $leader;
-                $projectSoporte->programmer = $programmer;
+                $projectSoporte->product_owner = $product_owner;
+                $projectSoporte->developer1 = $developer1;
+                $projectSoporte->developer2 = $developer2;
+
+                $topUser = $this->getUserWithMostActivitiesReports($projectSoporte->id);
+                if ($topUser[0]) {
+                    // Verificar si el usuario ya está asociado como desarrollador
+                    $existingPivot = $projectSoporte->users()->wherePivot('user_id', $topUser[0]->id)
+                        ->wherePivot('leader', false)
+                        ->wherePivot('product_owner', false)
+                        ->wherePivot('developer1', true)
+                        ->wherePivot('developer2', false)
+                        ->wherePivot('client', false)
+                        ->first();
+                    // Si no existe, asociar el usuario como desarrollador
+                    if ($existingPivot != null) {
+                        // Eliminar registros existentes con los mismos campos booleanos
+                        $projectSoporte->users()->wherePivot('leader', false)
+                            ->wherePivot('product_owner', false)
+                            ->wherePivot('developer1', true)
+                            ->wherePivot('developer2', false)
+                            ->wherePivot('client', false)
+                            ->detach();
+                        $projectSoporte->users()->syncWithoutDetaching([$topUser[0]->id => [
+                            'leader' => false,
+                            'product_owner' => false,
+                            'developer1' => true,
+                            'developer2' => false,
+                            'client' => false
+                        ]]);
+                    } else {
+                        $projectSoporte->users()->syncWithoutDetaching([$topUser[0]->id => [
+                            'leader' => false,
+                            'product_owner' => false,
+                            'developer1' => true,
+                            'developer2' => false,
+                            'client' => false
+                        ]]);
+                    }
+                }
+                if ($topUser[1]) {
+                    // Verificar si el usuario ya está asociado como desarrollador
+                    $existingPivot = $projectSoporte->users()->wherePivot('user_id', $topUser[1]->id)
+                        ->wherePivot('leader', false)
+                        ->wherePivot('product_owner', false)
+                        ->wherePivot('developer1', false)
+                        ->wherePivot('developer2', true)
+                        ->wherePivot('client', false)
+                        ->first();
+                    // Si no existe, asociar el usuario como desarrollador
+                    if ($existingPivot != null) {
+                        // Eliminar registros existentes con los mismos campos booleanos
+                        $projectSoporte->users()->wherePivot('leader', false)
+                            ->wherePivot('product_owner', false)
+                            ->wherePivot('developer1', false)
+                            ->wherePivot('developer2', true)
+                            ->wherePivot('client', false)
+                            ->detach();
+                        $projectSoporte->users()->syncWithoutDetaching([$topUser[1]->id => [
+                            'leader' => false,
+                            'product_owner' => false,
+                            'developer1' => false,
+                            'developer2' => true,
+                            'client' => false
+                        ]]);
+                    } else {
+                        $projectSoporte->users()->syncWithoutDetaching([$topUser[1]->id => [
+                            'leader' => false,
+                            'product_owner' => false,
+                            'developer1' => false,
+                            'developer2' => true,
+                            'client' => false
+                        ]]);
+                    }
+                }
             }
         }
 
@@ -184,7 +392,7 @@ class Projects extends Component
                 'type' => 'required|max:255',
                 'customer' => 'required',
                 'leader' => 'required',
-                'programmer' => 'required',
+                'product_owner' => 'required',
                 'general_objective' => 'required|max:255',
                 'files' => 'nullable',
                 'scopes' => 'nullable',
@@ -269,8 +477,8 @@ class Projects extends Component
                 $project->questions_priority = $questionsPriorityJson;
                 $project->save();
                 // Asocia el usuario al proyecto
-                $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false, 'client' => false]);
-                $project->users()->attach($this->programmer, ['leader' => false, 'programmer' => true, 'client' => false]);
+                $project->users()->attach($this->leader, ['leader' => true, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => false]);
+                $project->users()->attach($this->product_owner, ['leader' => false, 'product_owner' => true, 'developer1' => false, 'developer2' => false,  'client' => false]);
 
                 $backlog = new Backlog();
                 $backlog->general_objective = $this->general_objective;
@@ -325,8 +533,8 @@ class Projects extends Component
             $project->questions_priority = $questionsPriorityJson;
             $project->save();
             // Asocia el usuario al proyecto
-            $project->users()->attach($this->leader, ['leader' => true, 'programmer' => false, 'client' => false]);
-            $project->users()->attach($this->programmer, ['leader' => false, 'programmer' => true, 'client' => false]);
+            $project->users()->attach($this->leader, ['leader' => true, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => false]);
+            $project->users()->attach($this->product_owner, ['leader' => false, 'product_owner' => true, 'developer1' => false, 'developer2' => false, 'client' => false]);
 
             $backlog = new Backlog();
             $backlog->general_objective = $this->general_objective;
@@ -446,10 +654,10 @@ class Projects extends Component
                         $project->save();
                         // Primero, quita las relaciones existentes para estos roles
                         $project->users()->wherePivot('leader', true)->detach();
-                        $project->users()->wherePivot('programmer', true)->detach();
+                        $project->users()->wherePivot('product_owner', true)->detach();
                         // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
-                        $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
+                        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => false]]);
+                        $project->users()->syncWithoutDetaching([$this->product_owner => ['leader' => false, 'product_owner' => true, 'developer1' => false, 'developer2' => false, 'client' => false]]);
 
                         $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                         $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -467,10 +675,10 @@ class Projects extends Component
                     $project->save();
                     // Primero, quita las relaciones existentes para estos roles
                     $project->users()->wherePivot('leader', true)->detach();
-                    $project->users()->wherePivot('programmer', true)->detach();
+                    $project->users()->wherePivot('product_owner', true)->detach();
                     // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
-                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->product_owner => ['leader' => false, 'product_owner' => true, 'developer1' => false, 'developer2' => false, 'client' => false]]);
 
                     $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                     $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -547,10 +755,10 @@ class Projects extends Component
                     $project->save();
                     // Primero, quita las relaciones existentes para estos roles
                     $project->users()->wherePivot('leader', true)->detach();
-                    $project->users()->wherePivot('programmer', true)->detach();
+                    $project->users()->wherePivot('product_owner', true)->detach();
                     // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
-                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->product_owner => ['leader' => false, 'product_owner' => true, 'developer1' => false, 'developer2' => false, 'client' => false]]);
 
                     $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                     $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -587,10 +795,10 @@ class Projects extends Component
                                 $project->save();
                                 // Primero, quita las relaciones existentes para estos roles
                                 $project->users()->wherePivot('leader', true)->detach();
-                                $project->users()->wherePivot('programmer', true)->detach();
+                                $project->users()->wherePivot('product_owner', true)->detach();
                                 // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                                $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
-                                $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
+                                $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => false]]);
+                                $project->users()->syncWithoutDetaching([$this->product_owner => ['leader' => false, 'product_owner' => true, 'developer1' => false, 'developer2' => false, 'client' => false]]);
 
                                 $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                                 $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -639,10 +847,10 @@ class Projects extends Component
                                 $project->save();
                                 // Primero, quita las relaciones existentes para estos roles
                                 $project->users()->wherePivot('leader', true)->detach();
-                                $project->users()->wherePivot('programmer', true)->detach();
+                                $project->users()->wherePivot('product_owner', true)->detach();
                                 // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                                $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
-                                $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
+                                $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => false]]);
+                                $project->users()->syncWithoutDetaching([$this->product_owner => ['leader' => false, 'product_owner' => true, 'developer1' => false, 'developer2' => false, 'client' => false]]);
 
                                 $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                                 $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -674,10 +882,10 @@ class Projects extends Component
                     $project->save();
                     // Primero, quita las relaciones existentes para estos roles
                     $project->users()->wherePivot('leader', true)->detach();
-                    $project->users()->wherePivot('programmer', true)->detach();
+                    $project->users()->wherePivot('product_owner', true)->detach();
                     // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
-                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->product_owner => ['leader' => false, 'product_owner' => true, 'developer1' => false, 'developer2' => false, 'client' => false]]);
 
                     $backlog->general_objective = $this->general_objective ?? $backlog->general_objective;
                     $backlog->scopes = $this->scopes ?? $backlog->scopes;
@@ -770,10 +978,10 @@ class Projects extends Component
                         $project->save();
                         // Primero, quita las relaciones existentes para estos roles
                         $project->users()->wherePivot('leader', true)->detach();
-                        $project->users()->wherePivot('programmer', true)->detach();
+                        $project->users()->wherePivot('product_owner', true)->detach();
                         // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
-                        $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
+                        $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => false]]);
+                        $project->users()->syncWithoutDetaching([$this->product_owner => ['leader' => false, 'product_owner' => true, 'developer1' => false, 'developer2' => false, 'client' => false]]);
 
                         $backlog = new Backlog();
                         $backlog->general_objective = $this->general_objective;
@@ -793,10 +1001,10 @@ class Projects extends Component
                     $project->save();
                     // Primero, quita las relaciones existentes para estos roles
                     $project->users()->wherePivot('leader', true)->detach();
-                    $project->users()->wherePivot('programmer', true)->detach();
+                    $project->users()->wherePivot('product_owner', true)->detach();
                     // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
-                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'programmer' => false, 'client' => false]]);
-                    $project->users()->syncWithoutDetaching([$this->programmer => ['leader' => false, 'programmer' => true, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->leader => ['leader' => true, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => false]]);
+                    $project->users()->syncWithoutDetaching([$this->product_owner => ['leader' => false, 'product_owner' => true, 'developer1' => false, 'developer2' => false, 'client' => false]]);
 
                     $backlog = new Backlog();
                     $backlog->general_objective = $this->general_objective;
@@ -1022,10 +1230,10 @@ class Projects extends Component
 
         // Aquí recuperas el líder y el programador actual del proyecto
         $leader = $this->projectEdit->users()->wherePivot('leader', true)->first();
-        $programmer = $this->projectEdit->users()->wherePivot('programmer', true)->first();
+        $product_owner = $this->projectEdit->users()->wherePivot('product_owner', true)->first();
         // Guarda los IDs para excluirlos de los selects
         $this->leader = $leader ? $leader->id : null;
-        $this->programmer = $programmer ? $programmer->id : null;
+        $this->product_owner = $product_owner ? $product_owner->id : null;
 
         // BACKLOG
         $this->backlogEdit = Backlog::all()->where('project_id', $id)->first();
@@ -1127,7 +1335,7 @@ class Projects extends Component
         $this->priority = '';
         $this->customer = '';
         $this->leader = '';
-        $this->programmer = '';
+        $this->product_owner = '';
         $this->allType = ['Activo', 'Soporte', 'Cerrado', 'Entregado', 'No activo'];
         $this->general_objective = '';
         $this->files = [];

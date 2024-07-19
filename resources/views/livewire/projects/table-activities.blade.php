@@ -362,7 +362,7 @@
                 </thead>
                 <tbody>
                     @foreach ($activities as $activity)
-                        <tr class="trTable">
+                        <tr id="activity-{{ $activity->id }}" class="trTable">
                             <td class="relative px-2 py-1">
                                 <div wire:click="showActivity({{ $activity->id }})"
                                     class="flex cursor-pointer flex-row items-center text-center">
@@ -383,20 +383,6 @@
                                     @if ($activity->messages_count >= 1)
                                         {{-- usuario --}}
                                         @if ($activity->user_chat != Auth::id() && $activity->receiver_chat == Auth::id())
-                                            <div class="absolute right-0 top-0">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M8 9h8" />
-                                                    <path d="M8 13h6" />
-                                                    <path
-                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                                </svg>
-                                            </div>
-                                            {{-- envio varios mensajes de diversos usuarios --}}
-                                        @elseif($activity->noView == true)
                                             <div class="absolute right-0 top-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -880,8 +866,10 @@
                                     </div>
                                     @if ($activityShow->imageExists)
                                         <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                            <img src="{{ asset('activities/' . $activityShow->image) }}"
-                                                alt="Activity Image">
+                                            <a href="{{ asset('activities/' . $activityShow->image) }}" target="_blank">
+                                                <img src="{{ asset('activities/' . $activityShow->image) }}"
+                                                    alt="Activity Image">
+                                            </a>
                                         </div>
                                     @else
                                         <div class="md-3/4 mb-5 mt-3 flex w-full flex-col items-center justify-center">
@@ -1293,6 +1281,25 @@
     {{-- END LOADING PAGE --}}
     @push('js')
         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Verifica si la URL contiene el parámetro 'highlight'
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('highlight')) {
+                    // Obtiene el ID del reporte a resaltar
+                    const activityId = urlParams.get('highlight');
+                    // Selecciona la fila que deseas resaltar
+                    const row = document.getElementById('activity-' + activityId);
+                    if (row) {
+                        // Cambia el color de la fila a rojo
+                        row.style.backgroundColor = 'rgb(215 229 231)';
+
+                        // Después de 30 segundos, restaura el color original
+                        setTimeout(() => {
+                            row.style.backgroundColor = '';
+                        }, 15000); // segundos
+                    }
+                }
+            });
             // Scroll de Comentrios de modal
             document.addEventListener("DOMContentLoaded", function() {
                 var modal = document.getElementById("modalShow");

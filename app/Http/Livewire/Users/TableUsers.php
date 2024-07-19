@@ -174,7 +174,8 @@ class TableUsers extends Component
                 $user->projects()->attach($projectId, [
                     'client' => true,
                     'leader' => false,
-                    'programmer' => false,
+                    'product_owner' => false,
+                    'developer' => false,
                 ]);
             }
             $user->area_id = 5;
@@ -321,7 +322,7 @@ class TableUsers extends Component
                     // Crear un array con los datos de los proyectos seleccionados
                     $projectsData = [];
                     foreach ($this->selectedProjects as $projectId) {
-                        $projectsData[$projectId] = ['leader' => false, 'programmer' => false, 'client' => true];
+                        $projectsData[$projectId] = ['leader' => false, 'product_owner' => false, 'developer' => false, 'client' => true];
                     }
                     // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
                     $user->projects()->syncWithoutDetaching($projectsData);
@@ -337,7 +338,7 @@ class TableUsers extends Component
                 // Crear un array con los datos de los proyectos seleccionados
                 $projectsData = [];
                 foreach ($this->selectedProjects as $projectId) {
-                    $projectsData[$projectId] = ['leader' => false, 'programmer' => false, 'client' => true];
+                    $projectsData[$projectId] = ['leader' => false, 'product_owner' => false, 'developer' => false, 'client' => true];
                 }
                 // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
                 $user->projects()->syncWithoutDetaching($projectsData);

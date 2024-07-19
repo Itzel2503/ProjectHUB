@@ -107,8 +107,8 @@
                         @endif
                         <th class="@if ($user->type_user != 3) w-1/4 @endif px-4 py-3">Proyecto</th>
                         @if ($user->type_user != 3)
-                            <th class="px-4 py-3">Cliente</th>
-                            <th class="px-4 py-3">Líder y Scrum Master</th>
+                            <th class="w-32 px-4 py-3">Cliente</th>
+                            <th class="px-4 py-3">Líder y Product Owner</th>
                             @if ($user->type_user == 1)
                                 <th class="w-8 px-4 py-3">Estatus</th>
                             @endif
@@ -140,10 +140,39 @@
                                         <span class="font-bold">{{ $project->customer_name }}</span><br>
                                     </div>
                                 </td>
-                                <td class="px-4 py-2">
+                                <td class="principal px-4 py-2">
                                     <div class="mx-auto text-left">
                                         - {{ $project->leader->name }}<br>
-                                        - {{ $project->programmer->name }}
+                                        - {{ $project->product_owner->name }}
+                                    </div>
+                                    <div class="relative">
+                                        <div
+                                            class="hidden-info absolute -top-20 left-36 z-10 w-60 bg-gray-100 p-2 text-left text-xs">
+                                            <p>
+                                                <strong>Líder/Scrum:</strong>
+                                                {{ $project->leader->name }}
+                                            </p>
+                                            <p>
+                                                <strong>Product Owner</strong>
+                                                {{ $project->product_owner->name }}
+                                            </p>
+                                            <p>
+                                                <strong>Developer 1:</strong>
+                                                @if ($project->developer1)
+                                                    {{ $project->developer1->name }}
+                                                @else
+                                                    Sin asignar
+                                                @endif
+                                            </p>
+                                            <p>
+                                                <strong>Developer 2:</strong>
+                                                @if ($project->developer2)
+                                                    {{ $project->developer2->name }}
+                                                @else
+                                                    Sin asignar
+                                                @endif
+                                            </p>
+                                        </div>
                                     </div>
                                 </td>
                                 @if ($user->type_user == 1)
@@ -217,7 +246,7 @@
                                             </button>
                                             <!-- Panel -->
                                             <div id="dropdown-panel-{{ $project->id }}" style="display: none;"
-                                                class="@if ($user->type_user != 3) @if ($activeTab == 'Activo') top-3 @else {{ $loop->last ? '-top-16' : 'top-3' }} @endif @endif z-10 absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
+                                                class="@if ($user->type_user != 3) @if ($activeTab == 'Activo') top-3 @else {{ $loop->last ? '-top-16' : 'top-3' }} @endif @endif absolute right-10 z-10 mt-2 w-32 rounded-md bg-gray-200">
                                                 <!-- Botón Restaurar -->
                                                 <div wire:click="$emit('restartItem',{{ $project->id }})"
                                                     class="@if ($project->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
@@ -294,8 +323,8 @@
                             <tr class="text-left">
                                 <th class="w-16 px-4 py-3">Prioridad</th>
                                 <th class="w-1/4 px-4 py-3">Proyecto</th>
-                                <th class="px-4 py-3">Cliente</th>
-                                <th class="px-4 py-3">Líder y Scrum Master</th>
+                                <th class="w-32 px-4 py-3">Cliente</th>
+                                <th class="px-4 py-3">Líder y Product Owner</th>
                                 @if ($user->type_user == 1)
                                     <th class="w-8 px-4 py-3">Estatus</th>
                                 @endif
@@ -322,10 +351,39 @@
                                             <span class="font-bold">{{ $project->customer_name }}</span><br>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-2">
+                                    <td class="principal px-4 py-2">
                                         <div class="mx-auto text-left">
                                             - {{ $project->leader->name }}<br>
-                                            - {{ $project->programmer->name }}
+                                            - {{ $project->product_owner->name }}
+                                        </div>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-20 left-36 z-10 w-60 bg-gray-100 p-2 text-left text-xs">
+                                                <p>
+                                                    <strong>Líder/Scrum:</strong>
+                                                    {{ $project->leader->name }}
+                                                </p>
+                                                <p>
+                                                    <strong>Product Owner</strong>
+                                                    {{ $project->product_owner->name }}
+                                                </p>
+                                                <p>
+                                                    <strong>Developer 1:</strong>
+                                                    @if ($project->developer1)
+                                                        {{ $project->developer1->name }}
+                                                    @else
+                                                        Sin asignar
+                                                    @endif
+                                                </p>
+                                                <p>
+                                                    <strong>Developer 2:</strong>
+                                                    @if ($project->developer2)
+                                                        {{ $project->developer2->name }}
+                                                    @else
+                                                        Sin asignar
+                                                    @endif
+                                                </p>
+                                            </div>
                                         </div>
                                     </td>
                                     @if ($user->type_user == 1)
@@ -399,7 +457,7 @@
                                                     <!-- Panel -->
                                                     <div id="dropdown-panel-{{ $project->id }}"
                                                         style="display: none;"
-                                                        class="{{ $loop->last ? '-top-16' : 'top-3' }} z-10 absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
+                                                        class="{{ $loop->last ? '-top-16' : 'top-3' }} absolute right-10 z-10 mt-2 w-32 rounded-md bg-gray-200">
                                                         <!-- Botón Restaurar -->
                                                         <div wire:click="$emit('restartItem',{{ $project->id }})"
                                                             class="@if ($project->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
@@ -615,41 +673,6 @@
                         <div class="-mx-3 mb-6 flex flex-row">
                             <div class="mb-6 flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Scrum Master @if (!$showUpdate)
-                                        <p class="text-red-600">*</p>
-                                    @endif
-                                </h5>
-                                @if ($showUpdate)
-                                    <select wire:model='programmer' required name="programmer" id="programmer"
-                                        class="inputs">
-                                        @foreach ($allUsers as $user)
-                                            <option value="{{ $user->id }}"
-                                                @if ($user->id == $programmer) selected @endif>{{ $user->name }}
-                                                {{ $user->lastname }}</option>
-                                        @endforeach
-                                    </select>
-                                @else
-                                    <select wire:model='programmer' required name="programmer" id="programmer"
-                                        class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        @foreach ($allUsers as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }}
-                                                {{ $user->lastname }}</option>
-                                        @endforeach
-                                    </select>
-                                @endif
-                                <div>
-                                    <span class="text-xs italic text-red-600">
-                                        @error('programmer')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="flex w-full flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="name">
                                     Líder @if (!$showUpdate)
                                         <p class="text-red-600">*</p>
                                     @endif
@@ -676,6 +699,41 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('leader')
+                                            <span class="pl-2 text-xs italic text-red-600">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Product Owner @if (!$showUpdate)
+                                        <p class="text-red-600">*</p>
+                                    @endif
+                                </h5>
+                                @if ($showUpdate)
+                                    <select wire:model='product_owner' required name="product_owner"
+                                        id="product_owner" class="inputs">
+                                        @foreach ($allUsers as $user)
+                                            <option value="{{ $user->id }}"
+                                                @if ($user->id == $product_owner) selected @endif>{{ $user->name }}
+                                                {{ $user->lastname }}</option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <select wire:model='product_owner' required name="product_owner"
+                                        id="product_owner" class="inputs">
+                                        <option selected>Selecciona...</option>
+                                        @foreach ($allUsers as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }}
+                                                {{ $user->lastname }}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('product_owner')
                                             <span class="pl-2 text-xs italic text-red-600">
                                                 {{ $message }}
                                             </span>

@@ -180,7 +180,7 @@ return [
         'postal_code'              => 'código postal',
         'price'                    => 'precio',
         'priority'                 => 'prioridad',
-        'programmer'               => 'scrum master',
+        'product_owner'            => 'product owner',
         'province'                 => 'provincia',
         'recaptcha_response_field' => 'respuesta del recaptcha',
         'remember'                 => 'recordar',

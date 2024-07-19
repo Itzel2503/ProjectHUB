@@ -14,7 +14,7 @@ class Project extends Model
     {
         return $this->belongsToMany(User::class, 'project_user')
                     ->withTimestamps()
-                    ->withPivot(['leader', 'programmer', 'client']);
+                    ->withPivot(['leader', 'product_owner', 'client']);
     }
 
     // La relación para obtener solo el líder del proyecto.
@@ -24,11 +24,24 @@ class Project extends Model
                     ->wherePivot('leader', true);
     }
 
-    // La relación para obtener solo el programador del proyecto.
-    public function programmer()
+    // La relación para obtener solo el lider de producto.
+    public function product_owner()
     {
         return $this->belongsToMany(User::class, 'project_user')
-                    ->wherePivot('programmer', true);
+                    ->wherePivot('product_owner', true);
+    }
+
+    // La relación para obtener solo el desarrollador.
+    public function developer1()
+    {
+        return $this->belongsToMany(User::class, 'project_user')
+                    ->wherePivot('developer1', true);
+    }
+
+    public function developer2()
+    {
+        return $this->belongsToMany(User::class, 'project_user')
+                    ->wherePivot('developer2', true);
     }
 
     public function customer()

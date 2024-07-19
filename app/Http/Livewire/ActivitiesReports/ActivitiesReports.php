@@ -40,6 +40,8 @@ class ActivitiesReports extends Component
     public $showActivity = false,
         $showChatActivity = false;
     public $activityShow, $messagesActivity, $messageActivity;
+    // Inicializa el contador total de mensajes no vistos
+    public $totalMessagesCount = 0;
     // table, action's activities
     public $searchActivity, $firstSprint;
     public $filteredActivity = false, $filterActivity = false;
@@ -128,7 +130,36 @@ class ActivitiesReports extends Component
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
                 ->get();
-            $reportsDukke = null;
+            if (Auth::user()->area_id == 4) {
+                $reportsDukke = Report::where('project_id', 5)
+                    ->whereHas('user', function ($query) {
+                        $query->where('type_user', 3);
+                    })
+                    ->where(function ($query) {
+                        $query
+                            ->where('title', 'like', '%' . $this->searchDukke . '%');
+                        if (strtolower($this->searchDukke) === 'reincidencia' || strtolower($this->searchDukke) === 'Reincidencia') {
+                            $query->orWhereNotNull('count');
+                        }
+                    })
+                    ->where(function ($query) use ($user_id) {
+                        $query
+                            ->where('delegate_id', $user_id)
+                            // O incluir registros donde user_id es igual a user_id y video es true
+                            ->orWhere(function ($subQuery) use ($user_id) {
+                                $subQuery->where('user_id', $user_id)->where('video', true);
+                            });
+                    })
+                    ->when($this->filterDukke, function ($query) {
+                        $query->orderByRaw($this->priorityCaseDukke . ' ' . $this->filteredPriorityDukke);
+                    })
+                    ->orderBy('expected_date', $this->expected_dateDukke)
+                    ->where('state', '!=', 'Resuelto')
+                    ->with(['user', 'delegate'])
+                    ->get();
+            } else {
+                $reportsDukke = null;
+            }
             // Obtener los reports del usuario
             $reportsAdmin = User::select(
                     'users.id as user',
@@ -302,6 +333,9 @@ class ActivitiesReports extends Component
                     $activity->user_chat = $lastMessageNoView->user_id;
                     $activity->receiver_chat = $lastMessageNoView->receiver_id;
 
+                    // $this->user_chat = $lastMessageNoView->user_id;
+                    // $this->receiver_chat = $lastMessageNoView->user_id;
+
                     $receiver = User::find($lastMessageNoView->receiver_id);
 
                     if ($receiver->type_user == 3) {
@@ -325,7 +359,10 @@ class ActivitiesReports extends Component
                     }
                 }
             }
+            // Calcula los mensajes no vistos para la actividad actual
             $activity->messages_count = $messages->where('look', false)->count();
+            // Incrementa el contador total de mensajes no vistos
+            $this->totalMessagesCount += $activity->messages_count;
         }
         // ADD ATRIBUTES REPORTS
         foreach ($reports as $report) {
@@ -1153,6 +1190,7 @@ class ActivitiesReports extends Component
             ->where('look', false)
             ->latest()
             ->first();
+        
         if ($lastMessage) {
             // cliente
             if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {

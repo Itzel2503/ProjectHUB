@@ -11,6 +11,14 @@
             <button wire:click="setActiveTab('actividades')"
                 class="border-primaryColor @if ($activeTab === 'actividades') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 pb-4 text-sm font-medium">
                 Actividades
+                @if ($totalMessagesCount > 0)
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M8 9h8"/>
+                        <path d="M8 13h6"/>
+                        <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"/>
+                    </svg>
+                @endif
             </button>
             <button wire:click="setActiveTab('reportes')"
                 class="border-primaryColor @if ($activeTab === 'reportes') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 pb-4 text-sm font-medium">
@@ -115,9 +123,10 @@
                                 <div class="flex items-center">
                                     Fecha de entrega
                                     {{-- down-up --}}
-                                    <svg wire:click="filterDown('expected_dateActivity')" xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    <svg wire:click="filterDown('expected_dateActivity')"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
                                         class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredActivity) block @else hidden @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M17 3l0 18" />
@@ -126,9 +135,10 @@
                                         <path d="M20 6l-3 -3l-3 3" />
                                     </svg>
                                     {{-- up-down --}}
-                                    <svg wire:click="filterUp('expected_dateActivity')" xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    <svg wire:click="filterUp('expected_dateActivity')"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
                                         class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredActivity) hidden @else block @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M7 3l0 18" />
@@ -196,22 +206,6 @@
                                                                 d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
                                                         </svg>
                                                     </div>
-                                                    {{-- envio varios mensajes de diversos usuarios --}}
-                                                @elseif($activity->noView == true)
-                                                    <div class="absolute right-0 top-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                            <path d="M8 9h8" />
-                                                            <path d="M8 13h6" />
-                                                            <path
-                                                                d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                                        </svg>
-                                                    </div>
-                                                    {{-- administrador --}}
                                                 @elseif(Auth::user()->type_user == 1 && $activity->client == false && $activity->user_id == false)
                                                     <div class="absolute right-0 top-0">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -354,7 +348,7 @@
                                     <div class="flex justify-center">
                                         @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
                                             <a
-                                                href="{{ route('projects.activities.index', ['project' => $activity->sprint->backlog->project->id, 'activity' => $activity->id]) }}">
+                                                href="{{ route('projects.activities.index', ['project' => $activity->sprint->backlog->project->id, 'activity' => $activity->id, 'highlight' => $activity->id]) }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -415,9 +409,10 @@
                                 <div class="flex items-center">
                                     Fecha de entrega
                                     {{-- down-up --}}
-                                    <svg wire:click="filterDown('expected_dateReport')" xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    <svg wire:click="filterDown('expected_dateReport')"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
                                         class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredReport) block @else hidden @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M17 3l0 18" />
@@ -426,9 +421,10 @@
                                         <path d="M20 6l-3 -3l-3 3" />
                                     </svg>
                                     {{-- up-down --}}
-                                    <svg wire:click="filterUp('expected_dateReport')" xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    <svg wire:click="filterUp('expected_dateReport')"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
                                         class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredReport) hidden @else block @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M7 3l0 18" />
@@ -491,22 +487,6 @@
                                                                 d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
                                                         </svg>
                                                     </div>
-                                                    {{-- envio varios mensajes de diversos usuarios --}}
-                                                @elseif($report->noView == true)
-                                                    <div class="absolute right-0 top-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                            <path d="M8 9h8" />
-                                                            <path d="M8 13h6" />
-                                                            <path
-                                                                d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                                        </svg>
-                                                    </div>
-                                                    {{-- administrador --}}
                                                 @elseif(Auth::user()->type_user == 1 && $report->client == false && $report->user_id == false)
                                                     <div class="absolute right-0 top-0">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -638,7 +618,7 @@
                                     <div class="flex justify-center">
                                         @if ($report->project)
                                             <a
-                                                href="{{ route('projects.reports.index', ['project' => $report->project->id, 'reports' => $report->id]) }}">
+                                                href="{{ route('projects.reports.index', ['project' => $report->project->id, 'reports' => $report->id, 'highlight' => $report->id]) }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -699,9 +679,10 @@
                                 <div class="flex items-center">
                                     Fecha de entrega
                                     {{-- down-up --}}
-                                    <svg wire:click="filterDown('expected_dateDukke')" xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    <svg wire:click="filterDown('expected_dateDukke')"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
                                         class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredDukke) block @else hidden @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M17 3l0 18" />
@@ -710,9 +691,10 @@
                                         <path d="M20 6l-3 -3l-3 3" />
                                     </svg>
                                     {{-- up-down --}}
-                                    <svg wire:click="filterUp('expected_dateDukke')" xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    <svg wire:click="filterUp('expected_dateDukke')"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
                                         class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredDukke) hidden @else block @endif ml-2 cursor-pointer">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M7 3l0 18" />
@@ -775,22 +757,6 @@
                                                                 d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
                                                         </svg>
                                                     </div>
-                                                    {{-- envio varios mensajes de diversos usuarios --}}
-                                                @elseif($report->noView == true)
-                                                    <div class="absolute right-0 top-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                            <path d="M8 9h8" />
-                                                            <path d="M8 13h6" />
-                                                            <path
-                                                                d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                                        </svg>
-                                                    </div>
-                                                    {{-- administrador --}}
                                                 @elseif(Auth::user()->type_user == 1 && $report->client == false && $report->user_id == false)
                                                     <div class="absolute right-0 top-0">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -963,7 +929,7 @@
                                                         Editar
                                                     </div>
                                                     <!-- Botón VER MAS -->
-                                                    <a @if ($report->report_id == null || ($report->report_id != null && $report->repeat == true)) href="{{ route('projects.reports.index', ['project' => $report->project->id, 'reports' => $report->id]) }}" @endif
+                                                    <a @if ($report->report_id == null || ($report->report_id != null && $report->repeat == true)) href="{{ route('projects.reports.index', ['project' => $report->project->id, 'reports' => $report->id, 'highlight' => $report->id]) }}" @endif
                                                         class="flex cursor-pointer px-4 py-2 text-sm text-black">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
@@ -1048,22 +1014,6 @@
                                                                 d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
                                                         </svg>
                                                     </div>
-                                                    {{-- envio varios mensajes de diversos usuarios --}}
-                                                @elseif($task->noView == true)
-                                                    <div class="absolute right-0 top-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                            <path d="M8 9h8" />
-                                                            <path d="M8 13h6" />
-                                                            <path
-                                                                d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                                        </svg>
-                                                    </div>
-                                                    {{-- administrador --}}
                                                 @elseif(Auth::user()->type_user == 1 && $task->client == false && $task->user_id == false)
                                                     <div class="absolute right-0 top-0">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -1170,7 +1120,7 @@
                                     <div class="flex justify-center">
                                         @if ($task->project_activity)
                                             <a
-                                                href="{{ route('projects.activities.index', ['project' => $task->project_id, 'activity' => $task->id]) }}">
+                                                href="{{ route('projects.activities.index', ['project' => $task->project_id, 'activity' => $task->id, 'highlight' => $task->id]) }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -1183,7 +1133,7 @@
                                             </a>
                                         @elseif($task->project_report)
                                             <a
-                                                href="{{ route('projects.reports.index', ['project' => $task->project_id, 'reports' => $task->id]) }}">
+                                                href="{{ route('projects.reports.index', ['project' => $task->project_id, 'reports' => $task->id, 'highlight' => $task->id]) }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -1348,8 +1298,11 @@
                                     </div>
                                     @if ($activityShow->imageExists)
                                         <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                            <img src="{{ asset('activities/' . $activityShow->image) }}"
-                                                alt="Activity Image">
+                                            <a href="{{ asset('activities/' . $activityShow->image) }}"
+                                                target="_blank">
+                                                <img src="{{ asset('activities/' . $activityShow->image) }}"
+                                                    alt="Activity Image">
+                                            </a>
                                         </div>
                                     @else
                                         <div class="md-3/4 mb-5 mt-3 flex w-full flex-col items-center justify-center">
@@ -1493,8 +1446,8 @@
                                 <input wire:model.defer='messageReport' type="text" name="message" id="message"
                                     class="inputs" style="border-radius: 0.5rem 0px 0px 0.5rem !important"
                                     @if (Auth::user()->type_user != 3) placeholder="Mensaje"
-                                 @else
-                                     placeholder="Mensaje para Arten" @endif>
+                                    @else
+                                        placeholder="Mensaje para Arten" @endif>
                                 <button class="btnSave" style="border-radius: 0rem 0.5rem 0.5rem 0rem !important"
                                     wire:click="updateChatReport({{ $reportShow->id }})">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send"
@@ -1535,8 +1488,11 @@
                                     @if ($reportShow->contentExists)
                                         @if ($reportShow->image == true)
                                             <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                                <img src="{{ asset('reportes/' . $reportShow->content) }}"
-                                                    alt="Report Image">
+                                                <a href="{{ asset('reportes/' . $reportShow->content) }}"
+                                                    target="_blank">
+                                                    <img src="{{ asset('reportes/' . $reportShow->content) }}"
+                                                        alt="Report Image">
+                                                </a>
                                             </div>
                                         @endif
                                         @if ($reportShow->video == true)
@@ -1547,8 +1503,11 @@
                                                 </div>
                                             @else
                                                 <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                                    <video src="{{ asset('reportes/' . $reportShow->content) }}" loop
-                                                        autoplay alt="Report Video"></video>
+                                                    <a href="{{ asset('reportes/' . $reportShow->content) }}"
+                                                        target="_blank">
+                                                        <video src="{{ asset('reportes/' . $reportShow->content) }}"
+                                                            loop autoplay alt="Report Video"></video>
+                                                    </a>
                                                 </div>
                                             @endif
                                         @endif
@@ -1610,7 +1569,7 @@
                                 @endif
                             </div>
                         </div>
-                        <div id="evidence" class="hidden photos w-full px-5 lg:w-1/2">
+                        <div id="evidence" class="photos hidden w-full px-5 lg:w-1/2">
                             @if ($evidenceShow)
                                 <div class="flex flex-col">
                                     <div class="md-3/4 mb-5 mt-5 flex w-full flex-row justify-between">
@@ -1663,9 +1622,10 @@
                                     <div class="btnIcon cursor-pointer font-semibold text-red-500 hover:text-red-500"
                                         onclick="toogleEvidence()" id="textToogle">
                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-eye-x" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            class="icon icon-tabler icon-tabler-eye-x" width="24"
+                                            height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" fill="none" stroke-linecap="round"
+                                            stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
                                             <path
@@ -1702,8 +1662,8 @@
                         Editar reporte</h3>
                     <svg wire:click="modalEditReport" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
                         xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
-                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round">
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                        fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M18 6l-12 12"></path>
                         <path d="M6 6l12 12"></path>
@@ -1891,7 +1851,8 @@
                                         @endif
                                     </span>
                                 </div>
-                                <div class="@if ($changePoints) block @else hidden @endif -mx-3 mb-6">
+                                <div
+                                    class="@if ($changePoints) block @else hidden @endif -mx-3 mb-6">
                                     <div class="mb-6 flex w-full flex-col px-3">
                                         <h5 class="inline-flex font-semibold" for="name">
                                             Puntos <p class="text-red-600">*</p>
@@ -1960,11 +1921,12 @@
                 </div>
                 <div class="modalFooter">
                     @if ($modalEditReport)
-                        <button class="btnSave" wire:click="updateReport({{ $reportEdit->id }}, {{ $reportEdit->project_id }})">
+                        <button class="btnSave"
+                            wire:click="updateReport({{ $reportEdit->id }}, {{ $reportEdit->project_id }})">
                             <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
+                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24"
+                                height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
                                 <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
@@ -1992,11 +1954,10 @@
                     <h3
                         class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
                         Evidencia</h3>
-                    <svg id="modalEvidence"
-                        class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                    <svg id="modalEvidence" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
                         xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
-                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round">
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                        fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M18 6l-12 12"></path>
                         <path d="M6 6l12 12"></path>
@@ -2009,8 +1970,8 @@
                                 <h5 class="inline-flex font-semibold" for="evidence">
                                     Para completar tu reporte, por favor, sube el archivo de evidencia.
                                 </h5>
-                                <input wire:model='evidence' required type="file" name="evidence" id="evidence"
-                                    class="inputs">
+                                <input wire:model='evidence' required type="file" name="evidence"
+                                    id="evidence" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('evidence')
@@ -2029,9 +1990,9 @@
                         <button class="btnSave"
                             wire:click="updateEvidence({{ $reportEvidenceReport->id }}, {{ $reportEvidenceReport->project_id }})">
                             <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
+                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24"
+                                height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
                                 <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />

@@ -26,7 +26,9 @@ class ProjectTableSeeder extends Seeder
                 // Asignar el primer usuario como líder
                 $project->users()->attach($users->first()->id, [
                     'leader' => true,
-                    'programmer' => false,
+                    'product_owner' => false,
+                    'developer1' => false,
+                    'developer2' => false,
                     'client' => false,
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -35,7 +37,9 @@ class ProjectTableSeeder extends Seeder
                 // Asignar el segundo usuario como programador
                 $project->users()->attach($users->last()->id, [
                     'leader' => false,
-                    'programmer' => true,
+                    'product_owner' => true,
+                    'developer1' => false,
+                    'developer2' => false,
                     'client' => false,
                     'created_at' => now(),
                     'updated_at' => now(),

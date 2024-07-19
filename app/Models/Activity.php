@@ -26,6 +26,11 @@ class Activity extends Model
         return $this->belongsTo(Sprint::class);
     }
 
+    public function project()
+    {
+        return $this->hasOneThrough(Project::class, Sprint::class, 'id', 'id', 'sprint_id', 'project_id');
+    }
+
     public function chatMessages()
     {
         return $this->hasMany(ChatReports::class);
