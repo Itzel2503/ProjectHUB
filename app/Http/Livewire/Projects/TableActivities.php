@@ -49,7 +49,7 @@ class TableActivities extends Component
     // table, action's activities
     public $search;
     public $perPage = '';
-    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc';
+    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc', $orderByType = 'expected_date';
     public $usersFiltered = [],
         $allUsersFiltered = [],
         $selectedStates = [],
@@ -124,13 +124,11 @@ class TableActivities extends Component
         } else {
             $this->selectSprint = null;
         }
-
         // Filtro de consulta
         $user = Auth::user();
         $user_id = $user->id;
         // DELEGATE
         $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
-
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
             $activities = Activity::where('sprint_id', $this->selectSprint)
@@ -147,7 +145,9 @@ class TableActivities extends Component
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
-                ->orderBy('expected_date', $this->filteredExpected)
+                ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
+                ->select('activities.*', 'delegates.name')
+                ->orderBy($this->orderByType, $this->filteredExpected)
                 ->with(['user', 'delegate'])
                 ->get();
         } else {
@@ -168,7 +168,9 @@ class TableActivities extends Component
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
-                ->orderBy('expected_date', $this->filteredExpected)
+                ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
+                ->select('activities.*', 'delegates.name')
+                ->orderBy($this->orderByType, $this->filteredExpected)
                 ->with(['user', 'delegate'])
                 ->get();
         }
@@ -1212,6 +1214,12 @@ class TableActivities extends Component
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
         }
+
+        if ($type == 'delegate') {
+            $this->filterPriotiry = false;
+            $this->orderByType = 'name';
+            $this->filteredExpected = 'asc';
+        }
         
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
@@ -1228,6 +1236,12 @@ class TableActivities extends Component
             $this->filterPriotiry = true;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+        }
+
+        if ($type == 'delegate') {
+            $this->filterPriotiry = false;
+            $this->orderByType = 'name';
+            $this->filteredExpected = 'desc';
         }
         
         if ($type == 'expected_date') {

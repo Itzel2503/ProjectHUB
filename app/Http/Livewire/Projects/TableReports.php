@@ -34,8 +34,8 @@ class TableReports extends Component
     // table, action's reports
     public $leader = false, $filtered = false, $filter = false, $filterPriotiry = false;
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
-    public $perPage = '100';
-    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc';
+    public $perPage = '50';
+    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc', $orderByType = 'expected_date';
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
     // inputs
     public $tittle, $type, $file, $comment, $evidenceEdit, $expected_date, $priority1, $priority2, $priority3, $evidence, $message;
@@ -66,7 +66,9 @@ class TableReports extends Component
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
-                ->orderBy('expected_date', $this->filteredExpected)
+                ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
+                ->select('reports.*', 'delegates.name')
+                ->orderBy($this->orderByType, $this->filteredExpected)
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
         } elseif (Auth::user()->type_user == 2) {
@@ -94,7 +96,9 @@ class TableReports extends Component
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
-                ->orderBy('expected_date', $this->filteredExpected)
+                ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
+                ->select('reports.*', 'delegates.name')
+                ->orderBy($this->orderByType, $this->filteredExpected)
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
         } elseif (Auth::user()->type_user == 3) {
@@ -114,7 +118,9 @@ class TableReports extends Component
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
-                ->orderBy('expected_date', $this->filteredExpected)
+                ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
+                ->select('reports.*', 'delegates.name')
+                ->orderBy($this->orderByType, $this->filteredExpected)
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
         }
@@ -827,8 +833,15 @@ class TableReports extends Component
             $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
         }
 
+        if ($type == 'delegate') {
+            $this->filterPriotiry = false;
+            $this->orderByType = 'name';
+            $this->filteredExpected = 'asc';
+        }
+
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
+            $this->orderByType = 'expected_date';
             $this->filteredExpected = 'asc';
         }
     }
@@ -844,8 +857,15 @@ class TableReports extends Component
             $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
         }
 
+        if ($type == 'delegate') {
+            $this->filterPriotiry = false;
+            $this->orderByType = 'name';
+            $this->filteredExpected = 'desc';
+        }
+
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
+            $this->orderByType = 'expected_date';
             $this->filteredExpected = 'desc';
         }
     }
