@@ -77,9 +77,13 @@ class ActivitiesReports extends Component
     // ------------------------------ TASK ADMIN ------------------------------
     public $allUsersTask;
     public $searchTask;
+    public $expected_dateTask = 'asc';
+    public $filteredTask = false;
     // ------------------------------ CREATED ADMIN ------------------------------
     public $allUsersCreated;
     public $searchCreated;
+    public $expected_dateCreated = 'asc';
+    public $filteredCreated = false;
 
     public function mount()
     {
@@ -177,7 +181,7 @@ class ActivitiesReports extends Component
                 ->where('reports.delegate_id', $user_id)
                 ->where('reports.title', 'like', '%' . $this->searchTask . '%')
                 ->where('reports.state', '!=', 'Resuelto')
-                ->orderBy('reports.expected_date', 'asc')
+                ->orderBy('reports.expected_date', $this->expected_dateTask)
                 ->get();
             // Obtener las activities del usuario
             $activitiesTask = User::select(
@@ -189,10 +193,14 @@ class ActivitiesReports extends Component
                 ->where('activities.delegate_id', $user_id)
                 ->where('activities.title', 'like', '%' . $this->searchTask . '%')
                 ->where('activities.state', '!=', 'Resuelto')
-                ->orderBy('activities.expected_date', 'asc')
+                ->orderBy('activities.expected_date', $this->expected_dateTask)
                 ->get();
             // Combinar los resultados en una colección
             $tasks = $activitiesTask->merge($reportsTask);
+            // Ordenar la colección combinada
+            $tasks = $tasks->sortBy(function ($task) {
+                return $task->expected_date;
+            }, SORT_REGULAR, $this->expected_dateTask === 'desc');
             // Paginación manual
             $currentPage = LengthAwarePaginator::resolveCurrentPage();
             $perPage = $this->perPage;
@@ -200,7 +208,6 @@ class ActivitiesReports extends Component
             $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
                 'path' => LengthAwarePaginator::resolveCurrentPath(),
             ]);
-
             // Obtener los reports del usuario
             $reportsCreated = User::select(
                 'users.id as user',
@@ -210,7 +217,7 @@ class ActivitiesReports extends Component
                 ->leftJoin('reports', 'users.id', '=', 'reports.user_id')
                 ->where('reports.user_id', $user_id)
                 ->where('reports.title', 'like', '%' . $this->searchCreated . '%')
-                ->orderBy('reports.expected_date', 'asc')
+                ->orderBy('reports.expected_date', $this->expected_dateCreated)
                 ->get();
             // Obtener las activities del usuario
             $activitiesCreated = User::select(
@@ -221,7 +228,7 @@ class ActivitiesReports extends Component
                 ->leftJoin('activities', 'users.id', '=', 'activities.user_id')
                 ->where('activities.user_id', $user_id)
                 ->where('activities.title', 'like', '%' . $this->searchCreated . '%')
-                ->orderBy('activities.expected_date', 'asc')
+                ->orderBy('activities.expected_date', $this->expected_dateCreated)
                 ->get();
             // Combinar los resultados manualmente
             $taskCreated = new \Illuminate\Database\Eloquent\Collection;
@@ -233,6 +240,10 @@ class ActivitiesReports extends Component
             foreach ($reportsCreated as $report) {
                 $taskCreated->push($report);
             }
+            // Ordenar la colección combinada
+            $taskCreated = $taskCreated->sortBy(function ($task) {
+                return $task->expected_date;
+            }, SORT_REGULAR, $this->expected_dateCreated === 'desc');
             // Paginación manual
             $currentPage = LengthAwarePaginator::resolveCurrentPage();
             $perPage = $this->perPage;
@@ -1537,6 +1548,16 @@ class ActivitiesReports extends Component
     // FILTER
     public function filterDown($type)
     {
+        if ($type == 'expected_dateTask') {
+            $this->filteredTask = false;
+            $this->expected_dateTask = 'asc';
+        }
+
+        if ($type == 'expected_dateCreated') {
+            $this->filteredCreated = false;
+            $this->expected_dateCreated = 'asc';
+        }
+
         if ($type == 'activity') {
             $this->filterActivity = true;
             $this->filteredActivity = false;
@@ -1576,6 +1597,16 @@ class ActivitiesReports extends Component
 
     public function filterUp($type)
     {
+        if ($type == 'expected_dateTask') {
+            $this->filteredTask = true;
+            $this->expected_dateTask = 'desc';
+        }
+
+        if ($type == 'expected_dateCreated') {
+            $this->filteredCreated = true;
+            $this->expected_dateCreated = 'desc';
+        }
+
         if ($type == 'activity') {
             $this->filterActivity = true;
             $this->filteredActivity = true;

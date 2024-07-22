@@ -16,12 +16,15 @@
                 class="border-primaryColor @if ($activeTab === 'actividades') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 pb-4 text-sm font-medium">
                 Actividades
                 {{-- @if ($totalMessagesCount > 0)
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M8 9h8"/>
-                        <path d="M8 13h6"/>
-                        <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"/>
-                    </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M8 9h8" />
+                    <path d="M8 13h6" />
+                    <path
+                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                </svg>
                 @endif --}}
             </button>
             <button wire:click="setActiveTab('reportes')"
@@ -244,7 +247,7 @@
                                                         name="delegate" id="delegate"
                                                         class="inpSelectTable w-full text-sm"
                                                         @if (Auth::user()->type_user != 1 && Auth::user()->area_id != 1) @if ($activity->sprint_status == 'Pendiente' || $activity->sprint_status == 'Cerrado')
-                                                                disabled @endif
+                                            disabled @endif
                                                         @endif>
                                                         <option selected value={{ $activity->delegate->id }}>
                                                             {{ $activity->delegate->name }}
@@ -261,7 +264,7 @@
                                                         name="delegate" id="delegate"
                                                         class="inpSelectTable w-full text-sm"
                                                         @if (Auth::user()->type_user != 1 && Auth::user()->area_id != 1) @if ($activity->sprint_status == 'Pendiente' || $activity->sprint_status == 'Cerrado')
-                                                                disabled @endif
+                                    disabled @endif
                                                         @endif>
                                                         <option selected>
                                                             Seleccionar...
@@ -319,7 +322,7 @@
                                             name="state" id="state"
                                             class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
                                             @if (Auth::user()->type_user != 1 && Auth::user()->area_id != 1) @if ($activity->sprint_status == 'Pendiente' || $activity->sprint_status == 'Cerrado')
-                                                    disabled @endif
+                                disabled @endif
                                             @endif>
                                             <option selected value={{ $activity->state }}>{{ $activity->state }}
                                             </option>
@@ -386,7 +389,35 @@
                             <th class="w-96 px-4 py-3">Tareas</th>
                             <th class="px-1 py-3 lg:w-48">Delegado</th>
                             <th class="w-48 px-2 py-3">Estado</th>
-                            <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                            <th class="w-44 px-1 py-3">
+                                <div class="flex items-center">
+                                    Fecha de entrega
+                                    {{-- down-up --}}
+                                    <svg wire:click="filterDown('expected_dateCreated')"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredCreated) block @else hidden @endif ml-2 cursor-pointer">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M17 3l0 18" />
+                                        <path d="M10 18l-3 3l-3 -3" />
+                                        <path d="M7 21l0 -18" />
+                                        <path d="M20 6l-3 -3l-3 3" />
+                                    </svg>
+                                    {{-- up-down --}}
+                                    <svg wire:click="filterUp('expected_dateCreated')"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredCreated) hidden @else block @endif ml-2 cursor-pointer">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 3l0 18" />
+                                        <path d="M10 6l-3 -3l-3 3" />
+                                        <path d="M20 18l-3 3l-3 -3" />
+                                        <path d="M17 21l0 -18" />
+                                    </svg>
+                                </div>
+                            </th>
                             <th class="w-56 px-1 py-3">Creado</th>
                             <th class="w-16 px-1 py-3">Acciones</th>
                         </tr>
@@ -396,7 +427,8 @@
                             <tr class="trTable">
                                 <td class="relative px-2 py-1">
                                     @if ($activeTab === 'created')
-                                        <div @if ($task->project_activity) wire:click='showActivity({{ $task->id }})' @elseif($task->project_report) wire:click='showReport({{ $task->id }})' @endif
+                                        <div @if ($task->project_activity) wire:click='showActivity({{ $task->id }})'
+                                @elseif($task->project_report) wire:click='showReport({{ $task->id }})' @endif
                                             class="flex cursor-pointer flex-col justify-center text-center">
                                             <div class="flex flex-row">
                                                 <div class="w-12"></div>
@@ -462,12 +494,13 @@
                                         @if ($activeTab === 'created')
                                             @if ($task->project_activity || $task->project_report)
                                                 <select
-                                                    @if ($task->project_activity) wire:change.defer='updateDelegateActivity({{ $task->id }}, $event.target.value)' 
-                                                    @elseif($task->project_report) wire:change='updateDelegateReport({{ $task->id }}, $event.target.value)' @endif
+                                                    @if ($task->project_activity) wire:change.defer='updateDelegateActivity({{ $task->id }}, $event.target.value)'
+                                    @elseif($task->project_report)
+                                    wire:change='updateDelegateReport({{ $task->id }}, $event.target.value)' @endif
                                                     name="delegate" id="delegate"
-                                                    @if ($task->project_activity) @if (Auth::user()->type_user != 1 && Auth::user()->area_id != 1) 
-                                                            @if ($task->sprint_status == 'Pendiente' || $task->sprint_status == 'Cerrado')
-                                                                disabled @endif
+                                                    @if ($task->project_activity) @if (Auth::user()->type_user != 1 && Auth::user()->area_id != 1)
+                                    @if ($task->sprint_status == 'Pendiente' || $task->sprint_status == 'Cerrado')
+                                    disabled @endif
                                                     @endif
                                             @endif
                                             class="inpSelectTable w-full w-full text-sm text-sm">
@@ -522,8 +555,9 @@
             @if ($task->project_activity || $task->project_report)
                 <select name="state" id="state"
                     class="inpSelectTable @if ($task->state == 'Abierto') bg-blue-500 text-white @endif @if ($task->state == 'Proceso') bg-yellow-400 @endif @if ($task->state == 'Resuelto') bg-lime-700 text-white @endif @if ($task->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
-                    @if ($task->project_activity) wire:change.defer='updateStateActivity({{ $task->id }}, $event.target.value)' 
-                                            @elseif($task->project_report) wire:change='updateStateReport({{ $task->id }}, {{ $task->project_id }}, $event.target.value)' @endif>
+                    @if ($task->project_activity) wire:change.defer='updateStateActivity({{ $task->id }},
+                                $event.target.value)'
+                                @elseif($task->project_report) wire:change='updateStateReport({{ $task->id }}, {{ $task->project_id }}, $event.target.value)' @endif>
                     <option selected value={{ $task->state }}>{{ $task->state }}</option>
                     @foreach ($task->filteredActions as $action)
                         <option value="{{ $action }}">{{ $action }}</option>
@@ -1139,7 +1173,11 @@
                                                 Editar
                                             </div>
                                             <!-- Botón VER MAS -->
-                                            <a @if ($report->report_id == null || ($report->report_id != null && $report->repeat == true)) href="{{ route('projects.reports.index', ['project' => $report->project->id, 'reports' => $report->id, 'highlight' => $report->id]) }}" @endif
+                                            <a @if ($report->report_id == null || ($report->report_id != null && $report->repeat == true)) href="{{ route('projects.reports.index', [
+                                                'project' => $report->project->id,
+                                                'reports' => $report->id,
+                                                'highlight' => $report->id,
+                                            ]) }}" @endif
                                                 class="flex cursor-pointer px-4 py-2 text-sm text-black">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1171,7 +1209,35 @@
                     <th class="w-96 px-4 py-3">Tareas</th>
                     <th class="px-1 py-3 lg:w-48">Delegado</th>
                     <th class="w-48 px-2 py-3">Estado</th>
-                    <th class="w-44 px-1 py-3">Fecha de entrega</th>
+                    <th class="w-44 px-1 py-3">
+                        <div class="flex items-center">
+                            Fecha de entrega
+                            {{-- down-up --}}
+                            <svg wire:click="filterDown('expected_dateTask')"
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-down-up @if ($filteredTask) block @else hidden @endif ml-2 cursor-pointer">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M17 3l0 18" />
+                                <path d="M10 18l-3 3l-3 -3" />
+                                <path d="M7 21l0 -18" />
+                                <path d="M20 6l-3 -3l-3 3" />
+                            </svg>
+                            {{-- up-down --}}
+                            <svg wire:click="filterUp('expected_dateTask')"
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filteredTask) hidden @else block @endif ml-2 cursor-pointer">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M7 3l0 18" />
+                                <path d="M10 6l-3 -3l-3 3" />
+                                <path d="M20 18l-3 3l-3 -3" />
+                                <path d="M17 21l0 -18" />
+                            </svg>
+                        </div>
+                    </th>
                     <th class="w-56 px-1 py-3">Creado</th>
                     <th class="w-16 px-1 py-3">Acciones</th>
                 </tr>
@@ -1181,7 +1247,8 @@
                     <tr class="trTable">
                         <td class="relative px-2 py-1">
                             @if ($activeTab === 'task')
-                                <div @if ($task->project_activity) wire:click='showActivity({{ $task->id }})' @elseif($task->project_report) wire:click='showReport({{ $task->id }})' @endif
+                                <div @if ($task->project_activity) wire:click='showActivity({{ $task->id }})'
+                                @elseif($task->project_report) wire:click='showReport({{ $task->id }})' @endif
                                     class="flex cursor-pointer flex-col justify-center text-center">
                                     <div class="flex flex-row">
                                         <div class="w-12"></div>
@@ -1245,8 +1312,9 @@
                                 @if ($activeTab === 'task')
                                     @if ($task->project_activity || $task->project_report)
                                         <select
-                                            @if ($task->project_activity) wire:change.defer='updateDelegateActivity({{ $task->id }}, $event.target.value)' 
-                                                    @elseif($task->project_report) wire:change='updateDelegateReport({{ $task->id }}, $event.target.value)' @endif
+                                            @if ($task->project_activity) wire:change.defer='updateDelegateActivity({{ $task->id }}, $event.target.value)'
+                                    @elseif($task->project_report) wire:change='updateDelegateReport({{ $task->id }},
+                                    $event.target.value)' @endif
                                             name="delegate" id="delegate"
                                             class="inpSelectTable @if ($task->state == 'Resuelto') hidden @endif w-full text-sm">
                                             <option selected value={{ $task->delegate_id }}>
@@ -1291,8 +1359,9 @@
                             @if ($task->project_activity || $task->project_report)
                                 <select name="state" id="state"
                                     class="inpSelectTable @if ($task->state == 'Abierto') bg-blue-500 text-white @endif @if ($task->state == 'Proceso') bg-yellow-400 @endif @if ($task->state == 'Resuelto') bg-lime-700 text-white @endif @if ($task->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
-                                    @if ($task->project_activity) wire:change.defer='updateStateActivity({{ $task->id }}, $event.target.value)' 
-                                            @elseif($task->project_report) wire:change='updateStateReport({{ $task->id }}, {{ $task->project_id }}, $event.target.value)' @endif>
+                                    @if ($task->project_activity) wire:change.defer='updateStateActivity({{ $task->id }},
+                                $event.target.value)'
+                                @elseif($task->project_report) wire:change='updateStateReport({{ $task->id }}, {{ $task->project_id }}, $event.target.value)' @endif>
                                     <option selected value={{ $task->state }}>{{ $task->state }}</option>
                                     @foreach ($task->filteredActions as $action)
                                         <option value="{{ $action }}">{{ $action }}</option>
@@ -1378,7 +1447,7 @@
         </div>
     @elseif ($activeTab === 'task')
         @if (Auth::user()->type_user == 1)
-            
+
         @endif
     @elseif ($activeTab === 'created')
         @if (Auth::user()->type_user == 1)
@@ -1670,8 +1739,8 @@
                             <input wire:model.defer='messageReport' type="text" name="message" id="message"
                                 class="inputs" style="border-radius: 0.5rem 0px 0px 0.5rem !important"
                                 @if (Auth::user()->type_user != 3) placeholder="Mensaje"
-                                    @else
-                                        placeholder="Mensaje para Arten" @endif>
+                            @else
+                            placeholder="Mensaje para Arten" @endif>
                             <button class="btnSave" style="border-radius: 0rem 0.5rem 0.5rem 0rem !important"
                                 wire:click="updateChatReport({{ $reportShow->id }})">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send"
