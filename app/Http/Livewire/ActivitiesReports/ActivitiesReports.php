@@ -10,8 +10,8 @@ use App\Models\Report;
 use App\Models\Sprint;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -24,6 +24,7 @@ class ActivitiesReports extends Component
     use WithFileUploads;
     use WithPagination;
     protected $paginationTheme = 'tailwind';
+
     public $listeners = ['messageSentReport' => 'loadMessagesReport', 'messageSentActivity' => 'loadMessagesActivity'];
     // PESTAÑA
     public $activeTab = 'actividades';
@@ -32,6 +33,7 @@ class ActivitiesReports extends Component
     public $usersFiltered = [],
         $allUsersFiltered = [];
     public $selectedDelegate = '';
+    public $perPage = '50';
     // FILTRO PUNTOS
     public $startDate, $endDate, $starMonth, $endMonth;
     // ------------------------------ ACTIVITY ------------------------------
@@ -75,6 +77,9 @@ class ActivitiesReports extends Component
     // ------------------------------ TASK ADMIN ------------------------------
     public $allUsersTask;
     public $searchTask;
+    // ------------------------------ CREATED ADMIN ------------------------------
+    public $allUsersCreated;
+    public $searchCreated;
 
     public function mount()
     {
@@ -93,15 +98,16 @@ class ActivitiesReports extends Component
         // DELEGATE
         $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
         $this->allUsersTask = User::where('type_user', '!=', 3)->where('id', '!=', Auth::id())->orderBy('name', 'asc')->get();
+        $this->allUsersCreated = User::where('type_user', '!=', 3)->where('id', '!=', Auth::id())->orderBy('name', 'asc')->get();
         // Filtro de consulta
-        $user = Auth::user();
-        $user_id = $user->id;
+        $userLogin = Auth::user();
+        $user_id = $userLogin->id;
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
             $activities = Activity::where(function ($query) {
-                    $query
-                        ->where('title', 'like', '%' . $this->searchActivity . '%');
-                })
+                $query
+                    ->where('title', 'like', '%' . $this->searchActivity . '%');
+            })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
@@ -111,15 +117,15 @@ class ActivitiesReports extends Component
                 ->orderBy('expected_date', $this->expected_dateActivity)
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
-                ->get();
+                ->paginate($this->perPage);
 
             $reports = Report::where(function ($query) {
-                    $query
-                        ->where('title', 'like', '%' . $this->searchReport . '%');
-                    if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
-                        $query->orWhereNotNull('count');
-                    }
-                })
+                $query
+                    ->where('title', 'like', '%' . $this->searchReport . '%');
+                if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
+                    $query->orWhereNotNull('count');
+                }
+            })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
@@ -129,7 +135,8 @@ class ActivitiesReports extends Component
                 ->orderBy('expected_date', $this->expected_dateReport)
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
-                ->get();
+                ->paginate($this->perPage);
+
             if (Auth::user()->area_id == 4) {
                 $reportsDukke = Report::where('project_id', 5)
                     ->whereHas('user', function ($query) {
@@ -156,16 +163,16 @@ class ActivitiesReports extends Component
                     ->orderBy('expected_date', $this->expected_dateDukke)
                     ->where('state', '!=', 'Resuelto')
                     ->with(['user', 'delegate'])
-                    ->get();
+                    ->paginate($this->perPage);
             } else {
                 $reportsDukke = null;
             }
             // Obtener los reports del usuario
-            $reportsAdmin = User::select(
-                    'users.id as user',
-                    'users.name as user_name',
-                    'reports.*'
-                )
+            $reportsTask = User::select(
+                'users.id as user',
+                'users.name as user_name',
+                'reports.*'
+            )
                 ->leftJoin('reports', 'users.id', '=', 'reports.delegate_id')
                 ->where('reports.delegate_id', $user_id)
                 ->where('reports.title', 'like', '%' . $this->searchTask . '%')
@@ -173,11 +180,11 @@ class ActivitiesReports extends Component
                 ->orderBy('reports.expected_date', 'asc')
                 ->get();
             // Obtener las activities del usuario
-            $activitiesAdmin = User::select(
-                    'users.id as user',
-                    'users.name as user_name',
-                    'activities.*'
-                )
+            $activitiesTask = User::select(
+                'users.id as user',
+                'users.name as user_name',
+                'activities.*'
+            )
                 ->leftJoin('activities', 'users.id', '=', 'activities.delegate_id')
                 ->where('activities.delegate_id', $user_id)
                 ->where('activities.title', 'like', '%' . $this->searchTask . '%')
@@ -185,12 +192,59 @@ class ActivitiesReports extends Component
                 ->orderBy('activities.expected_date', 'asc')
                 ->get();
             // Combinar los resultados en una colección
-            $tasks = $activitiesAdmin->merge($reportsAdmin);
+            $tasks = $activitiesTask->merge($reportsTask);
+            // Paginación manual
+            $currentPage = LengthAwarePaginator::resolveCurrentPage();
+            $perPage = $this->perPage;
+            $currentItems = $tasks->slice(($currentPage - 1) * $perPage, $perPage)->all();
+            $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+            ]);
+
+            // Obtener los reports del usuario
+            $reportsCreated = User::select(
+                'users.id as user',
+                'users.name as user_name',
+                'reports.*'
+            )
+                ->leftJoin('reports', 'users.id', '=', 'reports.user_id')
+                ->where('reports.user_id', $user_id)
+                ->where('reports.title', 'like', '%' . $this->searchCreated . '%')
+                ->orderBy('reports.expected_date', 'asc')
+                ->get();
+            // Obtener las activities del usuario
+            $activitiesCreated = User::select(
+                'users.id as user',
+                'users.name as user_name',
+                'activities.*'
+            )
+                ->leftJoin('activities', 'users.id', '=', 'activities.user_id')
+                ->where('activities.user_id', $user_id)
+                ->where('activities.title', 'like', '%' . $this->searchCreated . '%')
+                ->orderBy('activities.expected_date', 'asc')
+                ->get();
+            // Combinar los resultados manualmente
+            $taskCreated = new \Illuminate\Database\Eloquent\Collection;
+
+            foreach ($activitiesCreated as $activity) {
+                $taskCreated->push($activity);
+            }
+
+            foreach ($reportsCreated as $report) {
+                $taskCreated->push($report);
+            }
+            // Paginación manual
+            $currentPage = LengthAwarePaginator::resolveCurrentPage();
+            $perPage = $this->perPage;
+            $currentItems = $taskCreated->slice(($currentPage - 1) * $perPage, $perPage)->all();
+            $paginatedCreated = new LengthAwarePaginator($currentItems, $taskCreated->count(), $perPage, $currentPage, [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+            ]);
         } else {
             $activities = Activity::where(function ($query) {
-                    $query
-                        ->where('title', 'like', '%' . $this->searchActivity . '%');
-                })
+                $query
+                    ->where('title', 'like', '%' . $this->searchActivity . '%');
+            })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id);
                 })
@@ -206,12 +260,12 @@ class ActivitiesReports extends Component
                 ->get();
 
             $reports = Report::where(function ($query) {
-                    $query
-                        ->where('title', 'like', '%' . $this->searchReport . '%');
-                    if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
-                        $query->orWhereNotNull('count');
-                    }
-                })
+                $query
+                    ->where('title', 'like', '%' . $this->searchReport . '%');
+                if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
+                    $query->orWhereNotNull('count');
+                }
+            })
                 ->when(Auth::user()->area_id == 4, function ($query) {
                     $query->whereHas('user', function ($subQuery) {
                         $subQuery->where('type_user', '!=', 3);
@@ -267,6 +321,7 @@ class ActivitiesReports extends Component
                 $reportsDukke = null;
             }
             $tasks = null;
+            $created = null;
         }
         // ADD ATRIBUTES ACTIVITIES
         foreach ($activities as $activity) {
@@ -275,9 +330,9 @@ class ActivitiesReports extends Component
                 $state = $activity->sprint->state;
                 if ($state == 'Pendiente') {
                     $activity->sprint_status = 'Pendiente';
-                }elseif ($state == 'Curso') {
+                } elseif ($state == 'Curso') {
                     $activity->sprint_status = 'Curso';
-                }elseif ($state == 'Cerrado') {
+                } elseif ($state == 'Cerrado') {
                     $activity->sprint_status = 'Cerrado';
                 }
             } else {
@@ -443,7 +498,7 @@ class ActivitiesReports extends Component
         }
         // ADD ATRIBUTES TASK ADMIN
         if (Auth::user()->type_user == 1) {
-            // ADD ATRIBUTES REPORTS
+            // ADD ATRIBUTES TASK
             foreach ($tasks as $task) {
                 // ACTIONS
                 $task->filteredActions = $this->getFilteredActions($task->state);
@@ -484,7 +539,7 @@ class ActivitiesReports extends Component
                 $user_created = User::where('id', $task->user_id)->first();
                 if ($user_created) {
                     $task->created_name = $user_created->name;
-                } else  {
+                } else {
                     $task->created_name = 'Usuario eliminado';
                 }
                 // NAME USUARIO
@@ -576,6 +631,146 @@ class ActivitiesReports extends Component
                 }
                 $task->messages_count = $messages->where('look', false)->count();
             }
+            // ADD ATRIBUTES TASK CREATED
+            foreach ($taskCreated as $create) {
+                // ACTIONS
+                $create->filteredActions = $this->getFilteredActions($create->state);
+                // DELEGATES
+                $create->usersFiltered = $this->allUsersCreated->reject(function ($user) use ($create) {
+                    return $user->id == $create->delegate_id;
+                })->values();
+                
+                // DELEGADO
+                $delegate_user = User::where('id', $create->delegate_id)->first();
+                if ($delegate_user) {
+                    $create->delegate_name = $delegate_user->name;
+                    $create->delegate_id = $delegate_user->id;
+                } else {
+                    $create->delegate_name = 'Usuario eliminado';
+                    $create->delegate_id = null;
+                }
+                // PROGRESS
+                if ($create->progress && $create->updated_at) {
+                    $create->progress = Carbon::parse($create->progress);
+                    $progress = Carbon::parse($create->progress);
+                    $updated_at = Carbon::parse($create->updated_at);
+                    $diff = $progress->diff($updated_at);
+
+                    $units = [
+                        'año' => $diff->y,
+                        'mes' => $diff->m,
+                        'semana' => floor($diff->days / 7),
+                        'dia' => $diff->d % 7, // Días restantes después de calcular las semanas
+                        'hora' => $diff->h,
+                        'minuto' => $diff->i,
+                        'segundo' => $diff->s,
+                    ];
+
+                    $timeDifference = '';
+                    foreach ($units as $unit => $value) {
+                        if ($value > 0) {
+                            $timeDifference = $value . ' ' . $unit . ($value > 1 ? 's' : '');
+                            break;
+                        }
+                    }
+
+                    $create->timeDifference = $timeDifference;
+                } else {
+                    $create->timeDifference = null;
+                }
+                // NAME USUARIO CREO
+                $user_created = User::where('id', $user_id)->first();
+                if ($user_created) {
+                    $create->created_name = $user_created->name;
+                } else {
+                    $create->created_name = 'Usuario eliminado';
+                }
+                // CHAT ACTIVITY
+                if ($create->sprint_id) {
+                    // MENSAJES
+                    $messages = ChatReports::where('activity_id', $create->id)->orderBy('created_at', 'asc')->get();
+                    $lastMessageNoView = ChatReports::where('activity_id', $create->id)
+                        ->where('user_id', '!=', Auth::id())
+                        ->where('receiver_id', Auth::id())
+                        ->where('look', false)
+                        ->latest()
+                        ->first();
+                    // Datos del proyecto
+                    $sprint = Sprint::where('id', $create->sprint_id)->first(); // Obtener solo un modelo, no una colección
+                    if ($sprint) {
+                        if ($sprint->backlog) {
+                            if ($sprint->backlog->project) {
+                                // Acceder al proyecto asociado al backlog
+                                $create->project_name = $sprint->backlog->project->name . ' (Actividad)';
+                                $create->project_id = $sprint->backlog->project->id;
+                                $create->project_activity = true;
+                            } else {
+                                // Manejar caso donde no hay backlog asociado
+                                $create->project_name = 'Proyecto no disponible';
+                                $create->project_activity = false;
+                            }
+                        } else {
+                            // Manejar caso donde no hay backlog asociado
+                            $create->project_name = 'Backlog no disponible';
+                            $create->project_activity = false;
+                        }
+                    } else {
+                        // Manejar caso donde no se encuentra el sprint
+                        $create->project_name = 'Sprint no encontrado';
+                        $create->project_activity = false;
+                    }
+                } else {
+                    $messages = ChatReports::where('report_id', $create->id)->orderBy('created_at', 'asc')->get();
+                    $lastMessageNoView = ChatReports::where('report_id', $create->id)
+                        ->where('user_id', '!=', Auth::id())
+                        ->where('receiver_id', Auth::id())
+                        ->where('look', false)
+                        ->latest()
+                        ->first();
+                    // Datos del proyecto
+                    $project = Project::where('id', $create->project_id)->first(); // Obtener solo un modelo, no una colección
+                    if ($project) {
+                        // Acceder al proyecto a
+                        $create->project_name = $project->name . ' (Reporte)';
+                        $create->project_id = $project->id;
+                        $create->project_report = true;
+                    } else {
+                        // Manejar caso donde no se encuentra el proyecto
+                        $create->project_name = 'Proyecto no encontrado';
+                        $create->project_report = false;
+                    }
+                }
+                // Verificar si la colección tiene al menos un mensaje
+                if ($messages) {
+                    if ($lastMessageNoView) {
+                        $create->user_chat = $lastMessageNoView->user_id;
+                        $create->receiver_chat = $lastMessageNoView->receiver_id;
+
+                        $receiver = User::find($lastMessageNoView->receiver_id);
+
+                        if ($receiver->type_user == 3) {
+                            $create->client = true;
+                        } else {
+                            $create->client = false;
+                        }
+                    } else {
+                        $lastMessage = $messages->last();
+                        if ($lastMessage) {
+                            if ($lastMessage->user_id == Auth::id()) {
+                                $create->user_id = true;
+                            } else {
+                                if ($lastMessage->receiver->type_user == 3) {
+                                    $create->client = true;
+                                } else {
+                                    $create->client = false;
+                                }
+                                $create->user_id = false;
+                            }
+                        }
+                    }
+                }
+                $create->messages_count = $messages->where('look', false)->count();
+            }
         }
         // ADD ATRIBUTES REPORTS DUKKE
         if (Auth::user()->area_id == 4) {
@@ -666,7 +861,8 @@ class ActivitiesReports extends Component
             'activities' => $activities,
             'reports' => $reports,
             'reportsDukke' => $reportsDukke,
-            'tasks' => $tasks
+            'tasks' => $paginatedTask,
+            'taskCreated' => $paginatedCreated,
         ]);
     }
     // ACTIONS
@@ -685,7 +881,7 @@ class ActivitiesReports extends Component
                 'type' => 'success',
                 'title' => 'Delegado actualizado',
             ]);
-        } else{
+        } else {
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
@@ -730,7 +926,7 @@ class ActivitiesReports extends Component
                     'title' => 'Estado actualizado',
                 ]);
             }
-        } else{
+        } else {
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
@@ -879,7 +1075,7 @@ class ActivitiesReports extends Component
             if ($this->changePoints == true) {
                 $validPoints = [0, 1, 2, 3, 5, 8, 13];
                 $report->points = $this->points;
-    
+
                 if (!in_array($this->points, $validPoints)) {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'error',
@@ -902,7 +1098,7 @@ class ActivitiesReports extends Component
                     $report->points = $report->points ?? 0;
                 }
             }
-            
+
             $report->save();
             $this->modalEditReport = false;
             $this->dispatchBrowserEvent('swal:modal', [
@@ -928,7 +1124,7 @@ class ActivitiesReports extends Component
                 'type' => 'success',
                 'title' => 'Delegado actualizado',
             ]);
-        } else{
+        } else {
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
                 'title' => 'Reporte no encontrado',
@@ -1190,7 +1386,7 @@ class ActivitiesReports extends Component
             ->where('look', false)
             ->latest()
             ->first();
-        
+
         if ($lastMessage) {
             // cliente
             if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
@@ -1618,5 +1814,4 @@ class ActivitiesReports extends Component
         $this->modalShowActivity = false;
         $this->modalShowReport = false;
     }
-
 }

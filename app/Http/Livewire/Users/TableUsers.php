@@ -363,6 +363,18 @@ class TableUsers extends Component
         if ($user) {
             $existingPivote = $user->projects()->exists();
             if ($existingPivote) {
+                // Verificar si existe algún registro en la tabla pivote con leader y product_owner = true
+                $existingLeaderProjects = $user->projects()->wherePivot('leader', true)->exists();
+                $existingProductProjects = $user->projects()->wherePivot('product_owner', true)->exists();
+
+                if ($existingLeaderProjects || $existingProductProjects) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Usuario asignado a proyecto',
+                        'text' => 'Eliminar usuario del proyecto asignado antes de realizar cambios.',
+                    ]);
+                    return;
+                }
                 // Verificar si existe algún registro en la tabla pivote con client = true
                 $existingClientProjects = $user->projects()->wherePivot('client', true)->exists();
                 if ($existingClientProjects) {
@@ -381,13 +393,47 @@ class TableUsers extends Component
                         'type' => 'success',
                         'title' => 'Usuario eliminado',
                     ]);
-                } else {
+                }
+                // Verificar si existe algún registro en la tabla pivote con developer's = true
+                $existingDeveloper1Projects = $user->projects()->wherePivot('developer1', true)->exists();
+                $existingDeveloper2Projects = $user->projects()->wherePivot('developer2', true)->exists();
+                if ($existingDeveloper1Projects) {
+                    // Eliminar los registros existentes donde developer1 es true para el proyecto actual
+                    $user->projects()->wherePivot('developer1', true)->detach();
+                    // Eliminar imagen anterior
+                    if (Storage::disk('users')->exists($user->profile_photo)) {
+                        Storage::disk('users')->delete($user->profile_photo);
+                    }
+                    // Actualizar el campos
+                    $user->profile_photo = null;
+                    // $user->effort_points = 0;
+                    $user->save();
+                    $user->delete();
+                    // Emitir un evento de navegador
                     $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Usuario asignado a proyecto',
-                        'text' => 'Eliminar usuario del proyecto asignado antes de realizar cambios.',
+                        'type' => 'success',
+                        'title' => 'Usuario eliminado',
+                        'text' => 'El usuario tenia tareas asignadas, buscarlas y reasignarlas a otro usuario.'
                     ]);
-                    return;
+                } 
+                if ($existingDeveloper2Projects) {
+                    // Eliminar los registros existentes donde developer1 es true para el proyecto actual
+                    $user->projects()->wherePivot('developer2', true)->detach();
+                    // Eliminar imagen anterior
+                    if (Storage::disk('users')->exists($user->profile_photo)) {
+                        Storage::disk('users')->delete($user->profile_photo);
+                    }
+                    // Actualizar el campos
+                    $user->profile_photo = null;
+                    // $user->effort_points = 0;
+                    $user->save();
+                    $user->delete();
+                    // Emitir un evento de navegador
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Usuario eliminado',
+                        'text' => 'El usuario tenia tareas asignadas, buscarlas y reasignarlas a otro usuario.'
+                    ]);
                 }
             } else {
                 // Eliminar imagen anterior

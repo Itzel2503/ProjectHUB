@@ -1,6 +1,6 @@
 <div>
     {{-- Tabla usuarios --}}
-    <div class="l px-4 py-4 sm:rounded-lg">
+    <div class="px-4 py-4 sm:rounded-lg">
         {{-- NAVEGADOR --}}
         <div class="flex flex-col justify-between gap-2 text-sm md:flex-row lg:text-base">
             <!-- SEARCH -->
