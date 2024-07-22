@@ -470,7 +470,7 @@
                                                                 disabled @endif
                                                     @endif
                                             @endif
-                                            class="inpSelectTable @if ($task->state == 'Resuelto') hidden @endif w-full w-full text-sm text-sm">
+                                            class="inpSelectTable w-full w-full text-sm text-sm">
                                             @if ($task->delegate_id)
                                                 <option selected value={{ $task->delegate_id }}>
                                                     {{ $task->delegate_name }}
@@ -480,11 +480,13 @@
                                                     Seleccionar...
                                                 </option>
                                             @endif
-                                            @foreach ($task->usersFiltered as $userFiltered)
-                                                <option value="{{ $userFiltered->id }}">
-                                                    {{ $userFiltered->name }}
-                                                </option>
-                                            @endforeach
+                                            @if ($task->state != 'Resuelto')
+                                                @foreach ($task->usersFiltered as $userFiltered)
+                                                    <option value="{{ $userFiltered->id }}">
+                                                        {{ $userFiltered->name }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
                                             </select>
                                             <p class="text-xs">
                                                 @if ($task->state == 'Proceso' || $task->state == 'Conflicto')
