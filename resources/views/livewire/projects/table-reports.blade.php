@@ -383,7 +383,7 @@
                                         </button>
                                         <!-- Panel -->
                                         <div id="dropdown-panel-{{ $report->id }}" style="display: none;"
-                                            class="@if (Auth::user()->type_user == 1 || Auth::user()->id == $report->user->id) {{ $loop->last ? '-top-16' : 'top-3' }} @else {{ $loop->last ? '-top-8' : 'top-3' }} @endif absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
+                                            class="@if (Auth::user()->type_user == 1 || (isset($report->user) && Auth::user()->id == $report->user->id)) {{ $loop->last ? '-top-16' : 'top-3' }} @else {{ $loop->last ? '-top-8' : 'top-3' }} @endif absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
                                             <!-- Botón Editar -->
                                             <div wire:click="showEdit({{ $report->id }})"
                                                 class="@if ($report->state == 'Resuelto') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-black">
@@ -401,7 +401,7 @@
                                                 </svg>
                                                 Editar
                                             </div>
-                                            @if (Auth::user()->type_user == 1 || Auth::user()->id == $report->user->id)
+                                            @if (Auth::user()->type_user == 1 || (isset($report->user) && Auth::user()->id == $report->user->id))
                                                 <!-- Botón Eliminar -->
                                                 <div wire:click="$emit('deleteReport',{{ $report->id }}, {{ $project->id }})"
                                                     class="@if ($report->state != 'Abierto') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-red-600">
@@ -543,6 +543,7 @@
                                 @endif
                             </div>
                             <div class="my-6 flex w-auto flex-row">
+                                @if (isset($report->user))
                                 <input wire:model.defer='message' type="text" name="message" id="message"
                                     class="inputs" style="border-radius: 0.5rem 0px 0px 0.5rem !important"
                                     @if (Auth::user()->type_user != 3) placeholder="Mensaje"
@@ -561,6 +562,7 @@
                                     </svg>
                                     Comentar
                                 </button>
+                                @endif
                             </div>
                         </div>
                         <div id="example" class="photos w-full px-5 lg:w-1/2">
@@ -928,7 +930,7 @@
                                     Story Points</h4>
                             </div>
                             @if ($showEdit)
-                                @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)
+                                @if (Auth::user()->type_user == 1 || (isset($reportEdit->user) && Auth::user()->id == $reportEdit->user->id))
                                     <div class="mb-6 flex flex-row">
                                         <span wire:click="changePoints"
                                             class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
@@ -953,7 +955,7 @@
                                         <h5 class="inline-flex font-semibold" for="name">
                                             Puntos <p class="text-red-600">*</p>
                                         </h5>
-                                        @if (Auth::user()->type_user == 1 || Auth::id() == $reportEdit->user->id)
+                                        @if (Auth::user()->type_user == 1 || (isset($reportEdit->user) && Auth::user()->id == $reportEdit->user->id))
                                             <input wire:model='points' required type="number"
                                                 placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
                                                 class="inputs">

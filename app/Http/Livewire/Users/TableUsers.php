@@ -295,7 +295,9 @@ class TableUsers extends Component
             if ($existingPivote) {
                 // Verificar si existe algún registro en la tabla pivote con client = true
                 $existingClientProjects = $user->projects()->wherePivot('client', true)->exists();
-                if (!$existingClientProjects) {
+                $existingDeveloper1Projects = $user->projects()->wherePivot('developer1', true)->exists();
+                $existingDeveloper2Projects = $user->projects()->wherePivot('developer2', true)->exists();
+                if (!$existingClientProjects || $existingDeveloper1Projects || $existingDeveloper2Projects) {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'error',
                         'title' => 'Usuario asignado a proyecto',
@@ -322,7 +324,7 @@ class TableUsers extends Component
                     // Crear un array con los datos de los proyectos seleccionados
                     $projectsData = [];
                     foreach ($this->selectedProjects as $projectId) {
-                        $projectsData[$projectId] = ['leader' => false, 'product_owner' => false, 'developer' => false, 'client' => true];
+                        $projectsData[$projectId] = ['leader' => false, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => true];
                     }
                     // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
                     $user->projects()->syncWithoutDetaching($projectsData);
@@ -338,7 +340,7 @@ class TableUsers extends Component
                 // Crear un array con los datos de los proyectos seleccionados
                 $projectsData = [];
                 foreach ($this->selectedProjects as $projectId) {
-                    $projectsData[$projectId] = ['leader' => false, 'product_owner' => false, 'developer' => false, 'client' => true];
+                    $projectsData[$projectId] = ['leader' => false, 'product_owner' => false, 'developer1' => false, 'developer2' => false, 'client' => true];
                 }
                 // Luego, usa syncWithoutDetaching para evitar eliminar otras relaciones
                 $user->projects()->syncWithoutDetaching($projectsData);

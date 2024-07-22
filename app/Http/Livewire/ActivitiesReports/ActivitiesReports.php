@@ -257,7 +257,7 @@ class ActivitiesReports extends Component
                 ->orderBy('expected_date', $this->expected_dateActivity)
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
-                ->get();
+                ->paginate($this->perPage);
 
             $reports = Report::where(function ($query) {
                 $query
@@ -288,7 +288,7 @@ class ActivitiesReports extends Component
                 ->orderBy('expected_date', $this->expected_dateReport)
                 ->where('state', '!=', 'Resuelto')
                 ->with(['user', 'delegate'])
-                ->get();
+                ->paginate($this->perPage);
 
             if (Auth::user()->area_id == 4) {
                 $reportsDukke = Report::where('project_id', 5)
@@ -316,12 +316,12 @@ class ActivitiesReports extends Component
                     ->orderBy('expected_date', $this->expected_dateDukke)
                     ->where('state', '!=', 'Resuelto')
                     ->with(['user', 'delegate'])
-                    ->get();
+                    ->paginate($this->perPage);
             } else {
                 $reportsDukke = null;
             }
-            $tasks = null;
-            $created = null;
+            $paginatedTask = null;
+            $paginatedCreated = null;
         }
         // ADD ATRIBUTES ACTIVITIES
         foreach ($activities as $activity) {
