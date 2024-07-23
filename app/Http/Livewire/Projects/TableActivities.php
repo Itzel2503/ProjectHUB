@@ -249,6 +249,8 @@ class TableActivities extends Component
                                 } else {
                                     $activity->client = false;
                                 }
+                            } else {
+                                $activity->client = false;
                             }
                             $activity->user_id = false;
                         }

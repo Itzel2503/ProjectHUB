@@ -206,6 +206,8 @@ class TableReports extends Component
                                 } else {
                                     $report->client = false;
                                 }
+                            } else {
+                                $report->client = false;
                             }
                             $report->user_id = false;
                         }

@@ -421,6 +421,8 @@ class ActivitiesReports extends Component
                                 } else {
                                     $activity->client = false;
                                 }
+                            } else {
+                                $activity->client = false;
                             }
                             $activity->user_id = false;
                         }
@@ -497,8 +499,12 @@ class ActivitiesReports extends Component
                         if ($lastMessage->user_id == Auth::id()) {
                             $report->user_id = true;
                         } else {
-                            if ($lastMessage->receiver->type_user == 3) {
-                                $report->client = true;
+                            if ($lastMessage->receiver) {
+                                if ($lastMessage->receiver->type_user == 3) {
+                                    $report->client = true;
+                                } else {
+                                    $report->client = false;
+                                }
                             } else {
                                 $report->client = false;
                             }
@@ -632,8 +638,12 @@ class ActivitiesReports extends Component
                             if ($lastMessage->user_id == Auth::id()) {
                                 $task->user_id = true;
                             } else {
-                                if ($lastMessage->receiver->type_user == 3) {
-                                    $task->client = true;
+                                if ($lastMessage->receiver) {
+                                    if ($lastMessage->receiver->type_user == 3) {
+                                        $task->client = true;
+                                    } else {
+                                        $task->client = false;
+                                    }
                                 } else {
                                     $task->client = false;
                                 }
@@ -772,8 +782,12 @@ class ActivitiesReports extends Component
                             if ($lastMessage->user_id == Auth::id()) {
                                 $create->user_id = true;
                             } else {
-                                if ($lastMessage->receiver->type_user == 3) {
-                                    $create->client = true;
+                                if ($lastMessage->receiver) {
+                                    if ($lastMessage->receiver->type_user == 3) {
+                                        $create->client = true;
+                                    } else {
+                                        $create->client = false;
+                                    }
                                 } else {
                                     $create->client = false;
                                 }
@@ -852,8 +866,12 @@ class ActivitiesReports extends Component
                             if ($lastMessage->user_id == Auth::id()) {
                                 $report->user_id = true;
                             } else {
-                                if ($lastMessage->receiver->type_user == 3) {
-                                    $report->client = true;
+                                if ($lastMessage->receiver) {
+                                    if ($lastMessage->receiver->type_user == 3) {
+                                        $report->client = true;
+                                    } else {
+                                        $report->client = false;
+                                    }
                                 } else {
                                     $report->client = false;
                                 }
