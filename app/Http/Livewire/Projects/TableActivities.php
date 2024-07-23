@@ -243,10 +243,12 @@ class TableActivities extends Component
                         if ($lastMessage->user_id == Auth::id()) {
                             $activity->user_id = true;
                         } else {
-                            if ($lastMessage->receiver->type_user == 3) {
-                                $activity->client = true;
-                            } else {
-                                $activity->client = false;
+                            if ($lastMessage->receiver) {
+                                if ($lastMessage->receiver->type_user == 3) {
+                                    $activity->client = true;
+                                } else {
+                                    $activity->client = false;
+                                }
                             }
                             $activity->user_id = false;
                         }

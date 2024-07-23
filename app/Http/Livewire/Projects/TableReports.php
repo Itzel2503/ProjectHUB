@@ -200,10 +200,12 @@ class TableReports extends Component
                         if ($lastMessage->user_id == Auth::id()) {
                             $report->user_id = true;
                         } else {
-                            if ($lastMessage->receiver->type_user == 3) {
-                                $report->client = true;
-                            } else {
-                                $report->client = false;
+                            if ($lastMessage->receiver) {
+                                if ($lastMessage->receiver->type_user == 3) {
+                                    $report->client = true;
+                                } else {
+                                    $report->client = false;
+                                }
                             }
                             $report->user_id = false;
                         }
