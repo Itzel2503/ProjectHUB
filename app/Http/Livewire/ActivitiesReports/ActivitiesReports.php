@@ -415,10 +415,12 @@ class ActivitiesReports extends Component
                         if ($lastMessage->user_id == Auth::id()) {
                             $activity->user_id = true;
                         } else {
-                            if ($lastMessage->receiver->type_user == 3) {
-                                $activity->client = true;
-                            } else {
-                                $activity->client = false;
+                            if ($lastMessage->receiver) {
+                                if ($lastMessage->receiver->type_user == 3) {
+                                    $activity->client = true;
+                                } else {
+                                    $activity->client = false;
+                                }
                             }
                             $activity->user_id = false;
                         }
@@ -1176,6 +1178,7 @@ class ActivitiesReports extends Component
                     $this->reportEvidenceReport = $report;
                 } else {
                     $report->state = $state;
+                    $report->updated_expected_date = true;
                     $report->end_date = Carbon::now();
                     $report->repeat = true;
                     $report->save();
@@ -1271,6 +1274,7 @@ class ActivitiesReports extends Component
                     'type' => 'success',
                     'title' => 'Evidencia actualizada',
                 ]);
+                $report->updated_expected_date = true;
                 $report->end_date = Carbon::now();
                 $report->state = 'Resuelto';
                 $report->repeat = true;
@@ -1389,7 +1393,6 @@ class ActivitiesReports extends Component
         $this->reportShow = Report::find($id);
         $this->evidenceShow = Evidence::where('report_id', $this->reportShow->id)->first();
 
-
         $this->messagesReport = ChatReports::where('report_id', $this->reportShow->id)->orderBy('created_at', 'asc')->get();
         // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
         $lastMessage = ChatReports::where('report_id', $this->reportShow->id)
@@ -1423,7 +1426,6 @@ class ActivitiesReports extends Component
             $this->showChatReport = true;
             $this->messagesReport->messages_count = $this->messagesReport->where('look', false)->count();
             // Marcar como vistos los mensajes si hay dos o más sin ver
-            // dd($this->messages);
             if ($this->messagesReport->messages_count >= 2) {
                 // Filtrar los mensajes que no han sido vistos
                 $moreMessages = $this->messagesReport->where('look', false);
@@ -1442,7 +1444,7 @@ class ActivitiesReports extends Component
         }
 
         $user = Auth::user();
-
+        // REPORTE EN VISTO
         if ($this->reportShow && $this->reportShow->delegate_id == $user->id && $this->reportShow->state == 'Abierto' && $this->reportShow->progress == null) {
             $this->reportShow->progress = Carbon::now();
             $this->reportShow->look = true;
@@ -1461,6 +1463,13 @@ class ActivitiesReports extends Component
             }
         } else {
             $this->reportShow->contentExists = false;
+        }
+        // USUARIO CREADOR ELIMINADO
+        $create_user = User::find($this->reportShow->user_id);
+        if ($create_user) {
+            $this->reportShow->create_user = true;
+        } else {
+            $this->reportShow->create_user = false;
         }
     }
 

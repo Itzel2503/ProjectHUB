@@ -1736,24 +1736,26 @@
                             @endif
                         </div>
                         <div class="my-6 flex w-auto flex-row">
-                            <input wire:model.defer='messageReport' type="text" name="message" id="message"
-                                class="inputs" style="border-radius: 0.5rem 0px 0px 0.5rem !important"
-                                @if (Auth::user()->type_user != 3) placeholder="Mensaje"
-                            @else
-                            placeholder="Mensaje para Arten" @endif>
-                            <button class="btnSave" style="border-radius: 0rem 0.5rem 0.5rem 0rem !important"
-                                wire:click="updateChatReport({{ $reportShow->id }})">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send"
-                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M10 14l11 -11" />
-                                    <path
-                                        d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
-                                </svg>
-                                Comentar
-                            </button>
+                            @if ($reportShow->create_user)
+                                <input wire:model.defer='messageReport' type="text" name="message" id="message"
+                                    class="inputs" style="border-radius: 0.5rem 0px 0px 0.5rem !important"
+                                    @if (Auth::user()->type_user != 3) placeholder="Mensaje"
+                                @else
+                                placeholder="Mensaje para Arten" @endif>
+                                <button class="btnSave" style="border-radius: 0rem 0.5rem 0.5rem 0rem !important"
+                                    wire:click="updateChatReport({{ $reportShow->id }})">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send"
+                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" fill="none" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M10 14l11 -11" />
+                                        <path
+                                            d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
+                                    </svg>
+                                    Comentar
+                                </button>
+                            @endif
                         </div>
                     </div>
                     <div id="example" class="photos w-full px-5 lg:w-1/2">
