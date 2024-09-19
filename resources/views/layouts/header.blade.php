@@ -52,7 +52,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    
+
     <style>
         .scrollEdit::-webkit-scrollbar {
             width: 6px;
@@ -91,6 +91,7 @@
         }
     </style>
 </head>
+
 <body>
     <div id="container" class="text-text1 relative flex h-screen">
         <!-- Desktop sidebar -->
@@ -223,6 +224,21 @@
                                     <path d="M20.733 20l1.3 .75" />
                                 </svg>
                                 <span class="ml-4">Story Points</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if ($user->type_user == 1 && $user->area_id == 1)
+                        <li class="menu">
+                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                                href="https://coma.artendigital.mx/projects/30/reports">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="currentColor"
+                                    class="icon icon-tabler icons-tabler-filled icon-tabler-star">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z" />
+                                </svg>
+                                <span class="ml-4">Administración</span>
                             </a>
                         </li>
                     @endif
@@ -397,22 +413,37 @@
                             <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
                                 href="{{ route('effortPoints.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-settings-cog">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path
-                                            d="M12.003 21c-.732 .001 -1.465 -.438 -1.678 -1.317a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c.886 .215 1.325 .957 1.318 1.694" />
-                                        <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-                                        <path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                        <path d="M19.001 15.5v1.5" />
-                                        <path d="M19.001 21v1.5" />
-                                        <path d="M22.032 17.25l-1.299 .75" />
-                                        <path d="M17.27 20l-1.3 .75" />
-                                        <path d="M15.97 17.25l1.3 .75" />
-                                        <path d="M20.733 20l1.3 .75" />
-                                    </svg>
-                                    <span class="ml-4">Story Points</span>
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-settings-cog">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M12.003 21c-.732 .001 -1.465 -.438 -1.678 -1.317a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c.886 .215 1.325 .957 1.318 1.694" />
+                                    <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                                    <path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M19.001 15.5v1.5" />
+                                    <path d="M19.001 21v1.5" />
+                                    <path d="M22.032 17.25l-1.299 .75" />
+                                    <path d="M17.27 20l-1.3 .75" />
+                                    <path d="M15.97 17.25l1.3 .75" />
+                                    <path d="M20.733 20l1.3 .75" />
+                                </svg>
+                                <span class="ml-4">Story Points</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if ($user->type_user == 1 && $user->area_id == 1)
+                        <li class="menu">
+                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                                href="https://coma.artendigital.mx/projects/30/reports">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="currentColor"
+                                    class="icon icon-tabler icons-tabler-filled icon-tabler-star">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z" />
+                                </svg>
+                                <span class="ml-4">Administración</span>
                             </a>
                         </li>
                     @endif
