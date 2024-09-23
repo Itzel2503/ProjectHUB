@@ -17,7 +17,8 @@
                 <span class="ml-4 text-xl">Actividades y Reportes</span>
             </h1>
         </div>
-        <div id="chart" class="my-5"></div>
+        <div id="chart1" class="my-5 hidden md:block"></div>
+        <div id="chart2" class="my-5 block md:hidden"></div>
         <livewire:activities-reports.activities-reports>
 
             @livewireScripts
@@ -33,7 +34,7 @@
             var series = @json($series);
             var totalEffortPoints = @json($totalEffortPoints);
 
-            var options = {
+            var options1 = {
                 series: series,
                 chart: {
                     type: 'bar',
@@ -110,7 +111,87 @@
                 }
             };
 
-            chart = new ApexCharts(document.querySelector("#chart"), options);
+            var options2 = {
+                series: series,
+                chart: {
+                    type: 'bar',
+                    height: 'auto',
+                    stacked: true,
+                },
+                colors: ['rgb(77, 124, 15)', 'rgb(250, 204, 21)', 'rgb(220, 38, 38)', 'rgb(59, 130, 246)',
+                    'rgb(243, 244, 246)', 'rgb(0,0,0)'
+                ],
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        dataLabels: {
+                            position: 'top',
+                            total: {
+                                enabled: true,
+                                formatter: function(val, opt) {
+                                    return totalEffortPoints[opt.dataPointIndex];
+                                },
+                                offsetX: 0,
+                                style: {
+                                    fontSize: '13px',
+                                    fontWeight: 900,
+                                    color: function({
+                                        seriesIndex
+                                    }) {
+                                        return seriesIndex === 4 ? '#000' : '#fff';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        colors: ['#fff', '#fff', '#fff', '#fff', '#000']
+                    }
+                },
+                stroke: {
+                    width: 1,
+                    colors: ['#fff']
+                },
+                title: {
+                    text: 'Story Points por mes'
+                },
+                xaxis: {
+                    categories: categories,
+                    labels: {
+                        formatter: function(val) {
+                            return val;
+                        }
+                    }
+                },
+                yaxis: {
+                    title: {
+                        text: undefined
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(val) {
+                            return val;
+                        }
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'left',
+                    offsetX: 40
+                }
+            };
+
+            chart = new ApexCharts(document.querySelector("#chart1"), options1);
+            chart.render();
+
+            chart = new ApexCharts(document.querySelector("#chart2"), options2);
             chart.render();
         });
     </script>
