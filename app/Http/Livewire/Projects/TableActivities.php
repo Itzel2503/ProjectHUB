@@ -49,12 +49,12 @@ class TableActivities extends Component
     // table, action's activities
     public $search;
     public $perPage = '';
-    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc', $orderByType = 'expected_date';
+    public $selectedDelegate = '', $filteredPriority = '', $filteredStateArrow = '', $priorityCase = '', $filteredExpected = 'desc', $orderByType = 'expected_date';
     public $usersFiltered = [],
         $allUsersFiltered = [],
         $selectedStates = [],
         $statesFiltered = [];
-    public $filtered = false, $filter = false, $filterPriotiry = false;
+    public $filtered = false, $filter = false, $filterPriotiry = false, $filterState = false;
 
     public function render()
     {
@@ -145,6 +145,9 @@ class TableActivities extends Component
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
+                ->when($this->filterState, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
+                })
                 ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
                 ->select('activities.*', 'delegates.name')
                 ->orderBy($this->orderByType, $this->filteredExpected)
@@ -167,6 +170,9 @@ class TableActivities extends Component
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->when($this->filterState, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
                 })
                 ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
                 ->select('activities.*', 'delegates.name')
@@ -1215,18 +1221,28 @@ class TableActivities extends Component
 
         if ($type == 'priority') {
             $this->filterPriotiry = true;
+            $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
         }
 
         if ($type == 'delegate') {
             $this->filterPriotiry = false;
+            $this->filterState = false;
             $this->orderByType = 'name';
             $this->filteredExpected = 'asc';
+        }
+
+        if ($type == 'state') {
+            $this->filterPriotiry = false;
+            $this->filterState = true;
+            $this->filteredStateArrow = 'asc';
+            $this->priorityCase = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END";
         }
         
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
+            $this->filterState = false;
             $this->filteredExpected = 'asc';
         }
     }
@@ -1238,18 +1254,28 @@ class TableActivities extends Component
 
         if ($type == 'priority') {
             $this->filterPriotiry = true;
+            $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
         }
 
         if ($type == 'delegate') {
             $this->filterPriotiry = false;
+            $this->filterState = false;
             $this->orderByType = 'name';
             $this->filteredExpected = 'desc';
+        }
+
+        if ($type == 'state') {
+            $this->filterPriotiry = false;
+            $this->filterState = true;
+            $this->filteredStateArrow = 'asc';
+            $this->priorityCase = "CASE WHEN state = 'Resuelto' THEN 1 WHEN state = 'Conflicto' THEN 2 WHEN state = 'Proceso' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END";
         }
         
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
+            $this->filterState = false;
             $this->filteredExpected = 'desc';
         }
     }

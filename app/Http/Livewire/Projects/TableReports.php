@@ -32,10 +32,10 @@ class TableReports extends Component
     public $changePoints = false;
     public $points, $point_know, $point_many, $point_effort;
     // table, action's reports
-    public $leader = false, $filtered = false, $filter = false, $filterPriotiry = false;
+    public $leader = false, $filtered = false, $filter = false, $filterPriotiry = false, $filterState = false;
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
     public $perPage = '50';
-    public $selectedDelegate = '', $filteredPriority = '', $priorityCase = '', $filteredExpected = 'desc', $orderByType = 'expected_date';
+    public $selectedDelegate = '', $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredExpected = 'desc', $orderByType = 'expected_date';
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
     // inputs
     public $tittle, $type, $file, $comment, $evidenceEdit, $expected_date, $priority1, $priority2, $priority3, $evidence, $message;
@@ -65,6 +65,9 @@ class TableReports extends Component
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->when($this->filterState, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
                 })
                 ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
                 ->select('reports.*', 'delegates.name')
@@ -96,6 +99,9 @@ class TableReports extends Component
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
+                ->when($this->filterState, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
+                })
                 ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
                 ->select('reports.*', 'delegates.name')
                 ->orderBy($this->orderByType, $this->filteredExpected)
@@ -117,6 +123,9 @@ class TableReports extends Component
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->when($this->filterState, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
                 })
                 ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
                 ->select('reports.*', 'delegates.name')
@@ -215,6 +224,20 @@ class TableReports extends Component
                 }
             }
             $report->messages_count = $messages->where('look', false)->count();
+            // Verificar si el archivo existe en la base de datos
+            if ($report->content) {
+                // Verificar si el archivo existe en la carpeta
+                $filePath = public_path('reportes/' . $report->content);
+                $fileExtension = pathinfo($report->content, PATHINFO_EXTENSION);
+                if (file_exists($filePath)) {
+                    $report->contentExists = true;
+                    $report->fileExtension = $fileExtension;
+                } else {
+                    $report->contentExists = false;
+                }
+            } else {
+                $report->contentExists = false;
+            }
         }
         return view('livewire.projects.table-reports', [
             'reports' => $reports,
@@ -835,18 +858,28 @@ class TableReports extends Component
 
         if ($type == 'priority') {
             $this->filterPriotiry = true;
+            $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
         }
 
+        if ($type == 'state') {
+            $this->filterPriotiry = false;
+            $this->filterState = true;
+            $this->filteredState = 'asc';
+            $this->priorityCase = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END";
+        }
+
         if ($type == 'delegate') {
             $this->filterPriotiry = false;
+            $this->filterState = false;
             $this->orderByType = 'name';
             $this->filteredExpected = 'asc';
         }
 
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
+            $this->filterState = false;
             $this->orderByType = 'expected_date';
             $this->filteredExpected = 'asc';
         }
@@ -859,18 +892,28 @@ class TableReports extends Component
 
         if ($type == 'priority') {
             $this->filterPriotiry = true;
+            $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+        }
+        
+        if ($type == 'state') {
+            $this->filterPriotiry = false;
+            $this->filterState = true;
+            $this->filteredState = 'asc';
+            $this->priorityCase = "CASE WHEN state = 'Resuelto' THEN 1 WHEN state = 'Conflicto' THEN 2 WHEN state = 'Proceso' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END";
         }
 
         if ($type == 'delegate') {
             $this->filterPriotiry = false;
+            $this->filterState = false;
             $this->orderByType = 'name';
             $this->filteredExpected = 'desc';
         }
 
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
+            $this->filterState = false;
             $this->orderByType = 'expected_date';
             $this->filteredExpected = 'desc';
         }
