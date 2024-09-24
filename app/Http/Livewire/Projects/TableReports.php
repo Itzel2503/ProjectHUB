@@ -236,7 +236,7 @@ class TableReports extends Component
                     $report->contentExists = false;
                 }
             } else {
-                $report->contentExists = false;
+                $report->contentExists = true;
             }
         }
         return view('livewire.projects.table-reports', [
