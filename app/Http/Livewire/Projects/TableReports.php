@@ -225,7 +225,7 @@ class TableReports extends Component
             }
             $report->messages_count = $messages->where('look', false)->count();
             // Verificar si el archivo existe en la base de datos
-            if ($report->content) {
+            if ($report->content && $report->video == true) {
                 // Verificar si el archivo existe en la carpeta
                 $filePath = public_path('reportes/' . $report->content);
                 $fileExtension = pathinfo($report->content, PATHINFO_EXTENSION);
