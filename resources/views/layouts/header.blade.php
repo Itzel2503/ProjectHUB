@@ -95,46 +95,47 @@
 <body>
     <div id="container" class="text-text1 relative flex h-screen">
         <!-- Desktop sidebar -->
-        <div class="bg-primaryColor z-20 hidden w-60 flex-shrink-0 overflow-y-auto shadow-md md:block">
-            <div class="bg-primaryColor py-1" style="height:100%">
+        <div class="text-white z-20 hidden w-60 flex-shrink-0 overflow-y-auto shadow-md md:block">
+            <div class="bg-coma-gradient bg-full bg-position-full py-1" style="height:100%">
                 @if (Auth::user())
                     @php
                         $user = DB::table('users')
                             ->where('id', Auth::user()->id)
                             ->first();
                     @endphp
-                    <div class="mt-5 flex justify-center justify-items-center">
+                        <div class="relative mt-5 flex justify-center justify-items-center">
                         @if (Auth::user()->profile_photo)
-                            <img class="mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
+                            <img class="z-10 mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
                                 src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}" alt="Avatar" />
                         @else
-                            <img class="mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
+                            <img class="z-10 mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
                                 src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar" />
                         @endif
-                    </div>
-                    <div class="w-full pt-2 text-center text-base font-medium">
-                        <p>{{ Auth::user()->name }}</p>
-                        <p>{{ Auth::user()->email }}</p>
-                        <p>{{ Auth::user()->area->name }}</p>
-                        <a class="menu flex cursor-pointer justify-center" href="{{ route('profile.index') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit mr-2"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                                <path d="M16 5l3 3" />
-                            </svg>
-                        </a>
+                            <a class="z-50 absolute mx-auto h-24 w-24 rounded-full bg-gray-900 cursor-pointer opacity-0 hover:opacity-80 justify-center justify-items-center" href="{{ route('profile.index') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit mx-auto mt-8"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                    <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                    <path d="M16 5l3 3" />
+                                </svg>
+                            </a>
+                        </div>
+                    <div class="w-full pt-2 text-center text-base mb-10">
+                        <p class="font-medium">{{ Auth::user()->name }}</p>
+                        <p class="font-light">{{ Auth::user()->email }}</p>
+                        <span class="text-xs">-</span>
+                        <p class="text-sm font-light">{{ Auth::user()->area->name }}</p>
                     </div>
                 @endif
                 <ul class="mt-5">
                     @if ($user->type_user == 1)
                         <li class="menu {{ request()->routeIs('userCatalog.index') ? 'active' : '' }}">
-                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="{{ route('userCatalog.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group"
-                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                                     stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
@@ -148,10 +149,10 @@
                             </a>
                         </li>
                         <li class="menu {{ request()->routeIs('customers.index') ? 'active' : '' }}">
-                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="{{ route('customers.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users"
-                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                                     stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
@@ -164,10 +165,10 @@
                         </li>
                     @endif
                     <li class="menu {{ request()->routeIs('projects.index') ? 'active' : '' }}">
-                        <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                        <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                             href="{{ route('projects.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-books"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path
@@ -186,10 +187,10 @@
                     </li>
                     @if ($user->type_user != 3)
                         <li class="menu {{ request()->routeIs('activities-reports.index') ? 'active' : '' }}">
-                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="{{ route('activities-reports.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
                                     class="icon icon-tabler icons-tabler-outline icon-tabler-list-search">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -205,10 +206,10 @@
                     @endif
                     @if ($user->type_user == 1)
                         <li class="menu {{ request()->routeIs('effortPoints.index') ? 'active' : '' }}">
-                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="{{ route('effortPoints.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
                                     class="icon icon-tabler icons-tabler-outline icon-tabler-settings-cog">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -229,7 +230,7 @@
                     @endif
                     @if ($user->type_user == 1 && $user->area_id == 1)
                         <li class="menu">
-                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="https://coma.artendigital.mx/projects/30/reports">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="currentColor"
@@ -246,12 +247,12 @@
                 <form method="POST" action="{{ route('logout') }}" x-data>
                     @csrf
                     <div class="pt-20 text-center">
-                        <span class="text-base font-semibold">
+                        <span class="text-base font-normal">
                             <button value="Log out" type="submit"
-                                class="border-secundaryColor hover: rounded border bg-transparent px-4 py-2 font-semibold hover:border-white">
+                                class="border-secundaryColor hover: rounded border bg-transparent px-4 py-2 font-normal hover:border-white">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="icon icon-tabler icon-tabler-logout float-right ml-2 mt-1 h-5 w-5"
-                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                                     stroke="currentColor" fill="none" stroke-linecap="round"
                                     stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -286,13 +287,13 @@
                     this.open = false
                     focusAfter && focusAfter.focus()
                 }
-            }" class="bg-primaryColor block md:hidden">
+            }" class="bg-secundaryColor block md:hidden">
             <div class="@if (Route::currentRouteName() == 'projects.reports.index') justify-between @else justify-end @endif flex p-4">
                 @if (Route::currentRouteName() == 'projects.reports.index')
-                    <a class="inline-flex w-auto items-center text-base font-semibold transition-colors duration-150"
+                    <a class="inline-flex w-auto items-center text-base font-normal transition-colors duration-150"
                         href="{{ route('projects.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-back-up"
-                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                             <path d="M9 14l-4 -4l4 -4" />
@@ -303,9 +304,9 @@
                 @endif
                 <button x-ref="button" x-on:click="toggle()" :aria-expanded="open"
                     :aria-controls="$id('dropdown-button')" type="button"
-                    class="flex items-center gap-2 rounded-md px-5 py-2.5 shadow">
+                    class="flex items-center gap-2 rounded-md px-5 py-2.5 text-white border-solid border border-primaryColor">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2"
-                        width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                         fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                         <path d="M4 6l16 0" />
@@ -316,13 +317,13 @@
             </div>
             <div x-ref="panel" x-show="open" x-on:click.outside="close($refs.button)" :id="$id('dropdown-button')"
                 style="display: none;"
-                class="bg-primaryColor textg-white absolute z-40 w-full rounded-b-md py-4 shadow-md">
+                class="bg-secundaryColor text-white absolute z-40 w-full rounded-b-md py-4 shadow-md">
                 <ul>
                     <li class="menu {{ request()->routeIs('profile.index') ? 'active' : '' }}">
-                        <a class="inline-flex w-full text-base font-semibold transition-colors duration-150"
+                        <a class="inline-flex w-full text-base font-normal transition-colors duration-150"
                             href="{{ route('profile.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-circle"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
@@ -334,11 +335,11 @@
                     </li>
                     @if (Auth::user()->type_user == 1)
                         <li class="menu {{ request()->routeIs('userCatalog.index') ? 'active' : '' }}">
-                            <a class="inline-flex w-full text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full text-base font-normal transition-colors duration-150"
                                 href="{{ route('userCatalog.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="icon icon-tabler icon-tabler-users-group" width="24" height="24"
-                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
                                     stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
@@ -352,10 +353,10 @@
                             </a>
                         </li>
                         <li class="menu {{ request()->routeIs('customers.index') ? 'active' : '' }}">
-                            <a class="inline-flex w-full text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full text-base font-normal transition-colors duration-150"
                                 href="{{ route('customers.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users"
-                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                                     stroke="currentColor" fill="none" stroke-linecap="round"
                                     stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -369,10 +370,10 @@
                         </li>
                     @endif
                     <li class="menu {{ request()->routeIs('projects.index') ? 'active' : '' }}">
-                        <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                        <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                             href="{{ route('projects.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-books"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path
@@ -391,10 +392,10 @@
                     </li>
                     @if ($user->type_user != 3)
                         <li class="menu {{ request()->routeIs('activities-reports.index') ? 'active' : '' }}">
-                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="{{ route('activities-reports.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
                                     class="icon icon-tabler icons-tabler-outline icon-tabler-list-search">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -410,10 +411,10 @@
                     @endif
                     @if ($user->type_user == 1)
                         <li class="menu {{ request()->routeIs('effortPoints.index') ? 'active' : '' }}">
-                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="{{ route('effortPoints.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
                                     class="icon icon-tabler icons-tabler-outline icon-tabler-settings-cog">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -434,7 +435,7 @@
                     @endif
                     @if ($user->type_user == 1 && $user->area_id == 1)
                         <li class="menu">
-                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="https://coma.artendigital.mx/projects/30/reports">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="currentColor"
@@ -451,9 +452,9 @@
                         <form method="POST" action="{{ route('logout') }}" x-data>
                             @csrf
                             <button value="Log out" type="submit"
-                                class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150">
+                                class="inline-flex w-full items-center text-base font-normal transition-colors duration-150">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-logout"
-                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                                     stroke="currentColor" fill="none" stroke-linecap="round"
                                     stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />

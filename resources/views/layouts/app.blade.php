@@ -73,7 +73,7 @@
             </div>
         </nav>
     </div> -->
-    <main class="  ">
+    <main class="bg-cover bg-center" style="background-image: url(images/out-0.png)">
         @yield('content')
     </main>
     </div>

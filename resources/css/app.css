@@ -4,7 +4,7 @@
 
 /* header */
 .active {
-    @apply border-l-4  border-secundaryColor font-extrabold bg-slate-100;
+    @apply border-l-4  border-primaryColor font-extrabold bg-secundaryColor;
 }
 .menu {
     @apply relative px-6 py-2.5 hover:opacity-70;

@@ -22,7 +22,20 @@ module.exports = {
         'text1': '#2e4c5f',
         'text2': '#575454' 
       },
+      backgroundImage: {
+        'coma-gradient': `radial-gradient(90% 90% at 27% 84%, #1F3544D4 0%, #073AFF00 99%),
+                           radial-gradient(35% 56% at 91% 74%, #3e6871 0%, #073AFF00 76%),
+                           radial-gradient(90% 90% at 89% 17%, #2e4c5f 0%, #073AFF00 95%),
+                           linear-gradient(139deg, #67B7BAFF 1%, #2e4c5f 100%)`
+      },
+      backgroundSize: {
+        'full': '100% 100%',
+      },
+      backgroundPosition: {
+        'full': '0px 0px, 0px 0px, 0px 0px, 0px 0px',
+      }
     },
+
   },
   plugins: [
     require('@tailwindcss/typography'),
