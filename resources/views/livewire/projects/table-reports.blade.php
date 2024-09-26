@@ -256,7 +256,7 @@
                                     </div>
                                     <p class="my-auto text-left text-xs font-semibold">{{ $report->title }}</p>
                                     @if ($report->contentExists == false)
-                                        <small class="text-red-600 ml-2">(Falta video)</small>
+                                        <small class="text-red-600 ml-2">(Falta archivo)</small>
                                     @endif
                                     @if ($report->messages_count >= 1)
                                         {{-- usuario --}}

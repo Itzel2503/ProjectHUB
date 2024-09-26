@@ -1816,6 +1816,29 @@
                                             @endif
                                         </div>
                                     @endif
+                                    @if (
+                                        $reportShow->image == true ||
+                                            $reportShow->video == true ||
+                                            ($reportShow->file == true && $reportShow->contentExists))
+                                        <div class="flex items-center justify-center">
+                                            <a href="{{ asset('reportes/' . $reportShow->content) }}"
+                                                download="{{ basename($reportShow->content) }}" class="btnSecondary"
+                                                style="color: white;">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon icon-tabler icon-tabler-download" width="24"
+                                                    height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                                    stroke="currentColor" fill="none" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                                    <path d="M7 11l5 5l5 -5" />
+                                                    <path d="M12 4l0 12" />
+                                                </svg>
+                                                &nbsp;
+                                                Descargar
+                                            </a>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="md-3/4 mb-5 mt-3 flex w-full flex-col items-center justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -1830,29 +1853,6 @@
                                             <path d="M3 3l18 18" />
                                         </svg>
                                         <p>Sin contenido</p>
-                                    </div>
-                                @endif
-                                @if (
-                                    $reportShow->image == true ||
-                                        $reportShow->video == true ||
-                                        ($reportShow->file == true && $reportShow->contentExists))
-                                    <div class="flex items-center justify-center">
-                                        <a href="{{ asset('reportes/' . $reportShow->content) }}"
-                                            download="{{ basename($reportShow->content) }}" class="btnSecondary"
-                                            style="color: white;">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-download" width="24"
-                                                height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                                                <path d="M7 11l5 5l5 -5" />
-                                                <path d="M12 4l0 12" />
-                                            </svg>
-                                            &nbsp;
-                                            Descargar
-                                        </a>
                                     </div>
                                 @endif
                             @else
