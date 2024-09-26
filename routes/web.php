@@ -5,7 +5,7 @@ use App\Http\Controllers\Projects\Activity;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Customers\Customer;
 use App\Http\Controllers\EffortPoints\EffortPoints;
-use App\Http\Controllers\Permit;
+use App\Http\Controllers\Inventory\Inventory;
 use App\Http\Controllers\Projects\Priority;
 use App\Http\Controllers\Projects\Project;
 use App\Http\Controllers\Projects\Report;
@@ -41,7 +41,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     // USERS
     Route::resource('userCatalog', UserCatalog::class)->only(['index'])->middleware('user.type:1');
     // CUSTOMERS
-    Route::resource('customers', Customer::class)->middleware('user.type:1');
+    Route::resource('customers', Customer::class)->middleware('user.type:1', 'user.area:1');
     // PROJECTS
     Route::resource('projects', Project::class)->only(['index']);
     Route::resource('priority', Priority::class)->middleware('user.type:1,2');
@@ -51,6 +51,8 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('/activities-reports', ActivityReport::class)->only(['index'])->middleware('user.type:1,2');
     // EFFORT POINTS
     Route::resource('/effortPoints', EffortPoints::class)->only(['index'])->middleware('user.type:1');
+    // INVENTORY
+    Route::resource('/storage', Inventory::class)->only(['index'])->middleware('user.type:1', 'user.area:1');
 });
 // Rutas de autenticación generadas por Auth::routes();
 Auth::routes();

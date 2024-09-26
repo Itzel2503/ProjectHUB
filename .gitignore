@@ -6,6 +6,7 @@
 /public/usuarios
 /public/activities
 /public/backlogs
+/public/inventory
 /storage/*.key
 /vendor
 .env

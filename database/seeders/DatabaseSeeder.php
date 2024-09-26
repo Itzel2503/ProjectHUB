@@ -34,6 +34,12 @@ class DatabaseSeeder extends Seeder
         Area::create([
             'name' => 'Cliente'
         ]);
+        Area::create([
+            'name' => 'Cocina'
+        ]);
+        Area::create([
+            'name' => 'Equipo audiovisual'
+        ]);
 
         User::create([
             'name' => 'Administrador ArtenKircof',

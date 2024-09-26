@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Customers;
+namespace App\Http\Controllers\Inventory;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class Customer extends Controller
+class Inventory extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,7 +17,7 @@ class Customer extends Controller
     {
         if (Auth::check()) {
             if (Auth::user()->type_user == 1 && Auth::user()->area_id == 1) {
-                return view('customers.customers');
+                return view('inventory.inventory');
             } else {
                 return back();
             }

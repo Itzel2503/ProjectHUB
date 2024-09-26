@@ -38,6 +38,7 @@ class TableUsers extends Component
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
 
         $areas = Area::all();
+        $areas = Area::whereNotIn('name', ['Cocina', 'Equipo audiovisual'])->get();
         $this->projects = Project::all();
 
         $users = User::onlyTrashed()

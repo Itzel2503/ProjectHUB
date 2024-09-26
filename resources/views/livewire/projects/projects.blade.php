@@ -622,7 +622,7 @@
                                     </select>
                                 @else
                                     <select wire:model='type' required name="type" id="type" class="inputs">
-                                        <option selected>Selecciona...</option>
+                                        <option value="0" selected>Selecciona...</option>
                                         @foreach ($allType as $type)
                                             <option value='{{ $type }}'>{{ $type }}</option>
                                         @endforeach
@@ -1370,7 +1370,6 @@
             Livewire.on('deleteItem', deletebyId => {
                 Swal.fire({
                     title: '¿Seguro que deseas eliminar este elemento?',
-                    text: "Esta acción es irreversible",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#202a33',
@@ -1392,7 +1391,6 @@
             Livewire.on('restartItem', restartbyId => {
                 Swal.fire({
                     title: '¿Deseas restaurar este elemento?',
-                    text: "Esta acción es irreversible",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#202a33',

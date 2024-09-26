@@ -515,7 +515,7 @@
                             class="md-3/4 mb-5 mt-3 flex w-full flex-col justify-between border-gray-400 px-5 md:mb-0 lg:w-1/2 lg:border-r-2">
                             <div class="text-justify text-base">
                                 <h3 class="text-text2 text-lg font-bold">Descripción</h3>
-                                {!! nl2br(e($reportShow->comment)) !!}<br><br>
+                                {!! nl2br( $reportShow->comment ) !!}<br><br>
                                 @if ($showChat)
                                     <h3 class="text-text2 text-base font-semibold">Comentarios</h3>
                                     <div id="messageContainer"
