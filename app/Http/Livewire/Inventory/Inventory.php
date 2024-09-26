@@ -179,9 +179,9 @@ class Inventory extends Component
             $product->brand = $this->brand ?? $product->brand;
             $product->model = $this->model ?? $product->model;
             $product->serial_number = $this->serial_number ?? $product->serial_number;
-            $product->status = $this->status ?? $product->status;
-            $product->department_id = $this->department_id ?? $product->department_id;
-            $product->manager_id = $this->manager_id ?? $product->manager_id;
+            $product->status = $this->status;
+            $product->department_id = $this->department;
+            $product->manager_id = $this->manager;
             // Manejo de campos de fecha y observaciones
             $product->purchase_date = !empty($this->purchase_date) ? $this->purchase_date : $product->purchase_date;
             $product->observations = !empty($this->observations) ? $this->observations : $product->observations;
@@ -411,6 +411,7 @@ class Inventory extends Component
                 }
             }
             $product->forceDelete();  // Elimina permanentemente el registro
+            $this->render();
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
