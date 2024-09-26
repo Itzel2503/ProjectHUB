@@ -125,7 +125,7 @@ class Inventory extends Component
                     return;
                 }
                 $area = Area::find($this->department);
-                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $area->name . '/' . $product->name;
+                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $area->name;
                 $fileName = $file->getClientOriginalName();
                 $fullNewFilePath = $filePath . '/' . $fileName;
                 // Procesar la imagen
@@ -216,7 +216,7 @@ class Inventory extends Component
                                 return;
                             }
                             $area = Area::find($this->department_id ?? $product->department_id);
-                            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $area->name . '/' . $product->name;
+                            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $area->name;
                             $fileName = $file->getClientOriginalName();
                             $fullNewFilePath = $filePath . '/' . $fileName;
                             // Procesar la imagen
@@ -300,7 +300,7 @@ class Inventory extends Component
                                 return;
                             }
                             $area = Area::find($this->department_id ?? $product->department_id);
-                            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $area->name . '/' . $product->name;                            
+                            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $area->name;                            
                             $fileName = $file->getClientOriginalName();
                             $fullNewFilePath = $filePath . '/' . $fileName;
                             // Procesar la imagen
