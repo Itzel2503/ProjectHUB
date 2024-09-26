@@ -96,7 +96,7 @@
                                     </button>
                                     <!-- Panel -->
                                     <div id="dropdown-panel-{{ $product->id }}" style="display: none;"
-                                        class="{{ $loop->last ? '-top-26' : '-top-8' }} absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
+                                        class="{{ $loop->last ? '-top-16' : '-top-8' }} absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
                                         @if ($product->deleted_at == null)
                                             <!-- Botón Editar -->
                                             <div wire:click="showEditProduct({{ $product->id }})"
