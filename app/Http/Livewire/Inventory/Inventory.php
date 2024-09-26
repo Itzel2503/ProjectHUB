@@ -181,8 +181,10 @@ class Inventory extends Component
             $product->status = $this->status ?? $product->status;
             $product->department_id = $this->department_id ?? $product->department_id;
             $product->manager_id = $this->manager_id ?? $product->manager_id;
-            $product->purchase_date = $this->purchase_date ?? $product->purchase_date;
-            $product->observations = $this->observations ?? $product->observations;
+            // Manejo de campos de fecha y observaciones
+            $product->purchase_date = !empty($this->purchase_date) ? $this->purchase_date : $product->purchase_date;
+            $product->observations = !empty($this->observations) ? $this->observations : $product->observations;
+
             $product->save();
 
             $productFiles = InventoryFiles::where('inventory_id', $product->id)->get();
@@ -393,7 +395,7 @@ class Inventory extends Component
 
     public function destroy($id)
     {
-        $product = ModelsInventory::find($id);
+        $product = ModelsInventory::withTrashed()->find($id);
 
         if ($product) {
             $product->forceDelete();  // Elimina permanentemente el registro
