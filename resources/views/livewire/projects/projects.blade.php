@@ -622,7 +622,7 @@
                                     </select>
                                 @else
                                     <select wire:model='type' required name="type" id="type" class="inputs">
-                                        <option value="0" selected>Selecciona...</option>
+                                        <option selected>Selecciona...</option>
                                         @foreach ($allType as $type)
                                             <option value='{{ $type }}'>{{ $type }}</option>
                                         @endforeach

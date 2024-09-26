@@ -1269,7 +1269,7 @@ class Projects extends Component
     {
         $this->code = '';
         $this->name = '';
-        $this->type = '0';
+        $this->type = '';
         $this->priority = '';
         $this->customer = '';
         $this->leader = '';

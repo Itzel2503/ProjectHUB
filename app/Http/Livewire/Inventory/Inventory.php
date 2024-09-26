@@ -516,9 +516,9 @@ class Inventory extends Component
         $this->brand = '';
         $this->model = '';
         $this->serial_number = '';
-        $this->status = '0';
-        $this->department = '0';
-        $this->manager = '0';
+        $this->status = '';
+        $this->department = '';
+        $this->manager = '';
         $this->purchase_date = '';
         $this->observations = '';
         $this->files = [];

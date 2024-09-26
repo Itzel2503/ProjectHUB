@@ -306,7 +306,7 @@
                                 @else
                                     <select wire:model='status' required name="status" id="status"
                                         class="inputs">
-                                        <option value="0" selected>Selecciona...</option>
+                                        <option selected>Selecciona...</option>
                                         <option value="Uso">Uso</option>
                                         <option value="No uso">No uso</option>
                                         <option value="Almacenado">Almacenado</option>
@@ -340,7 +340,7 @@
                                 @else
                                     <select wire:model='department' required name="department" id="department"
                                         class="inputs">
-                                        <option value="0" selected>Selecciona...</option>
+                                        <option selected>Selecciona...</option>
                                         @foreach ($areas as $area)
                                             <option value="{{ $area->id }}">{{ $area->name }}</option>
                                         @endforeach
@@ -374,7 +374,7 @@
                                 @else
                                     <select wire:model='manager' required name="manager" id="manager"
                                         class="inputs">
-                                        <option value="0" selected>Selecciona...</option>
+                                        <option selected>Selecciona...</option>
                                         @foreach ($allUsers as $user)
                                             <option value="{{ $user->id }}">{{ $user->name }}</option>
                                         @endforeach
