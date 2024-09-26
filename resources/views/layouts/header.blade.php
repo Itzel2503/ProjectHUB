@@ -150,7 +150,7 @@
                         </li>
                         @if ($user->area_id == 1)
                             <li class="menu {{ request()->routeIs('customers.index') ? 'active' : '' }}">
-                                <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                                <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                     href="{{ route('customers.index') }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users"
                                         width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -208,7 +208,7 @@
                     @endif
                     @if ($user->type_user == 1 && $user->area_id == 1)
                         <li class="menu">
-                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="https://coma.artendigital.mx/projects/30/reports">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="currentColor"
@@ -247,7 +247,7 @@
                     @endif
                     @if ($user->type_user == 1 && $user->area_id == 1)
                         <li class="menu {{ request()->routeIs('storage.index') ? 'active' : '' }}">
-                            <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="{{ route('storage.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -374,7 +374,7 @@
                         </li>
                         @if ($user->area_id == 1)
                             <li class="menu {{ request()->routeIs('customers.index') ? 'active' : '' }}">
-                                <a class="inline-flex w-full text-base font-semibold transition-colors duration-150"
+                                <a class="inline-flex w-full text-base font-normal transition-colors duration-150"
                                     href="{{ route('customers.index') }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users"
                                         width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -472,7 +472,7 @@
                     @endif
                     @if ($user->type_user == 1 && $user->area_id == 1)
                     <li class="menu {{ request()->routeIs('storage.index') ? 'active' : '' }}">
-                        <a class="inline-flex w-full items-center text-base font-semibold transition-colors duration-150"
+                        <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                             href="{{ route('storage.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
