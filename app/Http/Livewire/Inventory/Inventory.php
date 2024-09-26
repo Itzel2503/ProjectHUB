@@ -7,6 +7,7 @@ use App\Models\Inventory as ModelsInventory;
 use App\Models\InventoryFiles;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
@@ -398,6 +399,17 @@ class Inventory extends Component
         $product = ModelsInventory::withTrashed()->find($id);
 
         if ($product) {
+            
+            if (!$product->files->isEmpty()) {
+                foreach ($this->productShow->files as $file) {
+                    // Ruta del archivo en el sistema de archivos
+                    $filePath = public_path('inventory/' . $file->route);
+                    // Verificar si el archivo existe en la ruta
+                    if (File::exists($filePath)) {
+                        File::delete($filePath);
+                    }
+                }
+            }
             $product->forceDelete();  // Elimina permanentemente el registro
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
