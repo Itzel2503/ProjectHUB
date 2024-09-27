@@ -121,7 +121,7 @@
                         <tr class="trTable">
                             @if ($user->type_user != 3)
                                 <th class="px-4 py-2">
-                                    <a wire:click="showPriority({{ $project->id }})"
+                                    <a @if ($user->type_user == 1 && $user->area_id == 1) wire:click="showPriority({{ $project->id }})" @endif
                                         class="hover:text-secondary cursor-pointer p-3 hover:text-xl">K{{ $project->priority }}</a>
                                 </th>
                             @endif
@@ -335,7 +335,7 @@
                             @foreach ($projectsSoporte as $project)
                                 <tr class="trTable">
                                     <th class="px-4 py-2">
-                                        <a wire:click="showPriority({{ $project->id }})"
+                                        <a @if ($user->type_user == 1 && $user->area_id == 1) wire:click="showPriority({{ $project->id }})" @endif
                                             class="hover:text-secondary cursor-pointer p-3 hover:text-xl">K{{ $project->priority }}</a>
                                     </th>
                                     <td class="px-4 py-2">
