@@ -40,8 +40,6 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('profile', ProfileController::class)->only(['index']);
     // USERS
     Route::resource('userCatalog', UserCatalog::class)->only(['index'])->middleware('user.type:1');
-    // CUSTOMERS
-    Route::resource('customers', Customer::class)->middleware('user.type:1', 'user.area:1');
     // PROJECTS
     Route::resource('projects', Project::class)->only(['index']);
     Route::resource('priority', Priority::class)->middleware('user.type:1,2');

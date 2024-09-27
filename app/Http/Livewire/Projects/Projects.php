@@ -41,9 +41,12 @@ class Projects extends Component
     public $allType = ['Activo', 'Soporte', 'No activo', 'Entregado', 'Cerrado'];
     public $typeProject = 'Activo';
     // inputs
-    public $code, $name, $type, $priority, $customer, $leader, $product_owner, $general_objective, $scopes, $start_date, $closing_date, $passwords;
+    public $code, $name, $type, $priority, $customer, $nameClient, $leader, $product_owner, $general_objective, $scopes, $start_date, $closing_date, $passwords;
     public $files = [];
     public $severity, $impact, $satisfaction, $temporality, $magnitude, $strategy, $stage;
+    // CUSTOMER
+    public $customerInput = '1';
+    public $customertype = false;
 
     public function getUserWithMostActivitiesReports($projectId)
     {
@@ -328,7 +331,6 @@ class Projects extends Component
                 'code' => 'required|numeric',
                 'name' => 'required|max:255',
                 'type' => 'required|max:255',
-                'customer' => 'required',
                 'leader' => 'required',
                 'product_owner' => 'required',
                 'general_objective' => 'required|max:255',
@@ -336,7 +338,7 @@ class Projects extends Component
                 'scopes' => 'nullable',
                 'start_date' => 'required|date|max:255',
                 'closing_date' => 'required|date|max:255',
-
+                'customerInput' => 'required',
                 'severity' => 'required',
                 'impact' => 'required',
                 'satisfaction' => 'required',
@@ -345,7 +347,25 @@ class Projects extends Component
                 'strategy' => 'required',
                 'stage' => 'required',
             ]);
-
+            // VERIFICACION DE CLIENTE
+            if ($this->customerInput == '1') {
+                if (!$this->customer) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Faltan seleccionar un cliente.',
+                    ]);
+                    return;
+                }
+            }
+            if ($this->customerInput == '2') {
+                if (!$this->nameClient) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Faltan escribir un cliente.',
+                    ]);
+                    return;
+                }
+            }
             // Verificar si al menos uno de los campos está presente
             if (!$this->files && !$this->scopes) {
                 $this->dispatchBrowserEvent('swal:modal', [
@@ -373,7 +393,23 @@ class Projects extends Component
                 return;
             } else {
                 $project = new Project();
-                $project->customer_id = $this->customer;
+
+                if ($this->customerInput == '1') {
+                    $project->customer_id = $this->customer;
+                } elseif ($this->customerInput == '2') {
+                    $customer = new Customer();
+                    $customer->name = $this->nameClient;
+                    $customer->save();
+
+                    $project->customer_id = $customer->id;
+                } else {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Error en cliente.',
+                    ]);
+                    return;
+                }
+                
                 $project->code = $this->code;
                 $project->type = $this->type;
                 $project->name = $this->name;
@@ -429,7 +465,23 @@ class Projects extends Component
             }
         } else {
             $project = new Project();
-            $project->customer_id = $this->customer;
+
+            if ($this->customerInput == '1') {
+                $project->customer_id = $this->customer;
+            } elseif ($this->customerInput == '2') {
+                $customer = new Customer();
+                $customer->name = $this->nameClient;
+                $customer->save();
+                
+                $project->customer_id = $customer->id;
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Error en cliente.',
+                ]);
+                return;
+            }
+            
             $project->code = $this->code;
             $project->type = $this->type;
             $project->name = $this->name;
@@ -561,6 +613,15 @@ class Projects extends Component
                 'start_date' => 'required|date|max:255',
                 'closing_date' => 'required|date|max:255',
             ]);
+            if ($this->customerInput == '2') {
+                if (!$this->nameClient) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Faltan escribir un cliente.',
+                    ]);
+                    return;
+                }
+            }
             // Aquí puedes continuar con tu lógica después de la validación exitosa
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Emitir un evento de navegador
@@ -585,7 +646,23 @@ class Projects extends Component
                         return;
                     } else {
                         $project = Project::find($id);
-                        $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+
+                        if ($this->customerInput == '1') {
+                            $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+                        } elseif ($this->customerInput == '2') {
+                            $customer = new Customer();
+                            $customer->name = $this->nameClient;
+                            $customer->save();
+                            
+                            $project->customer_id = $customer->id;
+                        } else {
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'error',
+                                'title' => 'Error en cliente.',
+                            ]);
+                            return;
+                        }
+                        
                         $project->code = $this->code ?? $project->code;
                         $project->type = $this->type != null ? $this->type : $project->type;
                         $project->name = $this->name ?? $project->name;
@@ -606,7 +683,23 @@ class Projects extends Component
                     }
                 } else {
                     $project = Project::find($id);
-                    $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+
+                    if ($this->customerInput == '1') {
+                        $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+                    } elseif ($this->customerInput == '2') {
+                        $customer = new Customer();
+                        $customer->name = $this->nameClient;
+                        $customer->save();
+                        
+                        $project->customer_id = $customer->id;
+                    } else {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Error en cliente.',
+                        ]);
+                        return;
+                    }
+                    
                     $project->code = $this->code ?? $project->code;
                     $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
@@ -686,7 +779,23 @@ class Projects extends Component
             } else {
                 if ($this->selectedFiles == []) {
                     $project = Project::find($id);
-                    $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+
+                    if ($this->customerInput == '1') {
+                        $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+                    } elseif ($this->customerInput == '2') {
+                        $customer = new Customer();
+                        $customer->name = $this->nameClient;
+                        $customer->save();
+                        
+                        $project->customer_id = $customer->id;
+                    } else {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Error en cliente.',
+                        ]);
+                        return;
+                    }
+                    
                     $project->code = $this->code ?? $project->code;
                     $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
@@ -725,7 +834,23 @@ class Projects extends Component
                                 $remainingFilesCount--;
                                 // Guardar backlog
                                 $project = Project::find($id);
-                                $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+
+                                if ($this->customerInput == '1') {
+                                    $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+                                } elseif ($this->customerInput == '2') {
+                                    $customer = new Customer();
+                                    $customer->name = $this->nameClient;
+                                    $customer->save();
+                                    
+                                    $project->customer_id = $customer->id;
+                                } else {
+                                    $this->dispatchBrowserEvent('swal:modal', [
+                                        'type' => 'error',
+                                        'title' => 'Error en cliente.',
+                                    ]);
+                                    return;
+                                }
+                                
                                 $project->code = $this->code ?? $project->code;
                                 $project->type = $this->type != null ? $this->type : $project->type;
                                 $project->name = $this->name ?? $project->name;
@@ -778,7 +903,23 @@ class Projects extends Component
                                 $remainingFilesCount--;
                                 // Guardar backlog
                                 $project = Project::find($id);
-                                $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+
+                                if ($this->customerInput == '1') {
+                                    $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+                                } elseif ($this->customerInput == '2') {
+                                    $customer = new Customer();
+                                    $customer->name = $this->nameClient;
+                                    $customer->save();
+                                    
+                                    $project->customer_id = $customer->id;
+                                } else {
+                                    $this->dispatchBrowserEvent('swal:modal', [
+                                        'type' => 'error',
+                                        'title' => 'Error en cliente.',
+                                    ]);
+                                    return;
+                                }
+                                
                                 $project->code = $this->code ?? $project->code;
                                 $project->type = $this->type != null ? $this->type : $project->type;
                                 $project->name = $this->name ?? $project->name;
@@ -813,7 +954,23 @@ class Projects extends Component
 
                 if (!empty($this->files)) {
                     $project = Project::find($id);
-                    $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+
+                    if ($this->customerInput == '1') {
+                        $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+                    } elseif ($this->customerInput == '2') {
+                        $customer = new Customer();
+                        $customer->name = $this->nameClient;
+                        $customer->save();
+                        
+                        $project->customer_id = $customer->id;
+                    } else {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Error en cliente.',
+                        ]);
+                        return;
+                    }
+
                     $project->code = $this->code ?? $project->code;
                     $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
@@ -909,7 +1066,23 @@ class Projects extends Component
                         return;
                     } else {
                         $project = Project::find($id);
-                        $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+
+                        if ($this->customerInput == '1') {
+                            $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+                        } elseif ($this->customerInput == '2') {
+                            $customer = new Customer();
+                            $customer->name = $this->nameClient;
+                            $customer->save();
+                            
+                            $project->customer_id = $customer->id;
+                        } else {
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'error',
+                                'title' => 'Error en cliente.',
+                            ]);
+                            return;
+                        }
+
                         $project->code = $this->code ?? $project->code;
                         $project->type = $this->type != null ? $this->type : $project->type;
                         $project->name = $this->name ?? $project->name;
@@ -932,7 +1105,23 @@ class Projects extends Component
                     }
                 } else {
                     $project = Project::find($id);
-                    $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+
+                    if ($this->customerInput == '1') {
+                        $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
+                    } elseif ($this->customerInput == '2') {
+                        $customer = new Customer();
+                        $customer->name = $this->nameClient;
+                        $customer->save();
+                        
+                        $project->customer_id = $customer->id;
+                    } else {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Error en cliente.',
+                        ]);
+                        return;
+                    }
+
                     $project->code = $this->code ?? $project->code;
                     $project->type = $this->type != null ? $this->type : $project->type;
                     $project->name = $this->name ?? $project->name;
@@ -1239,6 +1428,18 @@ class Projects extends Component
         $this->resetErrorBag();
     }
     // EXTRAS
+    public function customerType()
+    {
+        if ($this->customertype == false) {
+            $this->customertype = true;
+            $this->customerInput = '2';
+        } else {
+            $this->customertype = false;
+            $this->customerInput = '1';
+        }
+        
+    }
+
     public function addInput()
     {
         $this->files[] = null;
@@ -1272,6 +1473,9 @@ class Projects extends Component
         $this->type = '';
         $this->priority = '';
         $this->customer = '';
+        $this->nameClient = '';
+        $this->customertype = false;
+        $this->customerInput = '1';
         $this->leader = '';
         $this->product_owner = '';
         $this->allType = ['Activo', 'Soporte', 'Cerrado', 'Entregado', 'No activo'];

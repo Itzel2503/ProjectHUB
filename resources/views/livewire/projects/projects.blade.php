@@ -639,25 +639,45 @@
                                 </div>
                             </div>
                             <div class="flex w-full flex-col px-3">
-                                <h5 class="inline-flex font-semibold" for="name">
-                                    Cliente @if (!$showUpdate)
-                                        <p class="text-red-600">*</p>
-                                    @endif
-                                </h5>
-                                @if ($showUpdate)
-                                    <select wire:model='customer' name="customer" id="customer" class="inputs">
-                                        @foreach ($allCustomers as $customer)
-                                            <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="flex justify-between">
+                                    <h5 class="inline-flex font-semibold" for="name">
+                                        Cliente @if (!$showUpdate)
+                                            <p class="text-red-600">*</p>
+                                        @endif
+                                    </h5>
+                                    <span id="addClient" wire:click="customerType"
+                                        class="align-items-center hover:text-secondary flex cursor-pointer flex-row justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="icon icon-tabler icon-tabler-plus" width="24"
+                                            height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" fill="none" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M12 5l0 14" />
+                                            <path d="M5 12l14 0" />
+                                        </svg>
+                                    </span>
+                                    <input wire:model='customerInput' type="hidden" id="customerInput">
+                                </div>
+                                @if ($customertype)
+                                    <input wire:model='nameClient' required type="text" placeholder="Nuevo cliente" name="nameClient"
+                                        id="nameClient" class="inputs">
                                 @else
-                                    <select wire:model='customer' required name="customer" id="customer"
-                                        class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        @foreach ($allCustomers as $allCustomer)
-                                            <option value="{{ $allCustomer->id }}">{{ $allCustomer->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    @if ($showUpdate)
+                                        <select wire:model.defer='customer' name="customer" id="customer" class="inputs">
+                                            @foreach ($allCustomers as $customer)
+                                                <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <select wire:model.defer='customer' required name="customer" id="customer"
+                                            class="inputs">
+                                            <option selected>Selecciona...</option>
+                                            @foreach ($allCustomers as $allCustomer)
+                                                <option value="{{ $allCustomer->id }}">{{ $allCustomer->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    @endif
                                 @endif
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -1330,7 +1350,7 @@
     {{-- END MODAL EDIT / CREATE PRIORITY --}}
     {{-- LOADING PAGE --}}
     <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-        wire:target="showProjectPriority,modalCreateEdit, showReports, showActivities, showUpdate, modalCreateEdit, addInput, removeInput, update, create, modalPriority, updatePriority">
+        wire:target="showProjectPriority,modalCreateEdit, showReports, showActivities, showUpdate, modalCreateEdit, customerType, addInput, removeInput, update, create, modalPriority, updatePriority">
         <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
         <div class="loadingspinner relative top-1/3 z-20">
             <div id="square1"></div>
