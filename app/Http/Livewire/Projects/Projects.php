@@ -397,10 +397,22 @@ class Projects extends Component
                 if ($this->customerInput == '1') {
                     $project->customer_id = $this->customer;
                 } elseif ($this->customerInput == '2') {
+                    // Verificar si ya existe un cliente con el mismo nombre
+                    $existingCustomer = Customer::where('name', $this->nameClient)->first();
+
+                    if ($existingCustomer) {
+                        // Si el cliente ya existe, lanzar un error
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'El cliente ya existe.',
+                        ]);
+                        return;
+                    }
+                    // Si no existe, crear el nuevo cliente
                     $customer = new Customer();
                     $customer->name = $this->nameClient;
                     $customer->save();
-
+                    // Asignar el nuevo cliente al proyecto
                     $project->customer_id = $customer->id;
                 } else {
                     $this->dispatchBrowserEvent('swal:modal', [
@@ -650,10 +662,22 @@ class Projects extends Component
                         if ($this->customerInput == '1') {
                             $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                         } elseif ($this->customerInput == '2') {
+                            // Verificar si ya existe un cliente con el mismo nombre
+                            $existingCustomer = Customer::where('name', $this->nameClient)->first();
+
+                            if ($existingCustomer) {
+                                // Si el cliente ya existe, lanzar un error
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'error',
+                                    'title' => 'El cliente ya existe.',
+                                ]);
+                                return;
+                            }
+                            // Si no existe, crear el nuevo cliente
                             $customer = new Customer();
                             $customer->name = $this->nameClient;
                             $customer->save();
-                            
+                            // Asignar el nuevo cliente al proyecto
                             $project->customer_id = $customer->id;
                         } else {
                             $this->dispatchBrowserEvent('swal:modal', [
@@ -687,10 +711,22 @@ class Projects extends Component
                     if ($this->customerInput == '1') {
                         $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                     } elseif ($this->customerInput == '2') {
+                        // Verificar si ya existe un cliente con el mismo nombre
+                        $existingCustomer = Customer::where('name', $this->nameClient)->first();
+
+                        if ($existingCustomer) {
+                            // Si el cliente ya existe, lanzar un error
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'error',
+                                'title' => 'El cliente ya existe.',
+                            ]);
+                            return;
+                        }
+                        // Si no existe, crear el nuevo cliente
                         $customer = new Customer();
                         $customer->name = $this->nameClient;
                         $customer->save();
-                        
+                        // Asignar el nuevo cliente al proyecto
                         $project->customer_id = $customer->id;
                     } else {
                         $this->dispatchBrowserEvent('swal:modal', [
@@ -783,10 +819,22 @@ class Projects extends Component
                     if ($this->customerInput == '1') {
                         $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                     } elseif ($this->customerInput == '2') {
+                        // Verificar si ya existe un cliente con el mismo nombre
+                        $existingCustomer = Customer::where('name', $this->nameClient)->first();
+
+                        if ($existingCustomer) {
+                            // Si el cliente ya existe, lanzar un error
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'error',
+                                'title' => 'El cliente ya existe.',
+                            ]);
+                            return;
+                        }
+                        // Si no existe, crear el nuevo cliente
                         $customer = new Customer();
                         $customer->name = $this->nameClient;
                         $customer->save();
-                        
+                        // Asignar el nuevo cliente al proyecto
                         $project->customer_id = $customer->id;
                     } else {
                         $this->dispatchBrowserEvent('swal:modal', [
@@ -838,10 +886,22 @@ class Projects extends Component
                                 if ($this->customerInput == '1') {
                                     $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                                 } elseif ($this->customerInput == '2') {
+                                    // Verificar si ya existe un cliente con el mismo nombre
+                                    $existingCustomer = Customer::where('name', $this->nameClient)->first();
+
+                                    if ($existingCustomer) {
+                                        // Si el cliente ya existe, lanzar un error
+                                        $this->dispatchBrowserEvent('swal:modal', [
+                                            'type' => 'error',
+                                            'title' => 'El cliente ya existe.',
+                                        ]);
+                                        return;
+                                    }
+                                    // Si no existe, crear el nuevo cliente
                                     $customer = new Customer();
                                     $customer->name = $this->nameClient;
                                     $customer->save();
-                                    
+                                    // Asignar el nuevo cliente al proyecto
                                     $project->customer_id = $customer->id;
                                 } else {
                                     $this->dispatchBrowserEvent('swal:modal', [
@@ -907,10 +967,22 @@ class Projects extends Component
                                 if ($this->customerInput == '1') {
                                     $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                                 } elseif ($this->customerInput == '2') {
+                                    // Verificar si ya existe un cliente con el mismo nombre
+                                    $existingCustomer = Customer::where('name', $this->nameClient)->first();
+
+                                    if ($existingCustomer) {
+                                        // Si el cliente ya existe, lanzar un error
+                                        $this->dispatchBrowserEvent('swal:modal', [
+                                            'type' => 'error',
+                                            'title' => 'El cliente ya existe.',
+                                        ]);
+                                        return;
+                                    }
+                                    // Si no existe, crear el nuevo cliente
                                     $customer = new Customer();
                                     $customer->name = $this->nameClient;
                                     $customer->save();
-                                    
+                                    // Asignar el nuevo cliente al proyecto
                                     $project->customer_id = $customer->id;
                                 } else {
                                     $this->dispatchBrowserEvent('swal:modal', [
@@ -958,10 +1030,22 @@ class Projects extends Component
                     if ($this->customerInput == '1') {
                         $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                     } elseif ($this->customerInput == '2') {
+                        // Verificar si ya existe un cliente con el mismo nombre
+                        $existingCustomer = Customer::where('name', $this->nameClient)->first();
+
+                        if ($existingCustomer) {
+                            // Si el cliente ya existe, lanzar un error
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'error',
+                                'title' => 'El cliente ya existe.',
+                            ]);
+                            return;
+                        }
+                        // Si no existe, crear el nuevo cliente
                         $customer = new Customer();
                         $customer->name = $this->nameClient;
                         $customer->save();
-                        
+                        // Asignar el nuevo cliente al proyecto
                         $project->customer_id = $customer->id;
                     } else {
                         $this->dispatchBrowserEvent('swal:modal', [
@@ -1070,10 +1154,22 @@ class Projects extends Component
                         if ($this->customerInput == '1') {
                             $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                         } elseif ($this->customerInput == '2') {
+                            // Verificar si ya existe un cliente con el mismo nombre
+                            $existingCustomer = Customer::where('name', $this->nameClient)->first();
+
+                            if ($existingCustomer) {
+                                // Si el cliente ya existe, lanzar un error
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'error',
+                                    'title' => 'El cliente ya existe.',
+                                ]);
+                                return;
+                            }
+                            // Si no existe, crear el nuevo cliente
                             $customer = new Customer();
                             $customer->name = $this->nameClient;
                             $customer->save();
-                            
+                            // Asignar el nuevo cliente al proyecto
                             $project->customer_id = $customer->id;
                         } else {
                             $this->dispatchBrowserEvent('swal:modal', [
@@ -1109,10 +1205,22 @@ class Projects extends Component
                     if ($this->customerInput == '1') {
                         $project->customer_id = !empty($this->customer) && is_numeric($this->customer) ? $this->customer : $project->customer_id;
                     } elseif ($this->customerInput == '2') {
+                        // Verificar si ya existe un cliente con el mismo nombre
+                        $existingCustomer = Customer::where('name', $this->nameClient)->first();
+
+                        if ($existingCustomer) {
+                            // Si el cliente ya existe, lanzar un error
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'error',
+                                'title' => 'El cliente ya existe.',
+                            ]);
+                            return;
+                        }
+                        // Si no existe, crear el nuevo cliente
                         $customer = new Customer();
                         $customer->name = $this->nameClient;
                         $customer->save();
-                        
+                        // Asignar el nuevo cliente al proyecto
                         $project->customer_id = $customer->id;
                     } else {
                         $this->dispatchBrowserEvent('swal:modal', [
