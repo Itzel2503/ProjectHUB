@@ -140,12 +140,14 @@ class TableReports extends Component
                 break;
             }
         }
-
-        foreach ($this->allUsers as $key => $user) {
-            // TODOS LOS DELEGADOS
-            $this->allUsersFiltered[$user->id] = $user->name;
+        // Llena el array secuencialmente
+        $this->allUsersFiltered = [];
+        foreach ($this->allUsers as $user) {
+            $this->allUsersFiltered[] = [
+                'id' => $user->id,
+                'name' => $user->name,
+            ];
         }
-
         // ADD ATRIBUTES
         foreach ($reports as $report) {
             // ACTIONS

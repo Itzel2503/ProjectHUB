@@ -216,6 +216,9 @@ class ActivitiesReports extends Component
             )
                 ->leftJoin('reports', 'users.id', '=', 'reports.user_id')
                 ->where('reports.user_id', $user_id)
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('reports.delegate_id', $this->selectedDelegate);
+                })
                 ->where('reports.title', 'like', '%' . $this->searchCreated . '%')
                 ->orderBy('reports.expected_date', $this->expected_dateCreated)
                 ->get();
@@ -227,6 +230,9 @@ class ActivitiesReports extends Component
             )
                 ->leftJoin('activities', 'users.id', '=', 'activities.user_id')
                 ->where('activities.user_id', $user_id)
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('activities.delegate_id', $this->selectedDelegate);
+                })
                 ->where('activities.title', 'like', '%' . $this->searchCreated . '%')
                 ->orderBy('activities.expected_date', $this->expected_dateCreated)
                 ->get();
@@ -884,8 +890,12 @@ class ActivitiesReports extends Component
             }
         }
         // TODOS LOS DELEGADOS
-        foreach ($this->allUsers as $key => $user) {
-            $this->allUsersFiltered[$user->id] = $user->name;
+        $this->allUsersFiltered = [];
+        foreach ($this->allUsers as $user) {
+            $this->allUsersFiltered[] = [
+                'id' => $user->id,
+                'name' => $user->name,
+            ];
         }
 
         return view('livewire.activities-reports.activities-reports', [

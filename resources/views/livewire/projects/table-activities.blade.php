@@ -184,8 +184,8 @@
                 <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
                     <select wire:model.lazy="selectedDelegate" class="inputs">
                         <option value="">Delegados</option>
-                        @foreach ($allUsersFiltered as $key => $userFiltered)
-                            <option value="{{ $key }}">{{ $userFiltered }}</option>
+                        @foreach ($allUsersFiltered as $userFiltered)
+                            <option value="{{ $userFiltered['id'] }}">{{ $userFiltered['name'] }}</option>
                         @endforeach
                     </select>
                 </div>

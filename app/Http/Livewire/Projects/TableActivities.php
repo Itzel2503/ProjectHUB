@@ -181,8 +181,12 @@ class TableActivities extends Component
                 ->get();
         }
         // TODOS LOS DELEGADOS
-        foreach ($this->allUsers as $key => $user) {
-            $this->allUsersFiltered[$user->id] = $user->name;
+        $this->allUsersFiltered = [];
+        foreach ($this->allUsers as $user) {
+            $this->allUsersFiltered[] = [
+                'id' => $user->id,
+                'name' => $user->name,
+            ];
         }
         // ADD ATRIBUTES
         foreach ($activities as $activity) {
