@@ -109,9 +109,6 @@
                         @if ($user->type_user != 3)
                             <th class="w-32 px-4 py-3">Cliente</th>
                             <th class="px-4 py-3">Líder y Product Owner</th>
-                            @if ($user->type_user == 1)
-                                <th class="w-8 px-4 py-3">Estatus</th>
-                            @endif
                         @endif
                         <th class="@if ($user->type_user != 3) w-2 @endif px-4 py-2">Acciones</th>
                     </tr>
@@ -175,18 +172,6 @@
                                         </div>
                                     </div>
                                 </td>
-                                @if ($user->type_user == 1)
-                                    <td class="px-4 py-1">
-                                        <div name="deleted_at" id="deleted_at"
-                                            class="inpSelectTable inpSelectTable @if ($project->deleted_at == null) bg-lime-700 text-white @else bg-red-600 text-white @endif text-sm font-semibold">
-                                            @if ($project->deleted_at == null)
-                                                <option selected>Activo</option>
-                                            @else
-                                                <option selected>Inactivo</option>
-                                            @endif
-                                        </div>
-                                    </td>
-                                @endif
                             @endif
                             <td
                                 class="@if ($user->type_user != 3) justify-end @else justify-center @endif flex px-4 py-2">
@@ -325,9 +310,6 @@
                                 <th class="w-1/4 px-4 py-3">Proyecto</th>
                                 <th class="w-32 px-4 py-3">Cliente</th>
                                 <th class="px-4 py-3">Líder y Product Owner</th>
-                                @if ($user->type_user == 1)
-                                    <th class="w-8 px-4 py-3">Estatus</th>
-                                @endif
                                 <th class="w-2 px-4 py-2">Acciones</th>
                             </tr>
                         </thead>
@@ -386,18 +368,6 @@
                                             </div>
                                         </div>
                                     </td>
-                                    @if ($user->type_user == 1)
-                                        <td class="px-4 py-1">
-                                            <div name="deleted_at" id="deleted_at"
-                                                class="inpSelectTable inpSelectTable @if ($project->deleted_at == null) bg-lime-700 text-white @else bg-red-600 text-white @endif text-sm font-semibold">
-                                                @if ($project->deleted_at == null)
-                                                    <option selected>Activo</option>
-                                                @else
-                                                    <option selected>Inactivo</option>
-                                                @endif
-                                            </div>
-                                        </td>
-                                    @endif
                                     <td class="flex justify-end px-4 py-2">
                                         @if ($project->deleted_at == null)
                                             @if ($project->backlog != null)
