@@ -36,6 +36,8 @@ class ActivitiesReports extends Component
     public $perPage = '50';
     // FILTRO PUNTOS
     public $startDate, $endDate, $starMonth, $endMonth;
+    // FILTRO ESTADOS
+    public $selectedStates = [];
     // ------------------------------ ACTIVITY ------------------------------
     // modal activity
     public $modalShowActivity = false;
@@ -111,12 +113,16 @@ class ActivitiesReports extends Component
             $activities = Activity::where(function ($query) {
                 $query
                     ->where('title', 'like', '%' . $this->searchActivity . '%');
-            })
+                })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->when($this->filterActivity, function ($query) {
                     $query->orderByRaw($this->priorityCaseActivity . ' ' . $this->filteredPriorityActivity);
+                })
+                ->when($this->selectedStates, function ($query) {
+                    // Filtrar por los estados seleccionados en los checkboxes
+                    return $query->whereIn('activities.state', $this->selectedStates);
                 })
                 ->orderBy('expected_date', $this->expected_dateActivity)
                 ->where('state', '!=', 'Resuelto')
@@ -129,12 +135,16 @@ class ActivitiesReports extends Component
                 if (strtolower($this->searchReport) === 'reincidencia' || strtolower($this->searchReport) === 'Reincidencia') {
                     $query->orWhereNotNull('count');
                 }
-            })
+                })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->when($this->filterReport, function ($query) {
                     $query->orderByRaw($this->priorityCaseReport . ' ' . $this->filteredPriorityReport);
+                })
+                ->when($this->selectedStates, function ($query) {
+                    // Filtrar por los estados seleccionados en los checkboxes
+                    return $query->whereIn('reports.state', $this->selectedStates);
                 })
                 ->orderBy('expected_date', $this->expected_dateReport)
                 ->where('state', '!=', 'Resuelto')
@@ -164,6 +174,10 @@ class ActivitiesReports extends Component
                     ->when($this->filterDukke, function ($query) {
                         $query->orderByRaw($this->priorityCaseDukke . ' ' . $this->filteredPriorityDukke);
                     })
+                    ->when($this->selectedStates, function ($query) {
+                        // Filtrar por los estados seleccionados en los checkboxes
+                        return $query->whereIn('reports.state', $this->selectedStates);
+                    })
                     ->orderBy('expected_date', $this->expected_dateDukke)
                     ->where('state', '!=', 'Resuelto')
                     ->with(['user', 'delegate'])
@@ -181,6 +195,10 @@ class ActivitiesReports extends Component
                 ->where('reports.delegate_id', $user_id)
                 ->where('reports.title', 'like', '%' . $this->searchTask . '%')
                 ->where('reports.state', '!=', 'Resuelto')
+                ->when($this->selectedStates, function ($query) {
+                    // Filtrar por los estados seleccionados en los checkboxes
+                    return $query->whereIn('reports.state', $this->selectedStates);
+                })
                 ->orderBy('reports.expected_date', $this->expected_dateTask)
                 ->get();
             // Obtener las activities del usuario
@@ -193,6 +211,10 @@ class ActivitiesReports extends Component
                 ->where('activities.delegate_id', $user_id)
                 ->where('activities.title', 'like', '%' . $this->searchTask . '%')
                 ->where('activities.state', '!=', 'Resuelto')
+                ->when($this->selectedStates, function ($query) {
+                    // Filtrar por los estados seleccionados en los checkboxes
+                    return $query->whereIn('activities.state', $this->selectedStates);
+                })
                 ->orderBy('activities.expected_date', $this->expected_dateTask)
                 ->get();
             // Combinar los resultados en una colección
@@ -219,6 +241,10 @@ class ActivitiesReports extends Component
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('reports.delegate_id', $this->selectedDelegate);
                 })
+                ->when($this->selectedStates, function ($query) {
+                    // Filtrar por los estados seleccionados en los checkboxes
+                    return $query->whereIn('reports.state', $this->selectedStates);
+                })
                 ->where('reports.title', 'like', '%' . $this->searchCreated . '%')
                 ->orderBy('reports.expected_date', $this->expected_dateCreated)
                 ->get();
@@ -232,6 +258,10 @@ class ActivitiesReports extends Component
                 ->where('activities.user_id', $user_id)
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('activities.delegate_id', $this->selectedDelegate);
+                })
+                ->when($this->selectedStates, function ($query) {
+                    // Filtrar por los estados seleccionados en los checkboxes
+                    return $query->whereIn('activities.state', $this->selectedStates);
                 })
                 ->where('activities.title', 'like', '%' . $this->searchCreated . '%')
                 ->orderBy('activities.expected_date', $this->expected_dateCreated)

@@ -42,6 +42,66 @@
                 class="border-primaryColor ml-auto flex w-full flex-col gap-2 border-b-2 text-sm md:flex-row lg:text-base">
                 <!-- SEARCH -->
                 <div class="flex w-full flex-wrap justify-end md:inline-flex md:flex-nowrap">
+                    <!-- STATE -->
+                    @if (Auth::user()->type_user == 1)
+                    <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
+                        <div class="flex w-full justify-center">
+                            <div x-data="{
+                                state: false,
+                                toggle() {
+                                    if (this.state) {
+                                        return this.close()
+                                    }
+                                    this.$refs.button.focus()
+                                    this.state = true
+                                },
+                                close(focusAfter) {
+                                    if (!this.state) return
+                                    this.state = false
+                                    focusAfter && focusAfter.focus()
+                                }
+                            }" x-on:keydown.escape.prevent.stop="close($refs.button)"
+                                x-id="['dropdown-button']" class="relative w-full">
+                                <!-- Button -->
+                                <button x-ref="button" x-on:click="toggle()" :aria-expanded="state"
+                                    :aria-controls="$id('dropdown-button')" type="button"
+                                    class="inputs flex h-12 items-center justify-between">
+                                    <span>Estados</span>
+                                    <!-- Heroicon: chevron-down -->
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="icon icon-tabler icon-tabler-chevron-down h-3 w-3" width="24"
+                                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M6 9l6 6l6 -6" />
+                                    </svg>
+                                </button>
+
+                                <!-- Panel -->
+                                <div x-ref="panel" x-show="state" x-on:click.outside="close($refs.button)"
+                                    :id="$id('dropdown-button')" style="display: none;"
+                                    class="absolute left-0 z-10 mt-2 w-full rounded-md bg-white">
+                                    <label class="block px-4 py-2">
+                                        <input type="checkbox" wire:model="selectedStates" value="Abierto" class="mr-2">
+                                        Abierto
+                                    </label>
+                                    <label class="block px-4 py-2">
+                                        <input type="checkbox" wire:model="selectedStates" value="Proceso" class="mr-2">
+                                        Proceso
+                                    </label>
+                                    <label class="block px-4 py-2">
+                                        <input type="checkbox" wire:model="selectedStates" value="Resuelto" class="mr-2">
+                                        Resuelto
+                                    </label>
+                                    <label class="block px-4 py-2">
+                                        <input type="checkbox" wire:model="selectedStates" value="Conflicto" class="mr-2">
+                                        Conflicto
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     @if (Auth::user()->type_user == 1)
                         <!-- DELEGATE -->
                         <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
