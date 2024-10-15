@@ -1507,7 +1507,9 @@
         </div>
     @elseif ($activeTab === 'task')
         @if (Auth::user()->type_user == 1)
-
+        <div class="py-5">
+            {{ $tasks->links() }}
+        </div>
         @endif
     @elseif ($activeTab === 'created')
         @if (Auth::user()->type_user == 1)
