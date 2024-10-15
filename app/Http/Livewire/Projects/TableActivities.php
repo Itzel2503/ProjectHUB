@@ -631,6 +631,7 @@ class TableActivities extends Component
         $this->emit('sprintsUpdated');
         $this->modalCreateActivity = false;
         $this->clearInputs();
+        $this->render();
         // Emitir un evento de navegador
         $this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',

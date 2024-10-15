@@ -108,6 +108,9 @@ class ActivitiesReports extends Component
         // Filtro de consulta
         $userLogin = Auth::user();
         $user_id = $userLogin->id;
+        if (!empty($this->selectedStates)) {
+            $this->resetPage();
+        }
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
             $activities = Activity::where(function ($query) {
