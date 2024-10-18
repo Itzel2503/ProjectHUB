@@ -872,7 +872,7 @@
                                                                 </div>
                                                             </div>
                                                             <!-- Columna para la foto de perfil -->
-                                                            <div class="flex justify-end mt-1 ml-1">
+                                                            <div class="flex justify-end  w-1/6 mt-1 ml-1">
                                                                 <div class="relative flex justify-center">
                                                                     @if (Auth::user()->profile_photo)
                                                                         <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
@@ -886,22 +886,29 @@
                                                         </div>
                                                     @else
                                                         @if (Auth::user()->type_user == 3)
-                                                            <div class="text-left">
-                                                                <span
-                                                                    class="text-sm font-semibold text-black">ARTEN</span>
-                                                            </div>
-                                                            <div class="rounded-xl bg-gray-200 p-2">
-                                                                <span
-                                                                    class="text-base font-extralight text-black text-gray-600">{{ $message->message }}</span>
-                                                            </div>
-                                                            <div class="text-left text-xs text-black">
-                                                                <span
-                                                                    class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
+                                                            <div class="flex items-start justify-end">
+                                                                <!-- Columna para la foto de perfil -->
+                                                                <div class="flex justify-end w-1/6 mt-1 mr-1">
+                                                                    <div class="relative flex justify-center">
+                                                                        <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
+                                                                            src="{{ asset('logos/favicon_v2.png') }}" alt="Avatar" />
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Columna para el mensaje -->
+                                                                <div>
+                                                                    <div class="text-left">
+                                                                        <span class="text-sm font-semibold text-black">ARTEN</span>
+                                                                        <span class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
+                                                                    </div>
+                                                                    <div class="bg-gray-200 rounded-xl p-2 text-left">
+                                                                        <span class="text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         @else
                                                             <div class="flex items-start justify-end">
                                                                 <!-- Columna para la foto de perfil -->
-                                                                <div class="flex justify-end flex justify-end mt-1 mr-1">
+                                                                <div class="flex justify-end w-1/6 mt-1 mr-1">
                                                                     <div class="relative flex justify-center">
                                                                         @if ($message->transmitter)
                                                                             @if ($message->transmitter->profile_photo)

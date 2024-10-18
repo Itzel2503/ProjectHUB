@@ -554,7 +554,7 @@
                                                                 </div>
                                                             </div>
                                                             <!-- Columna para la foto de perfil -->
-                                                            <div class="flex justify-end mt-1 ml-1">
+                                                            <div class="flex justify-end w-1/6 mt-1 ml-1">
                                                                 <div class="relative flex justify-center">
                                                                     @if (Auth::user()->profile_photo)
                                                                         <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
@@ -570,7 +570,7 @@
                                                         @if (Auth::user()->type_user == 3)
                                                             <div class="flex items-start justify-end">
                                                                 <!-- Columna para la foto de perfil -->
-                                                                <div class="flex justify-end flex justify-end mt-1 mr-1">
+                                                                <div class="flex justify-end w-1/6 mt-1 mr-1">
                                                                     <div class="relative flex justify-center">
                                                                         <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
                                                                             src="{{ asset('logos/favicon_v2.png') }}" alt="Avatar" />
@@ -590,7 +590,7 @@
                                                         @else
                                                             <div class="flex items-start justify-end">
                                                                 <!-- Columna para la foto de perfil -->
-                                                                <div class="flex justify-end flex justify-end mt-1 mr-1">
+                                                                <div class="flex justify-end w-1/6 mt-1 mr-1">
                                                                     <div class="relative flex justify-center">
                                                                         @if ($message->transmitter)
                                                                             @if ($message->transmitter->profile_photo)
