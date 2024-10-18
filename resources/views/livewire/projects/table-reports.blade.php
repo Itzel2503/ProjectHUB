@@ -578,7 +578,7 @@
                                                                 </div>
                                                                 <!-- Columna para el mensaje -->
                                                                 <div>
-                                                                    <div class="text-right">
+                                                                    <div class="text-left">
                                                                         <span class="text-sm font-semibold text-black">ARTEN</span>
                                                                         <span class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                                     </div>
@@ -608,7 +608,7 @@
                                                                 </div>
                                                                 <!-- Columna para el mensaje -->
                                                                 <div>
-                                                                    <div class="text-right">
+                                                                    <div class="text-left">
                                                                         <span class="text-sm font-semibold text-black">{{ ($message->transmitter) ? $message->transmitter->name : 'Usuario eliminado' }}</span>
                                                                         <span class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                                     </div>
