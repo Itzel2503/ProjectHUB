@@ -679,7 +679,7 @@ class TableActivities extends Component
                     $chat->user_id = $user->id; // envia
                     $chat->receiver_id = $activity->delegate->id; //recibe
                 }
-
+                
                 $chat->activity_id = $activity->id;
                 $chat->message = $this->message;
                 $chat->look = false;
@@ -1006,23 +1006,28 @@ class TableActivities extends Component
             ->latest()
             ->first();
         if ($lastMessage) {
-            // cliente
-            if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
+            if ($lastMessage->transmitter == null || $lastMessage->receiver == null) {
                 $lastMessage->look = true;
                 $lastMessage->save();
-            }
-            // mismo usuario
-            if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
-                $lastMessage->look = true;
-                $lastMessage->save();
-            }
-            // usuario administrador
-            if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                $lastMessage->look = true;
-                $lastMessage->save();
-            } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                $lastMessage->look = true;
-                $lastMessage->save();
+            } else {
+                // cliente
+                if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
+                // mismo usuario
+                if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
+                // usuario administrador
+                if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
             }
         }
 
@@ -1131,6 +1136,7 @@ class TableActivities extends Component
         } else {
             $this->modalShowActivity = true;
         }
+        $this->clearInputs();
     }
 
     public function modalCreateActivity()
@@ -1167,6 +1173,8 @@ class TableActivities extends Component
         $this->points = '';
         $this->point_know = '';
         $this->point_many = '';
+
+        $this->message = '';
         $this->point_effort = '';
     }
 

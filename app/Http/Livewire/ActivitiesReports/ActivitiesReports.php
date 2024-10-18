@@ -44,8 +44,6 @@ class ActivitiesReports extends Component
     public $showActivity = false,
         $showChatActivity = false;
     public $activityShow, $messagesActivity, $messageActivity;
-    // Inicializa el contador total de mensajes no vistos
-    public $totalMessagesCount = 0;
     // table, action's activities
     public $searchActivity, $firstSprint;
     public $filteredActivity = false, $filterActivity = false;
@@ -470,8 +468,6 @@ class ActivitiesReports extends Component
             }
             // Calcula los mensajes no vistos para la actividad actual
             $activity->messages_count = $messages->where('look', false)->count();
-            // Incrementa el contador total de mensajes no vistos
-            $this->totalMessagesCount += $activity->messages_count;
         }
         // ADD ATRIBUTES REPORTS
         foreach ($reports as $report) {
@@ -1376,23 +1372,28 @@ class ActivitiesReports extends Component
             ->latest()
             ->first();
         if ($lastMessage) {
-            // cliente
-            if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
+            if ($lastMessage->transmitter == null || $lastMessage->receiver == null) {
                 $lastMessage->look = true;
                 $lastMessage->save();
-            }
-            // mismo usuario
-            if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
-                $lastMessage->look = true;
-                $lastMessage->save();
-            }
-            // usuario administrador
-            if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                $lastMessage->look = true;
-                $lastMessage->save();
-            } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                $lastMessage->look = true;
-                $lastMessage->save();
+            } else {
+                // cliente
+                if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
+                // mismo usuario
+                if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
+                // usuario administrador
+                if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
             }
         }
 
@@ -1463,23 +1464,28 @@ class ActivitiesReports extends Component
             ->first();
 
         if ($lastMessage) {
-            // cliente
-            if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
+            if ($lastMessage->transmitter == null || $lastMessage->receiver == null) {
                 $lastMessage->look = true;
                 $lastMessage->save();
-            }
-            // mismo usuario
-            if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
-                $lastMessage->look = true;
-                $lastMessage->save();
-            }
-            // usuario administrador
-            if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                $lastMessage->look = true;
-                $lastMessage->save();
-            } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                $lastMessage->look = true;
-                $lastMessage->save();
+            } else {
+                // cliente
+                if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
+                // mismo usuario
+                if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
+                // usuario administrador
+                if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
             }
         }
 
@@ -1582,6 +1588,8 @@ class ActivitiesReports extends Component
         } else {
             $this->modalShowActivity = true;
         }
+        $this->messageActivity = '';
+        $this->messageReport = '';
     }
 
     public function modalShowReport()

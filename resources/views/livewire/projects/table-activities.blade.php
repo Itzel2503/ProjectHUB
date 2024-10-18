@@ -838,21 +838,51 @@
                                     <h3 class="text-text2 text-base font-semibold">Comentarios</h3>
                                     <div id="messageContainer"
                                         class="border-primaryColor max-h-80 overflow-y-scroll rounded-br-lg border-4 px-2 py-2">
+                                        @php
+                                            $previousDate = null;
+                                        @endphp
                                         @foreach ($messages as $index => $message)
+                                            @php
+                                                // Formato de la fecha para agrupar por día
+                                                $currentDate = $message->created_at->format('Y-m-d');
+                                            @endphp
+                                            @if ($previousDate !== $currentDate)
+                                                <!-- Mostrar la fecha solo cuando cambia -->
+                                                <div class="text-center text-xs font-bold text-gray-500 py-2">
+                                                    {{ $message->created_at->format('d M Y') }}
+                                                </div>
+                                                @php
+                                                    // Actualizar la fecha previa
+                                                    $previousDate = $currentDate;
+                                                @endphp
+                                            @endif
                                             <div
                                                 class="{{ $message->user_id == Auth::user()->id ? 'justify-end' : 'justify-start' }} flex">
                                                 <div class="mx-2 items-center">
                                                     @if ($message->user_id == Auth::user()->id)
-                                                        <div class="text-right">
-                                                            <span class="text-sm font-semibold text-black">Tú</span>
-                                                        </div>
-                                                        <div class="bg-primaryColor rounded-xl p-2 text-right">
-                                                            <span
-                                                                class="text-blacktext-base font-extralight text-gray-600">{{ $message->message }}</span>
-                                                        </div>
-                                                        <div class="text-right text-xs text-black">
-                                                            <span
-                                                                class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
+                                                        <div class="flex items-start justify-end">
+                                                            <!-- Columna para el mensaje -->
+                                                            <div>
+                                                                <div class="text-right">
+                                                                    <span class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
+                                                                    <span class="text-sm font-semibold text-black">Tú</span>
+                                                                </div>
+                                                                <div class="bg-primaryColor rounded-xl p-2 text-right">
+                                                                    <span class="text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Columna para la foto de perfil -->
+                                                            <div class="flex justify-end mt-1 ml-1">
+                                                                <div class="relative flex justify-center">
+                                                                    @if (Auth::user()->profile_photo)
+                                                                        <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
+                                                                            src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}" alt="Avatar" />
+                                                                    @else
+                                                                        <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
+                                                                            src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar" />
+                                                                    @endif
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     @else
                                                         @if (Auth::user()->type_user == 3)
@@ -869,17 +899,34 @@
                                                                     class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
                                                             </div>
                                                         @else
-                                                            <div class="text-left">
-                                                                <span
-                                                                    class="text-sm font-semibold text-black">{{ $message->transmitter->name }}</span>
-                                                            </div>
-                                                            <div class="rounded-xl bg-gray-200 p-2">
-                                                                <span
-                                                                    class="text-base font-extralight text-black text-gray-600">{{ $message->message }}</span>
-                                                            </div>
-                                                            <div class="text-left text-xs text-black">
-                                                                <span
-                                                                    class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
+                                                            <div class="flex items-start justify-end">
+                                                                <!-- Columna para la foto de perfil -->
+                                                                <div class="flex justify-end flex justify-end mt-1 mr-1">
+                                                                    <div class="relative flex justify-center">
+                                                                        @if ($message->transmitter)
+                                                                            @if ($message->transmitter->profile_photo)
+                                                                                <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
+                                                                                    src="{{ asset('usuarios/' . $message->transmitter->profile_photo) }}" alt="Avatar" />
+                                                                            @else
+                                                                                <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
+                                                                                    src="{{ Avatar::create($message->transmitter->name)->toBase64() }}" alt="Avatar" />
+                                                                            @endif
+                                                                        @else
+                                                                            <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
+                                                                                src="{{ asset('images/icons/user-off.png') }}" alt="Avatar" />
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Columna para el mensaje -->
+                                                                <div>
+                                                                    <div class="text-right">
+                                                                        <span class="text-sm font-semibold text-black">{{ ($message->transmitter) ? $message->transmitter->name : 'Usuario eliminado' }}</span>
+                                                                        <span class="font-light italic">{{ $message->created_at->format('H:i') }}</span>
+                                                                    </div>
+                                                                    <div class="bg-gray-200 rounded-xl p-2 text-left">
+                                                                        <span class="text-base font-extralight text-gray-600">{{ $message->message }}</span>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         @endif
                                                     @endif
@@ -893,9 +940,9 @@
                                 <input wire:model.defer='message' type="text" name="message" id="message"
                                     placeholder="Mensaje" class="inputs"
                                     style="border-radius: 0.5rem 0px 0px 0.5rem !important">
-                                <button class="btnSave" style="border-radius: 0rem 0.5rem 0.5rem 0rem !important"
-                                    wire:click="updateChat({{ $activityShow->id }})">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send"
+                                <button class="@if($activityShow->delegate)btnSave @else btnDisabled @endif" style="border-radius: 0rem 0.5rem 0.5rem 0rem !important"
+                                    @if($activityShow->delegate) wire:click="updateChat({{ $activityShow->id }})" @endif>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send mr-2"
                                         width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                                         stroke="currentColor" fill="none" stroke-linecap="round"
                                         stroke-linejoin="round">

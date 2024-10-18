@@ -714,23 +714,28 @@ class TableReports extends Component
             ->latest()
             ->first();
         if ($lastMessage) {
-            // cliente
-            if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
+            if ($lastMessage->transmitter == null || $lastMessage->receiver == null) {
                 $lastMessage->look = true;
                 $lastMessage->save();
-            }
-            // mismo usuario
-            if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
-                $lastMessage->look = true;
-                $lastMessage->save();
-            }
-            // usuario administrador
-            if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                $lastMessage->look = true;
-                $lastMessage->save();
-            } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                $lastMessage->look = true;
-                $lastMessage->save();
+            } else {
+                // cliente
+                if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
+                // mismo usuario
+                if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
+                // usuario administrador
+                if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
+                    $lastMessage->look = true;
+                    $lastMessage->save();
+                }
             }
         }
 
@@ -831,6 +836,7 @@ class TableReports extends Component
         } else {
             $this->modalShow = true;
         }
+        $this->message = '';
     }
 
     public function modalEdit()
