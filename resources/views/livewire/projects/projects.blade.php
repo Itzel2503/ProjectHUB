@@ -139,19 +139,20 @@
                                 </td>
                                 <td class="principal px-4 py-2">
                                     <div class="mx-auto text-left">
-                                        - {{ $project->leader->name }}<br>
-                                        - {{ $project->product_owner->name }}
+                                        <label class=" {{ ($project->leader) ?  : 'text-red-600' }}">- {{ ($project->leader) ? $project->leader->name : 'Sin asignar' }}</label>
+                                        <br>
+                                        <label class=" {{ ($project->product_owner) ?  : 'text-red-600' }}">- {{ ($project->product_owner) ? $project->product_owner->name : 'Sin asignar' }}</label>
                                     </div>
                                     <div class="relative">
                                         <div
                                             class="hidden-info absolute -top-20 left-36 z-10 w-60 bg-gray-100 p-2 text-left text-xs">
                                             <p>
                                                 <strong>Líder/Scrum:</strong>
-                                                {{ $project->leader->name }}
+                                                {{ ($project->leader) ? $project->leader->name : 'Sin asignar' }}
                                             </p>
                                             <p>
                                                 <strong>Product Owner</strong>
-                                                {{ $project->product_owner->name }}
+                                                {{ ($project->product_owner) ? $project->product_owner->name : 'Sin asignar' }}
                                             </p>
                                             <p>
                                                 <strong>Developer 1:</strong>
