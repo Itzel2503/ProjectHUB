@@ -1,4 +1,6 @@
 {
     "/js/app.js": "/js/app.js",
+    "/js/twemoji.js": "/js/twemoji.js",
+    "/js/daterangepicker.js": "/js/daterangepicker.js",
     "/css/app.css": "/css/app.css"
 }

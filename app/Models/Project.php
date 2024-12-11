@@ -58,4 +58,9 @@ class Project extends Model
     {
         return $this->hasOne(Backlog::class);
     }
+
+    public function notion()
+    {
+        return $this->hasMany(Notion::class);
+    }
 }

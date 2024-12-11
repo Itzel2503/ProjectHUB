@@ -61,4 +61,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Activity::class);
     }
+
+    public function notes()
+    {
+        return $this->hasMany(Notion::class);
+    }
+
+    public function notions()
+    {
+        return $this->belongsToMany(Notion::class, 'notion_users', 'user_id', 'notion_id')->withTimestamps();
+    }
 }
