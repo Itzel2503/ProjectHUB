@@ -28,6 +28,7 @@
         </h1>
     </div>
     <livewire:projects.table-reports :project="$project">
+    @include('projects.tablereports')
 
     @livewireScripts
     @stack('js')
