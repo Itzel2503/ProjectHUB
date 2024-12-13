@@ -93,6 +93,8 @@ class TableReports extends Component
                                 ->where('video', true);
                         });
                 })
+                // Excluir "Resuelto" por defecto
+                ->where('reports.state', '!=', 'Resuelto')
                 ->when($this->selectedStates, function ($query) {
                     $query->whereIn('state', $this->selectedStates);
                 })
