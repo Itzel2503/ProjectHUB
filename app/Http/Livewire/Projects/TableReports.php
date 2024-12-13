@@ -58,7 +58,7 @@ class TableReports extends Component
                     }
                 })
                 // Excluir "Resuelto" por defecto
-                ->where('state', '!=', 'Resuelto')
+                ->where('reports.state', '!=', 'Resuelto')
                 // Filtros adicionales cuando se seleccionen estados
                 ->when($this->selectedStates, function ($query) {
                     $query->whereIn('state', $this->selectedStates);
