@@ -57,6 +57,9 @@ class TableReports extends Component
                         $query->orWhereNotNull('count');
                     }
                 })
+                // Excluir "Resuelto" por defecto
+                ->where('state', '!=', 'Resuelto')
+                // Filtros adicionales cuando se seleccionen estados
                 ->when($this->selectedStates, function ($query) {
                     $query->whereIn('state', $this->selectedStates);
                 })
@@ -73,7 +76,6 @@ class TableReports extends Component
                 ->select('reports.*', 'delegates.name')
                 ->orderBy($this->orderByType, $this->filteredExpected)
                 ->with(['user', 'delegate'])
-                ->where('state', '!=', 'Resuelto')
                 ->paginate($this->perPage);
         } elseif (Auth::user()->type_user == 2) {
             $reports = Report::where('project_id', $this->project->id)
