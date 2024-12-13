@@ -28,7 +28,7 @@
         </h1>
     </div>
     <livewire:projects.table-reports :project="$project">
-    @include('projects.tablereports')
+    {{-- @include('projects.reports.tablereports') --}}
 
     @livewireScripts
     @stack('js')

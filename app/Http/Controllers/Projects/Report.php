@@ -22,10 +22,27 @@ class Report extends Controller
     public function index($project_id)
     {
         if (Auth::check()) {
+            $user = Auth::user();
             $project = Project::find($project_id);
+            $allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
+
+            $reports = ModelsReport::where('project_id', $project->id)
+                ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
+                ->select('reports.*', 'delegates.name')
+                ->with(['user', 'delegate'])
+                ->orderBy('reports.expected_date', 'asc')
+                ->get();
+            // FILTRO DE DEKEGADOS
+            $allUsersFiltered = [];
+            foreach ($allUsers as $user) {
+                $allUsersFiltered[] = [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ];
+            }
 
             if ($project) {
-                return view('projects.reports', compact('project'));
+                return view('projects.reports.reports', compact('project', 'reports', 'allUsersFiltered'));
             } else {
                 return redirect('/projects');
             }
@@ -47,7 +64,7 @@ class Report extends Controller
             $project = Project::find($project_id);
 
             if ($project) {
-                return view('projects.newreport', compact('project', 'user', 'allUsers'));
+                return view('projects.reports.newreport', compact('project', 'user', 'allUsers'));
             } else {
                 return redirect('/projects');
             }
@@ -313,7 +330,7 @@ class Report extends Controller
                 });
                 $expectedDate = Carbon::parse($report->expected_date)->toDateString();
                 
-                return view('projects.clonereport', compact('project', 'user', 'filteredUsers', 'report', 'expectedDate'));
+                return view('projects.reports.clonereport', compact('project', 'user', 'filteredUsers', 'report', 'expectedDate'));
             } else {
                 return redirect('/projects');
             }
