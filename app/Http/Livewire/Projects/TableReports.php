@@ -88,6 +88,13 @@ class TableReports extends Component
                     if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
                         $query->orWhereNotNull('count');
                     }
+                    // Si no se seleccionan estados, excluir "Resuelto"
+                    if (empty($this->selectedStates)) {
+                        $query->where('reports.state', '!=', 'Resuelto');
+                    } else {
+                        // Incluir todos los estados seleccionados
+                        $query->whereIn('state', $this->selectedStates);
+                    }
                 })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id)
@@ -120,6 +127,13 @@ class TableReports extends Component
             $reports = Report::where('project_id', $this->project->id)
                 ->whereHas('user', function ($query) {
                     $query->where('type_user', 3);
+                    // Si no se seleccionan estados, excluir "Resuelto"
+                    if (empty($this->selectedStates)) {
+                        $query->where('reports.state', '!=', 'Resuelto');
+                    } else {
+                        // Incluir todos los estados seleccionados
+                        $query->whereIn('state', $this->selectedStates);
+                    }
                 })
                 ->where(function ($query) {
                     $query->where('title', 'like', '%' . $this->search . '%');
