@@ -37,11 +37,17 @@ class TableReports extends Component
     // table, action's reports
     public $leader = false, $filtered = false, $filter = false, $filterPriotiry = false, $filterState = false;
     public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
-    public $perPage = '50';
+    public $perPage = '20';
     public $selectedDelegate = '', $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredExpected = 'asc', $orderByType = 'expected_date';
     public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
     // inputs
     public $tittle, $type, $file, $comment, $evidenceEdit, $expected_date, $priority1, $priority2, $priority3, $evidence, $message;
+
+    // Resetear paginación cuando se actualiza el campo de búsqueda
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -66,9 +72,16 @@ class TableReports extends Component
                         // Incluir todos los estados seleccionados
                         $query->whereIn('state', $this->selectedStates);
                     }
-                })
-                ->when($this->selectedDelegate, function ($query) {
-                    $query->where('delegate_id', $this->selectedDelegate);
+                    // Mostrar reportes del usuario logueado o aplicar filtro de delegado
+                    $userId = auth()->id(); // ID del usuario logueado
+                    if (empty($this->selectedDelegate)) {
+                        $query->where(function ($query) use ($userId) {
+                            $query->where('user_id', $userId)
+                                ->orWhere('delegate_id', $userId);
+                        });
+                    } else {
+                        $query->where('delegate_id', $this->selectedDelegate);
+                    }
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);

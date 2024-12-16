@@ -550,7 +550,7 @@
                                                                 </div>
                                                             </div>
                                                             <!-- Columna para la foto de perfil -->
-                                                            <div class="ml-1 mt-1 flex w-1/6 justify-end">
+                                                            <div class="ml-1 mt-1 flex w-auto justify-end">
                                                                 <div class="relative flex justify-center">
                                                                     @if (Auth::user()->profile_photo)
                                                                         <img class="h-8 w-8 rounded-full object-cover"
@@ -595,7 +595,7 @@
                                                         @else
                                                             <div class="flex items-start justify-end">
                                                                 <!-- Columna para la foto de perfil -->
-                                                                <div class="mr-1 mt-1 flex w-1/6 justify-end">
+                                                                <div class="mr-1 mt-1 flex w-auto justify-end">
                                                                     <div class="relative flex justify-center">
                                                                         @if ($message->transmitter)
                                                                             @if ($message->transmitter->profile_photo)
