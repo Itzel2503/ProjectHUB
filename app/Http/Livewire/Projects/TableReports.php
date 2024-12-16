@@ -72,16 +72,9 @@ class TableReports extends Component
                         // Incluir todos los estados seleccionados
                         $query->whereIn('state', $this->selectedStates);
                     }
-                    // Mostrar reportes del usuario logueado o aplicar filtro de delegado
-                    $userId = auth()->id(); // ID del usuario logueado
-                    if (empty($this->selectedDelegate)) {
-                        $query->where(function ($query) use ($userId) {
-                            $query->where('user_id', $userId)
-                                ->orWhere('delegate_id', $userId);
-                        });
-                    } else {
-                        $query->where('delegate_id', $this->selectedDelegate);
-                    }
+                })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
