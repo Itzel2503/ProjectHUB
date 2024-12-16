@@ -88,14 +88,6 @@ class TableReports extends Component
                     if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
                         $query->orWhereNotNull('count');
                     }
-                })
-                ->where(function ($query) use ($user_id) {
-                    $query->where('delegate_id', $user_id)
-                        // O incluir registros donde user_id es igual a user_id y video es true
-                        ->orWhere(function ($subQuery) use ($user_id) {
-                            $subQuery->where('user_id', $user_id)
-                                ->where('video', true);
-                        });
                     // Si no se seleccionan estados, excluir "Resuelto"
                     if (empty($this->selectedStates)) {
                         $query->where('reports.state', '!=', 'Resuelto');
@@ -104,10 +96,13 @@ class TableReports extends Component
                         $query->whereIn('state', $this->selectedStates);
                     }
                 })
-                // Excluir "Resuelto" por defecto
-                ->where('reports.state', '!=', 'Resuelto')
-                ->when($this->selectedStates, function ($query) {
-                    $query->whereIn('state', $this->selectedStates);
+                ->where(function ($query) use ($user_id) {
+                    $query->where('delegate_id', $user_id)
+                        // O incluir registros donde user_id es igual a user_id y video es true
+                        ->orWhere(function ($subQuery) use ($user_id) {
+                            $subQuery->where('user_id', $user_id)
+                                ->where('video', true);
+                        });
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
@@ -140,10 +135,6 @@ class TableReports extends Component
                         // Incluir todos los estados seleccionados
                         $query->whereIn('state', $this->selectedStates);
                     }
-                })
-                ->where('reports.state', '!=', 'Resuelto')
-                ->when($this->selectedStates, function ($query) {
-                    $query->whereIn('state', $this->selectedStates);
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
