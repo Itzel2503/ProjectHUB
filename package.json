@@ -16,7 +16,7 @@
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.4.47",
-        "tailwindcss": "^3.4.13"
+        "tailwindcss": "^3.4.16"
     },
     "dependencies": {
         "@tailwindcss/aspect-ratio": "^0.4.2",

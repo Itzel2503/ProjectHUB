@@ -24,6 +24,9 @@ class TableReports extends Component
     public $listeners = ['reloadPage' => 'reloadPage', 'messageSent' => 'loadMessages', 'delete'];
     // Generales
     public $allUsers;
+    // FILTROS
+    public $isOptionsVisible = false; // Controla la visibilidad del panel
+    public $visiblePanels = []; // Asociativa para controlar los paneles por ID de reporte
     // modal
     public $modalShow = false, $modalEdit = false, $modalEvidence = false;
     public $showReport = false, $showEdit = false, $showEvidence = false, $showChat = false;
@@ -56,12 +59,13 @@ class TableReports extends Component
                     if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
                         $query->orWhereNotNull('count');
                     }
-                })
-                // Excluir "Resuelto" por defecto
-                ->where('reports.state', '!=', 'Resuelto')
-                // Filtros adicionales cuando se seleccionen estados
-                ->when($this->selectedStates, function ($query) {
-                    $query->whereIn('state', $this->selectedStates);
+                    // Si no se seleccionan estados, excluir "Resuelto"
+                    if (empty($this->selectedStates)) {
+                        $query->where('reports.state', '!=', 'Resuelto');
+                    } else {
+                        // Incluir todos los estados seleccionados
+                        $query->whereIn('state', $this->selectedStates);
+                    }
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
@@ -123,6 +127,7 @@ class TableReports extends Component
                         $query->orWhereNotNull('count');
                     }
                 })
+                ->where('reports.state', '!=', 'Resuelto')
                 ->when($this->selectedStates, function ($query) {
                     $query->whereIn('state', $this->selectedStates);
                 })
@@ -864,6 +869,12 @@ class TableReports extends Component
         }
     }
     // FILTER
+    public function togglePanel($reportId)
+    {
+        // Alterna la visibilidad del panel basado en el ID
+        $this->visiblePanels[$reportId] = isset($this->visiblePanels[$reportId]) ? !$this->visiblePanels[$reportId] : true;
+    }
+    
     public function filterDown($type)
     {
         $this->filter = true;
