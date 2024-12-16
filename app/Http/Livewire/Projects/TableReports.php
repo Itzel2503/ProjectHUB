@@ -876,8 +876,16 @@ class TableReports extends Component
     // FILTER
     public function togglePanel($reportId)
     {
-        // Alterna la visibilidad del panel basado en el ID
-        $this->visiblePanels[$reportId] = isset($this->visiblePanels[$reportId]) ? !$this->visiblePanels[$reportId] : true;
+        // Si el panel ya está visible, lo cerramos
+        if (isset($this->visiblePanels[$reportId]) && $this->visiblePanels[$reportId]) {
+            unset($this->visiblePanels[$reportId]);
+        } else {
+            // Cerrar todos los demás paneles
+            $this->visiblePanels = [];
+
+            // Abrir el panel seleccionado
+            $this->visiblePanels[$reportId] = true;
+        }
     }
     
     public function filterDown($type)
