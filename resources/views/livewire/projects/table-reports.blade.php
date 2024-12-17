@@ -3,8 +3,8 @@
     <div class="px-4 py-4 sm:rounded-lg">
         {{-- NAVEGADOR --}}
         <div class="flex flex-col justify-between gap-2 text-sm md:flex-row lg:text-base">
-            <!-- SEARCH -->
             <div class="flex w-full flex-wrap md:inline-flex md:w-4/5 md:flex-nowrap">
+                <!-- SEARCH -->
                 <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:w-2/5 md:px-0">
                     <div class="relative flex h-full w-full">
                         <div class="absolute z-10 mt-2 flex">

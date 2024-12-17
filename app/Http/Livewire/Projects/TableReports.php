@@ -22,6 +22,16 @@ class TableReports extends Component
     protected $paginationTheme = 'tailwind';
 
     public $listeners = ['reloadPage' => 'reloadPage', 'messageSent' => 'loadMessages', 'delete'];
+    // FILTROS
+    public $search;
+    public $selectedDelegate = '';
+    public $allUsersFiltered = [];
+    public $filtered = false; // cambio de dirección de flechas
+    // variables para la consulta
+    public $filterPriotiry = false;
+
+
+
     // Generales
     public $allUsers;
     // FILTROS
@@ -35,11 +45,11 @@ class TableReports extends Component
     public $changePoints = false;
     public $points, $point_know, $point_many, $point_effort;
     // table, action's reports
-    public $leader = false, $filtered = false, $filter = false, $filterPriotiry = false, $filterState = false;
-    public $search, $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
+    public $leader = false, $filterState = false;
+    public $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
     public $perPage = '20';
-    public $selectedDelegate = '', $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredExpected = 'asc', $orderByType = 'expected_date';
-    public $selectedStates = [], $rules = [], $usersFiltered = [], $allUsersFiltered = [];
+    public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredExpected = 'asc', $orderByType = 'expected_date';
+    public $selectedStates = [], $rules = [], $usersFiltered = [];
     // inputs
     public $tittle, $type, $file, $comment, $evidenceEdit, $expected_date, $priority1, $priority2, $priority3, $evidence, $message;
 
@@ -55,7 +65,15 @@ class TableReports extends Component
 
         $user = Auth::user();
         $user_id = $user->id;
-        $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
+        $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get(); // TODOS LOS USUARIOS MENOS CLIENTES
+        // FILTRO DELEGADOS
+        $this->allUsersFiltered = []; 
+        foreach ($this->allUsers as $user) {
+            $this->allUsersFiltered[] = [
+                'id' => $user->id,
+                'name' => $user->name,
+            ];
+        }
 
         if (Auth::user()->type_user == 1) {
             $reports = Report::where('project_id', $this->project->id)
@@ -73,11 +91,11 @@ class TableReports extends Component
                         $query->whereIn('state', $this->selectedStates);
                     }
                 })
-                ->when($this->selectedDelegate, function ($query) {
-                    $query->where('delegate_id', $this->selectedDelegate);
-                })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->when($this->filterState, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
@@ -160,14 +178,6 @@ class TableReports extends Component
                 $this->leader = true;
                 break;
             }
-        }
-        // Llena el array secuencialmente
-        $this->allUsersFiltered = [];
-        foreach ($this->allUsers as $user) {
-            $this->allUsersFiltered[] = [
-                'id' => $user->id,
-                'name' => $user->name,
-            ];
         }
         // ADD ATRIBUTES
         foreach ($reports as $report) {
@@ -896,9 +906,8 @@ class TableReports extends Component
     
     public function filterDown($type)
     {
-        $this->filter = true;
-        $this->filtered = false;
-
+        $this->filtered = false; // Cambio de flechas
+        
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filterState = false;
@@ -930,9 +939,8 @@ class TableReports extends Component
 
     public function filterUp($type)
     {
-        $this->filter = true;
-        $this->filtered = true;
-
+        $this->filtered = true; // Cambio de flechas
+        
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filterState = false;
