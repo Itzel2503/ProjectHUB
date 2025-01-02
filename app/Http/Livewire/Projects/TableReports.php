@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Projects;
 
-use App\Models\ChatReports;
+use App\Models\ChatReportsActivities;
 use App\Models\Evidence;
 use App\Models\Project;
 use App\Models\Report;
@@ -21,37 +21,31 @@ class TableReports extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['reloadPage' => 'reloadPage', 'messageSent' => 'loadMessages', 'delete'];
+    public $listeners = ['delete'];
+    // ENVIADAS
+    public $project;
     // FILTROS
-    public $search;
+    public $search, $allUsers;
     public $selectedDelegate = '';
-    public $allUsersFiltered = [];
+    public $allUsersFiltered = [], $selectedStates = [];
     public $filtered = false; // cambio de dirección de flechas
-    // variables para la consulta
-    public $filterPriotiry = false;
-
-
-
-    // Generales
-    public $allUsers;
-    // FILTROS
-    public $isOptionsVisible = false; // Controla la visibilidad del panel
-    public $visiblePanels = []; // Asociativa para controlar los paneles por ID de reporte
-    // modal
-    public $modalShow = false, $modalEdit = false, $modalEvidence = false;
-    public $showReport = false, $showEdit = false, $showEvidence = false, $showChat = false;
-    public $messages;
-    // modal activity points
-    public $changePoints = false;
-    public $points, $point_know, $point_many, $point_effort;
-    // table, action's reports
-    public $leader = false, $filterState = false;
-    public $project, $reportShow, $reportEdit, $reportEvidence, $evidenceShow;
+    public $isOptionsVisible = false; // Controla la visibilidad del panel de opciones
+    public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
     public $perPage = '20';
+    // variables para la consulta
+    public $filterPriotiry = false, $filterState = false;
     public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredExpected = 'asc', $orderByType = 'expected_date';
-    public $selectedStates = [], $rules = [], $usersFiltered = [];
-    // inputs
-    public $tittle, $type, $file, $comment, $evidenceEdit, $expected_date, $priority1, $priority2, $priority3, $evidence, $message;
+    // MODAL SHOW
+    public $showReport = false;
+    public $reportShow = '';
+    // MODAL EDIT
+    public $editReport = false;
+    public $reportEdit = '';
+    // MODAL EVIDENCE
+    public $modalEvidence = false;
+    public  $reportEvidence;
+    // INPUTS
+    public $evidence;
 
     // Resetear paginación cuando se actualiza el campo de búsqueda
     public function updatingSearch()
@@ -74,7 +68,7 @@ class TableReports extends Component
                 'name' => $user->name,
             ];
         }
-
+        // CONSULTAS DE DATOS
         if (Auth::user()->type_user == 1) {
             $reports = Report::where('project_id', $this->project->id)
                 ->where(function ($query) {
@@ -122,6 +116,7 @@ class TableReports extends Component
                 })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id)
+                        ->orWhere('user_id', $user_id)
                         // O incluir registros donde user_id es igual a user_id y video es true
                         ->orWhere(function ($subQuery) use ($user_id) {
                             $subQuery->where('user_id', $user_id)
@@ -172,13 +167,6 @@ class TableReports extends Component
                 ->with(['user', 'delegate'])
                 ->paginate($this->perPage);
         }
-        // LEADER TABLE
-        foreach ($this->project->users as $projectUser) {
-            if ($projectUser->id === $user->id && $projectUser->pivot->leader) {
-                $this->leader = true;
-                break;
-            }
-        }
         // ADD ATRIBUTES
         foreach ($reports as $report) {
             // ACTIONS
@@ -187,7 +175,7 @@ class TableReports extends Component
             $report->usersFiltered = $this->allUsers->reject(function ($user) use ($report) {
                 return $user->id === $report->delegate_id;
             })->values();
-            // PROGRESS
+            // ETIQUETA DE PROGRESS
             if ($report->progress && $report->updated_at) {
                 $progress = Carbon::parse($report->progress);
                 $updated_at = Carbon::parse($report->updated_at);
@@ -216,8 +204,8 @@ class TableReports extends Component
                 $report->timeDifference = null;
             }
             // CHAT
-            $messages = ChatReports::where('report_id', $report->id)->orderBy('created_at', 'asc')->get();
-            $lastMessageNoView = ChatReports::where('report_id', $report->id)
+            $messages = ChatReportsActivities::where('report_id', $report->id)->orderBy('created_at', 'asc')->get();
+            $lastMessageNoView = ChatReportsActivities::where('report_id', $report->id)
                 ->where('user_id', '!=', Auth::id())
                 ->where('receiver_id', Auth::id())
                 ->where('look', false)
@@ -226,11 +214,11 @@ class TableReports extends Component
             // Verificar si la colección tiene al menos un mensaje
             if ($messages) {
                 if ($lastMessageNoView) {
-                    $report->user_chat = $lastMessageNoView->user_id;
-                    $report->receiver_chat = $lastMessageNoView->receiver_id;
+                    $report->user_id = $lastMessageNoView->user_id;
+                    $report->receiver_id = $lastMessageNoView->receiver_id;
 
                     $receiver = User::find($lastMessageNoView->receiver_id);
-
+                    
                     if ($receiver->type_user == 3) {
                         $report->client = true;
                     } else {
@@ -238,12 +226,23 @@ class TableReports extends Component
                     }
                 } else {
                     $lastMessage = $messages->last();
+                    
                     if ($lastMessage) {
                         if ($lastMessage->user_id == Auth::id()) {
                             $report->user_id = true;
                         } else {
                             if ($lastMessage->receiver) {
                                 if ($lastMessage->receiver->type_user == 3) {
+                                    $report->client = true;
+                                } else {
+                                    $report->client = false;
+                                }
+                            } else {
+                                $report->client = false;
+                            }
+                            // VER MENSAJES EXCLUSIVOS DE CLIENTE PARA ADMINISTRADORES
+                            if ($lastMessage->transmitter && Auth::user()->type_user == 1) {
+                                if ($lastMessage->transmitter->type_user == 3) {
                                     $report->client = true;
                                 } else {
                                     $report->client = false;
@@ -349,77 +348,6 @@ class TableReports extends Component
         }
     }
 
-    public function updateChat($id)
-    {
-        $report = Report::find($id);
-        $user = Auth::user();
-
-        if ($report) {
-            if ($this->message != '') {
-                $lastMessage = ChatReports::where('report_id', $report->id)
-                    ->where('user_id', '!=', Auth::id())
-                    ->where('look', false)
-                    ->latest()
-                    ->first();
-
-                $chat = new ChatReports();
-                if ($user->type_user == 1) {
-                    $chat->user_id = $user->id; // envia
-                    if ($report->user->id == Auth::id()) {
-                        $chat->receiver_id = $report->delegate->id; //recibe
-                    } else {
-                        if ($user->type_user == 1) {
-                            if ($report->user->type_user == 3) {
-                                $chat->receiver_id = $report->user->id; //recibe
-                            } else {
-                                $chat->receiver_id = $report->delegate->id; //recibe
-                            }
-                        } else {
-                            $chat->receiver_id = $report->user->id; //recibe
-                        }
-                    }
-                } elseif ($user->type_user == 2) {
-                    $chat->user_id = $user->id; // envia
-                    if ($report->user->type_user == 3) {
-                        $chat->receiver_id = $report->user->id; //recibe
-                    } else {
-                        $chat->receiver_id = $report->delegate->id; //recibe
-                    }
-                } elseif ($user->type_user == 3) {
-                    $chat->user_id = $user->id; // envia
-                    $chat->receiver_id = $report->delegate->id; //recibe
-                }
-
-                $chat->report_id = $report->id;
-                $chat->message = $this->message;
-                $chat->look = false;
-                $chat->save();
-
-                if ($lastMessage) {
-                    // administrador
-                    if ($lastMessage->transmitter->type_user == 3 && Auth::user()->type_user == 1) {
-                        $lastMessage->look = true;
-                        $lastMessage->save();
-                    }
-                }
-                // Emitir un evento después de enviar el mensaje
-                $this->emit('messageSent', $report->id);
-
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Mensaje enviado',
-                ]);
-
-                $this->message = '';
-            } else {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'El mensaje está vacío.',
-                ]);
-            }
-        }
-    }
-
     public function updateEvidence($id, $project_id)
     {
         $report = Report::find($id);
@@ -517,180 +445,6 @@ class TableReports extends Component
         }
     }
 
-    public function update($id, $project_id)
-    {
-        $report = Report::find($id);
-        $project = Project::find($project_id);
-
-        if ($report) {
-            if ($this->file) {
-                $extension = $this->file->extension();
-                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
-
-                if (in_array($extension, $extensionesImagen)) {
-                    $maxSize = 5 * 1024 * 1024; // 5 MB
-                    // Verificar el tamaño del archivo
-                    if ($this->file->getSize() > $maxSize) {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'error',
-                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
-                        ]);
-                        return;
-                    }
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                    $fileName = $this->file->getClientOriginalName();
-                    $fullNewFilePath = $filePath . '/' . $fileName;
-                    // Procesar la imagen
-                    $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
-                    // Redimensionar la imagen si es necesario
-                    $image->resize(800, null, function ($constraint) {
-                        $constraint->aspectRatio();
-                    });
-                    // Guardar la imagen temporalmente
-                    $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
-                    $image->save(storage_path('app/' . $tempPath));
-                    // Eliminar imagen anterior
-                    if (Storage::disk('reports')->exists($report->content)) {
-                        Storage::disk('reports')->delete($report->content);
-                    }
-                    // Guardar la imagen redimensionada en el almacenamiento local
-                    Storage::disk('reports')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
-                    // // Eliminar la imagen temporal
-                    Storage::disk('local')->delete($tempPath);
-
-                    $report->image = true;
-                    $report->video = false;
-                    $report->file = false;
-                } elseif (in_array($extension, $extensionesVideo)) {
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                    $fileName = $this->file->getClientOriginalName();
-                    $fullNewFilePath = $filePath . '/' . $fileName;
-                    // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-                    if ($report->content && Storage::disk('reports')->exists($report->content)) {
-                        $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
-                        if ($existingFilePath == $filePath) {
-                            Storage::disk('reports')->delete($report->content);
-                        }
-                    }
-                    // Guardar el archivo en el disco 'reports'
-                    $this->file->storeAs($filePath, $fileName, 'reports');
-
-                    $report->image = false;
-                    $report->video = true;
-                    $report->file = false;
-                } else {
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                    $fileName = $this->file->getClientOriginalName();
-                    $fullNewFilePath = $filePath . '/' . $fileName;
-                    // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-                    if ($report->content && Storage::disk('reports')->exists($report->content)) {
-                        $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
-                        if ($existingFilePath == $filePath) {
-                            Storage::disk('reports')->delete($report->content);
-                        }
-                    }
-                    // Guardar el archivo en el disco 'reports'
-                    $this->file->storeAs($filePath, $fileName, 'reports');
-
-                    $report->image = false;
-                    $report->video = false;
-                    $report->file = true;
-                }
-
-                $report->content = $fullNewFilePath;
-            }
-
-            $report->title = $this->tittle ?? $report->tittle;
-            $report->comment = $this->comment ?? $report->comment;
-
-            $fecha = Carbon::parse($report->expected_date)->toDateString();
-
-            if ($report->updated_expected_date == false && $this->expected_date != $fecha) {
-                $report->updated_expected_date = true;
-                $report->expected_date = $this->expected_date;
-            } else {
-                $report->expected_date = $this->expected_date ?? $report->expected_date;
-            }
-
-            $report->evidence = $this->evidenceEdit  ?? $report->evidence;
-
-            if ($this->priority1) {
-                $report->priority = 'Alto';
-            } elseif ($this->priority2) {
-                $report->priority = 'Medio';
-            } elseif ($this->priority3) {
-                $report->priority = 'Bajo';
-            }
-
-            if (Auth::user()->type_user == 3) {
-                $report->points = $report->points ?? 0;
-            } else {
-                if ($this->changePoints == true) {
-                    $validPoints = [0, 1, 2, 3, 5, 8, 13];
-                    $report->points = $this->points;
-
-                    if (!in_array($this->points, $validPoints)) {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'error',
-                            'title' => 'Puntuaje no válido.',
-                        ]);
-                        return; // O cualquier otra acción que desees realizar
-                    } else {
-                        $report->points = $this->points ?? $report->points;
-                    }
-                    // Crear un array asociativo con los valores
-                    $questionsPoints = [
-                        'pointKnow' => null,
-                        'pointMany' => null,
-                        'pointEffort' => null,
-                    ];
-                    // Convertir el array a JSON
-                    $questionsPointsJson = json_encode($questionsPoints);
-                    // Asignar y guardar 
-                    $report->questions_points = $questionsPointsJson;
-                } else {
-                    if (!$this->point_know || !$this->point_many || !$this->point_effort) {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'warning',
-                            'title' => 'El formulario está incompleto o no se han seleccionado los puntos necesarios.',
-                        ]);
-                        $report->points = $report->points ?? 0;
-                        $questionsPoints = [
-                            'pointKnow' => null,
-                            'pointMany' => null,
-                            'pointEffort' => null,
-                        ];
-                        // Convertir el array a JSON
-                        $questionsPointsJson = json_encode($questionsPoints);
-                        // Asignar y guardar 
-                        $report->questions_points = $questionsPointsJson;
-                    } else {
-                        $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
-                        $report->points = $maxPoint;
-                        // Crear un array asociativo con los valores
-                        $questionsPoints = [
-                            'pointKnow' => $this->point_know,
-                            'pointMany' => $this->point_many,
-                            'pointEffort' => $this->point_effort,
-                        ];
-                        // Convertir el array a JSON
-                        $questionsPointsJson = json_encode($questionsPoints);
-                        // Asignar y guardar 
-                        $report->questions_points = $questionsPointsJson;
-                    }
-                }
-            }
-
-            $report->save();
-            $this->modalEdit = false;
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Guardado exitoso',
-            ]);
-        }
-    }
-
     public function delete($id, $project_id)
     {
         $project = Project::find($project_id);
@@ -720,164 +474,44 @@ class TableReports extends Component
             ]);
         }
     }
-    // INFO MODAL
+    // MODAL
     public function showReport($id)
     {
-        $this->showReport = true;
-
-        if ($this->modalShow == true) {
-            $this->modalShow = false;
-        } else {
-            $this->modalShow = true;
-            $this->loadMessages($id);
-        }
-    }
-
-    public function loadMessages($id)
-    {
-        $this->reportShow = Report::find($id);
-        $this->evidenceShow = Evidence::where('report_id', $this->reportShow->id)->first();
-        $this->messages = ChatReports::where('report_id', $this->reportShow->id)->orderBy('created_at', 'asc')->get();
-        // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
-        $lastMessage = ChatReports::where('report_id', $this->reportShow->id)
-            ->where('user_id', '!=', Auth::id())
-            ->where('look', false)
-            ->latest()
-            ->first();
-        if ($lastMessage) {
-            if ($lastMessage->transmitter == null || $lastMessage->receiver == null) {
-                $lastMessage->look = true;
-                $lastMessage->save();
-            } else {
-                // cliente
-                if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
-                    $lastMessage->look = true;
-                    $lastMessage->save();
-                }
-                // mismo usuario
-                if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
-                    $lastMessage->look = true;
-                    $lastMessage->save();
-                }
-                // usuario administrador
-                if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                    $lastMessage->look = true;
-                    $lastMessage->save();
-                } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                    $lastMessage->look = true;
-                    $lastMessage->save();
-                }
-            }
-        }
-
-        if ($this->messages) {
-            $this->showChat = true;
-            $this->messages->messages_count = $this->messages->where('look', false)->count();
-            // Marcar como vistos los mensajes si hay dos o más sin ver
-            // dd($this->messages);
-            if ($this->messages->messages_count >= 2) {
-                // Filtrar los mensajes que no han sido vistos
-                $moreMessages = $this->messages->where('look', false);
-
-                foreach ($moreMessages as $message) {
-                    if ($message->receiver_id == Auth::id()) {
-                        $message->look = true;
-                        $message->save();
-                    }
-                }
-            }
-        }
-
-        if ($this->evidenceShow) {
-            $this->showEvidence = true;
-        }
-
-        $user = Auth::user();
-
-        if ($this->reportShow && $this->reportShow->delegate_id == $user->id && $this->reportShow->state == 'Abierto' && $this->reportShow->progress == null) {
-            $this->reportShow->progress = Carbon::now();
-            $this->reportShow->look = true;
-            $this->reportShow->save();
-        }
-
-        // Verificar si el archivo existe en la base de datos
-        if ($this->reportShow && $this->reportShow->content) {
-            // Verificar si el archivo existe en la carpeta
-            $filePath = public_path('reportes/' . $this->reportShow->content);
-            $fileExtension = pathinfo($this->reportShow->content, PATHINFO_EXTENSION);
-            if (file_exists($filePath)) {
-                $this->reportShow->contentExists = true;
-                $this->reportShow->fileExtension = $fileExtension;
-            } else {
-                $this->reportShow->contentExists = false;
-            }
-        } else {
-            $this->reportShow->contentExists = false;
-        }
-    }
-
-    public function showEdit($id)
-    {
-        $this->showEdit = true;
-
-        if ($this->modalEdit == true) {
-            $this->modalEdit = false;
-        } else {
-            $this->modalEdit = true;
-        }
-
-        $this->reportEdit = Report::find($id);
-        $this->tittle = $this->reportEdit->title;
-        $this->comment = $this->reportEdit->comment;
-
-        $fecha = Carbon::parse($this->reportEdit->expected_date);
-        $this->expected_date = $fecha->toDateString();
-
-        $this->evidenceEdit = false;
-        if ($this->reportEdit->evidence == true) {
-            $this->evidenceEdit = true;
-        }
-
-        $this->priority1 = false;
-        $this->priority2 = false;
-        $this->priority3 = false;
-
-        if ($this->reportEdit->priority == 'Alto') {
-            $this->priority1 = true;
-        } elseif ($this->reportEdit->priority == 'Medio') {
-            $this->priority2 = true;
-        } elseif ($this->reportEdit->priority == 'Bajo') {
-            $this->priority3 = true;
-        }
-        // EFFORT PONTS
-        $this->points = $this->reportEdit->points;
-        $this->changePoints = true;
-        $questionsPoints = json_decode($this->reportEdit->questions_points, true);
-        $this->point_know = $questionsPoints['pointKnow'] ?? null;
-        $this->point_many = $questionsPoints['pointMany'] ?? null;
-        $this->point_effort = $questionsPoints['pointEffort'] ?? null;
-    }
-
-    // MODAL
-    public function modalShow()
-    {
-        if ($this->modalShow == true) {
-            $this->modalShow = false;
+        if ($this->showReport == true) {
             $this->showReport = false;
+            $this->reportShow = null;
         } else {
-            $this->modalShow = true;
+            $this->reportShow = Report::find($id);
+            if ($this->reportShow) {
+                $this->showReport = true;
+            } else {
+                $this->showReport = false;
+                // Maneja un caso en el que no se encuentra el reporte (opcional)
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El reporte no existe',
+                ]);
+            }
         }
-        $this->message = '';
     }
 
-    public function modalEdit()
+    public function editReport($id)
     {
-        $this->showEdit = false;
-
-        if ($this->modalEdit == true) {
-            $this->modalEdit = false;
+        if ($this->editReport == true) {
+            $this->editReport = false;
+            $this->reportEdit = null;
         } else {
-            $this->modalEdit = true;
+            $this->reportEdit = Report::find($id);
+            if ($this->reportEdit) {
+                $this->editReport = true;
+            } else {
+                $this->editReport = false;
+                // Maneja un caso en el que no se encuentra el reporte (opcional)
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El reporte no existe',
+                ]);
+            }
         }
     }
 
@@ -1001,35 +635,5 @@ class TableReports extends Component
         return array_filter($actions, function ($action) use ($currentState) {
             return $action != $currentState;
         });
-    }
-
-    public function selectPriority($value)
-    {
-        $this->priority1 = false;
-        $this->priority2 = false;
-        $this->priority3 = false;
-
-        if ($value === 'Alto') {
-            $this->priority1 = true;
-        } elseif ($value === 'Medio') {
-            $this->priority2 = true;
-        } elseif ($value === 'Bajo') {
-            $this->priority3 = true;
-        }
-    }
-
-    public function changePoints()
-    {
-        if ($this->changePoints == true) {
-            $this->changePoints = false;
-        } else {
-            $this->changePoints = true;
-        }
-    }
-
-    public function reloadPage()
-    {
-        $this->reset();
-        $this->render();
     }
 }

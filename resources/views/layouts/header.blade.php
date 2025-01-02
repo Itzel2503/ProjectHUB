@@ -95,8 +95,8 @@
 <body>
     <div id="container" class="text-text1 relative flex h-screen">
         <!-- Desktop sidebar -->
-        <div class="text-white z-20 hidden w-60 flex-shrink-0 overflow-y-auto shadow-md md:block">
-            <div class="bg-coma-gradient bg-full bg-position-full py-1" style="height:100%">
+        <div class="text-white bg-coma-gradient z-20 hidden w-60 flex-shrink-0 overflow-y-auto shadow-md md:block h-screen">
+            <div class="bg-full bg-position-full py-1 h-full">
                 @if (Auth::user())
                     @php
                         $user = DB::table('users')
@@ -249,10 +249,10 @@
                 </ul>
                 <form method="POST" action="{{ route('logout') }}" x-data>
                     @csrf
-                    <div class="pt-20 text-center">
+                    <div class="pt-20 py-5 text-center">
                         <span class="text-base font-normal">
                             <button value="Log out" type="submit"
-                                class="border-secundaryColor hover: rounded border bg-transparent px-4 py-2 font-normal hover:border-white">
+                                class="border-gray-500 rounded border bg-transparent px-4 py-2 font-normal hover:border-white">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="icon icon-tabler icon-tabler-logout float-right ml-2 mt-1 h-5 w-5"
                                     width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"

@@ -15,7 +15,7 @@
             <span class="ml-4 text-xl">Actividades "{{ $project->name }}"</span>
         </h1>
     </div>
-    <livewire:projects.table-activities :project="$project" :backlog="$backlog" : sprints="$sprints">
+    <livewire:projects.activities.table-activities :project="$project" :backlog="$backlog" : sprints="$sprints">
 
     @livewireScripts
     @stack('js')

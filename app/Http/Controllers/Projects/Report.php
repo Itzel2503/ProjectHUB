@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+use function PHPUnit\Framework\isNull;
 
 class Report extends Controller
 {
@@ -25,7 +28,7 @@ class Report extends Controller
             $project = Project::find($project_id);
 
             if ($project) {
-                return view('projects.reports', compact('project'));
+                return view('projects.reports.reports', compact('project'));
             } else {
                 return redirect('/projects');
             }
@@ -47,7 +50,7 @@ class Report extends Controller
             $project = Project::find($project_id);
 
             if ($project) {
-                return view('projects.newreport', compact('project', 'user', 'allUsers'));
+                return view('projects.reports.newreport', compact('project', 'user', 'allUsers'));
             } else {
                 return redirect('/projects');
             }
@@ -83,12 +86,23 @@ class Report extends Controller
                     }
                 }
 
+                $projectName = Str::slug($project->name, '_');
+                $customerName = Str::slug($project->customer->name, '_');
+
                 if (isset($request->video)) {
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
                     if (Auth::user()->type_user == 3) {
-                        // En produccion es usuario Soporte, Daniel Rodriguez§
-                        $report->delegate_id = 10;
+                        // Usuario Soporte
+                        $userSoporte = User::where('area_id', '4')->first();
+                        if (!isNull($userSoporte)) {
+                            $delegate_id = $userSoporte->id;
+                        } else {
+                            // Usuario administradors
+                            $userSoporte = User::where('area_id', '1')->first();
+                            $delegate_id = $userSoporte->id;
+                        }
+                        $report->delegate_id =  $delegate_id;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
                     } else {
@@ -131,16 +145,24 @@ class Report extends Controller
                     list($type, $data) = explode(';', $request->photo);
                     list(, $data)      = explode(',', $data);
                     $imageData = base64_decode($data);
-
-                    $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.jpg';
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                    // Sanitizar nombres de archivo y directorios
+                    $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.jpg';
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, $imageData);
 
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
                     if (Auth::user()->type_user == 3) {
-                        // En produccion es usuario Soporte, Daniel Rodriguez§
-                        $report->delegate_id = 10;
+                        // Usuario Soporte
+                        $userSoporte = User::where('area_id', '4')->first();
+                        if (!isNull($userSoporte)) {
+                            $delegate_id = $userSoporte->id;
+                        } else {
+                            // Usuario administradors
+                            $userSoporte = User::where('area_id', '1')->first();
+                            $delegate_id = $userSoporte->id;
+                        }
+                        $report->delegate_id =  $delegate_id;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
                     } else {
@@ -183,15 +205,24 @@ class Report extends Controller
 
                     $file = $request->file('file');
                     $fileExtension = $file->extension();
-                    $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                    // Sanitizar nombres de archivo y directorios
+                    $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.' . $fileExtension;
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, file_get_contents($file));
 
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
                     if (Auth::user()->type_user == 3) {
-                        // En produccion es usuario Soporte, Daniel Rodriguez§
-                        $report->delegate_id = 10;
+                        // Usuario Soporte
+                        $userSoporte = User::where('area_id', '4')->first();
+                        if (!isNull($userSoporte)) {
+                            $delegate_id = $userSoporte->id;
+                        } else {
+                            // Usuario administradors
+                            $userSoporte = User::where('area_id', '1')->first();
+                            $delegate_id = $userSoporte->id;
+                        }
+                        $report->delegate_id =  $delegate_id;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
                     } else {
@@ -245,8 +276,16 @@ class Report extends Controller
                     $report->project_id = $project_id;
                     $report->user_id = $request->user_id;
                     if (Auth::user()->type_user == 3) {
-                        // En produccion es usuario Soporte, Daniel Rodriguez§
-                        $report->delegate_id = 10;
+                        // Usuario Soporte
+                        $userSoporte = User::where('area_id', '4')->first();
+                        if (!isNull($userSoporte)) {
+                            $delegate_id = $userSoporte->id;
+                        } else {
+                            // Usuario administradors
+                            $userSoporte = User::where('area_id', '1')->first();
+                            $delegate_id = $userSoporte->id;
+                        }
+                        $report->delegate_id =  $delegate_id;
                         $report->expected_date = Carbon::now();
                         $report->updated_expected_date = false;
                     } else {
@@ -312,8 +351,8 @@ class Report extends Controller
                     return $user->id == $report->delegate_id;
                 });
                 $expectedDate = Carbon::parse($report->expected_date)->toDateString();
-                
-                return view('projects.clonereport', compact('project', 'user', 'filteredUsers', 'report', 'expectedDate'));
+
+                return view('projects.reports.clonereport', compact('project', 'user', 'filteredUsers', 'report', 'expectedDate'));
             } else {
                 return redirect('/projects');
             }
@@ -348,7 +387,7 @@ class Report extends Controller
             $reportNew = new ModelsReport();
             $now = Carbon::now();
             $dateString = $now->format("Y-m-d H_i_s");
-            
+
             if ($project && $report) {
                 try {
                     // Validación de los campos
@@ -361,6 +400,10 @@ class Report extends Controller
 
                     throw $e;
                 }
+
+                $projectName = Str::slug($project->name, '_');
+                $customerName = Str::slug($project->customer->name, '_');
+
                 if ($report->report_id == null) {
                     $report->report_id = $id;
                     $report->state = "Resuelto";
@@ -373,14 +416,22 @@ class Report extends Controller
                     $reportNew->user_id = $request->user_id;
 
                     if (Auth::user()->type_user == 3) {
-                        // En produccion es usuario Soporte, Daniel Rodriguez§
-                        $reportNew->delegate_id = 10;
+                        // Usuario Soporte
+                        $userSoporte = User::where('area_id', '4')->first();
+                        if (!isNull($userSoporte)) {
+                            $delegate_id = $userSoporte->id;
+                        } else {
+                            // Usuario administradors
+                            $userSoporte = User::where('area_id', '1')->first();
+                            $delegate_id = $userSoporte->id;
+                        }
+                        $report->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
                     }
-                    
+
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
                     $reportNew->content = $request->video;
@@ -422,17 +473,25 @@ class Report extends Controller
                     list($type, $data) = explode(';', $request->photo);
                     list(, $data)      = explode(',', $data);
                     $imageData = base64_decode($data);
-
-                    $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.jpg';
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                    // Sanitizar nombres de archivo y directorios
+                    $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.jpg';
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, $imageData);
 
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
 
                     if (Auth::user()->type_user == 3) {
-                        // En produccion es usuario Soporte, Daniel Rodriguez§
-                        $reportNew->delegate_id = 10;
+                        // Usuario Soporte
+                        $userSoporte = User::where('area_id', '4')->first();
+                        if (!isNull($userSoporte)) {
+                            $delegate_id = $userSoporte->id;
+                        } else {
+                            // Usuario administradors
+                            $userSoporte = User::where('area_id', '1')->first();
+                            $delegate_id = $userSoporte->id;
+                        }
+                        $report->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
                     } else {
                         $reportNew->delegate_id = $request->delegate;
@@ -482,16 +541,25 @@ class Report extends Controller
 
                     $file = $request->file('file');
                     $fileExtension = $file->extension();
-                    $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                    // Sanitizar nombres de archivo y directorios
+                    $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.' . $fileExtension;
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, file_get_contents($file));
 
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
 
                     if (Auth::user()->type_user == 3) {
-                        // En produccion es usuario Soporte, Daniel Rodriguez§
-                        $reportNew->delegate_id = 10;
+                        // Usuario Soporte
+                        $userSoporte = User::where('area_id', '4')->first();
+                        if (!isNull($userSoporte)) {
+                            $delegate_id = $userSoporte->id;
+                        } else {
+                            // Usuario administradors
+                            $userSoporte = User::where('area_id', '1')->first();
+                            $delegate_id = $userSoporte->id;
+                        }
+                        $report->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
                     } else {
                         $reportNew->delegate_id = $request->delegate;
@@ -557,14 +625,22 @@ class Report extends Controller
                     $reportNew->user_id = $request->user_id;
 
                     if (Auth::user()->type_user == 3) {
-                        // En produccion es usuario Soporte, Daniel Rodriguez§
-                        $reportNew->delegate_id = 10;
+                        // Usuario Soporte
+                        $userSoporte = User::where('area_id', '4')->first();
+                        if (!isNull($userSoporte)) {
+                            $delegate_id = $userSoporte->id;
+                        } else {
+                            // Usuario administradors
+                            $userSoporte = User::where('area_id', '1')->first();
+                            $delegate_id = $userSoporte->id;
+                        }
+                        $report->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
                     }
-                    
+
                     $reportNew->report_id = $report->report_id;
                     $reportNew->title = $report->title;
 
@@ -580,9 +656,9 @@ class Report extends Controller
                         $sourcePath = public_path('reportes/' . $report->content); // Ruta del archivo existente
                         $pathInfo = pathinfo($sourcePath); // Obtener información sobre la ruta del archivo
                         $fileExtension = $pathInfo['extension']; // Obtener la extensión del archivo
-
-                        $fileName = 'Reporte ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
-                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                        // Sanitizar nombres de archivo y directorios
+                        $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.' . $fileExtension;
+                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
 
                         $destinationPath = public_path('reportes/' . $filePath); // Ruta donde se guardará la copia
 
@@ -614,7 +690,7 @@ class Report extends Controller
                         $reportNew->video = false;
                         $reportNew->file = false;
                     }
-                    
+
                     if ($request->priority1) {
                         $reportNew->priority = 'Alto';
                     } else if ($request->priority2) {

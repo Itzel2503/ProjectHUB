@@ -15,8 +15,7 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.4",
         "laravolt/avatar": "^5.0",
-        "livewire/livewire": "^2.12.8",
-        "nesbot/carbon": "^2.71"
+        "livewire/livewire": "^2.12.8"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

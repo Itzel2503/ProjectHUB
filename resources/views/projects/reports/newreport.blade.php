@@ -75,7 +75,7 @@
 
 <body>
     {{-- MENUS --}}
-    <div class="text-text1 bg-primaryColor flex items-center justify-center rounded-md py-2">
+    <div class="text-white bg-coma-gradient flex items-center justify-center  py-2">
         <div id="mainMenu" class="flex flex-row">
             <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}"
                 class="mx-3 flex w-auto items-center justify-center text-xl hover:opacity-70">
@@ -451,9 +451,9 @@
                                     <select name="pointEffort" id="pointEffort" class="inputs">
                                         <option value="0" selected>Selecciona...</option>
                                         <option value="1">Menos de 2 horas</option>
-                                        <option value="2">Medio dìa</option>
-                                        <option value="3">Hasta dos dìas</option>
-                                        <option value="5">Pocos dìas</option>
+                                        <option value="2">Medio día</option>
+                                        <option value="3">Hasta dos días</option>
+                                        <option value="5">Pocos días</option>
                                         <option value="8">Alrededor de</option>
                                         <option value="13">Mas de una</option>
                                     </select>

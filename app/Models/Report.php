@@ -33,6 +33,6 @@ class Report extends Model
 
     public function chatMessages()
     {
-        return $this->hasMany(ChatReports::class);
+        return $this->hasMany(ChatReportsActivities::class);
     }
 }

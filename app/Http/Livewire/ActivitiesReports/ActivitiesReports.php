@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\ActivitiesReports;
 
 use App\Models\Activity;
-use App\Models\ChatReports;
+use App\Models\ChatReportsActivities;
 use App\Models\Evidence;
 use App\Models\Project;
 use App\Models\Report;
@@ -423,8 +423,8 @@ class ActivitiesReports extends Component
                 $activity->timeDifference = null;
             }
             // CHAT
-            $messages = ChatReports::where('activity_id', $activity->id)->orderBy('created_at', 'asc')->get();
-            $lastMessageNoView = ChatReports::where('activity_id', $activity->id)
+            $messages = ChatReportsActivities::where('activity_id', $activity->id)->orderBy('created_at', 'asc')->get();
+            $lastMessageNoView = ChatReportsActivities::where('activity_id', $activity->id)
                 ->where('user_id', '!=', Auth::id())
                 ->where('receiver_id', Auth::id())
                 ->where('look', false)
@@ -508,8 +508,8 @@ class ActivitiesReports extends Component
                 $report->timeDifference = null;
             }
             // CHAT
-            $messages = ChatReports::where('report_id', $report->id)->orderBy('created_at', 'asc')->get();
-            $lastMessageNoView = ChatReports::where('report_id', $report->id)
+            $messages = ChatReportsActivities::where('report_id', $report->id)->orderBy('created_at', 'asc')->get();
+            $lastMessageNoView = ChatReportsActivities::where('report_id', $report->id)
                 ->where('user_id', '!=', Auth::id())
                 ->where('receiver_id', Auth::id())
                 ->where('look', false)
@@ -602,8 +602,8 @@ class ActivitiesReports extends Component
                 $task->delegate_name = $user_delegate->name;
                 // CHAT ACTIVITY
                 if ($task->sprint_id) {
-                    $messages = ChatReports::where('activity_id', $task->id)->orderBy('created_at', 'asc')->get();
-                    $lastMessageNoView = ChatReports::where('activity_id', $task->id)
+                    $messages = ChatReportsActivities::where('activity_id', $task->id)->orderBy('created_at', 'asc')->get();
+                    $lastMessageNoView = ChatReportsActivities::where('activity_id', $task->id)
                         ->where('user_id', '!=', Auth::id())
                         ->where('receiver_id', Auth::id())
                         ->where('look', false)
@@ -634,8 +634,8 @@ class ActivitiesReports extends Component
                         $task->project_activity = false;
                     }
                 } else {
-                    $messages = ChatReports::where('report_id', $task->id)->orderBy('created_at', 'asc')->get();
-                    $lastMessageNoView = ChatReports::where('report_id', $task->id)
+                    $messages = ChatReportsActivities::where('report_id', $task->id)->orderBy('created_at', 'asc')->get();
+                    $lastMessageNoView = ChatReportsActivities::where('report_id', $task->id)
                         ->where('user_id', '!=', Auth::id())
                         ->where('receiver_id', Auth::id())
                         ->where('look', false)
@@ -746,8 +746,8 @@ class ActivitiesReports extends Component
                 // CHAT ACTIVITY
                 if ($create->sprint_id) {
                     // MENSAJES
-                    $messages = ChatReports::where('activity_id', $create->id)->orderBy('created_at', 'asc')->get();
-                    $lastMessageNoView = ChatReports::where('activity_id', $create->id)
+                    $messages = ChatReportsActivities::where('activity_id', $create->id)->orderBy('created_at', 'asc')->get();
+                    $lastMessageNoView = ChatReportsActivities::where('activity_id', $create->id)
                         ->where('user_id', '!=', Auth::id())
                         ->where('receiver_id', Auth::id())
                         ->where('look', false)
@@ -778,8 +778,8 @@ class ActivitiesReports extends Component
                         $create->project_activity = false;
                     }
                 } else {
-                    $messages = ChatReports::where('report_id', $create->id)->orderBy('created_at', 'asc')->get();
-                    $lastMessageNoView = ChatReports::where('report_id', $create->id)
+                    $messages = ChatReportsActivities::where('report_id', $create->id)->orderBy('created_at', 'asc')->get();
+                    $lastMessageNoView = ChatReportsActivities::where('report_id', $create->id)
                         ->where('user_id', '!=', Auth::id())
                         ->where('receiver_id', Auth::id())
                         ->where('look', false)
@@ -875,8 +875,8 @@ class ActivitiesReports extends Component
                     $report->timeDifference = null;
                 }
                 // CHAT
-                $messages = ChatReports::where('report_id', $report->id)->orderBy('created_at', 'asc')->get();
-                $lastMessageNoView = ChatReports::where('report_id', $report->id)
+                $messages = ChatReportsActivities::where('report_id', $report->id)->orderBy('created_at', 'asc')->get();
+                $lastMessageNoView = ChatReportsActivities::where('report_id', $report->id)
                     ->where('user_id', '!=', Auth::id())
                     ->where('receiver_id', Auth::id())
                     ->where('look', false)
@@ -1364,9 +1364,9 @@ class ActivitiesReports extends Component
     public function loadMessagesActivity($id)
     {
         $this->activityShow = Activity::find($id);
-        $this->messagesActivity = ChatReports::where('activity_id', $this->activityShow->id)->orderBy('created_at', 'asc')->get();
+        $this->messagesActivity = ChatReportsActivities::where('activity_id', $this->activityShow->id)->orderBy('created_at', 'asc')->get();
         // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
-        $lastMessage = ChatReports::where('activity_id', $this->activityShow->id)
+        $lastMessage = ChatReportsActivities::where('activity_id', $this->activityShow->id)
             ->where('user_id', '!=', Auth::id())
             ->where('look', false)
             ->latest()
@@ -1455,9 +1455,9 @@ class ActivitiesReports extends Component
         $this->reportShow = Report::find($id);
         $this->evidenceShow = Evidence::where('report_id', $this->reportShow->id)->first();
 
-        $this->messagesReport = ChatReports::where('report_id', $this->reportShow->id)->orderBy('created_at', 'asc')->get();
+        $this->messagesReport = ChatReportsActivities::where('report_id', $this->reportShow->id)->orderBy('created_at', 'asc')->get();
         // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
-        $lastMessage = ChatReports::where('report_id', $this->reportShow->id)
+        $lastMessage = ChatReportsActivities::where('report_id', $this->reportShow->id)
             ->where('user_id', '!=', Auth::id())
             ->where('look', false)
             ->latest()
@@ -1729,13 +1729,13 @@ class ActivitiesReports extends Component
 
         if ($activity) {
             if ($this->messageActivity != '') {
-                $lastMessage = ChatReports::where('activity_id', $activity->id)
+                $lastMessage = ChatReportsActivities::where('activity_id', $activity->id)
                     ->where('user_id', '!=', Auth::id())
                     ->where('look', false)
                     ->latest()
                     ->first();
 
-                $chat = new ChatReports();
+                $chat = new ChatReportsActivities();
                 if ($user->type_user == 1) {
                     $chat->user_id = $user->id; // envia
                     if ($activity->user->id == Auth::id()) {
@@ -1801,13 +1801,13 @@ class ActivitiesReports extends Component
 
         if ($report) {
             if ($this->messageReport != '') {
-                $lastMessage = ChatReports::where('report_id', $report->id)
+                $lastMessage = ChatReportsActivities::where('report_id', $report->id)
                     ->where('user_id', '!=', Auth::id())
                     ->where('look', false)
                     ->latest()
                     ->first();
 
-                $chat = new ChatReports();
+                $chat = new ChatReportsActivities();
                 if ($user->type_user == 1) {
                     $chat->user_id = $user->id; // envia
                     if ($report->user->id == Auth::id()) {

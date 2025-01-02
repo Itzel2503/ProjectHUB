@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Livewire\Projects;
+namespace App\Http\Livewire\Projects\Activities;
 
 use App\Models\Activity;
-use App\Models\ChatReports;
+use App\Models\ChatReportsActivities;
 use App\Models\Sprint;
 use App\Models\User;
 use Carbon\Carbon;
@@ -227,8 +227,8 @@ class TableActivities extends Component
                 $activity->timeDifference = null;
             }
             // CHAT
-            $messages = ChatReports::where('activity_id', $activity->id)->orderBy('created_at', 'asc')->get();
-            $lastMessageNoView = ChatReports::where('activity_id', $activity->id)
+            $messages = ChatReportsActivities::where('activity_id', $activity->id)->orderBy('created_at', 'asc')->get();
+            $lastMessageNoView = ChatReportsActivities::where('activity_id', $activity->id)
                 ->where('user_id', '!=', Auth::id())
                 ->where('receiver_id', Auth::id())
                 ->where('look', false)
@@ -304,7 +304,7 @@ class TableActivities extends Component
             $this->percentageResolved = 0;
         }
 
-        return view('livewire.projects.table-activities', [
+        return view('livewire.projects.activities.table-activities', [
             'activities' => $activities,
         ]);
     }
@@ -646,13 +646,13 @@ class TableActivities extends Component
 
         if ($activity) {
             if ($this->message != '') {
-                $lastMessage = ChatReports::where('activity_id', $activity->id)
+                $lastMessage = ChatReportsActivities::where('activity_id', $activity->id)
                     ->where('user_id', '!=', Auth::id())
                     ->where('look', false)
                     ->latest()
                     ->first();
 
-                $chat = new ChatReports();
+                $chat = new ChatReportsActivities();
                 if ($user->type_user == 1) {
                     $chat->user_id = $user->id; // envia
                     if ($activity->user->id == Auth::id()) {
@@ -998,9 +998,9 @@ class TableActivities extends Component
     public function loadMessages($id)
     {
         $this->activityShow = Activity::find($id);
-        $this->messages = ChatReports::where('activity_id', $this->activityShow->id)->orderBy('created_at', 'asc')->get();
+        $this->messages = ChatReportsActivities::where('activity_id', $this->activityShow->id)->orderBy('created_at', 'asc')->get();
         // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
-        $lastMessage = ChatReports::where('activity_id', $this->activityShow->id)
+        $lastMessage = ChatReportsActivities::where('activity_id', $this->activityShow->id)
             ->where('user_id', '!=', Auth::id())
             ->where('look', false)
             ->latest()
