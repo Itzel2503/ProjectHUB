@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Modals\ReportsActivities;
 
+use App\Models\Activity;
+use App\Models\Backlog;
 use App\Models\Project;
 use App\Models\Report;
 use Carbon\Carbon;
@@ -15,22 +17,41 @@ class Edit extends Component
 {
     use WithFileUploads;
     use WithPagination;
-
     // ENVIADAS
-    public $reportedit, $type;
-
+    public $recordingedit, $backlog, $sprint, $type;
+    // REPORTE Y ACTIVIDAD
     public $recording;
     // DINAMICOS
     public $evidenceEdit, $changePoints = false;
+    // ACTIVIDADES
+    public $sprints;
     // INPUTS
-    public $tittle, $file, $comment, $expected_date, $priority, $points, $point_know, $point_many, $point_effort;
+    public $title, $file, $comment, $description, $expected_date, $moveActivity, $priority, $points, $point_know, $point_many, $point_effort;
 
     public function mount()
     {
-        $this->recording = Report::find($this->reportedit);
+        if ($this->type == 'activity') {
+            $this->sprints = Backlog::find($this->backlog->id)->sprints;
+            // Reorganizar la colección para que el sprint coincidente sea el primero
+            $this->sprints = $this->sprints->sortBy('number')->values(); // Orden inicial
+            $this->sprints = $this->sprints->partition(function ($sprint) {
+                return $sprint->id == $this->sprint; // Mueve el que coincide al principio
+            })->flatten();
+            // Establecer `moveActivity` con el ID del sprint seleccionado
+            $this->moveActivity = $this->sprint;
+        }
+
+        $this->recording = $this->type === 'report'
+            ? Report::find($this->recordingedit)
+            : Activity::with('sprint.backlog.project')->find($this->recordingedit);
         // Inicializar las propiedades con los valores del registro
-        $this->tittle = $this->recording->title;
-        $this->comment = $this->recording->comment;
+        $this->title = $this->recording->title;
+        if ($this->type == 'report') {
+            $this->comment = $this->recording->comment;
+        } else {
+            $this->description = $this->recording->description;
+        }
+
         $this->expected_date = Carbon::parse($this->recording->expected_date)->toDateString();
         $this->priority = $this->recording->priority ?? null;
         $this->points = $this->recording->points;
@@ -146,7 +167,7 @@ class Edit extends Component
                 $report->content = $fullNewFilePath;
             }
 
-            $report->title = $this->tittle ?? $report->tittle;
+            $report->title = $this->title ?? $report->title;
             $report->comment = $this->comment ?? $report->comment;
 
             $fecha = Carbon::parse($report->expected_date)->toDateString();
@@ -220,6 +241,7 @@ class Edit extends Component
                 }
             }
             $report->save();
+            $this->dispatchBrowserEvent('file-reset');
 
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',

@@ -49,7 +49,7 @@
     @apply text-white font-semibold  px-4 py-2 bg-blue-500  hover:bg-blue-400 rounded-lg cursor-pointer w-auto btnIcon;
 }
 .btnDisabled {
-    @apply text-white font-semibold  px-4 py-2 bg-gray-500  rounded-lg  btnIcon;
+    @apply text-white font-semibold bg-gray-500  rounded-lg cursor-pointer w-full btnIcon;
 }
 /* modal */
 .modalHeader {

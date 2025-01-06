@@ -67,7 +67,7 @@
 
 <body>
     {{-- MENUS --}}
-    <div class="text-text1 bg-primaryColor flex items-center justify-center rounded-md py-2">
+    <div class="text-white bg-coma-gradient flex items-center justify-center rounded-md py-2">
         <div id="mainMenu" class="flex flex-row">
             <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}"
                 class="mx-3 flex w-auto items-center justify-center text-xl hover:opacity-70">

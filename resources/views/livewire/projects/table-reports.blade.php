@@ -511,7 +511,7 @@
         </div>
     @endif
     {{-- END MODAL SHOW --}}
-    {{-- MODAL EDIT / CREATE REPORT --}}
+    {{-- MODAL EDIT --}}
     @if ($editReport && $reportEdit)
         <div
             class="block left-0 top-20 z-50 max-h-full overflow-y-auto">
@@ -535,12 +535,12 @@
                             <path d="M6 6l12 12"></path>
                         </svg>
                     </div>
-                    <livewire:modals.reports-activities.edit  :reportedit="$reportEdit->id" :type="'report'">
+                    <livewire:modals.reports-activities.edit  :recordingedit="$reportEdit->id" :type="'report'">
                 </div>
             </div>
         </div>
     @endif
-    {{-- END MODAL EDIT / CREATE REPORT --}}
+    {{-- END MODAL EDIT --}}
     {{-- END MODAL DELETE --}}
     {{-- MODAL EVIDENCE --}}
     <div
@@ -643,7 +643,7 @@
             });
             
             window.addEventListener('file-reset', () => {
-                document.getElementById('file').value = null;
+                document.getElementById('evidence').value = null;
             });
             // MODALS
             window.addEventListener('swal:modal', event => {

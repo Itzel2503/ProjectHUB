@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Projects\Activities;
 
 use App\Models\Activity;
+use App\Models\Backlog;
 use App\Models\ChatReportsActivities;
 use App\Models\Sprint;
 use App\Models\User;
@@ -20,110 +21,59 @@ class TableActivities extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['reloadPage' => 'reloadPage', 'messageSent' => 'loadMessages', 'sprintsUpdated', 'destroyActivity', 'destroySprint'];
-    // GENERALES
-    public $project, $backlog, $allUsers, $firstSprint;
-    public $sprints = [];
-    // Sprint
-    public $selectSprint, $sprintState, $startDate, $endDate, $idSprint, $percentageResolved;
-    public $filteredState = [];
-    public $changeSprint = false;
-    // modal backlog
-    public $modalBacklog = false;
-    // modal sprint
-    public $modalCreateSprint = false;
-    public $showUpdateSprint = false;
-    public $sprintEdit;
-    public $number, $name_sprint, $start_date, $end_date;
+    public $listeners = ['reloadPage' => 'reloadPage', 'delete'];
+    // ENVIADAS
+    public $idsprint, $project;
+    // BACKLOG
+    public $backlog;
+    // SPRINT
+    public $sprint;
+    // FILTROS
+    public $search, $allUsers;
+    public $selectedDelegate = '';
+    public $allUsersFiltered = [], $selectedStates = [];
+    public $filtered = false; // cambio de dirección de flechas
+    public $isOptionsVisible = false; // Controla la visibilidad del panel de opciones
+    public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
+    public $perPage = '20';
+    // variables para la consulta
+    public $filterPriotiry = false, $filterState = false;
+    public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredExpected = 'asc', $orderByType = 'expected_date';
+    // MODAL CREATE
+    public $createEdit = false;
+    // MODAL EDIT
+    public $editActivity = false;
+    public $activityEdit = '';
+    
+    
     // modal activity
-    public $modalCreateActivity = false,
-        $modalShowActivity = false;
+    public  $modalShowActivity = false;
     public $showUpdateActivity = false,
         $showActivity = false,
         $showChat = false;
-    public $activityShow, $messages, $activityEdit, $moveActivity;
+    public $activityShow, $messages, $moveActivity;
     public $title, $file, $description, $delegate, $expected_date, $priority1, $priority2, $priority3, $message;
     // modal activity points
     public $changePoints = false;
     public $points, $point_know, $point_many, $point_effort;
     // table, action's activities
-    public $search;
-    public $perPage = '';
-    public $selectedDelegate = '', $filteredPriority = '', $filteredStateArrow = '', $priorityCase = '', $filteredExpected = 'desc', $orderByType = 'expected_date';
+    public $filteredStateArrow = '';
     public $usersFiltered = [],
-        $allUsersFiltered = [],
-        $selectedStates = [],
         $statesFiltered = [];
-    public $filtered = false, $filter = false, $filterPriotiry = false, $filterState = false;
+    public $filter = false;
+
+    // Resetear paginación cuando se actualiza el campo de búsqueda
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
-        $this->dispatchBrowserEvent('reloadModalAfterDelay');
-
-        // Obtener los sprints y ordenarlos por el número de sprint
-        $backlog = $this->backlog;
-        $this->sprints = $backlog->sprints->sortBy('number');
-
-        if ($this->sprints->isNotEmpty()) {
-            // PRIMERO
-            if (!$this->changeSprint) {
-                // Buscar el primer sprint con estado 'Curso'
-                $courseSprint = $this->sprints->firstWhere('state', 'Curso');
-                // Si no se encontró ningún sprint con estado 'Curso', buscar el primer sprint con estado 'Curso'
-                if (!$courseSprint) {
-                    $pendingSprint = $this->sprints->firstWhere('state', 'Pendiente');
-
-                    // Si se encontró un sprint con estado 'Pendiente', asignarlo a $this->firstSprint
-                    if ($pendingSprint) {
-                        $this->firstSprint = $pendingSprint;
-                    } else {
-                        // Si no se encontró ningún sprint con estado 'Curso' o 'Pendiente', asignar el primer sprint de la colección
-                        $this->firstSprint = $this->sprints->first();
-                    }
-                } else {
-                    // Si se encontró un sprint con estado 'Curso', asignarlo a $this->firstSprint
-                    $this->firstSprint = $courseSprint;
-                }
-
-                $this->selectSprint = $this->firstSprint->id;
-                $this->filteredState = $this->getFilteredStates($this->firstSprint->state);
-            }
-            // SELECT
-            $this->updateSprintData($this->selectSprint);
-            $this->firstSprint = Sprint::find($this->selectSprint);
-
-            if ($this->firstSprint) {
-                $sprintDesc = $this->sprints;
-                // Encuentra el sprint anterior en la secuencia
-                $previousSprint = $sprintDesc->sortByDesc('number')->first(function ($sprint) {
-                    return $sprint->number < $this->firstSprint->number;
-                });
-
-                if ($previousSprint) {
-                    if ($previousSprint->state == 'Curso') {
-                        $this->filteredState = [];
-                    } else {
-                        if ($this->firstSprint->state == 'Curso') {
-                            $this->filteredState = [];
-                        } elseif ($this->firstSprint->state == 'Pendiente') {
-                            $this->filteredState = ['Curso'];
-                        } else {
-                            $this->filteredState = [];
-                        }
-                    }
-                } else {
-                    if ($this->firstSprint->state == 'Curso') {
-                        $this->filteredState = [];
-                    } elseif ($this->firstSprint->state == 'Pendiente') {
-                        $this->filteredState = ['Curso'];
-                    } else {
-                        $this->filteredState = [];
-                    }
-                }
-            }
-        } else {
-            $this->selectSprint = null;
-        }
+        // Backlog
+        $this->backlog = Backlog::where('project_id', $this->project->id)->first();
+        // Sprint
+        $this->sprint = Sprint::find($this->idsprint);
         // Filtro de consulta
         $user = Auth::user();
         $user_id = $user->id;
@@ -131,19 +81,23 @@ class TableActivities extends Component
         $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
-            $activities = Activity::where('sprint_id', $this->selectSprint)
+            $activities = Activity::where('sprint_id', $this->idsprint)
                 ->where(function ($query) {
                     $query
                         ->where('title', 'like', '%' . $this->search . '%');
-                })
-                ->when($this->selectedDelegate, function ($query) {
-                    $query->where('delegate_id', $this->selectedDelegate);
-                })
-                ->when(!empty($this->selectedStates), function ($query) {
-                    $query->whereIn('state', $this->selectedStates);
+                    // Si no se seleccionan estados, excluir "Resuelto"
+                    if (empty($this->selectedStates)) {
+                        $query->where('state', '!=', 'Resuelto');
+                    } else {
+                        // Incluir todos los estados seleccionados
+                        $query->whereIn('state', $this->selectedStates);
+                    }
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->when($this->filterState, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
@@ -152,33 +106,37 @@ class TableActivities extends Component
                 ->select('activities.*', 'delegates.name')
                 ->orderBy($this->orderByType, $this->filteredExpected)
                 ->with(['user', 'delegate'])
-                ->get();
+                ->paginate($this->perPage);
         } else {
-            $activities = Activity::where('sprint_id', $this->selectSprint)
+            $activities = Activity::where('sprint_id', $this->idsprint)
                 ->where(function ($query) {
                     $query
                         ->where('title', 'like', '%' . $this->search . '%');
+                    // Si no se seleccionan estados, excluir "Resuelto"
+                    if (empty($this->selectedStates)) {
+                        $query->where('state', '!=', 'Resuelto');
+                    } else {
+                        // Incluir todos los estados seleccionados
+                        $query->whereIn('state', $this->selectedStates);
+                    }
+                })
+                ->when($this->filterPriotiry, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
+                })
+                ->when($this->filterState, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
                 })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id);
                 })
-                ->when($this->selectedDelegate, function ($query) {
-                    $query->where('delegate_id', $this->selectedDelegate);
-                })
-                ->when(!empty($this->selectedStates), function ($query) {
-                    $query->whereIn('state', $this->selectedStates);
-                })
-                ->when($this->filterPriotiry, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
-                })
-                ->when($this->filterState, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
-                })
                 ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
                 ->select('activities.*', 'delegates.name')
                 ->orderBy($this->orderByType, $this->filteredExpected)
                 ->with(['user', 'delegate'])
-                ->get();
+                ->paginate($this->perPage);
         }
         // TODOS LOS DELEGADOS
         $this->allUsersFiltered = [];
@@ -241,7 +199,7 @@ class TableActivities extends Component
                     $activity->receiver_chat = $lastMessageNoView->receiver_id;
 
                     $receiver = User::find($lastMessageNoView->receiver_id);
-                    
+
                     if ($receiver->type_user == 3) {
                         $activity->client = true;
                     } else {
@@ -249,12 +207,23 @@ class TableActivities extends Component
                     }
                 } else {
                     $lastMessage = $messages->last();
+
                     if ($lastMessage) {
                         if ($lastMessage->user_id == Auth::id()) {
                             $activity->user_id = true;
                         } else {
                             if ($lastMessage->receiver) {
                                 if ($lastMessage->receiver->type_user == 3) {
+                                    $activity->client = true;
+                                } else {
+                                    $activity->client = false;
+                                }
+                            } else {
+                                $activity->client = false;
+                            }
+                            // VER MENSAJES EXCLUSIVOS DE CLIENTE PARA ADMINISTRADORES
+                            if ($lastMessage->transmitter && Auth::user()->type_user == 1) {
+                                if ($lastMessage->transmitter->type_user == 3) {
                                     $activity->client = true;
                                 } else {
                                     $activity->client = false;
@@ -269,376 +238,12 @@ class TableActivities extends Component
             }
             $activity->messages_count = $messages->where('look', false)->count();
         }
-        // COUNT ACTIVITIES
-        $totalActivities = Activity::where('sprint_id', $this->selectSprint)->count(); // Contar el número total de actividades del sprint
-        $allActivities = Activity::where('sprint_id', $this->selectSprint)->get(); // Seleccionar todas las actividades del sprint
-        $sprint = Sprint::find($this->selectSprint);
-        if ($totalActivities && Auth::user()->type_user == 1) {
-            if ($sprint->state == 'Curso' || $sprint->state == 'Cerrado') {
-                $resolvedActivities = $allActivities->where('state', 'Resuelto')->count(); // Contar el número de actividades resueltas
-                if ($totalActivities > 0) {
-                    $this->percentageResolved = ($resolvedActivities / $totalActivities) * 100; // Calcular el porcentaje de actividades resueltas sobre el total de actividades
-                    $this->percentageResolved = round($this->percentageResolved, 2); // Redondear el porcentaje a dos decimales
-                    // Verificar si todas las actividades están en estado "Resuelto"
-                    $allResolved = $allActivities->every(function ($activity) {
-                        return $activity->state === 'Resuelto';
-                    });
-                    // Si todas las actividades están en estado "Resuelto", actualizar el estado del sprint a "Cerrado"
-                    if ($allResolved && Auth::user()->type_user == 1) {
-                        $sprint->state = 'Cerrado';
-                        $sprint->save();
-
-                        $this->firstSprint = $sprint;
-                        $this->sprints = $this->backlog->sprints;
-                    }
-                } else {
-                    // Manejo alternativo si $totalActivities es igual a cero
-                    $this->percentageResolved = 0;
-                }
-            } else {
-                // Manejo alternativo state es diferente
-                $this->percentageResolved = 0;
-            }
-        } else {
-            // Manejo alternativo si $totalActivities no existe
-            $this->percentageResolved = 0;
-        }
 
         return view('livewire.projects.activities.table-activities', [
             'activities' => $activities,
         ]);
     }
     // ACTIONS
-    public function createSprint()
-    {
-        try {
-            $this->validate(
-                [
-                    'name_sprint' => 'required|max:255',
-                    'start_date' => 'required|date|max:255',
-                    'end_date' => 'required|date|max:255',
-                ],
-                [
-                    'name_sprint.required' => 'El nombre del sprint es obligatorio.',
-                    'name_sprint.max' => 'El nombre del sprint no puede tener más de 255 caracteres.',
-                    'start_date.required' => 'La fecha de inicio del sprint es obligatoria.',
-                    'start_date.date' => 'La fecha de inicio del sprint debe ser una fecha válida.',
-                    'start_date.max' => 'La fecha de inicio del sprint no puede tener más de 255 caracteres.',
-                    'end_date.required' => 'La fecha de finalización del sprint es obligatoria.',
-                    'end_date.date' => 'La fecha de finalización del sprint debe ser una fecha válida.',
-                    'end_date.max' => 'La fecha de finalización del sprint no puede tener más de 255 caracteres.',
-                ],
-            );
-            // Aquí puedes continuar con tu lógica después de la validación exitosa
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Faltan campos o campos incorrectos',
-            ]);
-            throw $e;
-        }
-
-        $sprint = new Sprint();
-
-        $sprints = Sprint::where('backlog_id', $this->backlog->id)
-            ->orderBy('number', 'desc')
-            ->get();
-
-        if ($sprints->isEmpty()) {
-            $sprint->number = 1;
-        } else {
-            $lastSprintNumber = $sprints->first()->number;
-            $sprint->number = $lastSprintNumber + 1;
-        }
-
-        $sprint->name = $this->name_sprint;
-        $sprint->state = 'Pendiente';
-        $sprint->start_date = $this->start_date;
-        $sprint->end_date = $this->end_date;
-        $sprint->backlog_id = $this->backlog->id;
-        $sprint->save();
-
-        $this->emit('sprintsUpdated');
-        $this->modalCreateSprint = false;
-        // Emitir un evento de navegador
-        $this->dispatchBrowserEvent('swal:modal', [
-            'type' => 'success',
-            'title' => 'Sprint creado',
-        ]);
-    }
-
-    public function updateSprint($id)
-    {
-        try {
-            $this->validate(
-                [
-                    'name_sprint' => 'required|max:255',
-                ],
-                [
-                    'name_sprint.required' => 'El nombre del sprint es obligatorio.',
-                    'name_sprint.max' => 'El nombre del sprint no puede tener más de 255 caracteres.',
-                ],
-            );
-            // Aquí puedes continuar con tu lógica después de la validación exitosa
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Faltan campos o campos incorrectos',
-            ]);
-            throw $e;
-        }
-
-        $sprint = Sprint::find($id);
-        $sprint->name = $this->name_sprint ?? $sprint->name;
-        $sprint->start_date = $this->start_date ?? $sprint->start_date;
-        $sprint->end_date = $this->end_date ?? $sprint->end_date;
-        $sprint->save();
-
-        $this->emit('sprintsUpdated');
-        $this->modalCreateSprint = false;
-        // Emitir un evento de navegador
-        $this->dispatchBrowserEvent('swal:modal', [
-            'type' => 'success',
-            'title' => 'Sprint actualizado',
-        ]);
-    }
-
-    public function updateStateSprint($id, $state)
-    {
-        $sprint = Sprint::find($id);
-        $allSprints = Sprint::all()->where('backlog_id', $this->backlog->id);
-
-        if ($sprint) {
-            // Encuentra el sprint anterior en la secuencia
-            $previousSprint = $allSprints->sortByDesc('number')->first(function ($number) {
-                return $number->number < $this->firstSprint->number;
-            });
-
-            if ($this->firstSprint->number == 1) {
-                $sprint->state = $state;
-                $sprint->save();
-                $this->emit('sprintsUpdated');
-
-                // Emitir un evento de navegador
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Estado de sprint actualizado',
-                ]);
-            } elseif ($previousSprint) {
-                if ($previousSprint->state == 'Pendiente') {
-                    // Emitir un evento de navegador
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Sprint anterior no iniciado',
-                    ]);
-                } else {
-                    $sprint->state = $state;
-                    $sprint->save();
-                    $this->emit('sprintsUpdated');
-
-                    // Emitir un evento de navegador
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'success',
-                        'title' => 'Estado de sprint actualizado',
-                    ]);
-                }
-            }
-        } else {
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Sprint no encontrado',
-            ]);
-        }
-    }
-
-    public function destroySprint($id)
-    {
-        $sprintDelete = Sprint::find($id);
-
-        if ($sprintDelete) {
-            $sprintNumberToDelete = $sprintDelete->number;
-            $sprints = Sprint::all()->where('backlog_id', $this->backlog->id);
-            // Eliminar el sprint
-            $sprintDelete->delete();
-            // Reenumerar los números de los sprints restantes
-            foreach ($sprints as $sprint) {
-                if ($sprint->number > $sprintNumberToDelete) {
-                    $sprint->number -= 1;
-                    $sprint->save();
-                }
-            }
-
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Sprint eliminado',
-            ]);
-
-            return redirect()->to('/projects/' . $this->project->id . '/activities');
-        } else {
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Sprint no encontrado',
-            ]);
-        }
-    }
-
-    public function createActivity()
-    {
-        try {
-            $this->validate(
-                [
-                    'title' => 'required|max:255',
-                    'delegate' => 'required',
-                    'expected_date' => 'required|date',
-                ],
-                [
-                    'title.required' => 'El título es obligatorio.',
-                    'title.max:255' => 'El título no debe tener más caracteres que 255.',
-                    'delegate.required' => 'El delegado es obligatorio.',
-                    'expected_date.required' => 'La fecha esperada es obligatoria.',
-                    'expected_date.date' => 'La fecha esperada debe ser una fecha válida.',
-                ],
-            );
-            // Aquí puedes continuar con tu lógica después de la validación exitosa
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Faltan campos o campos incorrectos',
-            ]);
-            throw $e;
-        }
-
-        $activity = new Activity();
-        if ($this->file) {
-            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-            if (in_array($this->file->extension(), $extensionesImagen)) {
-                $maxSize = 5 * 1024 * 1024; // 5 MB
-                // Verificar el tamaño del archivo
-                if ($this->file->getSize() > $maxSize) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
-                    ]);
-                    return;
-                }
-                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $this->project->customer->name . '/' . $this->project->name;
-                $fileName = $this->file->getClientOriginalName();
-                $fullNewFilePath = $filePath . '/' . $fileName;
-                // Procesar la imagen
-                $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
-                // Redimensionar la imagen si es necesario
-                $image->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
-                // Guardar la imagen temporalmente
-                $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
-                $image->save(storage_path('app/' . $tempPath));
-                // Guardar la imagen redimensionada en el almacenamiento local
-                Storage::disk('activities')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
-                // // Eliminar la imagen temporal
-                Storage::disk('local')->delete($tempPath);
-                $activity->image = $fullNewFilePath;
-            } else {
-                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $this->project->customer->name . '/' . $this->project->name;
-                $fileName = $this->file->getClientOriginalName();
-                $fullNewFilePath = $filePath . '/' . $fileName;
-                // Guardar el archivo en el disco 'activities'
-                $this->file->storeAs($filePath, $fileName, 'activities');
-                $activity->image = $fullNewFilePath;
-            }
-        }
-
-        $activity->sprint_id = $this->selectSprint;
-        $activity->delegate_id = $this->delegate;
-        $activity->user_id = Auth::id();
-        $activity->title = $this->title;
-        $activity->description = $this->description;
-
-        if ($this->priority1) {
-            $activity->priority = 'Alto';
-        } elseif ($this->priority2) {
-            $activity->priority = 'Medio';
-        } elseif ($this->priority3) {
-            $activity->priority = 'Bajo';
-        }
-        $activity->state = 'Abierto';
-
-        if ($this->changePoints == true) {
-            if (!$this->points) {
-                $activity->points = 0;
-            } else {
-                $validPoints = [1, 2, 3, 5, 8, 13];
-                $activity->points = $this->points;
-
-                if (!in_array($this->points, $validPoints)) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Puntuaje no válido.',
-                    ]);
-                    return; // O cualquier otra acción que desees realizar
-                } else {
-                    $activity->points = $this->points;
-                }
-            }
-            $questionsPoints = [
-                'pointKnow' => null,
-                'pointMany' => null,
-                'pointEffort' => null,
-            ];
-            // Convertir el array a JSON
-            $questionsPointsJson = json_encode($questionsPoints);
-            // Asignar y guardar 
-            $activity->questions_points = $questionsPointsJson;
-        } else {
-            if (!$this->point_know && !$this->point_many && !$this->point_effort) {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'warning',
-                    'title' => 'El formulario está incompleto o no se han seleccionado los puntos necesarios.',
-                ]);
-                $activity->points = 0;
-                $questionsPoints = [
-                    'pointKnow' => null,
-                    'pointMany' => null,
-                    'pointEffort' => null,
-                ];
-                // Convertir el array a JSON
-                $questionsPointsJson = json_encode($questionsPoints);
-                // Asignar y guardar 
-                $activity->questions_points = $questionsPointsJson;
-            } else {
-                $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
-                $activity->points = $maxPoint;
-                // Crear un array asociativo con los valores
-                $questionsPoints = [
-                    'pointKnow' => $this->point_know,
-                    'pointMany' => $this->point_many,
-                    'pointEffort' => $this->point_effort,
-                ];
-                // Convertir el array a JSON
-                $questionsPointsJson = json_encode($questionsPoints);
-                // Asignar y guardar 
-                $activity->questions_points = $questionsPointsJson;
-            }
-        }
-        $activity->delegated_date = Carbon::now();
-        $activity->expected_date = $this->expected_date;
-        $activity->save();
-
-        $this->emit('sprintsUpdated');
-        $this->modalCreateActivity = false;
-        $this->clearInputs();
-        $this->render();
-        // Emitir un evento de navegador
-        $this->dispatchBrowserEvent('swal:modal', [
-            'type' => 'success',
-            'title' => 'Actividad creada',
-        ]);
-    }
-
     public function updateChat($id)
     {
         $activity = Activity::find($id);
@@ -679,7 +284,7 @@ class TableActivities extends Component
                     $chat->user_id = $user->id; // envia
                     $chat->receiver_id = $activity->delegate->id; //recibe
                 }
-                
+
                 $chat->activity_id = $activity->id;
                 $chat->message = $this->message;
                 $chat->look = false;
@@ -736,7 +341,7 @@ class TableActivities extends Component
             throw $e;
         }
         $activity = Activity::find($id);
-        
+
         if ($this->file) {
             $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
             if (in_array($this->file->extension(), $extensionesImagen)) {
@@ -880,7 +485,7 @@ class TableActivities extends Component
         ]);
     }
 
-    public function destroyActivity($id)
+    public function delete($id)
     {
         $activity = Activity::find($id);
 
@@ -964,25 +569,6 @@ class TableActivities extends Component
         }
     }
     // INFO MODAL
-    public function showEditSprint($id)
-    {
-        $this->showUpdateSprint = true;
-
-        if ($this->modalCreateSprint == true) {
-            $this->modalCreateSprint = false;
-        } else {
-            $this->modalCreateSprint = true;
-        }
-
-        $this->sprintEdit = Sprint::find($id);
-        $this->name_sprint = $this->sprintEdit->name;
-
-        $fecha_start = Carbon::parse($this->sprintEdit->start_date);
-        $this->start_date = $fecha_start->toDateString();
-        $fecha_end = Carbon::parse($this->sprintEdit->end_date);
-        $this->end_date = $fecha_end->toDateString();
-    }
-
     public function showActivity($id)
     {
         $this->showActivity = true;
@@ -1107,50 +693,29 @@ class TableActivities extends Component
         $this->point_effort = $questionsPoints['pointEffort'] ?? null;
     }
     // MODAL
-    public function modalBacklog()
+    public function create()
     {
-        if ($this->modalBacklog == true) {
-            $this->modalBacklog = false;
-        } else {
-            $this->modalBacklog = true;
-        }
+        $this->createEdit = !$this->createEdit;
     }
 
-    public function modalCreateSprint()
+    public function editActivity($id)
     {
-        $this->showUpdateSprint = false;
-
-        if ($this->modalCreateSprint == true) {
-            $this->modalCreateSprint = false;
-        } else {
-            $this->modalCreateSprint = true;
-        }
-        $this->clearInputs();
-        $this->resetErrorBag();
-    }
-
-    public function modalShowActivity()
-    {
-        if ($this->modalShowActivity == true) {
-            $this->modalShowActivity = false;
-        } else {
-            $this->modalShowActivity = true;
-        }
-        $this->clearInputs();
-    }
-
-    public function modalCreateActivity()
-    {
-        $this->showUpdateActivity = false;
-
-        if ($this->modalCreateActivity == true) {
-            $this->modalCreateActivity = false;
-        } else {
+        if ($this->createEdit == true) {
+            $this->createEdit = false;
             $this->activityEdit = null;
-            $this->modalCreateActivity = true;
+        } else {
+            $this->activityEdit = Activity::find($id);
+            if ($this->activityEdit) {
+                $this->createEdit = true;
+            } else {
+                $this->createEdit = false;
+                // Maneja un caso en el que no se encuentra el actividad (opcional)
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'El reporte no existe',
+                ]);
+            }
         }
-        $this->clearInputs();
-        $this->resetErrorBag();
     }
     // EXTRAS
     public function clearInputs()
@@ -1181,14 +746,6 @@ class TableActivities extends Component
     public function sprintsUpdated()
     {
         $this->sprints = $this->backlog->sprints;
-    }
-
-    public function selectSprint($id)
-    {
-        $this->changeSprint = true;
-        $this->updateSprintData($id);
-        $this->selectSprint = $id;
-        $this->emit('sprintsUpdated');
     }
 
     public function selectPriority($value)
@@ -1227,7 +784,21 @@ class TableActivities extends Component
         $this->render();
     }
     // FILTER
-    public function filterDown($type) 
+    public function togglePanel($activityId)
+    {
+        // Si el panel ya está visible, lo cerramos
+        if (isset($this->visiblePanels[$activityId]) && $this->visiblePanels[$activityId]) {
+            unset($this->visiblePanels[$activityId]);
+        } else {
+            // Cerrar todos los demás paneles
+            $this->visiblePanels = [];
+
+            // Abrir el panel seleccionado
+            $this->visiblePanels[$activityId] = true;
+        }
+    }
+
+    public function filterDown($type)
     {
         $this->filter = true;
         $this->filtered = false;
@@ -1252,7 +823,7 @@ class TableActivities extends Component
             $this->filteredStateArrow = 'asc';
             $this->priorityCase = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END";
         }
-        
+
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
             $this->filterState = false;
@@ -1260,7 +831,7 @@ class TableActivities extends Component
         }
     }
 
-    public function filterUp($type) 
+    public function filterUp($type)
     {
         $this->filter = true;
         $this->filtered = true;
@@ -1285,7 +856,7 @@ class TableActivities extends Component
             $this->filteredStateArrow = 'asc';
             $this->priorityCase = "CASE WHEN state = 'Resuelto' THEN 1 WHEN state = 'Conflicto' THEN 2 WHEN state = 'Proceso' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END";
         }
-        
+
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
             $this->filterState = false;

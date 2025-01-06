@@ -8,19 +8,24 @@
                     class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
                     <h4
                         class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
-                        Reporte</h4>
+                        @if ($type == 'activity')
+                            Actividad
+                        @else
+                            Reporte
+                        @endif
+                    </h4>
                 </div>
             @endif
             <div class="-mx-3 mb-6 flex flex-row">
                 <div class="mb-6 flex w-full flex-col px-3">
-                    <h5 class="inline-flex font-semibold" for="tittle">
+                    <h5 class="inline-flex font-semibold" for="title">
                         Titulo<p class="text-red-600">*</p>
                     </h5>
-                    <input wire:model='tittle' required type="text" placeholder="Título" name="tittle" id="tittle"
+                    <input wire:model='title' required type="text" placeholder="Título" name="title" id="title"
                         class="inputs">
                     <div>
                         <span class="text-xs italic text-red-600">
-                            @error('tittle')
+                            @error('title')
                                 <span class="pl-2 text-xs italic text-red-600">
                                     {{ $message }}
                                 </span>
@@ -30,7 +35,11 @@
                 </div>
                 <div class="mb-6 flex w-full flex-col px-3">
                     <h5 class="inline-flex font-semibold" for="file">
-                        Seleccionar archivo
+                        @if ($type == 'activity')
+                            Seleccionar una imagen
+                        @else
+                            Seleccionar archivo
+                        @endif
                     </h5>
                     <input wire:model='file' required type="file" name="file" id="file" class="inputs">
                     <div>
@@ -46,54 +55,97 @@
             </div>
             <div class="-mx-3 mb-6">
                 <div class="mb-6 flex w-full flex-col px-3">
-                    <h5 class="inline-flex font-semibold" for="tittle">
-                        Descripción<p class="text-red-600">*</p>
-                    </h5>
-                    <textarea wire:model='comment' type="text" rows="6"
-                        placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" id="comment"
-                        class="textarea"></textarea>
-                    <div>
-                        <span class="text-xs italic text-red-600">
-                            @error('comment')
-                                <span class="pl-2 text-xs italic text-red-600">
-                                    {{ $message }}
-                                </span>
-                            @enderror
-                        </span>
-                    </div>
+                    @if ($type == 'activity')
+                        <h5 class="inline-flex font-semibold" for="description">
+                            Descripción
+                        </h5>
+                        <textarea wire:model='description' type="text" rows="6"
+                            placeholder="Describa la observación y especifique el objetivo a cumplir." name="description" id="description"
+                            class="textarea"></textarea>
+                        <div>
+                            <span class="text-xs italic text-red-600">
+                                @error('description')
+                                    <span class="pl-2 text-xs italic text-red-600">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </span>
+                        </div>
+                    @else
+                        <h5 class="inline-flex font-semibold" for="comment">
+                            Descripción<p class="text-red-600">*</p>
+                        </h5>
+                        <textarea wire:model='comment' type="text" rows="6"
+                            placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" id="comment"
+                            class="textarea"></textarea>
+                        <div>
+                            <span class="text-xs italic text-red-600">
+                                @error('comment')
+                                    <span class="pl-2 text-xs italic text-red-600">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </span>
+                        </div>
+                    @endif
                 </div>
             </div>
             @if (Auth::user()->type_user != 3)
                 <div class="-mx-3 mb-6 flex flex-row">
-                    <div class="m-auto mb-6 flex w-full flex-row px-3">
-                        <h5 class="mr-5 inline-flex font-semibold" for="evidenceEdit">
-                            Evidencia
-                        </h5>
-                        <div class="flex justify-center gap-20">
-                            <div class="flex flex-col items-center">
-                                <input type="checkbox" wire:model="evidenceEdit" class="priority-checkbox"
-                                    style="height: 24px; width: 24px;" />
+                    @if ($type == 'report')
+                        <div class="mb-6 flex w-full flex-col px-3">
+                            <h5 class="mr-5 inline-flex font-semibold" for="evidenceEdit">
+                                Evidencia
+                            </h5>
+                            <div class="flex justify-center gap-20">
+                                <div class="flex flex-col items-center">
+                                    <input type="checkbox" wire:model="evidenceEdit" class="priority-checkbox"
+                                        style="height: 24px; width: 24px;" />
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-xs italic text-red-600">
+                                    @error('evidenceEdit')
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </span>
+                            </div>
+                            <div>
+                                <span class="text-xs italic text-red-600">
+                                    @error('delegate')
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </span>
                             </div>
                         </div>
-                        <div>
-                            <span class="text-xs italic text-red-600">
-                                @error('evidenceEdit')
-                                    <span class="pl-2 text-xs italic text-red-600">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </span>
+                    @else
+                        <div
+                            class="mb-6 flex w-full flex-col px-3">
+                            <h5 class="inline-flex font-semibold" for="delegate">
+                                Mover a sprint
+                            </h5>
+                            <select wire:model="moveActivity" class="inputs">
+                                @foreach ($sprints as $sprint)
+                                    <option value="{{ $sprint->id }}">{{ $sprint->number }} -
+                                        {{ $sprint->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div>
+                                <span class="text-xs italic text-red-600">
+                                    @error('moveActivity')
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </span>
+                            </div>
                         </div>
-                        <div>
-                            <span class="text-xs italic text-red-600">
-                                @error('delegate')
-                                    <span class="pl-2 text-xs italic text-red-600">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </span>
-                        </div>
-                    </div>
+                    @endif
                     <div class="mb-6 flex w-full flex-col px-3">
                         <h5 class="inline-flex font-semibold" for="expected_date">
                             Fecha de entrega<p class="text-red-600">*</p>

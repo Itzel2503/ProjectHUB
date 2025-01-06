@@ -59,6 +59,7 @@ class TableReports extends Component
 
         $user = Auth::user();
         $user_id = $user->id;
+        // DELEGATE
         $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get(); // TODOS LOS USUARIOS MENOS CLIENTES
         // FILTRO DELEGADOS
         $this->allUsersFiltered = []; 
@@ -256,14 +257,12 @@ class TableReports extends Component
                 }
             }
             $report->messages_count = $messages->where('look', false)->count();
-            // Verificar si el archivo existe en la base de datos
+            // Verificar si el archivo existe en la base de datos y si es un video
             if ($report->content && $report->video == true) {
                 // Verificar si el archivo existe en la carpeta
                 $filePath = public_path('reportes/' . $report->content);
-                $fileExtension = pathinfo($report->content, PATHINFO_EXTENSION);
                 if (file_exists($filePath)) {
                     $report->contentExists = true;
-                    $report->fileExtension = $fileExtension;
                 } else {
                     $report->contentExists = false;
                 }
@@ -425,6 +424,7 @@ class TableReports extends Component
                 }
                 $evidence->content = $fullNewFilePath;
                 $evidence->save();
+                $this->dispatchBrowserEvent('file-reset');
 
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'success',

@@ -26,9 +26,9 @@ class Activity extends Model
         return $this->belongsTo(Sprint::class);
     }
 
-    public function project()
+    public function getProjectAttribute()
     {
-        return $this->hasOneThrough(Project::class, Sprint::class, 'id', 'id', 'sprint_id', 'project_id');
+        return $this->sprint && $this->sprint->backlog ? $this->sprint->backlog->project : null;
     }
 
     public function chatMessages()
