@@ -25,7 +25,7 @@
                             <div wire:poll.5s>
                                 <span class="m-auto mr-5">
                                     <span class="inline-block font-semibold">Avance</span>
-                                    <span class="{{ $percentageResolved == '100' ? 'text-lime-700' : '' }}">
+                                    <span class="{{ $percentageResolved == '100' ? 'text-lime-700' : ($percentageResolved >= 50 ? 'text-yellow-500' : 'text-red-600') }}">
                                         {{ $percentageResolved }}%
                                     </span>
                                 </span>
@@ -56,7 +56,7 @@
                         {{ \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
                         <span class="inline-block font-semibold">Fecha de cierre:</span>
                         <span
-                            class="{{ (\Carbon\Carbon::parse($endDate)->startOfDay() <= \Carbon\Carbon::now()->startOfDay()) ? 'text-red-500' : '' }}">
+                            class="">
                             {{ \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                         </span>
                     </div>

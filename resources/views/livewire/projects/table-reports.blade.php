@@ -609,7 +609,7 @@
     {{-- END MODAL EVIDENCE --}}
     {{-- LOADING PAGE --}}
     <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-        wire:target="create, filterDown, filterUp updateDelegate,, showReport, editReport, reportRepeat, changePoints, update, updateEvidence">
+        wire:target="isOptionsVisible, create, filterDown, filterUp, showReport, togglePanel, editReport, deleteReport, reportRepeat, updateEvidence">
         <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40">
         </div>
         <div class="loadingspinner relative top-1/3 z-20">

@@ -84,13 +84,7 @@ class TableActivities extends Component
                 ->where(function ($query) {
                     $query
                         ->where('title', 'like', '%' . $this->search . '%');
-                    // Si no se seleccionan estados, excluir "Resuelto"
-                    if (empty($this->selectedStates)) {
-                        $query->where('state', '!=', 'Resuelto');
-                    } else {
-                        // Incluir todos los estados seleccionados
-                        $query->whereIn('state', $this->selectedStates);
-                    }
+                    $query->whereIn('state', $this->selectedStates);
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
@@ -111,13 +105,7 @@ class TableActivities extends Component
                 ->where(function ($query) {
                     $query
                         ->where('title', 'like', '%' . $this->search . '%');
-                    // Si no se seleccionan estados, excluir "Resuelto"
-                    if (empty($this->selectedStates)) {
-                        $query->where('state', '!=', 'Resuelto');
-                    } else {
-                        // Incluir todos los estados seleccionados
-                        $query->whereIn('state', $this->selectedStates);
-                    }
+                    $query->whereIn('state', $this->selectedStates);
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
