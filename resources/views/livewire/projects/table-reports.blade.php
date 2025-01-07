@@ -505,7 +505,7 @@
                             <path d="M6 6l12 12"></path>
                         </svg>
                     </div>
-                    <livewire:modals.reports-activities.show :reportshow="$reportShow->id" :type="'report'">
+                    <livewire:modals.reports-activities.show :recordingshow="$reportShow->id" :type="'report'">
                 </div>
             </div>
         </div>

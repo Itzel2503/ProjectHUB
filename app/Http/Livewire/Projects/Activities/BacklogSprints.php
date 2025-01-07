@@ -11,7 +11,7 @@ use Livewire\Component;
 
 class BacklogSprints extends Component
 {
-    public $listeners = ['destroySprint'];
+    public $listeners = ['activityUpdated' => 'recalculatePercentageResolved', 'destroySprint'];
     protected $paginationTheme = 'tailwind';
     // ENVIADAS
     public $project, $backlog;
@@ -61,6 +61,18 @@ class BacklogSprints extends Component
                     // Si se encontró un sprint con estado 'Pendiente', asignarlo a $this->firstSprint
                     if ($pendingSprint) {
                         $this->firstSprint = $pendingSprint;
+                        // Obtenemos las fechas relevantes
+                        $startDate = Carbon::parse($pendingSprint->start_date)->startOfDay();
+                        $currentDate = Carbon::now()->startOfDay();
+                        // Verificamos si la fecha de inicio del sprint es igual o mayor a hoy
+                        if ($startDate->lte($currentDate)) {
+                            // Solo cambiar a "Curso" si estamos en o después del 13 de enero
+                            if ($currentDate->greaterThanOrEqualTo(Carbon::create($startDate))) {
+                                $sprint = Sprint::find($pendingSprint->id);
+                                $sprint->state = 'Curso';
+                                $sprint->save();
+                            }
+                        }
                     } else {
                         // Si no se encontró ningún sprint con estado 'Curso' o 'Pendiente', asignar el primer sprint de la colección
                         $this->firstSprint = $this->sprints->first();
@@ -143,17 +155,6 @@ class BacklogSprints extends Component
             // Manejo alternativo si $totalActivities no existe
             $this->percentageResolved = 0;
         }
-        // ACTUALIZAR ESTADO DE SPRINT SI LA FECHA DE INICIO ES MAYOR O IGUAL A LA FECHA ACTUAL Y EL ESTADO ES PENDIENTE
-        // dd($this->firstSprint, $this->sprints);
-        if ($this->firstSprint ) {
-            if ($this->firstSprint->state == 'Pendiente') {
-                if (Carbon::parse($this->firstSprint->start_date)->startOfDay() >= Carbon::now()->startOfDay()) {
-                    $sprint = Sprint::find($this->firstSprint->id);
-                    $sprint->state = 'Curso';
-                    // $sprint->save();
-                }
-            }
-        }
 
         return view('livewire.projects.activities.backlog-sprints', [
             'sprints' => $this->sprints,
@@ -211,7 +212,7 @@ class BacklogSprints extends Component
         $sprint->save();
 
         // Actualiza los sprints en la vista
-        $this->sprintsUpdated();   
+        $this->sprintsUpdated();
         $this->newSprint();
         // Emitir un evento de navegador
         $this->dispatchBrowserEvent('swal:modal', [
@@ -360,7 +361,7 @@ class BacklogSprints extends Component
     {
         $this->updateSprint = true;
 
-        ($this->newSprint == true) ? $this->newSprint = false :  $this->newSprint = true ;
+        ($this->newSprint == true) ? $this->newSprint = false :  $this->newSprint = true;
 
         $this->sprintEdit = Sprint::find($id);
         $this->name_sprint = $this->sprintEdit->name;
@@ -374,7 +375,7 @@ class BacklogSprints extends Component
     public function clearInputs()
     {
         $this->name_sprint = '';
-        $this->start_date = ''; 
+        $this->start_date = '';
         $this->end_date = '';
     }
 
@@ -389,6 +390,11 @@ class BacklogSprints extends Component
         $this->updateSprintData($id);
         $this->selectSprint = $id;
         $this->emit('sprintsUpdated');
+    }
+
+    public function recalculatePercentageResolved()
+    {
+        $this->calculatePercentageResolved();
     }
     // PROTECTED
     protected function updateSprintData($id)
@@ -419,5 +425,35 @@ class BacklogSprints extends Component
         return array_filter($actions, function ($action) use ($currentState) {
             return $action != $currentState;
         });
+    }
+
+    protected function calculatePercentageResolved()
+    {
+        $totalActivities = Activity::where('sprint_id', $this->selectSprint)->count();
+        $allActivities = Activity::where('sprint_id', $this->selectSprint)->get();
+        $sprint = Sprint::find($this->selectSprint);
+
+        if ($totalActivities && Auth::user()->type_user == 1) {
+            $resolvedActivities = $allActivities->where('state', 'Resuelto')->count();
+
+            if ($totalActivities > 0) {
+                $this->percentageResolved = round(($resolvedActivities / $totalActivities) * 100, 2);
+
+                $allResolved = $allActivities->every(function ($activity) {
+                    return $activity->state === 'Resuelto';
+                });
+
+                if ($allResolved && $sprint->state !== 'Cerrado') {
+                    $sprint->state = 'Cerrado';
+                    $sprint->save();
+                    $this->firstSprint = $sprint;
+                    $this->sprints = $this->backlog->sprints;
+                }
+            } else {
+                $this->percentageResolved = 0;
+            }
+        } else {
+            $this->percentageResolved = 0;
+        }
     }
 }

@@ -123,15 +123,15 @@
                             </div>
                         </div>
                     @else
-                        <div
-                            class="mb-6 flex w-full flex-col px-3">
+                        <div class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="delegate">
                                 Mover a sprint
                             </h5>
                             <select wire:model="moveActivity" class="inputs">
                                 @foreach ($sprints as $sprint)
-                                    <option value="{{ $sprint->id }}">{{ $sprint->number }} -
-                                        {{ $sprint->name }}
+                                    <option value="{{ is_object($sprint) ? $sprint->id : $sprint['id'] }}">
+                                        {{ is_object($sprint) ? $sprint->number : $sprint['number'] }} -
+                                        {{ is_object($sprint) ? $sprint->name : $sprint['name'] }}
                                     </option>
                                 @endforeach
                             </select>

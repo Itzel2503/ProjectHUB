@@ -22,12 +22,14 @@
                     {{-- NOMBRE --}}
                     <div class="mb-2 inline-flex h-12 w-2/6 bg-transparent px-2 md:mx-3 md:px-0">
                         @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
-                            <span class="m-auto mr-5">
-                                <span class="inline-block font-semibold">Avance</span>
-                                <span class="{{ $percentageResolved == '100' ? 'text-lime-700' : '' }}">
-                                    {{ $percentageResolved }}%
+                            <div wire:poll.5s>
+                                <span class="m-auto mr-5">
+                                    <span class="inline-block font-semibold">Avance</span>
+                                    <span class="{{ $percentageResolved == '100' ? 'text-lime-700' : '' }}">
+                                        {{ $percentageResolved }}%
+                                    </span>
                                 </span>
-                            </span>
+                            </div>
                         @endif
                         <select wire:model="selectSprint" wire:change="selectSprint($event.target.value)"
                             class="inputs">
@@ -352,7 +354,7 @@
     @endif
     {{-- END MODAL EDIT / CREATE SPRINT --}}
     <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-        wire:target="newSprint, updateStateSprint, updateStateSprint, selectSprint, showBacklog, createSprint, updateSprint">
+        wire:target="newSprint, editSprint, deleteSprint, showBacklog, updateSprint, createSprint">
         <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
         <div class="loadingspinner relative top-1/3 z-20">
             <div id="square1"></div>
@@ -363,7 +365,7 @@
         </div>
     </div>
     @if (!$sprints->isEmpty())
-        <livewire:projects.activities.table-activities :idsprint="$idSprint"  :project="$project">
+        <livewire:projects.activities.table-activities :idsprint="$idSprint"  :project="$project"  wire:key="table-activities-{{ $idSprint }}">
     @endif
     @push('js')
         <script>

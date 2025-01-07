@@ -10,7 +10,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -316,175 +315,6 @@ class TableActivities extends Component
         }
     }
 
-    public function updateActivity($id)
-    {
-        try {
-            $this->validate(
-                [
-                    'title' => 'required|max:255',
-                    'expected_date' => 'required|date',
-                ],
-                [
-                    'title.required' => 'El título es obligatorio.',
-                    'title.max:255' => 'El título no debe tener más caracteres que 255.',
-                    'expected_date.required' => 'La fecha esperada es obligatoria.',
-                    'expected_date.date' => 'La fecha esperada debe ser una fecha válida.',
-                ],
-            );
-            // Aquí puedes continuar con tu lógica después de la validación exitosa
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Faltan campos o campos incorrectos',
-            ]);
-            throw $e;
-        }
-        $activity = Activity::find($id);
-
-        if ($this->file) {
-            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-            if (in_array($this->file->extension(), $extensionesImagen)) {
-                $maxSize = 5 * 1024 * 1024; // 5 MB
-                // Verificar el tamaño del archivo
-                if ($this->file->getSize() > $maxSize) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
-                    ]);
-                    return;
-                }
-                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $this->project->customer->name . '/' . $this->project->name;
-                $fileName = $this->file->getClientOriginalName();
-                $fullNewFilePath = $filePath . '/' . $fileName;
-                // Procesar la imagen
-                $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
-                // Redimensionar la imagen si es necesario
-                $image->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
-                // Guardar la imagen temporalmente
-                $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
-                $image->save(storage_path('app/' . $tempPath));
-                // Eliminar imagen anterior
-                if (Storage::disk('activities')->exists($activity->image)) {
-                    Storage::disk('activities')->delete($activity->image);
-                }
-                // Guardar la imagen redimensionada en el almacenamiento local
-                Storage::disk('activities')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
-                // // Eliminar la imagen temporal
-                Storage::disk('local')->delete($tempPath);
-                $activity->image = $fullNewFilePath;
-            } else {
-                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $this->project->customer->name . '/' . $this->project->name;
-                $fileName = $this->file->getClientOriginalName();
-                $fullNewFilePath = $filePath . '/' . $fileName;
-
-                // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-                if ($activity->image && Storage::disk('activities')->exists($activity->image)) {
-                    $existingFilePath = pathinfo($activity->image, PATHINFO_DIRNAME);
-
-                    if ($existingFilePath == $filePath) {
-                        Storage::disk('activities')->delete($activity->image);
-                    }
-                }
-                // Guardar el archivo en el disco 'activities'
-                $this->file->storeAs($filePath, $fileName, 'activities');
-                $activity->image = $fullNewFilePath;
-            }
-        }
-
-        $activity->sprint_id = $this->moveActivity ?? $activity->sprint_id;
-        if ($this->moveActivity) {
-            $sprint = Sprint::find($this->moveActivity);
-            if ($sprint->state == 'Cerrado') {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'Sprint cerrado',
-                ]);
-
-                return;
-            }
-        }
-        $activity->title = $this->title ?? $activity->title;
-        $activity->description = $this->description ?? $activity->description;
-
-        if ($this->priority1) {
-            $activity->priority = 'Alto';
-        } elseif ($this->priority2) {
-            $activity->priority = 'Medio';
-        } elseif ($this->priority3) {
-            $activity->priority = 'Bajo';
-        }
-
-        $activity->expected_date = $this->expected_date ?? $activity->expected_date;
-
-        if ($this->changePoints == true) {
-            $validPoints = [0, 1, 2, 3, 5, 8, 13];
-            $activity->points = $this->points;
-
-            if (!in_array($this->points, $validPoints)) {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'Puntuaje no válido.',
-                ]);
-                return; // O cualquier otra acción que desees realizar
-            } else {
-                $activity->points = $this->points ?? $activity->points;
-            }
-            // Crear un array asociativo con los valores
-            $questionsPoints = [
-                'pointKnow' => null,
-                'pointMany' => null,
-                'pointEffort' => null,
-            ];
-            // Convertir el array a JSON
-            $questionsPointsJson = json_encode($questionsPoints);
-            // Asignar y guardar 
-            $activity->questions_points = $questionsPointsJson;
-        } else {
-            if (!$this->point_know || !$this->point_many || !$this->point_effort) {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'warning',
-                    'title' => 'El formulario está incompleto o no se han seleccionado los puntos necesarios.',
-                ]);
-                $activity->points = $activity->points ?? 0;
-                $questionsPoints = [
-                    'pointKnow' => null,
-                    'pointMany' => null,
-                    'pointEffort' => null,
-                ];
-                // Convertir el array a JSON
-                $questionsPointsJson = json_encode($questionsPoints);
-                // Asignar y guardar 
-                $activity->questions_points = $questionsPointsJson;
-            } else {
-                $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
-                $activity->points = $maxPoint;
-                // Crear un array asociativo con los valores
-                $questionsPoints = [
-                    'pointKnow' => $this->point_know,
-                    'pointMany' => $this->point_many,
-                    'pointEffort' => $this->point_effort,
-                ];
-                // Convertir el array a JSON
-                $questionsPointsJson = json_encode($questionsPoints);
-                // Asignar y guardar 
-                $activity->questions_points = $questionsPointsJson;
-            }
-        }
-        $activity->save();
-
-        $this->clearInputs();
-        $this->emit('sprintsUpdated');
-        $this->modalCreateActivity = false;
-        // Emitir un evento de navegador
-        $this->dispatchBrowserEvent('swal:modal', [
-            'type' => 'success',
-            'title' => 'Actividad actualizada',
-        ]);
-    }
-
     public function delete($id)
     {
         $activity = Activity::find($id);
@@ -559,7 +389,8 @@ class TableActivities extends Component
                 $activity->end_date = Carbon::now();
                 $activity->state = $state;
                 $activity->save();
-
+                // Emitir un evento para notificar al componente padre
+                $this->emitUp('activityUpdated');
                 // Emitir un evento de navegador
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'success',
@@ -569,18 +400,6 @@ class TableActivities extends Component
         }
     }
     // INFO MODAL
-    public function showActivity($id)
-    {
-        $this->showActivity = true;
-
-        if ($this->modalShowActivity == true) {
-            $this->modalShowActivity = false;
-        } else {
-            $this->modalShowActivity = true;
-            $this->loadMessages($id);
-        }
-    }
-
     public function loadMessages($id)
     {
         $this->activityShow = Activity::find($id);
@@ -654,48 +473,30 @@ class TableActivities extends Component
             $this->activityShow->imageExists = false;
         }
     }
-
-    public function showEditActivity($id)
-    {
-        $this->showUpdateActivity = true;
-
-        if ($this->modalCreateActivity == true) {
-            $this->modalCreateActivity = false;
-        } else {
-            $this->modalCreateActivity = true;
-        }
-
-        $this->activityEdit = Activity::find($id);
-        $this->moveActivity = $this->activityEdit->sprint_id;
-        $this->title = $this->activityEdit->title;
-        $this->description = $this->activityEdit->description;
-
-        $fecha_expected = Carbon::parse($this->activityEdit->expected_date);
-        $this->expected_date = $fecha_expected->toDateString();
-
-        $this->priority1 = false;
-        $this->priority2 = false;
-        $this->priority3 = false;
-
-        if ($this->activityEdit->priority == 'Alto') {
-            $this->priority1 = true;
-        } elseif ($this->activityEdit->priority == 'Medio') {
-            $this->priority2 = true;
-        } elseif ($this->activityEdit->priority == 'Bajo') {
-            $this->priority3 = true;
-        }
-        // EFFORT PONTS
-        $this->points = $this->activityEdit->points;
-        $this->changePoints = true;
-        $questionsPoints = json_decode($this->activityEdit->questions_points, true);
-        $this->point_know = $questionsPoints['pointKnow'] ?? null;
-        $this->point_many = $questionsPoints['pointMany'] ?? null;
-        $this->point_effort = $questionsPoints['pointEffort'] ?? null;
-    }
     // MODAL
     public function create()
     {
         $this->createEdit = !$this->createEdit;
+    }
+
+    public function showActivity($id)
+    {
+        if ($this->showActivity == true) {
+            $this->showActivity = false;
+            $this->activityShow = null;
+        } else {
+            $this->activityShow = Activity::find($id);
+            if ($this->activityShow) {
+                $this->showActivity = true;
+            } else {
+                $this->showActivity = false;
+                // Maneja un caso en el que no se encuentra el reporte (opcional)
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'La actividad no existe',
+                ]);
+            }
+        }
     }
 
     public function editActivity($id)
@@ -718,66 +519,6 @@ class TableActivities extends Component
         }
     }
     // EXTRAS
-    public function clearInputs()
-    {
-        $this->number = '';
-        $this->name_sprint = '';
-        $this->start_date = '';
-        $this->end_date = '';
-
-        $this->title = '';
-        $this->dispatchBrowserEvent('file-reset');
-        $this->description = '';
-        $this->delegate = '';
-        $this->expected_date = '';
-        $this->priority1 = false;
-        $this->priority2 = false;
-        $this->priority3 = false;
-
-        $this->changePoints = false;
-        $this->points = '';
-        $this->point_know = '';
-        $this->point_many = '';
-
-        $this->message = '';
-        $this->point_effort = '';
-    }
-
-    public function sprintsUpdated()
-    {
-        $this->sprints = $this->backlog->sprints;
-    }
-
-    public function selectPriority($value)
-    {
-        $this->priority1 = false;
-        $this->priority2 = false;
-        $this->priority3 = false;
-
-        if ($value === 'Alto') {
-            $this->priority1 = true;
-        } elseif ($value === 'Medio') {
-            $this->priority2 = true;
-        } elseif ($value === 'Bajo') {
-            $this->priority3 = true;
-        }
-    }
-
-    public function changePoints()
-    {
-        if ($this->changePoints == true) {
-            $this->changePoints = false;
-            if ($this->activityEdit == null) {
-                $this->points = '';
-            }
-        } else {
-            $this->changePoints = true;
-            $this->point_know = '';
-            $this->point_many = '';
-            $this->point_effort = '';
-        }
-    }
-
     public function reloadPage()
     {
         $this->reset();
@@ -800,9 +541,8 @@ class TableActivities extends Component
 
     public function filterDown($type)
     {
-        $this->filter = true;
-        $this->filtered = false;
-
+        $this->filtered = false; // Cambio de flechas
+        
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filterState = false;
@@ -810,6 +550,13 @@ class TableActivities extends Component
             $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
         }
 
+        if ($type == 'state') {
+            $this->filterPriotiry = false;
+            $this->filterState = true;
+            $this->filteredState = 'asc';
+            $this->priorityCase = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END";
+        }
+
         if ($type == 'delegate') {
             $this->filterPriotiry = false;
             $this->filterState = false;
@@ -817,30 +564,30 @@ class TableActivities extends Component
             $this->filteredExpected = 'asc';
         }
 
-        if ($type == 'state') {
-            $this->filterPriotiry = false;
-            $this->filterState = true;
-            $this->filteredStateArrow = 'asc';
-            $this->priorityCase = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END";
-        }
-
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
             $this->filterState = false;
+            $this->orderByType = 'expected_date';
             $this->filteredExpected = 'asc';
         }
     }
 
     public function filterUp($type)
     {
-        $this->filter = true;
-        $this->filtered = true;
-
+        $this->filtered = true; // Cambio de flechas
+        
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+        }
+        
+        if ($type == 'state') {
+            $this->filterPriotiry = false;
+            $this->filterState = true;
+            $this->filteredState = 'asc';
+            $this->priorityCase = "CASE WHEN state = 'Resuelto' THEN 1 WHEN state = 'Conflicto' THEN 2 WHEN state = 'Proceso' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END";
         }
 
         if ($type == 'delegate') {
@@ -850,32 +597,14 @@ class TableActivities extends Component
             $this->filteredExpected = 'desc';
         }
 
-        if ($type == 'state') {
-            $this->filterPriotiry = false;
-            $this->filterState = true;
-            $this->filteredStateArrow = 'asc';
-            $this->priorityCase = "CASE WHEN state = 'Resuelto' THEN 1 WHEN state = 'Conflicto' THEN 2 WHEN state = 'Proceso' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END";
-        }
-
         if ($type == 'expected_date') {
             $this->filterPriotiry = false;
             $this->filterState = false;
+            $this->orderByType = 'expected_date';
             $this->filteredExpected = 'desc';
         }
     }
     // PROTECTED
-    protected function updateSprintData($id)
-    {
-        $sprint = Sprint::find($id);
-
-        if ($sprint) {
-            $this->startDate = $sprint->start_date;
-            $this->endDate = $sprint->end_date;
-            $this->sprintState = $sprint->state;
-            $this->idSprint = $sprint->id;
-        }
-    }
-
     protected function getFilteredActions($currentState)
     {
         $actions = ['Abierto', 'Proceso', 'Resuelto', 'Conflicto'];

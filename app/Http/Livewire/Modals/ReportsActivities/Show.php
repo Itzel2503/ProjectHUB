@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Modals\ReportsActivities;
 
+use App\Models\Activity;
 use App\Models\ChatReportsActivities;
 use App\Models\Evidence;
 use App\Models\Report;
@@ -12,7 +13,7 @@ use Livewire\Component;
 class Show extends Component
 {
     // ENVIADAS
-    public $reportshow, $type;
+    public $recordingshow, $type;
 
     public $evidenceShow, $recording, $chat;
     public $showChat = false;
@@ -21,15 +22,28 @@ class Show extends Component
 
     public function render()
     {
-        $this->recording = Report::find($this->reportshow);
-        $this->evidenceShow = Evidence::where('report_id', $this->reportshow)->first();
-        $this->chat = ChatReportsActivities::where('report_id', $this->reportshow)->orderBy('created_at', 'asc')->get();
-        // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
-        $lastMessage = ChatReportsActivities::where('report_id', $this->reportshow)
-            ->where('user_id', '!=', Auth::id())
-            ->where('look', false)
-            ->latest()
-            ->first();
+        if ($this->type == 'report') {
+            $this->recording = Report::find($this->recordingshow);
+            $this->evidenceShow = Evidence::where('report_id', $this->recordingshow)->first();
+            $this->chat = ChatReportsActivities::where('report_id', $this->recordingshow)->orderBy('created_at', 'asc')->get();
+            // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
+            $lastMessage = ChatReportsActivities::where('report_id', $this->recordingshow)
+                ->where('user_id', '!=', Auth::id())
+                ->where('look', false)
+                ->latest()
+                ->first();
+        } else {
+            $this->recording = Activity::find($this->recordingshow);
+            $this->evidenceShow = null;
+            $this->chat = ChatReportsActivities::where('activity_id', $this->recordingshow)->orderBy('created_at', 'asc')->get();
+            // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
+            $lastMessage = ChatReportsActivities::where('activity_id', $this->recordingshow)
+                ->where('user_id', '!=', Auth::id())
+                ->where('look', false)
+                ->latest()
+                ->first();
+        }
+        
         if ($lastMessage) {
             if ($lastMessage->transmitter == null || $lastMessage->receiver == null) {
                 $lastMessage->look = true;
@@ -81,11 +95,15 @@ class Show extends Component
             $this->recording->look = true;
             $this->recording->save();
         }
-
         // Verificar si el archivo existe en la base de datos
         if ($this->recording && $this->recording->content) {
             // Verificar si el archivo existe en la carpeta
-            $filePath = public_path('reportes/' . $this->recording->content);
+            if ($this->type == 'report') {
+                $filePath = public_path('reportes/' . $this->recording->content);
+            } else {
+                $filePath = public_path('activities/' . $this->recording->content);
+            }
+            
             $fileExtension = pathinfo($this->recording->content, PATHINFO_EXTENSION);
             if (file_exists($filePath)) {
                 $this->recording->contentExists = true;
@@ -101,17 +119,30 @@ class Show extends Component
 
     public function sendMessage($id)
     {
-        $recording = Report::find($id);
+        if ($this->type == 'report') {
+            $recording = Report::find($id);
+        } else {
+            $recording = Activity::find($id);
+        }
+        
         $user = Auth::user();
 
         if ($recording) {
             if ($this->message != '') {
-                $lastMessage = ChatReportsActivities::where('report_id', $recording->id)
-                    ->where('user_id', '!=', Auth::id())
-                    ->where('look', false)
-                    ->latest()
-                    ->first();
-
+                if ($this->type == 'report') {
+                    $lastMessage = ChatReportsActivities::where('report_id', $recording->id)
+                        ->where('user_id', '!=', Auth::id())
+                        ->where('look', false)
+                        ->latest()
+                        ->first();
+                } else {
+                    $lastMessage = ChatReportsActivities::where('activity_id', $recording->id)
+                        ->where('user_id', '!=', Auth::id())
+                        ->where('look', false)
+                        ->latest()
+                        ->first();
+                }
+                
                 $chat = new ChatReportsActivities();
                 if ($user->type_user == 1) {
                     $chat->user_id = $user->id; // envia
@@ -140,7 +171,12 @@ class Show extends Component
                     $chat->receiver_id = $recording->delegate->id; //recibe
                 }
 
-                $chat->report_id = $recording->id;
+                if ($this->type == 'report') {
+                    $chat->report_id = $recording->id;
+                } else {
+                    $chat->activity_id = $recording->id;
+                }
+                
                 $chat->message = $this->message;
                 $chat->look = false;
                 $chat->save();
