@@ -37,7 +37,7 @@ class TableActivities extends Component
     public $perPage = '20';
     // variables para la consulta
     public $filterPriotiry = false, $filterState = false;
-    public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredStateArrow = '', $filteredExpected = 'asc', $orderByType = 'expected_date';
+    public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredStateArrow = '', $filteredExpected = 'desc', $orderByType = 'expected_date';
     // MODAL CREATE
     public $createEdit = false;
     // MODAL EDIT
