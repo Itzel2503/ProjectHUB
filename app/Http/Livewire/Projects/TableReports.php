@@ -117,15 +117,11 @@ class TableReports extends Component
                 })
                 ->where(function ($query) use ($user_id) {
                     $query->where('delegate_id', $user_id)
-                        ->orWhere('user_id', $user_id)
                         // O incluir registros donde user_id es igual a user_id y video es true
                         ->orWhere(function ($subQuery) use ($user_id) {
                             $subQuery->where('user_id', $user_id)
                                 ->where('video', true);
                         });
-                })
-                ->when($this->selectedDelegate, function ($query) {
-                    $query->where('delegate_id', $this->selectedDelegate);
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
