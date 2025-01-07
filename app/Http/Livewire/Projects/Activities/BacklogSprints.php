@@ -71,6 +71,8 @@ class BacklogSprints extends Component
                                 $sprint = Sprint::find($pendingSprint->id);
                                 $sprint->state = 'Curso';
                                 $sprint->save();
+                                // Emitir evento al componente hijo
+                                $this->emit('sprintUpdated', $pendingSprint->id);
                             }
                         }
                     } else {
@@ -273,7 +275,7 @@ class BacklogSprints extends Component
                 $sprint->state = $state;
                 $sprint->save();
                 $this->emit('sprintsUpdated');
-
+                $this->emit('sprintUpdated', $id);
                 // Emitir un evento de navegador
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'success',
@@ -290,7 +292,7 @@ class BacklogSprints extends Component
                     $sprint->state = $state;
                     $sprint->save();
                     $this->emit('sprintsUpdated');
-
+                    $this->emit('sprintUpdated', $id);
                     // Emitir un evento de navegador
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'success',

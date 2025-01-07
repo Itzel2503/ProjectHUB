@@ -20,7 +20,7 @@ class TableActivities extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['reloadPage' => 'reloadPage', 'delete'];
+    public $listeners = ['reloadPage' => 'reloadPage', 'sprintUpdated', 'delete'];
     // ENVIADAS
     public $idsprint, $project;
     // BACKLOG
@@ -37,29 +37,15 @@ class TableActivities extends Component
     public $perPage = '20';
     // variables para la consulta
     public $filterPriotiry = false, $filterState = false;
-    public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredExpected = 'asc', $orderByType = 'expected_date';
+    public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredStateArrow = '', $filteredExpected = 'asc', $orderByType = 'expected_date';
     // MODAL CREATE
     public $createEdit = false;
     // MODAL EDIT
     public $editActivity = false;
     public $activityEdit = '';
-    
-    
-    // modal activity
-    public  $modalShowActivity = false;
-    public $showUpdateActivity = false,
-        $showActivity = false,
-        $showChat = false;
-    public $activityShow, $messages, $moveActivity;
-    public $title, $file, $description, $delegate, $expected_date, $priority1, $priority2, $priority3, $message;
-    // modal activity points
-    public $changePoints = false;
-    public $points, $point_know, $point_many, $point_effort;
-    // table, action's activities
-    public $filteredStateArrow = '';
-    public $usersFiltered = [],
-        $statesFiltered = [];
-    public $filter = false;
+    // MODAL SHOW
+    public $showActivity = false;
+    public $activityShow;
 
     // Resetear paginación cuando se actualiza el campo de búsqueda
     public function updatingSearch()
@@ -84,19 +70,15 @@ class TableActivities extends Component
                 ->where(function ($query) {
                     $query
                         ->where('title', 'like', '%' . $this->search . '%');
-                    // Si no se seleccionan estados, excluir "Resuelto"
-                    if (empty($this->selectedStates)) {
-                        $query->where('state', '!=', 'Resuelto');
-                    } else {
-                        // Incluir todos los estados seleccionados
-                        $query->whereIn('state', $this->selectedStates);
-                    }
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
+                })
+                ->when(!empty($this->selectedStates), function ($query) {
+                    $query->whereIn('state', $this->selectedStates);
                 })
                 ->when($this->filterState, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
@@ -111,19 +93,15 @@ class TableActivities extends Component
                 ->where(function ($query) {
                     $query
                         ->where('title', 'like', '%' . $this->search . '%');
-                    // Si no se seleccionan estados, excluir "Resuelto"
-                    if (empty($this->selectedStates)) {
-                        $query->where('state', '!=', 'Resuelto');
-                    } else {
-                        // Incluir todos los estados seleccionados
-                        $query->whereIn('state', $this->selectedStates);
-                    }
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
+                })
+                ->when(!empty($this->selectedStates), function ($query) {
+                    $query->whereIn('state', $this->selectedStates);
                 })
                 ->when($this->filterState, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
@@ -243,78 +221,6 @@ class TableActivities extends Component
         ]);
     }
     // ACTIONS
-    public function updateChat($id)
-    {
-        $activity = Activity::find($id);
-        $user = Auth::user();
-
-        if ($activity) {
-            if ($this->message != '') {
-                $lastMessage = ChatReportsActivities::where('activity_id', $activity->id)
-                    ->where('user_id', '!=', Auth::id())
-                    ->where('look', false)
-                    ->latest()
-                    ->first();
-
-                $chat = new ChatReportsActivities();
-                if ($user->type_user == 1) {
-                    $chat->user_id = $user->id; // envia
-                    if ($activity->user->id == Auth::id()) {
-                        $chat->receiver_id = $activity->delegate->id; //recibe
-                    } else {
-                        if ($user->type_user == 1) {
-                            if ($activity->user->type_user == 3) {
-                                $chat->receiver_id = $activity->user->id; //recibe
-                            } else {
-                                $chat->receiver_id = $activity->delegate->id; //recibe
-                            }
-                        } else {
-                            $chat->receiver_id = $activity->user->id; //recibe
-                        }
-                    }
-                } elseif ($user->type_user == 2) {
-                    $chat->user_id = $user->id; // envia
-                    if ($activity->user->type_user == 3) {
-                        $chat->receiver_id = $activity->user->id; //recibe
-                    } else {
-                        $chat->receiver_id = $activity->delegate->id; //recibe
-                    }
-                } elseif ($user->type_user == 3) {
-                    $chat->user_id = $user->id; // envia
-                    $chat->receiver_id = $activity->delegate->id; //recibe
-                }
-
-                $chat->activity_id = $activity->id;
-                $chat->message = $this->message;
-                $chat->look = false;
-                $chat->save();
-
-                if ($lastMessage) {
-                    // administrador
-                    if ($lastMessage->transmitter->type_user == 3 && Auth::user()->type_user == 1) {
-                        $lastMessage->look = true;
-                        $lastMessage->save();
-                    }
-                }
-                // Emitir un evento después de enviar el mensaje
-                $this->emit('messageSent', $activity->id);
-
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Mensaje enviado',
-                ]);
-
-                $this->message = '';
-            } else {
-                $this->modalShowActivity = false;
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'El mensaje está vacío.',
-                ]);
-            }
-        }
-    }
-
     public function delete($id)
     {
         $activity = Activity::find($id);
@@ -399,84 +305,12 @@ class TableActivities extends Component
             }
         }
     }
-    // INFO MODAL
-    public function loadMessages($id)
-    {
-        $this->activityShow = Activity::find($id);
-        $this->messages = ChatReportsActivities::where('activity_id', $this->activityShow->id)->orderBy('created_at', 'asc')->get();
-        // Primero, obtén el último mensaje para este reporte que no haya sido visto por el usuario autenticado
-        $lastMessage = ChatReportsActivities::where('activity_id', $this->activityShow->id)
-            ->where('user_id', '!=', Auth::id())
-            ->where('look', false)
-            ->latest()
-            ->first();
-        if ($lastMessage) {
-            if ($lastMessage->transmitter == null || $lastMessage->receiver == null) {
-                $lastMessage->look = true;
-                $lastMessage->save();
-            } else {
-                // cliente
-                if ($lastMessage->transmitter->type_user != 3 && $lastMessage->receiver->type_user == Auth::user()->type_user && $lastMessage->receiver_id == Auth::id()) {
-                    $lastMessage->look = true;
-                    $lastMessage->save();
-                }
-                // mismo usuario
-                if ($lastMessage->transmitter->id == $lastMessage->receiver->id && Auth::user()->type_user == 1) {
-                    $lastMessage->look = true;
-                    $lastMessage->save();
-                }
-                // usuario administrador
-                if ($lastMessage->transmitter->type_user == 3 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                    $lastMessage->look = true;
-                    $lastMessage->save();
-                } elseif ($lastMessage->transmitter->type_user == 1 && $lastMessage->receiver->type_user != 3 && $lastMessage->receiver_id == Auth::id()) {
-                    $lastMessage->look = true;
-                    $lastMessage->save();
-                }
-            }
-        }
-
-        if ($this->messages) {
-            $this->showChat = true;
-            $this->messages->messages_count = $this->messages->where('look', false)->count();
-            // Marcar como vistos los mensajes si hay dos o más sin ver
-            if ($this->messages->messages_count >= 2) {
-                // Filtrar los mensajes que no han sido vistos
-                $moreMessages = $this->messages->where('look', false);
-
-                foreach ($moreMessages as $message) {
-                    if ($message->receiver_id == Auth::id()) {
-                        $message->look = true;
-                        $message->save();
-                    }
-                }
-            }
-        }
-
-        $user = Auth::user();
-        if ($this->activityShow && $this->activityShow->delegate_id == $user->id && $this->activityShow->state == 'Abierto' && $this->activityShow->progress == null) {
-            $this->activityShow->progress = Carbon::now();
-            $this->activityShow->look = true;
-            $this->activityShow->save();
-        }
-
-        // Verificar si el archivo existe en la base de datos
-        if ($this->activityShow && $this->activityShow->image) {
-            // Verificar si el archivo existe en la carpeta
-            $filePath = public_path('activities/' . $this->activityShow->image);
-            if (file_exists($filePath)) {
-                $this->activityShow->imageExists = true;
-            } else {
-                $this->activityShow->imageExists = false;
-            }
-        } else {
-            $this->activityShow->imageExists = false;
-        }
-    }
     // MODAL
-    public function create()
+    public function create($idProject)
     {
-        $this->createEdit = !$this->createEdit;
+        if ($idProject != 0) {
+            $this->createEdit = !$this->createEdit;
+        }
     }
 
     public function showActivity($id)
@@ -523,6 +357,13 @@ class TableActivities extends Component
     {
         $this->reset();
         $this->render();
+    }
+
+    public function sprintUpdated($sprintId)
+    {
+        if ($this->idsprint == $sprintId) {
+            $this->sprint = Sprint::find($sprintId);
+        }
     }
     // FILTER
     public function togglePanel($activityId)
