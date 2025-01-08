@@ -55,10 +55,12 @@ class TableActivities extends Component
 
     public function render()
     {
-        // Backlog
-        $this->backlog = Backlog::where('project_id', $this->project->id)->first();
-        // Sprint
-        $this->sprint = Sprint::find($this->idsprint);
+        if ($this->project != null && $this->idsprint != null) {
+            // Backlog
+            $this->backlog = Backlog::where('project_id', $this->project->id)->first();
+            // Sprint
+            $this->sprint = Sprint::find($this->idsprint);
+        }
         // Filtro de consulta
         $user = Auth::user();
         $user_id = $user->id;
@@ -66,54 +68,113 @@ class TableActivities extends Component
         $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
-            $activities = Activity::where('sprint_id', $this->idsprint)
-                ->where(function ($query) {
+            if ($this->project == null && $this->idsprint == null) {
+                $activities = Activity::where(function ($query) {
                     $query
                         ->where('title', 'like', '%' . $this->search . '%');
-                })
-                ->when($this->filterPriotiry, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
-                })
-                ->when($this->selectedDelegate, function ($query) {
-                    $query->where('delegate_id', $this->selectedDelegate);
-                })
-                ->when(!empty($this->selectedStates), function ($query) {
-                    $query->whereIn('state', $this->selectedStates);
-                })
-                ->when($this->filterState, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
-                })
-                ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
-                ->select('activities.*', 'delegates.name')
-                ->orderBy($this->orderByType, $this->filteredExpected)
-                ->with(['user', 'delegate'])
-                ->paginate($this->perPage);
+                        // Si no se seleccionan estados, excluir "Resuelto"
+                        if (empty($this->selectedStates)) {
+                            $query->where('activities.state', '!=', 'Resuelto');
+                        } else {
+                            // Incluir todos los estados seleccionados
+                            $query->whereIn('state', $this->selectedStates);
+                        }
+                    })
+                    ->when($this->filterPriotiry, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    })
+                    ->when($this->selectedDelegate, function ($query) {
+                        $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when($this->filterState, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
+                    })
+                    ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
+                    ->select('activities.*', 'delegates.name')
+                    ->orderBy($this->orderByType, $this->filteredExpected)
+                    ->with(['user', 'delegate'])
+                    ->paginate($this->perPage);
+            } else {
+                $activities = Activity::where('sprint_id', $this->idsprint)
+                    ->where(function ($query) {
+                        $query
+                            ->where('title', 'like', '%' . $this->search . '%');
+                    })
+                    ->when($this->filterPriotiry, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    })
+                    ->when($this->selectedDelegate, function ($query) {
+                        $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when(!empty($this->selectedStates), function ($query) {
+                        $query->whereIn('state', $this->selectedStates);
+                    })
+                    ->when($this->filterState, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
+                    })
+                    ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
+                    ->select('activities.*', 'delegates.name')
+                    ->orderBy($this->orderByType, $this->filteredExpected)
+                    ->with(['user', 'delegate'])
+                    ->paginate($this->perPage);
+            }
         } else {
-            $activities = Activity::where('sprint_id', $this->idsprint)
-                ->where(function ($query) {
+            if ($this->project == null && $this->idsprint == null) {
+                $activities = Activity::where(function ($query) {
                     $query
                         ->where('title', 'like', '%' . $this->search . '%');
-                })
-                ->when($this->filterPriotiry, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
-                })
-                ->when($this->selectedDelegate, function ($query) {
-                    $query->where('delegate_id', $this->selectedDelegate);
-                })
-                ->when(!empty($this->selectedStates), function ($query) {
-                    $query->whereIn('state', $this->selectedStates);
-                })
-                ->when($this->filterState, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
-                })
-                ->where(function ($query) use ($user_id) {
-                    $query->where('delegate_id', $user_id);
-                })
-                ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
-                ->select('activities.*', 'delegates.name')
-                ->orderBy($this->orderByType, $this->filteredExpected)
-                ->with(['user', 'delegate'])
-                ->paginate($this->perPage);
+                        // Si no se seleccionan estados, excluir "Resuelto"
+                        if (empty($this->selectedStates)) {
+                            $query->where('activities.state', '!=', 'Resuelto');
+                        } else {
+                            // Incluir todos los estados seleccionados
+                            $query->whereIn('state', $this->selectedStates);
+                        }
+                    })
+                    ->when($this->filterPriotiry, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    })
+                    ->when($this->selectedDelegate, function ($query) {
+                        $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when($this->filterState, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
+                    })
+                    ->where(function ($query) use ($user_id) {
+                        $query->where('delegate_id', $user_id);
+                    })
+                    ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
+                    ->select('activities.*', 'delegates.name')
+                    ->orderBy($this->orderByType, $this->filteredExpected)
+                    ->with(['user', 'delegate'])
+                    ->paginate($this->perPage);
+            } else {
+                $activities = Activity::where('sprint_id', $this->idsprint)
+                    ->where(function ($query) {
+                        $query
+                            ->where('title', 'like', '%' . $this->search . '%');
+                    })
+                    ->when($this->filterPriotiry, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    })
+                    ->when($this->selectedDelegate, function ($query) {
+                        $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when(!empty($this->selectedStates), function ($query) {
+                        $query->whereIn('state', $this->selectedStates);
+                    })
+                    ->when($this->filterState, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
+                    })
+                    ->where(function ($query) use ($user_id) {
+                        $query->where('delegate_id', $user_id);
+                    })
+                    ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
+                    ->select('activities.*', 'delegates.name')
+                    ->orderBy($this->orderByType, $this->filteredExpected)
+                    ->with(['user', 'delegate'])
+                    ->paginate($this->perPage);
+                }
         }
         // TODOS LOS DELEGADOS
         $this->allUsersFiltered = [];

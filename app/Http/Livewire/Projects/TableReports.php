@@ -71,69 +71,139 @@ class TableReports extends Component
         }
         // CONSULTAS DE DATOS
         if (Auth::user()->type_user == 1) {
-            $reports = Report::where('project_id', $this->project->id)
-                ->where(function ($query) {
-                    $query->where('title', 'like', '%' . $this->search . '%');
-                    // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
-                    if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
-                        $query->orWhereNotNull('count');
-                    }
-                    // Si no se seleccionan estados, excluir "Resuelto"
-                    if (empty($this->selectedStates)) {
-                        $query->where('reports.state', '!=', 'Resuelto');
-                    } else {
-                        // Incluir todos los estados seleccionados
-                        $query->whereIn('state', $this->selectedStates);
-                    }
-                })
-                ->when($this->filterPriotiry, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
-                })
-                ->when($this->selectedDelegate, function ($query) {
-                    $query->where('delegate_id', $this->selectedDelegate);
-                })
-                ->when($this->filterState, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
-                })
-                ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
-                ->select('reports.*', 'delegates.name')
-                ->orderBy($this->orderByType, $this->filteredExpected)
-                ->with(['user', 'delegate'])
-                ->paginate($this->perPage);
+            if ($this->project == null) {
+                $reports = Report::where(function ($query) {
+                        $query->where('title', 'like', '%' . $this->search . '%');
+                        // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
+                        if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
+                            $query->orWhereNotNull('count');
+                        }
+                        // Si no se seleccionan estados, excluir "Resuelto"
+                        if (empty($this->selectedStates)) {
+                            $query->where('reports.state', '!=', 'Resuelto');
+                        } else {
+                            // Incluir todos los estados seleccionados
+                            $query->whereIn('state', $this->selectedStates);
+                        }
+                    })
+                    ->when($this->filterPriotiry, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    })
+                    ->when($this->selectedDelegate, function ($query) {
+                        $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when($this->filterState, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
+                    })
+                    ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
+                    ->select('reports.*', 'delegates.name')
+                    ->orderBy($this->orderByType, $this->filteredExpected)
+                    ->with(['user', 'delegate'])
+                    ->paginate($this->perPage);
+            } else {
+                $reports = Report::where('project_id', $this->project->id)
+                    ->where(function ($query) {
+                        $query->where('title', 'like', '%' . $this->search . '%');
+                        // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
+                        if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
+                            $query->orWhereNotNull('count');
+                        }
+                        // Si no se seleccionan estados, excluir "Resuelto"
+                        if (empty($this->selectedStates)) {
+                            $query->where('reports.state', '!=', 'Resuelto');
+                        } else {
+                            // Incluir todos los estados seleccionados
+                            $query->whereIn('state', $this->selectedStates);
+                        }
+                    })
+                    ->when($this->filterPriotiry, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    })
+                    ->when($this->selectedDelegate, function ($query) {
+                        $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when($this->filterState, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
+                    })
+                    ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
+                    ->select('reports.*', 'delegates.name')
+                    ->orderBy($this->orderByType, $this->filteredExpected)
+                    ->with(['user', 'delegate'])
+                    ->paginate($this->perPage);
+            }
         } elseif (Auth::user()->type_user == 2) {
-            $reports = Report::where('project_id', $this->project->id)
-                ->where(function ($query) {
-                    $query->where('title', 'like', '%' . $this->search . '%');
-                    if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
-                        $query->orWhereNotNull('count');
-                    }
-                    // Si no se seleccionan estados, excluir "Resuelto"
-                    if (empty($this->selectedStates)) {
-                        $query->where('reports.state', '!=', 'Resuelto');
-                    } else {
-                        // Incluir todos los estados seleccionados
-                        $query->whereIn('state', $this->selectedStates);
-                    }
-                })
-                ->where(function ($query) use ($user_id) {
-                    $query->where('delegate_id', $user_id)
-                        // O incluir registros donde user_id es igual a user_id y video es true
-                        ->orWhere(function ($subQuery) use ($user_id) {
-                            $subQuery->where('user_id', $user_id)
-                                ->where('video', true);
-                        });
-                })
-                ->when($this->filterPriotiry, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
-                })
-                ->when($this->filterState, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
-                })
-                ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
-                ->select('reports.*', 'delegates.name')
-                ->orderBy($this->orderByType, $this->filteredExpected)
-                ->with(['user', 'delegate'])
-                ->paginate($this->perPage);
+            if ($this->project == null) {
+                $reports = Report::where(function ($query) {
+                        $query->where('title', 'like', '%' . $this->search . '%');
+                        // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
+                        if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
+                            $query->orWhereNotNull('count');
+                        }
+                        // Si no se seleccionan estados, excluir "Resuelto"
+                        if (empty($this->selectedStates)) {
+                            $query->where('reports.state', '!=', 'Resuelto');
+                        } else {
+                            // Incluir todos los estados seleccionados
+                            $query->whereIn('state', $this->selectedStates);
+                        }
+                    })
+                    ->where(function ($query) use ($user_id) {
+                        $query->where('delegate_id', $user_id)
+                            // O incluir registros donde user_id es igual a user_id y video es true
+                            ->orWhere(function ($subQuery) use ($user_id) {
+                                $subQuery->where('user_id', $user_id)
+                                    ->where('video', true);
+                            });
+                    })
+                    ->when($this->filterPriotiry, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    })
+                    ->when($this->selectedDelegate, function ($query) {
+                        $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when($this->filterState, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
+                    })
+                    ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
+                    ->select('reports.*', 'delegates.name')
+                    ->orderBy($this->orderByType, $this->filteredExpected)
+                    ->with(['user', 'delegate'])
+                    ->paginate($this->perPage);
+            } else {
+                $reports = Report::where('project_id', $this->project->id)
+                    ->where(function ($query) {
+                        $query->where('title', 'like', '%' . $this->search . '%');
+                        if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
+                            $query->orWhereNotNull('count');
+                        }
+                        // Si no se seleccionan estados, excluir "Resuelto"
+                        if (empty($this->selectedStates)) {
+                            $query->where('reports.state', '!=', 'Resuelto');
+                        } else {
+                            // Incluir todos los estados seleccionados
+                            $query->whereIn('state', $this->selectedStates);
+                        }
+                    })
+                    ->where(function ($query) use ($user_id) {
+                        $query->where('delegate_id', $user_id)
+                            // O incluir registros donde user_id es igual a user_id y video es true
+                            ->orWhere(function ($subQuery) use ($user_id) {
+                                $subQuery->where('user_id', $user_id)
+                                    ->where('video', true);
+                            });
+                    })
+                    ->when($this->filterPriotiry, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    })
+                    ->when($this->filterState, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
+                    })
+                    ->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
+                    ->select('reports.*', 'delegates.name')
+                    ->orderBy($this->orderByType, $this->filteredExpected)
+                    ->with(['user', 'delegate'])
+                    ->paginate($this->perPage);
+                }
         } elseif (Auth::user()->type_user == 3) {
             $reports = Report::where('project_id', $this->project->id)
                 ->whereHas('user', function ($query) {
@@ -305,8 +375,12 @@ class TableReports extends Component
                 if ($report->evidence == true) {
                     $this->modalEvidence = true;
 
-                    $project = Project::find($project_id);
-                    $report->project_id = $project->id;
+                    if ($this->project == null) {
+                        $report->project_id =$report->project->id;
+                    } else {
+                        $project = Project::find($project_id);
+                        $report->project_id = $project->id;
+                    }
                     $this->reportEvidence = $report;
                 } else {
                     $report->state = $state;
