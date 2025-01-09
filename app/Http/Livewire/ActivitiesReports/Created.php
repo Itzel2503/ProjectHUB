@@ -447,7 +447,7 @@ class Created extends Component
             $this->filterPriotiry = false;
             $this->filterState = false;
             $this->orderByType = 'name';
-            $this->filteredExpected = 'desc';
+            $this->filteredExpected = 'asc';
         }
 
         if ($type == 'expected_date') {
@@ -480,7 +480,7 @@ class Created extends Component
             $this->filterPriotiry = false;
             $this->filterState = false;
             $this->orderByType = 'name';
-            $this->filteredExpected = 'asc';
+            $this->filteredExpected = 'desc';
         }
 
         if ($type == 'expected_date') {
