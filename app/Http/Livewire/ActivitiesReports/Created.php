@@ -127,7 +127,11 @@ class Created extends Component
             $task->filteredActions = $this->getFilteredActions($task->state);
             // DELEGATE
             $delegate = User::where('id', $task->delegate_id)->first();
-            $task->delegate_name = $delegate->name;
+            if ($delegate) {
+                $task->delegate_name = $delegate->name;
+            } else {
+                $task->delegate_name = 'Sin delegar';
+            }
             if ($delegate) {
                 $task->delegate_name = $delegate->name;
             } else {
