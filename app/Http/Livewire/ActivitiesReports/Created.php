@@ -127,7 +127,11 @@ class Created extends Component
             $task->filteredActions = $this->getFilteredActions($task->state);
             // DELEGATE
             $delegate = User::where('id', $task->delegate_id)->first();
-            $task->delegate_name = $delegate->name;
+            if ($delegate) {
+                $task->delegate_name = $delegate->name;
+            } else {
+                $task->delegate_name = 'Sin delegar';
+            }
             // Filtramos los usuarios
             $task->usersFiltered = $this->allUsers->reject(function ($user) use ($delegate) {
                 return $user->id === optional($delegate)->id; // Usamos optional() para evitar errores si $delegate es null
