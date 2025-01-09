@@ -29,11 +29,12 @@
     <script>
         // GRAFICA
         document.addEventListener('DOMContentLoaded', function() {
+            var chart; // Mantén la referencia global a la gráfica
             // Datos para el gráfico de Proyectos Activos
             var categories = @json($categories);
             var series = @json($series);
             var totalEffortPoints = @json($totalEffortPoints);
-
+            
             var options1 = {
                 series: series,
                 chart: {
@@ -188,11 +189,32 @@
                 }
             };
 
-            chart = new ApexCharts(document.querySelector("#chart1"), options1);
-            chart.render();
-
-            chart = new ApexCharts(document.querySelector("#chart2"), options2);
-            chart.render();
+            let charts = {
+                chart1: new ApexCharts(document.querySelector("#chart1"), options1),
+                chart2: new ApexCharts(document.querySelector("#chart2"), options2),
+            };
+            charts.chart1.render();
+            charts.chart2.render();
+            // Actualizar la gráfica al recibir el evento
+            window.addEventListener('update-chart', function (event) {
+                Object.values(charts).forEach((chart) => {
+                    chart.updateOptions({
+                        series: event.detail.series,
+                        xaxis: { categories: event.detail.categories },
+                        plotOptions: {
+                            bar: {
+                                dataLabels: {
+                                    total: {
+                                        formatter: function (val, opt) {
+                                            return event.detail.totalEffortPoints[opt.dataPointIndex];
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    });
+                });
+            });
         });
     </script>
 @endsection

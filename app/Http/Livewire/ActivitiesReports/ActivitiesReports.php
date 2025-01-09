@@ -9,14 +9,13 @@ use Livewire\Component;
 
 class ActivitiesReports extends Component
 {
-
     protected $paginationTheme = 'tailwind';
-
+    
+    protected $listeners = ['refreshChart'];
     // PESTAÑA
     public $activeTab = 'actividades';
     // DUKKE
     public $dukke = '';
-
 
     public function mount()
     {
@@ -34,5 +33,14 @@ class ActivitiesReports extends Component
     public function setActiveTab($tab)
     {
         $this->activeTab = $tab;
+    }
+
+    public function refreshChart($categories, $series, $totalEffortPoints)
+    {
+        $this->dispatchBrowserEvent('update-chart', [
+            'categories' => $categories,
+            'series' => $series,
+            'totalEffortPoints' => $totalEffortPoints,
+        ]);
     }
 }
