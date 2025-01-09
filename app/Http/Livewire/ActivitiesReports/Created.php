@@ -23,7 +23,7 @@ class Created extends Component
     public $filtered = false; // cambio de dirección de flechas
     public $isOptionsVisible = false; // Controla la visibilidad del panel de opciones
     public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
-    public $perPage = '';
+    public $perPage = '20';
     // variables para la consulta
     public $filterPriotiry = false, $filterState = false;
     public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredStateArrow = '', $filteredExpected = 'desc', $orderByType = 'expected_date';
