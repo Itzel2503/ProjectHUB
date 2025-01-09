@@ -3,7 +3,6 @@
 use App\Http\Controllers\ActivitiesReports\ActivityReport;
 use App\Http\Controllers\Projects\Activity;
 use App\Http\Controllers\Auth\ProfileController;
-use App\Http\Controllers\Customers\Customer;
 use App\Http\Controllers\EffortPoints\EffortPoints;
 use App\Http\Controllers\Inventory\Inventory;
 use App\Http\Controllers\Projects\Priority;
@@ -12,6 +11,7 @@ use App\Http\Controllers\Projects\Report;
 use App\Http\Controllers\Users\UserCatalog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Livewire\Livewire;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +36,7 @@ Route::get('/', function () {
 });
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['web', 'auth'])->group(function () {
+    Livewire::routes();
     // PROFILE
     Route::resource('profile', ProfileController::class)->only(['index']);
     // USERS

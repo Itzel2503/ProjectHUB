@@ -67,7 +67,7 @@ class Created extends Component
                 $query->where('delegate_id', $this->selectedDelegate);
             })
             ->orderBy($this->orderByType, $this->filteredExpected)
-            ->get();
+            ->paginate($this->perPage);
         // Obtener las activities del usuario
         $activities = User::select(
             'users.id as user',
@@ -91,7 +91,7 @@ class Created extends Component
                 $query->where('delegate_id', $this->selectedDelegate);
             })
             ->orderBy($this->orderByType, $this->filteredExpected)
-            ->get();
+            ->paginate($this->perPage);
         // Combinar los resultados manualmente
         $tasks = new \Illuminate\Database\Eloquent\Collection;
 
