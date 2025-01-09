@@ -373,8 +373,7 @@
                                     </p>
                                 @else
                                     @if ($project == null)
-                                        <select
-                                            wire:change='updateState({{ $report->id }}, 0, $event.target.value)'
+                                        <select wire:change='updateState({{ $report->id }}, 0, $event.target.value)'
                                             name="state" id="state"
                                             class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold">
                                             <option selected value={{ $report->state }}>{{ $report->state }}</option>
@@ -599,53 +598,51 @@
         </div>
     @endif
     {{-- END MODAL EDIT --}}
-    {{-- END MODAL DELETE --}}
     {{-- MODAL EVIDENCE --}}
-    <div
-        class="@if ($modalEvidence) block  @else hidden @endif left-0 top-20 z-50 max-h-full overflow-y-auto">
-        <div
-            class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
-        </div>
-        <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
-            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
-                <div
-                    class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
-                    <h3
-                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                        Evidencia</h3>
-                    <svg id="modalEvidence" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
-                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
-                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M18 6l-12 12"></path>
-                        <path d="M6 6l12 12"></path>
-                    </svg>
-                </div>
-                <div class="modalBody">
-                    <div class="md-3/4 mt-5 flex w-full flex-col">
-                        <div class="-mx-3 flex flex-row">
-                            <div class="w-full px-3">
-                                <h5 class="inline-flex font-semibold" for="evidence">
-                                    Para completar tu reporte, por favor, sube el archivo de evidencia.
-                                </h5>
-                                <input wire:model='evidence' required type="file" name="evidence" id="evidence"
-                                    class="inputs">
-                                <div>
-                                    <span class="text-xs italic text-red-600">
-                                        @error('evidence')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
-                                    </span>
+    @if ($showEvidence && $reportEvidence)
+        <div class="left-0 top-20 z-50 block max-h-full overflow-y-auto">
+            <div
+                class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+            </div>
+            <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
+                <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+                    <div
+                        class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
+                        <h3
+                            class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                            Evidencia</h3>
+                        <svg id="showEvidence" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                            xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M18 6l-12 12"></path>
+                            <path d="M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                    <div class="modalBody">
+                        <div class="md-3/4 mt-5 flex w-full flex-col">
+                            <div class="-mx-3 flex flex-row">
+                                <div class="w-full px-3">
+                                    <h5 class="inline-flex font-semibold" for="evidence">
+                                        Para completar tu reporte, por favor, sube el archivo de evidencia.
+                                    </h5>
+                                    <input wire:model='evidence' required type="file" name="evidence"
+                                        id="evidence" class="inputs">
+                                    <div>
+                                        <span class="text-xs italic text-red-600">
+                                            @error('evidence')
+                                                <span class="pl-2 text-xs italic text-red-600">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modalFooter">
-                    @if ($modalEvidence)
+                    <div class="modalFooter">
                         <button class="btnSave"
                             wire:click="updateEvidence({{ $reportEvidence->id }}, {{ $reportEvidence->project_id }})">
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -659,15 +656,50 @@
                             </svg>
                             Guardar
                         </button>
-                    @endif
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
+    {{-- END MODAL EVIDENCE --}}
+    {{-- MODAL EVIDENCE --}}
+    @if ($evidenceActRep)
+        <div class="left-0 top-20 z-50 block max-h-full overflow-y-auto">
+            <div
+                class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
+            </div>
+            <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
+                <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+                    <div
+                        class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
+                        <h3
+                            class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                            Reporte finalizado</h3>
+                    </div>
+                    <div class="modalBody">
+                        <div class="md-3/4 mt-5 flex w-full flex-col">
+                            <div class="-mx-3 flex flex-row">
+                                <div class="w-full px-3">
+                                    <p class="text-justify">
+                                        Para completar tu reporte, haz clic en el botón <strong>"Continuar"</strong>. Serás redirigido a la página donde se encuentra el reporte. Una vez allí, selecciona la opción "Resuelto" y carga la evidencia correspondiente.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modalFooter">
+                        <button class="btnSave" wire:click="finishEvidence({{ $reportEvidence->project->id }}, {{ $reportEvidence->id }})">
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
     {{-- END MODAL EVIDENCE --}}
     {{-- LOADING PAGE --}}
     <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-        wire:target="$set('isOptionsVisible'), create, filterDown, filterUp, showReport, togglePanel, editReport, deleteReport, reportRepeat, updateEvidence">
+        wire:target="$set('isOptionsVisible'), create, filterDown, filterUp, showReport, togglePanel, editReport, deleteReport, reportRepeat, updateEvidence, finishEvidence">
         <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40">
         </div>
         <div class="loadingspinner relative top-1/3 z-20">
@@ -730,8 +762,8 @@
                 })
             });
 
-            let modalEvidence = document.getElementById('modalEvidence');
-            modalEvidence.addEventListener('click', function() {
+            let showEvidence = document.getElementById('showEvidence');
+            showEvidence.addEventListener('click', function() {
                 Swal.fire({
                     title: 'Confirmación de cierre',
                     text: "Si cierras sin subir evidencia, el reporte permanecerá sin actualizar. ¿Seguro que quieres continuar?",

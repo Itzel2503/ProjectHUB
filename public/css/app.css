@@ -1011,10 +1011,6 @@ select {
   margin-bottom: auto;
 }
 
-.-mb-px {
-  margin-bottom: -1px;
-}
-
 .-ml-px {
   margin-left: -1px;
 }
@@ -3232,6 +3228,16 @@ select {
   .md\:px-20 {
     padding-left: 5rem;
     padding-right: 5rem;
+  }
+
+  .md\:py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .md\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }
 

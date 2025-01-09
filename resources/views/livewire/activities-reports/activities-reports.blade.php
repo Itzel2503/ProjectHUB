@@ -1,31 +1,30 @@
 <div>
     <div class="px-4 py-4 sm:rounded-lg">
         {{-- PESTAÑAS --}}
-        <nav class="-mb-px flex">
+        <nav class="flex flex-wrap md:flex-nowrap overflow-x-auto border-b-2 border-primaryColor">
             <button wire:click="setActiveTab('task')"
-                class="border-primaryColor @if ($activeTab === 'task') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 py-4 text-sm font-medium">
+                class="border-primaryColor @if ($activeTab === 'task') rounded-t-lg border-x-2 border-t-2 @endif whitespace-nowrap px-3 py-2 md:py-4 text-xs md:text-sm font-medium">
                 Mis tareas
             </button>
             <button wire:click="setActiveTab('created')"
-                class="border-primaryColor @if ($activeTab === 'created') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 py-4 text-sm font-medium">
-                Creadas por mi
+                class="border-primaryColor @if ($activeTab === 'created') rounded-t-lg border-x-2 border-t-2 @endif whitespace-nowrap px-3 py-2 md:py-4 text-xs md:text-sm font-medium">
+                Creadas por mí
             </button>
             <button wire:click="setActiveTab('actividades')"
-                class="border-primaryColor @if ($activeTab === 'actividades') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 py-4 text-sm font-medium">
+                class="border-primaryColor @if ($activeTab === 'actividades') rounded-t-lg border-x-2 border-t-2 @endif whitespace-nowrap px-3 py-2 md:py-4 text-xs md:text-sm font-medium">
                 Actividades
             </button>
             <button wire:click="setActiveTab('reportes')"
-                class="border-primaryColor @if ($activeTab === 'reportes') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 py-4 text-sm font-medium">
+                class="border-primaryColor @if ($activeTab === 'reportes') rounded-t-lg border-x-2 border-t-2 @endif whitespace-nowrap px-3 py-2 md:py-4 text-xs md:text-sm font-medium">
                 Reportes
             </button>
             @if (Auth::user()->area_id == 4)
                 <button wire:click="setActiveTab('dukke')"
-                    class="border-primaryColor @if ($activeTab === 'dukke') rounded-t-lg border-x-2 border-t-2 @else border-b-2 @endif whitespace-nowrap px-3 py-4 text-sm font-medium">
+                    class="border-primaryColor @if ($activeTab === 'dukke') rounded-t-lg border-x-2 border-t-2 @endif whitespace-nowrap px-3 py-2 md:py-4 text-xs md:text-sm font-medium">
                     Dukke
                 </button>
             @endif
-            <div class="w-full border-b-2 border-primaryColor"></div>
-        </nav>
+        </nav>        
         {{-- END PESTAÑAS --}}
         {{-- TABLE --}}
         @if ($activeTab === 'task')

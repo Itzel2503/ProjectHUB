@@ -31,8 +31,8 @@ class MyActivities extends Component
     public $taskShow = '';
     public $taskShowType = '';
     // MODAL EVIDENCE
-    public $modalEvidence = false;
-    public  $reportEvidence;
+    public $reportEvidence;
+    public $evidenceActRep = false;
 
     public function render()
     {
@@ -369,10 +369,7 @@ class MyActivities extends Component
 
                 if ($state == 'Resuelto') {
                     if ($report->evidence == true) {
-                        $this->modalEvidence = true;
-
-                        $project = Project::find($project_id);
-                        $report->project_id = $project->id;
+                        $this->evidenceActRep = true;
                         $this->reportEvidence = $report;
                     } else {
                         $report->state = $state;
@@ -390,6 +387,11 @@ class MyActivities extends Component
                 }
             }
         }
+    }
+
+    public function finishEvidence($project_id, $report_id)
+    {
+        $this->redirectRoute('projects.reports.index', ['project' => $project_id, 'reports' => $report_id, 'highlight' => $report_id]);
     }
     // MODAL
     public function show($id, $type)

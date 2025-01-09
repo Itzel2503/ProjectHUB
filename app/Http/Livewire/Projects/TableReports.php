@@ -42,8 +42,9 @@ class TableReports extends Component
     public $editReport = false;
     public $reportEdit = '';
     // MODAL EVIDENCE
-    public $modalEvidence = false;
+    public $showEvidence = false;
     public  $reportEvidence;
+    public $evidenceActRep = false;
     // INPUTS
     public $evidence;
 
@@ -373,15 +374,15 @@ class TableReports extends Component
 
             if ($state == 'Resuelto') {
                 if ($report->evidence == true) {
-                    $this->modalEvidence = true;
-
                     if ($this->project == null) {
-                        $report->project_id =$report->project->id;
+                        $this->evidenceActRep = true;
+                        $this->reportEvidence = $report;
                     } else {
+                        $this->showEvidence = true;
                         $project = Project::find($project_id);
                         $report->project_id = $project->id;
+                        $this->reportEvidence = $report;
                     }
-                    $this->reportEvidence = $report;
                 } else {
                     $report->state = $state;
                     $report->updated_expected_date = true;
@@ -505,7 +506,7 @@ class TableReports extends Component
                 $report->state = 'Resuelto';
                 $report->repeat = true;
                 $report->save();
-                $this->modalEvidence = false;
+                $this->showEvidence = false;
             } else {
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
@@ -543,6 +544,11 @@ class TableReports extends Component
                 'title' => 'Reporte no encontrado',
             ]);
         }
+    }
+
+    public function finishEvidence($project_id, $report_id)
+    {
+        $this->redirectRoute('projects.reports.index', ['project' => $project_id, 'reports' => $report_id, 'highlight' => $report_id]);
     }
     // MODAL
     public function showReport($id)
@@ -585,13 +591,10 @@ class TableReports extends Component
         }
     }
 
-    public function modalEvidence()
+    public function evidenceActRep($id)
     {
-        if ($this->modalEvidence == true) {
-            $this->modalEvidence = false;
-        } else {
-            $this->modalEvidence = true;
-        }
+        dd($id);
+        $this->evidenceActRep = !$this->evidenceActRep;
     }
     // FILTER
     public function togglePanel($reportId)
