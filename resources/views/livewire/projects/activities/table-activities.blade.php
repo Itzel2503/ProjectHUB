@@ -313,11 +313,11 @@
                             </td>
                             <td class="px-2 py-1">
                                 <div class="mx-auto w-auto text-left">
-                                    @if ($activity->delegate)
-                                        <p
-                                            class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
-                                            {{ $activity->delegate->name }}</p>
-                                        @if ($project != null && $idsprint != null)
+                                    @if ($project != null && $idsprint != null)
+                                        @if ($activity->delegate)
+                                            <p class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
+                                                {{ $activity->delegate->name }}
+                                            </p>
                                             <select
                                                 wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
                                                 name="delegate" id="delegate"
@@ -332,7 +332,24 @@
                                                 @endforeach
                                             </select>
                                         @else
-                                            @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
+                                            <p
+                                                class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
+                                                Usuario eliminado</p>
+                                            <select
+                                                wire:change='updateDelegate({{ $activity->id }}, $event.target.value)'
+                                                name="delegate" id="delegate"
+                                                class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm">
+                                                <option selected>
+                                                    Seleccionar...</option>
+                                                @foreach ($activity->usersFiltered as $userFiltered)
+                                                    <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        @endif
+                                    @else
+                                        @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
+                                            @if ($activity->delegate)
                                                 <select
                                                     wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
                                                     name="delegate" id="delegate"
@@ -348,6 +365,20 @@
                                                 </select>
                                             @else
                                                 <select
+                                                    wire:change='updateDelegate({{ $activity->id }}, $event.target.value)'
+                                                    name="delegate" id="delegate"
+                                                    class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm">
+                                                    <option selected>
+                                                        Seleccionar...</option>
+                                                    @foreach ($activity->usersFiltered as $userFiltered)
+                                                        <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            @endif
+                                        @else
+                                            @if ($activity->delegate)
+                                                <select
                                                     wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
                                                     name="delegate" id="delegate"
                                                     class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm" disabled>
@@ -359,40 +390,19 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                            @else
+                                                <select
+                                                    wire:change='updateDelegate({{ $activity->id }}, $event.target.value)'
+                                                    name="delegate" id="delegate"
+                                                    class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm">
+                                                    <option selected>
+                                                        Seleccionar...</option>
+                                                    @foreach ($activity->usersFiltered as $userFiltered)
+                                                        <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             @endif
-                                        @endif
-                                    @else
-                                        <p
-                                            class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
-                                            Usuario eliminado</p>
-                                        @if ($project != null && $idsprint != null)
-                                            <select
-                                                wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
-                                                name="delegate" id="delegate"
-                                                class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm"
-                                                @if ($sprint->state == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif>
-                                                <option selected>
-                                                    Seleccionar...
-                                                </option>
-                                                @foreach ($activity->usersFiltered as $userFiltered)
-                                                    <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        @else
-                                            <select
-                                                wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
-                                                name="delegate" id="delegate"
-                                                class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm"
-                                                @if (Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif>
-                                                <option selected value={{ $activity->delegate->id }}>
-                                                    {{ $activity->delegate->name }}
-                                                </option>
-                                                @foreach ($activity->usersFiltered as $userFiltered)
-                                                    <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
                                         @endif
                                     @endif
                                     <p class="text-xs">
@@ -472,7 +482,8 @@
                                     @if ($project == null && $idsprint == null)
                                         @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
                                             <a
-                                                href="{{ route('projects.activities.index', ['project' => $activity->sprint->backlog->project->id, 'activity' => $activity->id, 'highlight' => $activity->id]) }}">
+                                                href="{{ route('projects.activities.index', ['project' => $activity->sprint->backlog->project->id, 'activity' => $activity->id, 'highlight' => $activity->id]) }}"
+                                                target="_blank" rel="noopener noreferrer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"

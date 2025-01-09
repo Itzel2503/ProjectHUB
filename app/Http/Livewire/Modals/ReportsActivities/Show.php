@@ -19,6 +19,9 @@ class Show extends Component
     public $showChat = false;
     // INPUTS
     public $message;
+    // EVIDENCE
+    public $showEvidence = false;
+
 
     public function render()
     {
@@ -202,5 +205,10 @@ class Show extends Component
                 ]);
             }
         }
+    }
+
+    public function toggleEvidence()
+    {
+        $this->showEvidence = !$this->showEvidence; // Cambia el estado
     }
 }

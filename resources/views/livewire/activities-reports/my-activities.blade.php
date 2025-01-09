@@ -347,7 +347,8 @@
                                 <div class="flex justify-center">
                                     @if ($task->project_activity)
                                         <a
-                                            href="{{ route('projects.activities.index', ['project' => $task->project_id, 'activity' => $task->id, 'highlight' => $task->id]) }}">
+                                            href="{{ route('projects.activities.index', ['project' => $task->project_id, 'activity' => $task->id, 'highlight' => $task->id]) }}"
+                                            target="_blank" rel="noopener noreferrer">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -360,7 +361,8 @@
                                         </a>
                                     @elseif($task->project_report)
                                         <a
-                                            href="{{ route('projects.reports.index', ['project' => $task->project_id, 'reports' => $task->id, 'highlight' => $task->id]) }}">
+                                            href="{{ route('projects.reports.index', ['project' => $task->project_id, 'reports' => $task->id, 'highlight' => $task->id]) }}"
+                                            target="_blank" rel="noopener noreferrer">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -384,7 +386,7 @@
             </table>
         </div>
         <div class="py-5">
-            {{-- {{ $task->links() }} --}}
+            {{ $tasks->links() }}
         </div>
     </div>
     {{-- END TABLE --}}

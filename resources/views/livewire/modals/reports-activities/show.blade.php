@@ -154,13 +154,12 @@
                 @endif
             </div>
         </div>
-        <div id="example" class="photos w-full px-5 lg:w-1/2">
+        <div class="photos w-full px-5 lg:w-1/2 @if ($showEvidence) hidden @endif">
             <div class="mb-6 w-auto">
                 <div class="md-3/4 mb-5 mt-5 flex w-full flex-row justify-between">
                     <div class="text-text2 text-center text-xl font-semibold md:flex">Detalle</div>
                     @if ($recording->evidence == true)
-                        <div class="btnIcon cursor-pointer font-semibold text-blue-500 hover:text-blue-400"
-                            onclick="toogleEvidence()" id="textToogle">
+                        <div class="btnIcon cursor-pointer font-semibold text-blue-500 hover:text-blue-400" wire:click="toggleEvidence">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye"
                                 width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -250,55 +249,13 @@
                 @endif
             </div>
         </div>
-        <div id="evidence" class="photos hidden w-full px-5 lg:w-1/2">
-            @if ($evidenceShow)
-                <div class="flex flex-col">
-                    <div class="md-3/4 mb-5 mt-5 flex w-full flex-row justify-between">
-                        <div class="text-center text-xl font-semibold text-gray-700 md:flex">
-                            Evidencia
-                        </div>
-                        <div class="btnIcon cursor-pointer font-semibold text-red-500 hover:text-red-500"
-                            onclick="toogleEvidence()" id="textToogle">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-x"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                                <path
-                                    d="M13.048 17.942a9.298 9.298 0 0 1 -1.048 .058c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6a17.986 17.986 0 0 1 -1.362 1.975" />
-                                <path d="M22 22l-5 -5" />
-                                <path d="M17 22l5 -5" />
-                            </svg> &nbsp; Evidencia
-                        </div>
+        <div class="photos w-full px-5 lg:w-1/2 @if (!$showEvidence) hidden @endif">
+            <div class="flex flex-col">
+                <div class="md-3/4 mb-5 mt-5 flex w-full flex-row justify-between">
+                    <div class="text-center text-xl font-semibold text-gray-700 md:flex">
+                        Evidencia
                     </div>
-                    @if (!empty($evidenceShow->content))
-                        @if ($evidenceShow->image == true)
-                            <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                <img src="{{ asset('evidence/' . $evidenceShow->content) }}" alt="Report Image">
-                            </div>
-                        @endif
-                        @if ($evidenceShow->video == true)
-                            <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                <video src="{{ asset('evidence/' . $evidenceShow->content) }}" loop autoplay
-                                    alt="Report Video"></video>
-                            </div>
-                        @endif
-                        @if ($evidenceShow->file == true)
-                            <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                <iframe src="{{ asset('evidence/' . $evidenceShow->content) }}" width="auto"
-                                    height="800"></iframe>
-                            </div>
-                        @endif
-                    @else
-                        <div class="my-5 w-full text-center text-lg text-red-500">
-                            <p class="text-red my-5">Sin evidencia</p>
-                        </div>
-                    @endif
-                </div>
-            @else
-                <div class="md-3/4 mb-5 mt-5 flex w-full flex-row justify-end">
-                    <div class="btnIcon cursor-pointer font-semibold text-red-500 hover:text-red-500"
-                        onclick="toogleEvidence()" id="textToogle">
+                    <div class="btnIcon cursor-pointer font-semibold text-red-500 hover:text-red-500" wire:click="toggleEvidence">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye-x"
                             width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -311,14 +268,34 @@
                         </svg> &nbsp; Evidencia
                     </div>
                 </div>
-                <div class="mt-10 animate-bounce text-center text-2xl font-bold text-red-500">
-                    Sin evidencia
-                </div>
-            @endif
+                @if (!empty($evidenceShow->content))
+                    @if ($evidenceShow->image == true)
+                        <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
+                            <img src="{{ asset('evidence/' . $evidenceShow->content) }}" alt="Report Image">
+                        </div>
+                    @endif
+                    @if ($evidenceShow->video == true)
+                        <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
+                            <video src="{{ asset('evidence/' . $evidenceShow->content) }}" loop autoplay
+                                alt="Report Video"></video>
+                        </div>
+                    @endif
+                    @if ($evidenceShow->file == true)
+                        <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
+                            <iframe src="{{ asset('evidence/' . $evidenceShow->content) }}" width="auto"
+                                height="800"></iframe>
+                        </div>
+                    @endif
+                @else
+                    <div class="my-5 w-full text-center text-lg text-red-500">
+                        <p class="text-red my-5">Sin evidencia</p>
+                    </div>
+                @endif
+            </div>
         </div>
         {{-- LOADING PAGE --}}
         <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-            wire:target="sendMessage">
+            wire:target="sendMessage, toggleEvidence">
             <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40">
             </div>
             <div class="loadingspinner relative top-1/3 z-20">

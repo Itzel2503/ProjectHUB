@@ -60,6 +60,11 @@ class TableReports extends Component
 
     public function render()
     {
+        // Verifica si algún filtro ha cambiado
+        if (!empty($this->search) || !empty($this->selectedDelegate) || !empty($this->selectedStates)) {
+            $this->visiblePanels = []; // Restablecer visiblePanels
+        }
+
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
 
         $user = Auth::user();
@@ -355,6 +360,10 @@ class TableReports extends Component
     {
         $report = Report::find($id);
 
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
+
         if ($report) {
             if ($state == 'Proceso' || $state == 'Conflicto') {
                 if ($report->progress == null && $report->look == false && $report->state == 'Abierto') {
@@ -408,6 +417,10 @@ class TableReports extends Component
 
     public function updateDelegate($id, $delegate)
     {
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
+
         $report = Report::find($id);
         if ($report) {
             $report->delegate_id = $delegate;
@@ -416,7 +429,7 @@ class TableReports extends Component
             $report->look = false;
             $report->state = 'Abierto';
             $report->save();
-
+            
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
                 'title' => 'Delegado actualizado',
@@ -559,6 +572,10 @@ class TableReports extends Component
     // MODAL
     public function showReport($id)
     {
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
+
         if ($this->showReport == true) {
             $this->showReport = false;
             $this->reportShow = null;
@@ -579,6 +596,10 @@ class TableReports extends Component
 
     public function editReport($id)
     {
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
+
         if ($this->editReport == true) {
             $this->editReport = false;
             $this->reportEdit = null;
@@ -599,12 +620,12 @@ class TableReports extends Component
 
     public function evidenceActRep($id)
     {
-        dd($id);
         $this->evidenceActRep = !$this->evidenceActRep;
     }
     // FILTER
     public function togglePanel($reportId)
     {
+        $this->isOptionsVisible = false;
         // Si el panel ya está visible, lo cerramos
         if (isset($this->visiblePanels[$reportId]) && $this->visiblePanels[$reportId]) {
             unset($this->visiblePanels[$reportId]);
@@ -620,6 +641,9 @@ class TableReports extends Component
     public function filterDown($type)
     {
         $this->filtered = false; // Cambio de flechas
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
         
         if ($type == 'priority') {
             $this->filterPriotiry = true;
@@ -653,6 +677,9 @@ class TableReports extends Component
     public function filterUp($type)
     {
         $this->filtered = true; // Cambio de flechas
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
         
         if ($type == 'priority') {
             $this->filterPriotiry = true;

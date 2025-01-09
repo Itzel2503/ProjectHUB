@@ -59,6 +59,11 @@ class TableActivities extends Component
 
     public function render()
     {
+        // Verifica si algún filtro ha cambiado
+        if (!empty($this->search) || !empty($this->selectedDelegate) || !empty($this->selectedStates)) {
+            $this->visiblePanels = []; // Restablecer visiblePanels
+        }
+        // Verifica si se ha seleccionado un proyecto y un sprint
         if ($this->project != null && $this->idsprint != null) {
             // Backlog
             $this->backlog = Backlog::where('project_id', $this->project->id)->first();
@@ -315,6 +320,10 @@ class TableActivities extends Component
 
     public function updateDelegate($id, $delegate)
     {
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
+
         $activity = Activity::find($id);
         if ($activity) {
             $activity->delegate_id = $delegate;
@@ -333,6 +342,10 @@ class TableActivities extends Component
 
     public function updateState($id, $state)
     {
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
+
         $activity = Activity::find($id);
 
         if ($activity) {
@@ -376,6 +389,10 @@ class TableActivities extends Component
     // MODAL
     public function create($idProject)
     {
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
+
         if ($idProject != 0) {
             $this->createEdit = !$this->createEdit;
         }
@@ -383,6 +400,10 @@ class TableActivities extends Component
 
     public function showActivity($id)
     {
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
+
         if ($this->showActivity == true) {
             $this->showActivity = false;
             $this->activityShow = null;
@@ -403,6 +424,10 @@ class TableActivities extends Component
 
     public function editActivity($id)
     {
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
+
         if ($this->createEdit == true) {
             $this->createEdit = false;
             $this->activityEdit = null;
@@ -451,6 +476,9 @@ class TableActivities extends Component
     public function filterDown($type)
     {
         $this->filtered = false; // Cambio de flechas
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
         
         if ($type == 'priority') {
             $this->filterPriotiry = true;
@@ -484,6 +512,9 @@ class TableActivities extends Component
     public function filterUp($type)
     {
         $this->filtered = true; // Cambio de flechas
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
         
         if ($type == 'priority') {
             $this->filterPriotiry = true;
