@@ -11,7 +11,6 @@ use App\Http\Controllers\Projects\Report;
 use App\Http\Controllers\Users\UserCatalog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Livewire\Livewire;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +35,6 @@ Route::get('/', function () {
 });
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['web', 'auth'])->group(function () {
-    Livewire::routes();
     // PROFILE
     Route::resource('profile', ProfileController::class)->only(['index']);
     // USERS
