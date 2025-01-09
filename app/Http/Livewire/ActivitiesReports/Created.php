@@ -127,6 +127,7 @@ class Created extends Component
             $task->filteredActions = $this->getFilteredActions($task->state);
             // DELEGATE
             $delegate = User::where('id', $task->delegate_id)->first();
+            $task->delegate_name = $delegate->name;
             if ($delegate) {
                 $task->delegate_name = $delegate->name;
             } else {
@@ -271,7 +272,7 @@ class Created extends Component
             }
             $task->messages_count = $messages->where('look', false)->count();
         }
-        
+
         // dd($tasks);
         return view('livewire.activities-reports.created', [
             'tasks' => $paginatedTask,
@@ -432,7 +433,7 @@ class Created extends Component
     public function filterDown($type)
     {
         $this->filtered = false; // Cambio de flechas
-        
+
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filterState = false;
@@ -465,14 +466,14 @@ class Created extends Component
     public function filterUp($type)
     {
         $this->filtered = true; // Cambio de flechas
-        
+
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
         }
-        
+
         if ($type == 'state') {
             $this->filterPriotiry = false;
             $this->filterState = true;
