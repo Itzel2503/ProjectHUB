@@ -93,25 +93,38 @@ class Created extends Component
             ->orderBy($this->orderByType, $this->filteredExpected)
             ->get();
         // Combinar los resultados manualmente
-        $tasks = new \Illuminate\Database\Eloquent\Collection;
+        // $tasks = new \Illuminate\Database\Eloquent\Collection;
 
-        foreach ($activities as $activity) {
-            $tasks->push($activity);
-        }
+        // foreach ($activities as $activity) {
+        //     $tasks->push($activity);
+        // }
 
-        foreach ($reports as $report) {
-            $tasks->push($report);
-        }
-        // Ordenar la colección combinada
-        $tasks = $tasks->sortBy(function ($task) {
+        // foreach ($reports as $report) {
+        //     $tasks->push($report);
+        // }
+        // // Ordenar la colección combinada
+        // $tasks = $tasks->sortBy(function ($task) {
+        //     return $task->expected_date;
+        // }, SORT_REGULAR, $this->filteredExpected === 'desc');
+        // // Paginación manual
+        // $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        // $perPage = $this->perPage;
+        // $currentItems = $tasks->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        // $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
+        //     'path' => LengthAwarePaginator::resolveCurrentPath(),
+        // ]);
+        // Combinar y ordenar las colecciones
+        $tasks = $reports->merge($activities)->sortBy(function ($task) {
             return $task->expected_date;
         }, SORT_REGULAR, $this->filteredExpected === 'desc');
-        // Paginación manual
+
+        // Paginación manual con URLs compatibles con Livewire
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $perPage = $this->perPage;
-        $currentItems = $tasks->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $currentItems = $tasks->slice(($currentPage - 1) * $perPage, $perPage)->values();
         $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
-            'path' => LengthAwarePaginator::resolveCurrentPath(),
+            'path' => url('/'), // Ruta base para paginación
+            'pageName' => 'page',
         ]);
         // TODOS LOS DELEGADOS
         $this->allUsersFiltered = [];
