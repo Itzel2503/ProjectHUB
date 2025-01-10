@@ -23,7 +23,7 @@ class Created extends Component
     public $filtered = false; // cambio de dirección de flechas
     public $isOptionsVisible = false; // Controla la visibilidad del panel de opciones
     public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
-    public $perPage = '500';
+    public $perPage = '20';
     // variables para la consulta
     public $filterPriotiry = false, $filterState = false;
     public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredStateArrow = '', $filteredExpected = 'desc', $orderByType = 'expected_date';
@@ -92,40 +92,22 @@ class Created extends Component
             })
             ->orderBy($this->orderByType, $this->filteredExpected)
             ->get();
+            
         // Combinar los resultados manualmente
-        // $tasks = new \Illuminate\Database\Eloquent\Collection;
+        $tasks = new \Illuminate\Database\Eloquent\Collection;
 
-        // foreach ($activities as $activity) {
-        //     $tasks->push($activity);
-        // }
+        foreach ($activities as $activity) {
+            $tasks->push($activity);
+        }
 
-        // foreach ($reports as $report) {
-        //     $tasks->push($report);
-        // }
-        // // Ordenar la colección combinada
-        // $tasks = $tasks->sortBy(function ($task) {
-        //     return $task->expected_date;
-        // }, SORT_REGULAR, $this->filteredExpected === 'desc');
-        // // Paginación manual
-        // $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        // $perPage = $this->perPage;
-        // $currentItems = $tasks->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        // $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
-        //     'path' => LengthAwarePaginator::resolveCurrentPath(),
-        // ]);
-        // Combinar y ordenar las colecciones
-        $tasks = $reports->merge($activities)->sortBy(function ($task) {
+        foreach ($reports as $report) {
+            $tasks->push($report);
+        }
+        // Ordenar la colección combinada
+        $tasks = $tasks->sortBy(function ($task) {
             return $task->expected_date;
         }, SORT_REGULAR, $this->filteredExpected === 'desc');
 
-        // Paginación manual con URLs compatibles con Livewire
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = $this->perPage;
-        $currentItems = $tasks->slice(($currentPage - 1) * $perPage, $perPage)->values();
-        $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
-            'path' => url('/'), // Ruta base para paginación
-            'pageName' => 'page',
-        ]);
         // TODOS LOS DELEGADOS
         $this->allUsersFiltered = [];
         foreach ($this->allUsers as $user) {
@@ -140,11 +122,6 @@ class Created extends Component
             $task->filteredActions = $this->getFilteredActions($task->state);
             // DELEGATE
             $delegate = User::where('id', $task->delegate_id)->first();
-            if ($delegate) {
-                $task->delegate_name = $delegate->name;
-            } else {
-                $task->delegate_name = 'Sin delegar';
-            }
             if ($delegate) {
                 $task->delegate_name = $delegate->name;
             } else {
@@ -290,9 +267,8 @@ class Created extends Component
             $task->messages_count = $messages->where('look', false)->count();
         }
 
-        // dd($tasks);
         return view('livewire.activities-reports.created', [
-            'tasks' => $paginatedTask,
+            'tasks' => $tasks,
         ]);
     }
     // ACTIONS

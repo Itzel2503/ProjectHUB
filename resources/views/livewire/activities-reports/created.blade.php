@@ -389,7 +389,7 @@
             </table>
         </div>
         <div class="py-5">
-            {{ $tasks->links() }}
+            {{-- {{ $tasks->links() }} --}}
         </div>
     </div>
     {{-- END TABLE --}}
