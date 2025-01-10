@@ -125,7 +125,7 @@ class Created extends Component
             if ($delegate) {
                 $task->delegate_name = $delegate->name;
             } else {
-                $task->delegate_name = 'Sin delegar';
+                $task->delegate_name = 'Usuario eliminado';
             }
             // Filtramos los usuarios
             $task->usersFiltered = $this->allUsers->reject(function ($user) use ($delegate) {
