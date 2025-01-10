@@ -59,10 +59,6 @@ class TableActivities extends Component
 
     public function render()
     {
-        // Verifica si algún filtro ha cambiado
-        if (!empty($this->search) || !empty($this->selectedDelegate) || !empty($this->selectedStates)) {
-            $this->visiblePanels = []; // Restablecer visiblePanels
-        }
         // Verifica si se ha seleccionado un proyecto y un sprint
         if ($this->project != null && $this->idsprint != null) {
             // Backlog

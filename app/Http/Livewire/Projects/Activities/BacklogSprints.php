@@ -7,6 +7,7 @@ use App\Models\Backlog;
 use App\Models\Sprint;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Livewire\Component;
 
 class BacklogSprints extends Component
@@ -326,11 +327,30 @@ class BacklogSprints extends Component
                 }
             }
 
+            $activities = Activity::where('sprint_id', $id)->get();
+            $totalActivities = $activities->count();
+            
+            foreach ($activities as $activity) {
+                if ($activity->image) {
+                    $contentPath = 'activities/' . $activity->image;
+                    $fullPath = public_path($contentPath);
+    
+                    if (File::exists($fullPath)) {
+                        File::delete($fullPath);
+                    }
+                }
+                $activity->delete();
+            }
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => $totalActivities . 'actividad/es eliminada/s',
+            ]);
+
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
                 'title' => 'Sprint eliminado',
             ]);
-
             return redirect()->to('/projects/' . $this->project->id . '/activities');
         } else {
             $this->dispatchBrowserEvent('swal:modal', [

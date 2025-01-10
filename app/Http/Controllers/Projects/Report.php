@@ -71,7 +71,7 @@ class Report extends Controller
             $project = Project::find($project_id);
             $report = new ModelsReport();
             $now = Carbon::now();
-            $dateString = $now->format("Y-m-d H_i_s");
+            $dateString = $now->format("Y-m-d_H_i_s");
             if ($project && $report) {
                 if (Auth::user()->type_user != 3) {
                     try {
@@ -147,7 +147,7 @@ class Report extends Controller
                     $imageData = base64_decode($data);
                     // Sanitizar nombres de archivo y directorios
                     $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.jpg';
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, $imageData);
 
                     $report->project_id = $project_id;
@@ -207,7 +207,7 @@ class Report extends Controller
                     $fileExtension = $file->extension();
                     // Sanitizar nombres de archivo y directorios
                     $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.' . $fileExtension;
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
                     Storage::disk('reports')->put($filePath, file_get_contents($file));
 
                     $report->project_id = $project_id;

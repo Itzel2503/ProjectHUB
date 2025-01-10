@@ -510,6 +510,18 @@
             </div>
         </div>
     </div>
+    {{-- LOADING PAGE --}}
+    <div class="absolute left-0 top-0 z-50 h-screen w-full hidden" id="loadingPage">
+        <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
+        <div class="loadingspinner relative top-1/3 z-20">
+            <div id="square1"></div>
+            <div id="square2"></div>
+            <div id="square3"></div>
+            <div id="square4"></div>
+            <div id="square5"></div>
+        </div>
+    </div>
+    {{-- END LOADING PAGE --}}
     {{-- END MODAL EDIT / CREATE SPRINT --}}
     @if (session('error'))
         <script>
@@ -562,9 +574,12 @@
         // BUTTONS FORM
         let checkboxes = document.querySelectorAll('.priority-checkbox');
         let downloadVideo = document.getElementById('downloadVideo');
+        // LOAGING
+        let loadingPage = document.getElementById('loadingPage');
         // VARIABLES GLOBALES
         let user = @json($user->id);
         let project = @json($project->name);
+        let formattedProject = project.replace(/\s+/g, '_'); // Reemplazar los espacios por guiones bajos
         // ------------------------------ MODAL ------------------------------
         let showingDirect = false; // Estado inicial
         let validNumbers = [1, 2, 3, 5, 8, 13];
@@ -685,7 +700,7 @@
         let horas = ("0" + fechaActual.getHours()).slice(-2);
         let minutos = ("0" + fechaActual.getMinutes()).slice(-2);
         let segundos = ("0" + fechaActual.getSeconds()).slice(-2);
-        let fechaEnFormato = año + '-' + mes + '-' + dia + ' ' + horas + '_' + minutos + '_' + segundos;
+        let fechaEnFormato = año + '-' + mes + '-' + dia + '_' + horas + '_' + minutos + '_' + segundos;
         // Ayudante para la duración; no ayuda en nada pero muestra algo informativo
         let secondsOnTime = numeroDeSegundos => {
             let horas = Math.floor(numeroDeSegundos / 60 / 60);
@@ -737,8 +752,8 @@
                     mediaRecorder.stop(); // Detener la grabación si el stream se vuelve inactivo
                     // INPUTS BUTTONS
                     inputUser.value = user;
-                    downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato + '.mp4';
-                    inputVideo.value = 'Reporte ' + project + ', ' + fechaEnFormato;
+                    downloadVideo.download = 'Reporte_' + formattedProject + '_' + fechaEnFormato + '.mp4';
+                    inputVideo.value = 'Reporte_' + formattedProject + '_' + fechaEnFormato;
                     // VIEWS
                     viewReport.style.display = 'block';
                     artboard.style.display = 'none';
@@ -802,7 +817,7 @@
                 });
                 recording.src = URL.createObjectURL(recordedBlob);
                 downloadVideo.href = recording.src;
-                downloadVideo.download = 'Reporte ' + project + ', ' + fechaEnFormato + '.mp4';
+                downloadVideo.download = 'Reporte_' + formattedProject + '_' + fechaEnFormato + '.mp4';
             })
             /* .catch(log); */
         }, false);
@@ -831,6 +846,8 @@
 
                 e.preventDefault();
                 return;
+            } else {
+                loadingPage.classList.remove('hidden');
             }
             // Verifica si el botón de descarga tiene una URL y descárgalo
             if (downloadVideo.href) {

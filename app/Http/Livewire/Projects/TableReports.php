@@ -60,11 +60,6 @@ class TableReports extends Component
 
     public function render()
     {
-        // Verifica si algún filtro ha cambiado
-        if (!empty($this->search) || !empty($this->selectedDelegate) || !empty($this->selectedStates)) {
-            $this->visiblePanels = []; // Restablecer visiblePanels
-        }
-
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
 
         $user = Auth::user();

@@ -137,6 +137,7 @@ class Edit extends Component
                     }
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
                     $fileName = $this->file->getClientOriginalName();
+                    $fileName = str_replace(' ', '_', $fileName);
                     $fullNewFilePath = $filePath . '/' . $fileName;
                     // Procesar la imagen
                     $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
@@ -162,6 +163,7 @@ class Edit extends Component
                 } elseif (in_array($extension, $extensionesVideo)) {
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
                     $fileName = $this->file->getClientOriginalName();
+                    $fileName = str_replace(' ', '_', $fileName);
                     $fullNewFilePath = $filePath . '/' . $fileName;
                     // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
                     if ($report->content && Storage::disk('reports')->exists($report->content)) {
@@ -179,6 +181,7 @@ class Edit extends Component
                 } else {
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
                     $fileName = $this->file->getClientOriginalName();
+                    $fileName = str_replace(' ', '_', $fileName);
                     $fullNewFilePath = $filePath . '/' . $fileName;
                     // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
                     if ($report->content && Storage::disk('reports')->exists($report->content)) {
@@ -295,6 +298,7 @@ class Edit extends Component
                     }
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $this->project->customer->name . '/' . $this->project->name;
                     $fileName = $this->file->getClientOriginalName();
+                    $fileName = str_replace(' ', '_', $fileName);
                     $fullNewFilePath = $filePath . '/' . $fileName;
                     // Procesar la imagen
                     $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
@@ -317,6 +321,7 @@ class Edit extends Component
                 } else {
                     $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $this->project->customer->name . '/' . $this->project->name;
                     $fileName = $this->file->getClientOriginalName();
+                    $fileName = str_replace(' ', '_', $fileName);
                     $fullNewFilePath = $filePath . '/' . $fileName;
     
                     // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
