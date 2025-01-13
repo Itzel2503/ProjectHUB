@@ -146,7 +146,7 @@
                     class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
                     Story Points</h4>
             </div>
-            @if (Auth::user()->type_user == 1 || Auth::id() == $activityEdit->user->id)
+            @if (Auth::user()->type_user == 1)
                 <div class="mb-6 flex flex-row">
                     <span wire:click="changePoints"
                         class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
@@ -229,10 +229,6 @@
         </div>
     </div>
     <div class="modalFooter">
-        {{-- @if ($showUpdateActivity)
-            <button class="btnSave" wire:click="updateActivity({{ $activityEdit->id }})"> Guardar
-            </button>
-        @else --}}
         <button class="btnSave" wire:click="create()">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy mr-2"
                 width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"

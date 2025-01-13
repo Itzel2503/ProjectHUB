@@ -2,13 +2,10 @@
 
 use App\Http\Controllers\ActivitiesReports\ActivityReport;
 use App\Http\Controllers\Projects\Activity;
-use App\Http\Controllers\Auth\ProfileController;
-use App\Http\Controllers\EffortPoints\EffortPoints;
-use App\Http\Controllers\Inventory\Inventory;
+use App\Http\Controllers\Notion\Notion;
 use App\Http\Controllers\Projects\Priority;
 use App\Http\Controllers\Projects\Project;
 use App\Http\Controllers\Projects\Report;
-use App\Http\Controllers\Users\UserCatalog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -36,9 +33,13 @@ Route::get('/', function () {
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['web', 'auth'])->group(function () {
     // PROFILE
-    Route::resource('profile', ProfileController::class)->only(['index']);
+    Route::get('profile', function () {
+        return view('auth/profile');
+    })->name('profile.index');
     // USERS
-    Route::resource('userCatalog', UserCatalog::class)->only(['index'])->middleware('user.type:1');
+    Route::get('userCatalog', function () {
+        return view('users/user-catalog');
+    })->name('userCatalog.index')->middleware('user.type:1');
     // PROJECTS
     Route::resource('projects', Project::class)->only(['index']);
     Route::resource('priority', Priority::class)->middleware('user.type:1,2');
@@ -46,10 +47,16 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('projects.activities', Activity::class)->only(['index'])->middleware('user.type:1,2');
     // ACTIVITIES
     Route::resource('/activities-reports', ActivityReport::class)->only(['index'])->middleware('user.type:1,2');
+    // NOTION
+    Route::resource('/notion', Notion::class);
     // EFFORT POINTS
-    Route::resource('/effortPoints', EffortPoints::class)->only(['index'])->middleware('user.type:1');
+    Route::get('effortPoints', function () {
+        return view('effortpoints/effortpoints');
+    })->name('effortPoints.index')->middleware('user.type:1');
     // INVENTORY
-    Route::resource('/storage', Inventory::class)->only(['index'])->middleware('user.type:1', 'user.area:1');
+    Route::get('storage', function () {
+        return view('inventory/inventory');
+    })->name('storage.index')->middleware('user.type:1', 'user.area:1');
 });
 // Rutas de autenticación generadas por Auth::routes();
 Auth::routes();

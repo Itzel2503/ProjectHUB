@@ -95,15 +95,16 @@
 <body>
     <div id="container" class="text-text1 relative flex h-screen">
         <!-- Desktop sidebar -->
-        <div class="text-white bg-coma-gradient z-20 hidden w-60 flex-shrink-0 overflow-y-auto shadow-md md:block h-screen">
-            <div class="bg-full bg-position-full py-1 h-full">
+        <div
+            class="bg-coma-gradient z-20 hidden h-screen w-60 flex-shrink-0 overflow-y-auto text-white shadow-md md:block">
+            <div class="bg-full bg-position-full h-full py-1">
                 @if (Auth::user())
                     @php
                         $user = DB::table('users')
                             ->where('id', Auth::user()->id)
                             ->first();
                     @endphp
-                        <div class="relative mt-5 flex justify-center justify-items-center">
+                    <div class="relative mt-5 flex justify-center justify-items-center">
                         @if (Auth::user()->profile_photo)
                             <img class="z-10 mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
                                 src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}" alt="Avatar" />
@@ -111,18 +112,20 @@
                             <img class="z-10 mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
                                 src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar" />
                         @endif
-                            <a class="z-50 absolute mx-auto h-24 w-24 rounded-full bg-gray-900 cursor-pointer opacity-0 hover:opacity-80 justify-center justify-items-center" href="{{ route('profile.index') }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit mx-auto mt-8"
-                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                                    <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                                    <path d="M16 5l3 3" />
-                                </svg>
-                            </a>
-                        </div>
-                    <div class="w-full pt-2 text-center text-base mb-10">
+                        <a class="absolute z-50 mx-auto h-24 w-24 cursor-pointer justify-center justify-items-center rounded-full bg-gray-900 opacity-0 hover:opacity-80"
+                            href="{{ route('profile.index') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-edit mx-auto mt-8" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                <path d="M16 5l3 3" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="mb-10 w-full pt-2 text-center text-base">
                         <p class="font-medium">{{ Auth::user()->name }}</p>
                         <p class="font-light">{{ Auth::user()->email }}</p>
                         <span class="text-xs">-</span>
@@ -153,8 +156,8 @@
                         <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                             href="{{ route('projects.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-books"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path
                                     d="M5 4m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
@@ -189,6 +192,21 @@
                             </a>
                         </li>
                     @endif
+                    {{-- <li class="menu {{ request()->routeIs('notion.index') ? 'active' : '' }}">
+                        <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
+                            href="{{ route('notion.index') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-note">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M13 20l7 -7" />
+                                <path
+                                    d="M13 20v-6a1 1 0 0 1 1 -1h6v-7a2 2 0 0 0 -2 -2h-12a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7" />
+                            </svg>
+                            <span class="ml-4">Notas</span>
+                        </a>
+                    </li> --}}
                     @if ($user->type_user == 1 && $user->area_id == 1)
                         <li class="menu">
                             <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
@@ -249,10 +267,10 @@
                 </ul>
                 <form method="POST" action="{{ route('logout') }}" x-data>
                     @csrf
-                    <div class="pt-20 py-5 text-center">
+                    <div class="py-5 pt-20 text-center">
                         <span class="text-base font-normal">
                             <button value="Log out" type="submit"
-                                class="border-gray-500 rounded border bg-transparent px-4 py-2 font-normal hover:border-white">
+                                class="rounded border border-gray-500 bg-transparent px-4 py-2 font-normal hover:border-white">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="icon icon-tabler icon-tabler-logout float-right ml-2 mt-1 h-5 w-5"
                                     width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
@@ -307,7 +325,7 @@
                 @endif
                 <button x-ref="button" x-on:click="toggle()" :aria-expanded="open"
                     :aria-controls="$id('dropdown-button')" type="button"
-                    class="flex items-center gap-2 rounded-md px-5 py-2.5 text-white border-solid border border-primaryColor">
+                    class="border-primaryColor flex items-center gap-2 rounded-md border border-solid px-5 py-2.5 text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2"
                         width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                         fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -320,7 +338,7 @@
             </div>
             <div x-ref="panel" x-show="open" x-on:click.outside="close($refs.button)" :id="$id('dropdown-button')"
                 style="display: none;"
-                class="bg-secundaryColor text-white absolute z-40 w-full rounded-b-md py-4 shadow-md">
+                class="bg-secundaryColor absolute z-40 w-full rounded-b-md py-4 text-white shadow-md">
                 <ul>
                     <li class="menu {{ request()->routeIs('profile.index') ? 'active' : '' }}">
                         <a class="inline-flex w-full text-base font-normal transition-colors duration-150"
@@ -396,6 +414,21 @@
                             </a>
                         </li>
                     @endif
+                    {{-- <li class="menu {{ request()->routeIs('notion.index') ? 'active' : '' }}">
+                        <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
+                            href="{{ route('notion.index') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-note">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M13 20l7 -7" />
+                                <path
+                                    d="M13 20v-6a1 1 0 0 1 1 -1h6v-7a2 2 0 0 0 -2 -2h-12a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7" />
+                            </svg>
+                            <span class="ml-4">Notas</span>
+                        </a>
+                    </li> --}}
                     @if ($user->type_user == 1)
                         <li class="menu {{ request()->routeIs('effortPoints.index') ? 'active' : '' }}">
                             <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
@@ -436,23 +469,23 @@
                         </li>
                     @endif
                     @if ($user->type_user == 1 && $user->area_id == 1)
-                    <li class="menu {{ request()->routeIs('storage.index') ? 'active' : '' }}">
-                        <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
-                            href="{{ route('storage.index') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round"
-                                class="icon icon-tabler icons-tabler-outline icon-tabler-archive">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
-                                <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
-                                <path d="M10 12l4 0" />
-                            </svg>
-                            <span class="ml-4">Inventario</span>
-                        </a>
-                    </li>
-                @endif
+                        <li class="menu {{ request()->routeIs('storage.index') ? 'active' : '' }}">
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
+                                href="{{ route('storage.index') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-archive">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+                                    <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+                                    <path d="M10 12l4 0" />
+                                </svg>
+                                <span class="ml-4">Inventario</span>
+                            </a>
+                        </li>
+                    @endif
                     <li class="menu">
                         <form method="POST" action="{{ route('logout') }}" x-data>
                             @csrf

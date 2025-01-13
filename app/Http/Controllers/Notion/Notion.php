@@ -1,12 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\EffortPoints;
+namespace App\Http\Controllers\Notion;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notion as ModelsNotion;
+use App\Models\Project;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class EffortPoints extends Controller
+class Notion extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,12 +20,11 @@ class EffortPoints extends Controller
     public function index()
     {
         if (Auth::check()) {
-            if (Auth::user()->type_user == 1) {
-                return view('effortpoints.effortpoints');
-            } else {
-                return back();
-            }
-        } else {
+            $allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
+            $projects = Project::all();
+            $notios = ModelsNotion::all();
+            return view('notion.notion', compact('projects', 'allUsers', 'notios'));
+        } else { 
             return redirect('/login');
         }
     }
