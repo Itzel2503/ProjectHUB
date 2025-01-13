@@ -121,7 +121,7 @@ class Report extends Controller
                     }
 
                     $report->state = "Abierto";
-                    $report->comment = $request->comment;
+                    $report->description = $request->description;
                     $report->evidence = ($request->evidence) ? true : false;
                     $report->points = $request->points ?? 0;
                     // Crear un array asociativo con los valores
@@ -179,7 +179,7 @@ class Report extends Controller
                         $report->priority = 'Bajo';
                     }
                     $report->state = "Abierto";
-                    $report->comment = $request->comment;
+                    $report->description = $request->description;
                     $report->evidence = ($request->evidence) ? true : false;
                     $report->points = $request->points ?? 0;
                     // Crear un array asociativo con los valores
@@ -241,7 +241,7 @@ class Report extends Controller
                     }
 
                     $report->state = "Abierto";
-                    $report->comment = $request->comment;
+                    $report->description = $request->description;
                     $report->evidence = ($request->evidence) ? true : false;
                     $report->points = $request->points ?? 0;
                     // Crear un array asociativo con los valores
@@ -303,7 +303,7 @@ class Report extends Controller
                     }
 
                     $report->state = "Abierto";
-                    $report->comment = $request->comment;
+                    $report->description = $request->description;
                     $report->evidence = ($request->evidence) ? true : false;
                     $report->points = $request->points ?? 0;
                     // Crear un array asociativo con los valores
@@ -392,7 +392,7 @@ class Report extends Controller
                 try {
                     // Validación de los campos
                     $validatedData = $request->validate([
-                        'comment' => 'required',
+                        'description' => 'required',
                     ]);
                     // Aquí puedes continuar con tu lógica después de la validación exitosa
                 } catch (\Illuminate\Validation\ValidationException $e) {
@@ -443,7 +443,7 @@ class Report extends Controller
                         $reportNew->priority = 'Bajo';
                     }
                     $reportNew->state = "Abierto";
-                    $reportNew->comment = $request->comment;
+                    $reportNew->description = $request->description;
                     $reportNew->evidence = $request->evidence ?? $report->evidence;
                     $reportNew->points = $request->points ?? 0;
                     // Crear un array asociativo con los valores
@@ -509,7 +509,7 @@ class Report extends Controller
                         $reportNew->priority = 'Bajo';
                     }
                     $reportNew->state = "Abierto";
-                    $reportNew->comment = $request->comment;
+                    $reportNew->description = $request->description;
                     $reportNew->evidence = $request->evidence ?? $report->evidence;
                     $reportNew->points = $request->points ?? 0;
                     // Crear un array asociativo con los valores
@@ -577,7 +577,7 @@ class Report extends Controller
                         $reportNew->priority = 'Bajo';
                     }
                     $reportNew->state = "Abierto";
-                    $reportNew->comment = $request->comment;
+                    $reportNew->description = $request->description;
                     $reportNew->evidence = $request->evidence ?? $report->evidence;
                     $reportNew->points = $request->points ?? 0;
                     // Crear un array asociativo con los valores
@@ -699,7 +699,7 @@ class Report extends Controller
                         $reportNew->priority = 'Bajo';
                     }
                     $reportNew->state = "Abierto";
-                    $reportNew->comment = $request->comment;
+                    $reportNew->description = $request->description;
                     $reportNew->evidence = $request->evidence ?? $report->evidence;
                     $reportNew->points = $request->points ?? 0;
                     // Crear un array asociativo con los valores

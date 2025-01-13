@@ -72,15 +72,15 @@
                             </span>
                         </div>
                     @else
-                        <h5 class="inline-flex font-semibold" for="comment">
+                        <h5 class="inline-flex font-semibold" for="description">
                             Descripción<p class="text-red-600">*</p>
                         </h5>
-                        <textarea wire:model='comment' type="text" rows="6"
-                            placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="comment" id="comment"
+                        <textarea wire:model='description' type="text" rows="6"
+                            placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="description" id="description"
                             class="textarea"></textarea>
                         <div>
                             <span class="text-xs italic text-red-600">
-                                @error('comment')
+                                @error('description')
                                     <span class="pl-2 text-xs italic text-red-600">
                                         {{ $message }}
                                     </span>

@@ -27,7 +27,7 @@ class Edit extends Component
     // ACTIVIDADES
     public $sprints;
     // INPUTS
-    public $title, $file, $comment, $description, $expected_date, $moveActivity, $priority, $points, $point_know, $point_many, $point_effort;
+    public $title, $file, $description, $expected_date, $moveActivity, $priority, $points, $point_know, $point_many, $point_effort;
 
     public function mount()
     {
@@ -36,9 +36,7 @@ class Edit extends Component
             : Activity::with('sprint.backlog.project')->find($this->recordingedit);
         // Inicializar las propiedades con los valores del registro
         $this->title = $this->recording->title;
-        if ($this->type == 'report') {
-            $this->comment = $this->recording->comment;
-        } else {
+        if ($this->type != 'report') {
             $this->sprints = Backlog::find($this->backlog->id)->sprints->map(function ($sprint) {
                 return is_array($sprint) ? (object) $sprint : $sprint; // Asegurarse de que sean objetos
             });
@@ -50,9 +48,8 @@ class Edit extends Component
             })->flatten();
             // Establecer `moveActivity` con el ID del sprint seleccionado
             $this->moveActivity = $this->sprint;
-            $this->description = $this->recording->description;
         }
-
+        $this->description = $this->recording->description;
         $this->expected_date = Carbon::parse($this->recording->expected_date)->toDateString();
         $this->priority = $this->recording->priority ?? null;
         $this->points = $this->recording->points;
@@ -202,7 +199,7 @@ class Edit extends Component
             }
 
             $report->title = $this->title ?? $report->title;
-            $report->comment = $this->comment ?? $report->comment;
+            $report->description = $this->description ?? $report->description;
 
             $fecha = Carbon::parse($report->expected_date)->toDateString();
 
