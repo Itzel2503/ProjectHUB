@@ -678,10 +678,6 @@
                 }
             });
             // MODALS
-            window.addEventListener('swal:modal', event => {
-                toastr[event.detail.type](event.detail.text, event.detail.title);
-            });
-
             Livewire.on('deleteActivity', deletebyId => {
                 Swal.fire({
                     title: '¿Seguro que deseas eliminar este elemento?',
