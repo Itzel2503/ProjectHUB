@@ -286,7 +286,7 @@ class TableActivities extends Component
         $totalActivities = Activity::where('sprint_id', $this->idsprint)->count(); // Contar el número total de actividades del sprint
         $allActivities = Activity::where('sprint_id', $this->idsprint)->get(); // Seleccionar todas las actividades del sprint
         $sprint = Sprint::find($this->idsprint);
-        if ($totalActivities && Auth::user()->type_user == 1) {
+        if ($totalActivities) {
             if ($sprint->state == 'Curso' || $sprint->state == 'Cerrado') {
                 $resolvedActivities = $allActivities->where('state', 'Resuelto')->count(); // Contar el número de actividades resueltas
                 if ($totalActivities > 0) {
@@ -304,7 +304,6 @@ class TableActivities extends Component
             // Manejo alternativo si $totalActivities no existe
             $this->percentageResolved = 0;
         }
-
         return view('livewire.projects.activities.table-activities', [
             'activities' => $activities,
         ]);
