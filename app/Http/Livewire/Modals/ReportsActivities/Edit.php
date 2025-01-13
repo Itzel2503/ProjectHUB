@@ -107,6 +107,7 @@ class Edit extends Component
                 throw $e;
             }
         }
+        
         if ($this->type == 'report') {
             $report = Report::find($id);
             $activity = null;
@@ -350,7 +351,7 @@ class Edit extends Component
             $activity->description = $this->description ?? $activity->description;
             $activity->priority = $this->priority ?? $activity->priority;
             $activity->expected_date = $this->expected_date ?? $activity->expected_date;
-    
+            
             if ($this->changePoints == false) {
                 $validPoints = [0, 1, 2, 3, 5, 8, 13];
                 $activity->points = $this->points;
@@ -405,6 +406,7 @@ class Edit extends Component
                     $activity->questions_points = $questionsPointsJson;
                 }
             }
+            
             $activity->save();
             $this->dispatchBrowserEvent('file-reset');
 
