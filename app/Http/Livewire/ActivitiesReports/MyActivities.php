@@ -113,13 +113,13 @@ class MyActivities extends Component
         $tasks = $tasks->sortBy(function ($task) {
             return $task->expected_date;
         }, SORT_REGULAR, $this->filteredExpected === 'desc');
-        // Paginación manual
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = $this->perPage;
-        $currentItems = $tasks->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
-            'path' => LengthAwarePaginator::resolveCurrentPath(),
-        ]);
+        // // Paginación manual
+        // $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        // $perPage = $this->perPage;
+        // $currentItems = $tasks->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        // $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
+        //     'path' => LengthAwarePaginator::resolveCurrentPath(),
+        // ]);
 
         // ADD ATRIBUTES
         foreach ($tasks as $task) {
@@ -270,7 +270,7 @@ class MyActivities extends Component
             $task->messages_count = $messages->where('look', false)->count();
         }
         return view('livewire.activities-reports.my-activities', [
-            'tasks' => $paginatedTask,
+            'tasks' => $tasks,
         ]);
     }
     // ACTIONS
