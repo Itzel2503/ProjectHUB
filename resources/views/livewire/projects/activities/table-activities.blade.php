@@ -82,13 +82,34 @@
                 </div>
                 <!-- BTN NEW -->
                 @if ($project != null && $idsprint != null)
-                    <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:hidden md:px-0">
+                    @if ($percentageResolved != 100)
+                        <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:hidden md:px-0">
+                            <button
+                                @if ($sprint->state == 'Pendiente' && Auth::user()->type_user != 1) class="btnDisabled" wire:click="create(0)" @else
+                                class="btnNuevo" wire:click="create({{ $project->id }})" @endif>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 5l0 14" />
+                                    <path d="M5 12l14 0" />
+                                </svg>
+                                Actividad
+                            </button>
+                        </div>
+                    @endif
+                @endif
+            </div>
+            <!-- BTN NEW -->
+            @if ($project != null && $idsprint != null)
+                @if ($percentageResolved != 100)
+                    <div class="mb-2 hidden h-12 w-1/6 bg-transparent md:inline-flex">
                         <button
                             @if ($sprint->state == 'Pendiente' && Auth::user()->type_user != 1) class="btnDisabled" wire:click="create(0)" @else
                             class="btnNuevo" wire:click="create({{ $project->id }})" @endif>
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M12 5l0 14" />
                                 <path d="M5 12l14 0" />
@@ -97,23 +118,6 @@
                         </button>
                     </div>
                 @endif
-            </div>
-            <!-- BTN NEW -->
-            @if ($project != null && $idsprint != null)
-                <div class="mb-2 hidden h-12 w-1/6 bg-transparent md:inline-flex">
-                    <button
-                        @if ($sprint->state == 'Pendiente' && Auth::user()->type_user != 1) class="btnDisabled" wire:click="create(0)" @else
-                        class="btnNuevo" wire:click="create({{ $project->id }})" @endif>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2"
-                            width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M12 5l0 14" />
-                            <path d="M5 12l14 0" />
-                        </svg>
-                        Actividad
-                    </button>
-                </div>
             @endif
         </div>
         {{-- END NAVEGADOR --}}

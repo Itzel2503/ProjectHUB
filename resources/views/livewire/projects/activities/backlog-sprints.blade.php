@@ -365,7 +365,7 @@
         </div>
     </div>
     @if (!$sprints->isEmpty())
-        <livewire:projects.activities.table-activities :idsprint="$idSprint"  :project="$project"  wire:key="table-activities-{{ $idSprint }}">
+        <livewire:projects.activities.table-activities :idsprint="$idSprint" :project="$project"  wire:key="table-activities-{{ $idSprint }}">
     @endif
     @push('js')
         <script>

@@ -139,20 +139,22 @@
                                 </td>
                                 <td class="principal px-4 py-2">
                                     <div class="mx-auto text-left">
-                                        <label class=" {{ ($project->leader) ?  : 'text-red-600' }}">- {{ ($project->leader) ? $project->leader->name : 'Sin asignar' }}</label>
+                                        <label class="{{ $project->leader ?: 'text-red-600' }}">-
+                                            {{ $project->leader ? $project->leader->name : 'Sin asignar' }}</label>
                                         <br>
-                                        <label class=" {{ ($project->product_owner) ?  : 'text-red-600' }}">- {{ ($project->product_owner) ? $project->product_owner->name : 'Sin asignar' }}</label>
+                                        <label class="{{ $project->product_owner ?: 'text-red-600' }}">-
+                                            {{ $project->product_owner ? $project->product_owner->name : 'Sin asignar' }}</label>
                                     </div>
                                     <div class="relative">
                                         <div
                                             class="hidden-info absolute -top-20 left-36 z-10 w-60 bg-gray-100 p-2 text-left text-xs">
                                             <p>
                                                 <strong>Líder/Scrum:</strong>
-                                                {{ ($project->leader) ? $project->leader->name : 'Sin asignar' }}
+                                                {{ $project->leader ? $project->leader->name : 'Sin asignar' }}
                                             </p>
                                             <p>
                                                 <strong>Product Owner</strong>
-                                                {{ ($project->product_owner) ? $project->product_owner->name : 'Sin asignar' }}
+                                                {{ $project->product_owner ? $project->product_owner->name : 'Sin asignar' }}
                                             </p>
                                             <p>
                                                 <strong>Developer 1:</strong>
@@ -178,6 +180,25 @@
                                 class="@if ($user->type_user != 3) justify-end @else justify-center @endif flex px-4 py-2">
                                 @if ($project->deleted_at == null)
                                     @if ($project->backlog != null)
+                                        @if ($user->type_user == 3 || $user->type_user == 1)
+                                            <button wire:click="showActivitiesClient({{ $project->id }})"
+                                                class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path
+                                                        d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
+                                                    <path d="M10 16h6" />
+                                                    <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                                    <path d="M4 8h3" />
+                                                    <path d="M4 12h3" />
+                                                    <path d="M4 16h3" />
+                                                </svg>
+                                            </button>
+                                        @endif
                                         @if ($user->type_user != 3)
                                             <button wire:click="showActivities({{ $project->id }})"
                                                 class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
@@ -372,21 +393,41 @@
                                     <td class="flex justify-end px-4 py-2">
                                         @if ($project->deleted_at == null)
                                             @if ($project->backlog != null)
-                                                <button wire:click="showActivities({{ $project->id }})"
-                                                    class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-book">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                        <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                                        <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                                        <path d="M3 6l0 13" />
-                                                        <path d="M12 6l0 13" />
-                                                        <path d="M21 6l0 13" />
-                                                    </svg>
-                                                </button>
+                                                @if ($user->type_user == 3 || $user->type_user == 1)
+                                                    <button wire:click="showActivitiesClient({{ $project->id }})"
+                                                        class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                            height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                            <path
+                                                                d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
+                                                            <path d="M10 16h6" />
+                                                            <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                                            <path d="M4 8h3" />
+                                                            <path d="M4 12h3" />
+                                                            <path d="M4 16h3" />
+                                                        </svg>
+                                                    </button>
+                                                @endif
+                                                @if ($user->type_user != 3)
+                                                    <button wire:click="showActivities({{ $project->id }})"
+                                                        class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                            <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                                            <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                                            <path d="M3 6l0 13" />
+                                                            <path d="M12 6l0 13" />
+                                                            <path d="M21 6l0 13" />
+                                                        </svg>
+                                                    </button>
+                                                @endif
                                             @endif
                                             <button wire:click="showReports({{ $project->id }})"
                                                 class="bg-secondary mx-1 mt-1 rounded-lg px-2 py-1 font-bold text-white">
@@ -619,10 +660,9 @@
                                     <span id="addClient" wire:click="customerType"
                                         class="align-items-center hover:text-secondary flex cursor-pointer flex-row justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-plus" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
+                                            class="icon icon-tabler icon-tabler-plus" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M12 5l0 14" />
                                             <path d="M5 12l14 0" />
@@ -631,11 +671,13 @@
                                     <input wire:model='customerInput' type="hidden" id="customerInput">
                                 </div>
                                 @if ($customertype)
-                                    <input wire:model='nameClient' required type="text" placeholder="Nuevo cliente" name="nameClient"
-                                        id="nameClient" class="inputs">
+                                    <input wire:model='nameClient' required type="text"
+                                        placeholder="Nuevo cliente" name="nameClient" id="nameClient"
+                                        class="inputs">
                                 @else
                                     @if ($showUpdate)
-                                        <select wire:model.defer='customer' name="customer" id="customer" class="inputs">
+                                        <select wire:model.defer='customer' name="customer" id="customer"
+                                            class="inputs">
                                             @foreach ($allCustomers as $customer)
                                                 <option value="{{ $customer->id }}">{{ $customer->name }}</option>
                                             @endforeach
@@ -645,7 +687,8 @@
                                             class="inputs">
                                             <option selected>Selecciona...</option>
                                             @foreach ($allCustomers as $allCustomer)
-                                                <option value="{{ $allCustomer->id }}">{{ $allCustomer->name }}</option>
+                                                <option value="{{ $allCustomer->id }}">{{ $allCustomer->name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     @endif

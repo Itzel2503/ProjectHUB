@@ -24,11 +24,11 @@ class TableActivities extends Component
 
     public $listeners = ['reloadPage' => 'reloadPage', 'sprintUpdated', 'delete'];
     // ENVIADAS
-    public $idsprint, $project;
+    public $idsprint, $project, $percentagetesolved;
     // BACKLOG
     public $backlog;
     // SPRINT
-    public $sprint;
+    public $sprint, $percentageResolved;
     // FILTROS
     public $search, $allUsers;
     public $selectedDelegate = '';
@@ -280,6 +280,29 @@ class TableActivities extends Component
                 }
             }
             $activity->messages_count = $messages->where('look', false)->count();
+        }
+
+        // COUNT ACTIVITIES
+        $totalActivities = Activity::where('sprint_id', $this->idsprint)->count(); // Contar el número total de actividades del sprint
+        $allActivities = Activity::where('sprint_id', $this->idsprint)->get(); // Seleccionar todas las actividades del sprint
+        $sprint = Sprint::find($this->idsprint);
+        if ($totalActivities && Auth::user()->type_user == 1) {
+            if ($sprint->state == 'Curso' || $sprint->state == 'Cerrado') {
+                $resolvedActivities = $allActivities->where('state', 'Resuelto')->count(); // Contar el número de actividades resueltas
+                if ($totalActivities > 0) {
+                    $this->percentageResolved = ($resolvedActivities / $totalActivities) * 100; // Calcular el porcentaje de actividades resueltas sobre el total de actividades
+                    $this->percentageResolved = round($this->percentageResolved, 2); // Redondear el porcentaje a dos decimales
+                } else {
+                    // Manejo alternativo si $totalActivities es igual a cero
+                    $this->percentageResolved = 0;
+                }
+            } else {
+                // Manejo alternativo state es diferente
+                $this->percentageResolved = 0;
+            }
+        } else {
+            // Manejo alternativo si $totalActivities no existe
+            $this->percentageResolved = 0;
         }
 
         return view('livewire.projects.activities.table-activities', [
