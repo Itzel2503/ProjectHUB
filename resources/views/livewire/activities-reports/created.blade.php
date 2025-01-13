@@ -272,7 +272,7 @@
                                         <p
                                             class="@if ($task->state == 'Resuelto') font-semibold @else hidden @endif">
                                             {{ $task->delegate_name }}</p>
-                                        <select
+                                        <select @if($task->project_activity) @if($task->sprint_state == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif @endif
                                             @if ($task->project_activity) wire:change.defer="updateDelegate({{ $task->id }}, $event.target.value, 'activity')" @elseif($task->project_report) wire:change="updateDelegate({{ $task->id }},$event.target.value, 'report')" @endif
                                             name="delegate" id="delegate"
                                             class="inpSelectTable @if ($task->state == 'Resuelto') hidden @endif w-full text-sm">
@@ -315,7 +315,7 @@
                             </td>
                             <td class="px-2 py-1">
                                 @if ($task->project_activity || $task->project_report)
-                                    <select name="state" id="state"
+                                    <select name="state" id="state" @if($task->project_activity) @if($task->sprint_state == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif @endif
                                         class="inpSelectTable @if ($task->state == 'Abierto') bg-blue-500 text-white @endif @if ($task->state == 'Proceso') bg-yellow-400 @endif @if ($task->state == 'Resuelto') bg-lime-700 text-white @endif @if ($task->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
                                         @if ($task->project_activity) wire:change.defer="updateState({{ $task->id }}, null, $event.target.value)" @elseif($task->project_report) wire:change="updateState({{ $task->id }}, {{ $task->project_id }}, $event.target.value)" @endif>
                                         <option selected value={{ $task->state }}>{{ $task->state }}</option>

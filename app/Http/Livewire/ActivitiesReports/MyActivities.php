@@ -186,6 +186,7 @@ class MyActivities extends Component
                             // Acceder al proyecto asociado al backlog
                             $task->project_name = $sprint->backlog->project->name . ' (Actividad)';
                             $task->project_id = $sprint->backlog->project->id;
+                            $task->sprint_state = $sprint->state;
                             $task->project_activity = true;
                         } else {
                             // Manejar caso donde no hay backlog asociado
