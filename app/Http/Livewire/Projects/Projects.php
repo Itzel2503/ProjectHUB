@@ -1566,7 +1566,12 @@ class Projects extends Component
 
     public function showActivities($project_id)
     {
-        return redirect()->route('projects.activities.index', ['project' => $project_id]);
+        return redirect()->route('projects.activities.index', ['project' => $project_id, 'client' => false]);
+    }
+
+    public function showActivitiesClient($project_id)
+    {
+        return redirect()->route('projects.activities.index', ['project' => $project_id, 'client' => true]);
     }
 
     public function showProjectPriority()

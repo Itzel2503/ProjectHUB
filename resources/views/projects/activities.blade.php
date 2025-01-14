@@ -15,8 +15,12 @@
             <span class="ml-4 text-xl">Actividades "{{ $project->name }}"</span>
         </h1>
     </div>
-    <livewire:projects.activities.backlog-sprints :project="$project" :backlog="$backlog">
-
+    @if ($client == false)
+        <livewire:projects.activities.backlog-sprints :project="$project" :backlog="$backlog">
+    @else
+        <livewire:projects.activities.backlog-sprints-client :project="$project" :backlog="$backlog">
+    @endif
+    
     @livewireScripts
     @stack('js')
     <script src="{{ asset('vendor/livewire-alert/livewire-alert.js') }}"></script>

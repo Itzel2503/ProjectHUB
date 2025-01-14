@@ -18,11 +18,12 @@ class Activity extends Controller
     {
         if (Auth::check()) {
             $project = Project::with('backlog.sprints')->find($project_id);
+            $client = request()->query('client'); // Obtener el valor adicional
             
             if ($project) {
                 $backlog = $project->backlog;
                 if ($backlog) {
-                    return view('projects.activities', compact('project', 'backlog'));
+                    return view('projects.activities', compact('project', 'backlog', 'client'));
                 } else {
                     return redirect('/projects');
                 }

@@ -180,7 +180,23 @@
                                 class="@if ($user->type_user != 3) justify-end @else justify-center @endif flex px-4 py-2">
                                 @if ($project->deleted_at == null)
                                     @if ($project->backlog != null)
-                                        {{-- @if ($user->type_user == 3 || $user->type_user == 1)
+                                        @if ($user->type_user != 3)
+                                            <button wire:click="showActivities({{ $project->id }})"
+                                                class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                                    <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                                    <path d="M3 6l0 13" />
+                                                    <path d="M12 6l0 13" />
+                                                    <path d="M21 6l0 13" />
+                                                </svg>
+                                            </button>
+                                        @endif
+                                        @if ($user->type_user == 3 || $user->type_user == 1 && $user->area_id == 1)
                                             <button wire:click="showActivitiesClient({{ $project->id }})"
                                                 class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -196,22 +212,6 @@
                                                     <path d="M4 8h3" />
                                                     <path d="M4 12h3" />
                                                     <path d="M4 16h3" />
-                                                </svg>
-                                            </button>
-                                        @endif --}}
-                                        @if ($user->type_user != 3)
-                                            <button wire:click="showActivities({{ $project->id }})"
-                                                class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-book">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                                    <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                                    <path d="M3 6l0 13" />
-                                                    <path d="M12 6l0 13" />
-                                                    <path d="M21 6l0 13" />
                                                 </svg>
                                             </button>
                                         @endif
@@ -393,7 +393,23 @@
                                     <td class="flex justify-end px-4 py-2">
                                         @if ($project->deleted_at == null)
                                             @if ($project->backlog != null)
-                                                {{-- @if ($user->type_user == 3 || $user->type_user == 1)
+                                                @if ($user->type_user != 3)
+                                                    <button wire:click="showActivities({{ $project->id }})"
+                                                        class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                            <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                                            <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                                            <path d="M3 6l0 13" />
+                                                            <path d="M12 6l0 13" />
+                                                            <path d="M21 6l0 13" />
+                                                        </svg>
+                                                    </button>
+                                                @endif
+                                                @if ($user->type_user == 3 || $user->type_user == 1 && $user->area_id == 1)
                                                     <button wire:click="showActivitiesClient({{ $project->id }})"
                                                         class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -409,22 +425,6 @@
                                                             <path d="M4 8h3" />
                                                             <path d="M4 12h3" />
                                                             <path d="M4 16h3" />
-                                                        </svg>
-                                                    </button>
-                                                @endif --}}
-                                                @if ($user->type_user != 3)
-                                                    <button wire:click="showActivities({{ $project->id }})"
-                                                        class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-book">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                            <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                                            <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                                            <path d="M3 6l0 13" />
-                                                            <path d="M12 6l0 13" />
-                                                            <path d="M21 6l0 13" />
                                                         </svg>
                                                     </button>
                                                 @endif
