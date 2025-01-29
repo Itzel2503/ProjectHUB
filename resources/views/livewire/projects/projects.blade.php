@@ -196,7 +196,7 @@
                                                 </svg>
                                             </button>
                                         @endif
-                                        @if ($user->type_user == 3 || $user->type_user == 1 && $user->area_id == 1)
+                                        {{-- @if ($user->type_user == 3 || $user->type_user == 1 && $user->area_id == 1)
                                             <button wire:click="showActivitiesClient({{ $project->id }})"
                                                 class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -214,7 +214,7 @@
                                                     <path d="M4 16h3" />
                                                 </svg>
                                             </button>
-                                        @endif
+                                        @endif --}}
                                     @endif
                                     <button wire:click="showReports({{ $project->id }})"
                                         class="bg-secondary mx-1 mt-1 rounded-lg px-2 py-1 font-bold text-white">
@@ -409,7 +409,7 @@
                                                         </svg>
                                                     </button>
                                                 @endif
-                                                @if ($user->type_user == 3 || $user->type_user == 1 && $user->area_id == 1)
+                                                {{-- @if ($user->type_user == 3 || $user->type_user == 1 && $user->area_id == 1)
                                                     <button wire:click="showActivitiesClient({{ $project->id }})"
                                                         class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -427,7 +427,7 @@
                                                             <path d="M4 16h3" />
                                                         </svg>
                                                     </button>
-                                                @endif
+                                                @endif --}}
                                             @endif
                                             <button wire:click="showReports({{ $project->id }})"
                                                 class="bg-secondary mx-1 mt-1 rounded-lg px-2 py-1 font-bold text-white">
