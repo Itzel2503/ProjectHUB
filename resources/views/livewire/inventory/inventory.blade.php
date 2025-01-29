@@ -54,72 +54,117 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="trTable">
-                        @foreach ($products as $product)
-                    <tr class="trTable">
-                        <td class="cursor-pointer px-4 py-1" wire:click="showProduct({{ $product->id }})">
-                            {{ $product->name }}</td>
-                        <td class="px-4 py-1">{{ $product->brand }}</td>
-                        <td class="px-4 py-1">{{ $product->model }}</td>
-                        <td class="px-4 py-1">{{ $product->serial_number }}</td>
-                        <td class="px-4 py-1">
-                            <div name="deleted_at" id="deleted_at"
-                                class="inpSelectTable inpSelectTable 
-                                @if ($product->deleted_at == null) 
-                                    @if ($product->status == 'Uso') bg-lime-700 text-white
+                    @foreach ($products as $product)
+                        <tr class="trTable">
+                            <td class="cursor-pointer px-4 py-1" wire:click="showProduct({{ $product->id }})">
+                                {{ $product->name }}</td>
+                            <td class="px-4 py-1">{{ $product->brand }}</td>
+                            <td class="px-4 py-1">{{ $product->model }}</td>
+                            <td class="px-4 py-1">{{ $product->serial_number }}</td>
+                            <td class="px-4 py-1">
+                                <div name="deleted_at" id="deleted_at"
+                                    class="inpSelectTable inpSelectTable 
+                                @if ($product->deleted_at == null) @if ($product->status == 'Uso') bg-lime-700 text-white
                                     @elseif ($product->status == 'Uso externo') bg-yellow-400
                                     @elseif ($product->status == 'Almacenado') bg-blue-500 text-white
-                                    @elseif ($product->status == 'No uso') bg-slate-900 text-white @endif @else bg-red-600 text-white @endif text-sm font-semibold">
-                                @if ($product->deleted_at == null)
-                                    <option selected>{{ $product->status }}</option>
+                                    @elseif ($product->status == 'No uso') bg-slate-900 text-white @endif
                                 @else
-                                    <option selected>Inactivo</option>
+                                bg-red-600 text-white
+                                @endif text-sm font-semibold">
+                                    @if ($product->deleted_at == null)
+                                        <div selected>{{ $product->status }}</div>
+                                    @else
+                                        <div selected>Inactivo</div>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="px-4 py-1">
+                                @if ($product->manager)
+                                    {{ $product->manager->name }}
+                                @else
+                                    Usuario eliminado
                                 @endif
-                            </div>
-                        </td>
-                        <td class="px-4 py-1">{{ $product->manager->name }}</td>
-                        <td class="px-4 py-1">{{ $product->area->name }}</td>
-                        <td class="px-4 py-1">
-                            <div class="flex justify-center">
-                                <div id="dropdown-button-{{ $product->id }}" class="relative">
-                                    <button onclick="toggleDropdown('{{ $product->id }}')" type="button"
-                                        class="flex items-center px-5 py-2.5">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-dots-vertical" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        </svg>
-                                    </button>
-                                    <!-- Panel -->
-                                    <div id="dropdown-panel-{{ $product->id }}" style="display: none;"
-                                        class="{{ $loop->last ? '-top-16' : '-top-8' }} absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
-                                        @if ($product->deleted_at == null)
-                                            <!-- Botón Editar -->
-                                            <div wire:click="showEditProduct({{ $product->id }})"
-                                                class="flex cursor-pointer content-center px-4 py-2 text-sm text-black">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-edit mr-2" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path
-                                                        d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
-                                                    </path>
-                                                    <path
-                                                        d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
-                                                    </path>
-                                                    <path d="M16 5l3 3"></path>
-                                                </svg>
-                                                Editar
-                                            </div>
-                                            @if (Auth::user()->type_user == 1 || Auth::user()->id == $activity->user->id)
-                                                <!-- Botón Inhabilitar -->
-                                                <div wire:click="$emit('disableProduct',{{ $product->id }})"
+                            </td>
+                            <td class="px-4 py-1">{{ $product->area->name }}</td>
+                            <td class="px-4 py-1">
+                                <div class="flex justify-center">
+                                    <div id="dropdown-button-{{ $product->id }}" class="relative">
+                                        <button onclick="toggleDropdown('{{ $product->id }}')" type="button"
+                                            class="flex items-center px-5 py-2.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-dots-vertical" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                            </svg>
+                                        </button>
+                                        <!-- Panel -->
+                                        <div id="dropdown-panel-{{ $product->id }}" style="display: none;"
+                                            class="{{ $loop->last ? '-top-16' : '-top-8' }} absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
+                                            @if ($product->deleted_at == null)
+                                                <!-- Botón Editar -->
+                                                <div wire:click="showEditProduct({{ $product->id }})"
+                                                    class="flex cursor-pointer content-center px-4 py-2 text-sm text-black">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="icon icon-tabler icon-tabler-edit mr-2" width="24"
+                                                        height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                        stroke="currentColor" fill="none" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path
+                                                            d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
+                                                        </path>
+                                                        <path
+                                                            d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
+                                                        </path>
+                                                        <path d="M16 5l3 3"></path>
+                                                    </svg>
+                                                    Editar
+                                                </div>
+                                                @if (Auth::user()->type_user == 1 || Auth::user()->id == $activity->user->id)
+                                                    <!-- Botón Inhabilitar -->
+                                                    <div wire:click="$emit('disableProduct',{{ $product->id }})"
+                                                        class="flex cursor-pointer content-center px-4 py-2 text-sm text-red-600">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="icon icon-tabler icon-tabler-trash mr-2"
+                                                            width="24" height="24" viewBox="0 0 24 24"
+                                                            stroke-width="2" stroke="currentColor" fill="none"
+                                                            stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none">
+                                                            </path>
+                                                            <path d="M4 7l16 0"></path>
+                                                            <path d="M10 11l0 6"></path>
+                                                            <path d="M14 11l0 6"></path>
+                                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12">
+                                                            </path>
+                                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                        </svg>
+                                                        Inhabilitar
+                                                    </div>
+                                                @endif
+                                            @else
+                                                <!-- Botón Restaurar -->
+                                                <div wire:click="$emit('restartProduct',{{ $product->id }})"
+                                                    class="@if ($product->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="icon icon-tabler icon-tabler-reload mr-2"
+                                                        width="24" height="24" viewBox="0 0 24 24"
+                                                        stroke-width="2" stroke="currentColor" fill="none"
+                                                        stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path
+                                                            d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747">
+                                                        </path>
+                                                        <path d="M20 4v5h-5"></path>
+                                                    </svg>
+                                                    Restaurar
+                                                </div>
+                                                <!-- Botón Eliminar -->
+                                                <div wire:click="$emit('deleteProduct',{{ $product->id }})"
                                                     class="flex cursor-pointer content-center px-4 py-2 text-sm text-red-600">
                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                         class="icon icon-tabler icon-tabler-trash mr-2" width="24"
@@ -133,51 +178,15 @@
                                                         <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
                                                         <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                                                     </svg>
-                                                    Inhabilitar
+                                                    Eliminar
                                                 </div>
                                             @endif
-                                        @else
-                                            <!-- Botón Restaurar -->
-                                            <div wire:click="$emit('restartProduct',{{ $product->id }})"
-                                                class="@if ($product->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-reload mr-2" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path
-                                                        d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747">
-                                                    </path>
-                                                    <path d="M20 4v5h-5"></path>
-                                                </svg>
-                                                Restaurar
-                                            </div>
-                                            <!-- Botón Eliminar -->
-                                            <div wire:click="$emit('deleteProduct',{{ $product->id }})"
-                                                class="flex cursor-pointer content-center px-4 py-2 text-sm text-red-600">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-trash mr-2" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M4 7l16 0"></path>
-                                                    <path d="M10 11l0 6"></path>
-                                                    <path d="M14 11l0 6"></path>
-                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                                </svg>
-                                                Eliminar
-                                            </div>
-                                        @endif
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
                     @endforeach
-                    </tr>
                 </tbody>
             </table>
         </div>
@@ -526,38 +535,40 @@
                             <div class="text-justify text-base">
                                 <h3 class="text-text2 mb-2 text-lg font-bold">Detalles</h3>
                                 @if ($productShow)
-                                <div class="flex justify-between mb-1">
-                                    <label class="font-bold">Marca:</label>
-                                    <p class="w-1/2">{{ $productShow->brand }}</p>
-                                </div>
-                                <div class="flex justify-between mb-1">
-                                    <label class="font-bold">Modelo:</label>
-                                    <p class="w-1/2">{{ $productShow->model }}</p>
-                                </div>
-                                <div class="flex justify-between mb-1">
-                                    <label class="font-bold">Número de serie:</label>
-                                    <p class="w-1/2">{{ $productShow->serial_number }}</p>
-                                </div>
-                                <div class="flex justify-between mb-1">
-                                    <label class="font-bold">Estatus:</label>
-                                    <p class="w-1/2">{{ $productShow->status }}</p>
-                                </div>
-                                <div class="flex justify-between mb-1">
-                                    <label class="font-bold">Fecha de compra:</label>
-                                    <p class="w-1/2">{{ $productShow->purchase_date ? \Carbon\Carbon::parse($productShow->purchase_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') : 'Sin fecha' }}</p>
-                                </div>
-                                <div class="flex justify-between mb-1">
-                                    <label class="font-bold">Departamento:</label>
-                                    <p class="w-1/2">{{ $productShow->area->name }}</p>
-                                </div>
-                                <div class="flex justify-between mb-1">
-                                    <label class="font-bold">Encargado:</label>
-                                    <p class="w-1/2">{{ $productShow->manager->name }}</p>
-                                </div>
-                                <div class="mb-3">
-                                    <p class="font-bold w-full">Observaciones:</p>
-                                    {!! nl2br($productShow->observations) !!}
-                                </div>
+                                    <div class="flex justify-between mb-1">
+                                        <label class="font-bold">Marca:</label>
+                                        <p class="w-1/2">{{ $productShow->brand }}</p>
+                                    </div>
+                                    <div class="flex justify-between mb-1">
+                                        <label class="font-bold">Modelo:</label>
+                                        <p class="w-1/2">{{ $productShow->model }}</p>
+                                    </div>
+                                    <div class="flex justify-between mb-1">
+                                        <label class="font-bold">Número de serie:</label>
+                                        <p class="w-1/2">{{ $productShow->serial_number }}</p>
+                                    </div>
+                                    <div class="flex justify-between mb-1">
+                                        <label class="font-bold">Estatus:</label>
+                                        <p class="w-1/2">{{ $productShow->status }}</p>
+                                    </div>
+                                    <div class="flex justify-between mb-1">
+                                        <label class="font-bold">Fecha de compra:</label>
+                                        <p class="w-1/2">
+                                            {{ $productShow->purchase_date ? \Carbon\Carbon::parse($productShow->purchase_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') : 'Sin fecha' }}
+                                        </p>
+                                    </div>
+                                    <div class="flex justify-between mb-1">
+                                        <label class="font-bold">Departamento:</label>
+                                        <p class="w-1/2">{{ $productShow->area->name }}</p>
+                                    </div>
+                                    <div class="flex justify-between mb-1">
+                                        <label class="font-bold">Encargado:</label>
+                                        <p class="w-1/2">{{ $productShow->manager->name }}</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <p class="font-bold w-full">Observaciones:</p>
+                                        {!! nl2br($productShow->observations) !!}
+                                    </div>
                                 @else
                                     <div class="my-5 text-center row">
                                         <p class="col-12">Sin datos</p>
@@ -590,14 +601,18 @@
                                         @foreach ($productShow->files as $file)
                                             @if ($file->contentExists)
                                                 <!-- Mostrar la imagen si el archivo existe -->
-                                                <a class="w-1/2" href="{{ asset('inventory/' . $file->route) }}" target="_blank">
-                                                    <img src="{{ asset('inventory/' . $file->route) }}" alt="Inventory Image">
+                                                <a class="w-1/2" href="{{ asset('inventory/' . $file->route) }}"
+                                                    target="_blank">
+                                                    <img src="{{ asset('inventory/' . $file->route) }}"
+                                                        alt="Inventory Image">
                                                 </a>
                                             @else
-                                                <div class="w-1/2 md-3/4 mb-5 mt-3 flex flex-col items-center justify-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                <div
+                                                    class="w-1/2 md-3/4 mb-5 mt-3 flex flex-col items-center justify-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         class="icon icon-tabler icons-tabler-outline icon-tabler-files-off">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                         <path d="M15 3v4a1 1 0 0 0 1 1h4" />
@@ -608,7 +623,7 @@
                                                         <path d="M3 3l18 18" />
                                                     </svg>
                                                     <p>Sin contenido</p>
-                                                </div> 
+                                                </div>
                                             @endif
                                         @endforeach
                                     </div>
