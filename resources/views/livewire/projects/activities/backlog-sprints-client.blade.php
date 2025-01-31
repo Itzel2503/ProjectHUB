@@ -108,14 +108,6 @@
                                     <p>{{ $backlog->general_objective }}</p>
                                 </div>
                             </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="text-text2 text-lg font-bold">
-                                        Claves de acceso
-                                    </h5>
-                                    <textarea required disabled type="text" rows="10" name="scopes" id="scopes" class="textarea">{{ $backlog->passwords }}</textarea>
-                                </div>
-                            </div>
                         </div>
                         <div class="w-full px-5 lg:w-1/2">
                             <div class="-mx-3 mb-6">
