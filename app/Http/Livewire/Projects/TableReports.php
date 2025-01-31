@@ -51,6 +51,8 @@ class TableReports extends Component
     public $evidence;
     // GRAFICA EFFORT POINTS
     public $starMonth, $endMonth;
+    // EXPECTED_DATE
+    public $expected_day;
 
     // Resetear paginación cuando se actualiza el campo de búsqueda
     public function updatingSearch()
@@ -67,7 +69,7 @@ class TableReports extends Component
         // DELEGATE
         $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get(); // TODOS LOS USUARIOS MENOS CLIENTES
         // FILTRO DELEGADOS
-        $this->allUsersFiltered = []; 
+        $this->allUsersFiltered = [];
         foreach ($this->allUsers as $user) {
             $this->allUsersFiltered[] = [
                 'id' => $user->id,
@@ -78,19 +80,19 @@ class TableReports extends Component
         if (Auth::user()->type_user == 1) {
             if ($this->project == null) {
                 $reports = Report::where(function ($query) {
-                        $query->where('title', 'like', '%' . $this->search . '%');
-                        // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
-                        if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
-                            $query->orWhereNotNull('count');
-                        }
-                        // Si no se seleccionan estados, excluir "Resuelto"
-                        if (empty($this->selectedStates)) {
-                            $query->where('reports.state', '!=', 'Resuelto');
-                        } else {
-                            // Incluir todos los estados seleccionados
-                            $query->whereIn('state', $this->selectedStates);
-                        }
-                    })
+                    $query->where('title', 'like', '%' . $this->search . '%');
+                    // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
+                    if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
+                        $query->orWhereNotNull('count');
+                    }
+                    // Si no se seleccionan estados, excluir "Resuelto"
+                    if (empty($this->selectedStates)) {
+                        $query->where('reports.state', '!=', 'Resuelto');
+                    } else {
+                        // Incluir todos los estados seleccionados
+                        $query->whereIn('state', $this->selectedStates);
+                    }
+                })
                     ->when($this->filterPriotiry, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                     })
@@ -139,19 +141,19 @@ class TableReports extends Component
         } elseif (Auth::user()->type_user == 2) {
             if ($this->project == null) {
                 $reports = Report::where(function ($query) {
-                        $query->where('title', 'like', '%' . $this->search . '%');
-                        // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
-                        if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
-                            $query->orWhereNotNull('count');
-                        }
-                        // Si no se seleccionan estados, excluir "Resuelto"
-                        if (empty($this->selectedStates)) {
-                            $query->where('reports.state', '!=', 'Resuelto');
-                        } else {
-                            // Incluir todos los estados seleccionados
-                            $query->whereIn('state', $this->selectedStates);
-                        }
-                    })
+                    $query->where('title', 'like', '%' . $this->search . '%');
+                    // Buscar por 'reincidencia' para seleccionar reportes con 'repeat' en true
+                    if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
+                        $query->orWhereNotNull('count');
+                    }
+                    // Si no se seleccionan estados, excluir "Resuelto"
+                    if (empty($this->selectedStates)) {
+                        $query->where('reports.state', '!=', 'Resuelto');
+                    } else {
+                        // Incluir todos los estados seleccionados
+                        $query->whereIn('state', $this->selectedStates);
+                    }
+                })
                     ->where(function ($query) use ($user_id) {
                         $query->where('delegate_id', $user_id)
                             // O incluir registros donde user_id es igual a user_id y video es true
@@ -208,7 +210,7 @@ class TableReports extends Component
                     ->orderBy($this->orderByType, $this->filteredExpected)
                     ->with(['user', 'delegate'])
                     ->paginate($this->perPage);
-                }
+            }
         } elseif (Auth::user()->type_user == 3) {
             $reports = Report::where('project_id', $this->project->id)
                 ->whereHas('user', function ($query) {
@@ -241,6 +243,9 @@ class TableReports extends Component
         }
         // ADD ATRIBUTES
         foreach ($reports as $report) {
+            // FECHA DE ENTREGA
+            $currentDate = Carbon::parse($report->expected_date);
+            $this->expected_day[$report->id] = $currentDate->day;
             // ACTIONS
             $report->filteredActions = $this->getFilteredActions($report->state);
             // DELEGATE
@@ -290,7 +295,7 @@ class TableReports extends Component
                     $report->receiver_id = $lastMessageNoView->receiver_id;
 
                     $receiver = User::find($lastMessageNoView->receiver_id);
-                    
+
                     if ($receiver->type_user == 3) {
                         $report->client = true;
                     } else {
@@ -298,7 +303,7 @@ class TableReports extends Component
                     }
                 } else {
                     $lastMessage = $messages->last();
-                    
+
                     if ($lastMessage) {
                         if ($lastMessage->user_id == Auth::id()) {
                             $report->user_id = true;
@@ -349,6 +354,28 @@ class TableReports extends Component
     public function create($project_id)
     {
         $this->redirectRoute('projects.reports.create', ['project' => $project_id]);
+    }
+
+    public function updateDelegate($id, $delegate)
+    {
+        // Oculta todos los paneles
+        $this->visiblePanels = [];
+        $this->isOptionsVisible = false;
+
+        $report = Report::find($id);
+        if ($report) {
+            $report->delegate_id = $delegate;
+            $report->delegated_date = Carbon::now();
+            $report->progress = null;
+            $report->look = false;
+            $report->state = 'Abierto';
+            $report->save();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Delegado actualizado',
+            ]);
+        }
     }
 
     public function updateState($id, $project_id, $state)
@@ -410,24 +437,111 @@ class TableReports extends Component
         }
     }
 
-    public function updateDelegate($id, $delegate)
+    public function updateExpectedDay($id, $day)
     {
-        // Oculta todos los paneles
-        $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
-
         $report = Report::find($id);
+
         if ($report) {
-            $report->delegate_id = $delegate;
-            $report->delegated_date = Carbon::now();
-            $report->progress = null;
-            $report->look = false;
-            $report->state = 'Abierto';
+            $currentDate = Carbon::parse($report->expected_date);
+            $month = $currentDate->month;
+            $year = $currentDate->year;
+            $oldDay = $currentDate->day;
+            // Ajustar el día si no es válido para el mes/año actual
+            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
+
+            if ($lastDayOfMonth < $day) {
+                $this->expected_day[$report->id] = $oldDay;
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'No se puede seleccionar un día fuera del mes y año de la fecha esperada'
+                ]);
+                return;
+            }
+
+            $newDate = $currentDate->setDay($day);
+            $report->expected_date = $newDate;
             $report->save();
-            
+
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
-                'title' => 'Delegado actualizado',
+                'title' => 'Día actualizado correctamente',
+            ]);
+        } else {
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Reporte no encontrado',
+            ]);
+        }
+    }
+
+    public function updateExpectedMonth($id, $month)
+    {
+        $report = Report::find($id);
+
+        if ($report) {
+            $currentDate = Carbon::parse($report->expected_date);
+            $year = $currentDate->year;
+            $day = $currentDate->day;
+            // Ajustar el día si no es válido para el mes/año actual
+            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
+            if ($lastDayOfMonth < $day) {
+                $day = $lastDayOfMonth; // Ajustar el día al último día del mes
+                $this->expected_day[$report->id] = $day;
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'warning',
+                    'title' => 'Día ajustada al mes seleccionado'
+                ]);
+            }
+            // Crear la nueva fecha usando día, mes y año
+            $newDate = Carbon::create($year, $month, $day);
+            // Actualizar el registro
+            $report->expected_date = $newDate;
+            $report->save();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Mes actualizado correctamente',
+            ]);
+        } else {
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Reporte no encontrado',
+            ]);
+        }
+    }
+
+    public function updateExpectedYear($id, $year)
+    {
+        $report = Report::find($id);
+
+        if ($report) {
+            $currentDate = Carbon::parse($report->expected_date);
+            $month = $currentDate->month;
+            $day = $currentDate->day;
+            // Ajustar el día si no es válido para el mes/año actual
+            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
+            if ($lastDayOfMonth < $day) {
+                $day = $lastDayOfMonth; // Ajustar el día al último día del mes
+                $this->expected_day[$report->id] = $day;
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'warning',
+                    'title' => 'Día ajustada al mes seleccionado'
+                ]);
+            }
+            // Crear la nueva fecha usando día, mes y año
+            $newDate = Carbon::create($year, $month, $day);
+            // Actualizar el registro
+            $report->expected_date = $newDate;
+            $report->save();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Año actualizado correctamente',
+            ]);
+        } else {
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Reporte no encontrado',
             ]);
         }
     }
@@ -632,14 +746,14 @@ class TableReports extends Component
             $this->visiblePanels[$reportId] = true;
         }
     }
-    
+
     public function filterDown($type)
     {
         $this->filtered = false; // Cambio de flechas
         // Oculta todos los paneles
         $this->visiblePanels = [];
         $this->isOptionsVisible = false;
-        
+
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filterState = false;
@@ -675,14 +789,14 @@ class TableReports extends Component
         // Oculta todos los paneles
         $this->visiblePanels = [];
         $this->isOptionsVisible = false;
-        
+
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
         }
-        
+
         if ($type == 'state') {
             $this->filterPriotiry = false;
             $this->filterState = true;
@@ -907,5 +1021,5 @@ class TableReports extends Component
         })->toArray();
         // Emitir los datos al componente padre
         $this->emitUp('refreshChart', $categories, $series, $totalEffortPoints);
-    }   
+    }
 }

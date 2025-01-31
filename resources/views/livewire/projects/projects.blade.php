@@ -83,24 +83,27 @@
         {{-- END PESTAÑAS --}}
         {{-- TABLE --}}
         <div class="tableStyle">
-            @if ($user->type_user != 3)
-                <div class="text-text1 bg-primaryColor w-full px-4 pt-2 text-xl font-semibold tracking-wide">
-                    @if ($activeTab == 'Activo')
-                        <h2>Activos</h2>
-                    @endif
-                    @if ($activeTab == 'No activo')
-                        <h2>No activos</h2>
-                    @endif
-                    @if ($activeTab == 'Entregado')
-                        <h2>Entregados</h2>
-                    @endif
-                    @if ($activeTab == 'Cerrado')
-                        <h2>Cerrados</h2>
-                    @endif
-                </div>
-            @endif
             <table class="whitespace-no-wrap table-hover table w-full">
                 <thead class="headTable border-0">
+                    @if ($user->type_user != 3)
+                        <tr>
+                            <th class="text-text1 bg-primaryColor px-4 pt-2 text-xl font-semibold tracking-wide text-left"
+                                colspan="5">
+                                @if ($activeTab == 'Activo')
+                                    <h2>Activos</h2>
+                                @endif
+                                @if ($activeTab == 'No activo')
+                                    <h2>No activos</h2>
+                                @endif
+                                @if ($activeTab == 'Entregado')
+                                    <h2>Entregados</h2>
+                                @endif
+                                @if ($activeTab == 'Cerrado')
+                                    <h2>Cerrados</h2>
+                                @endif
+                            </th>
+                        </tr>
+                    @endif
                     <tr class="@if ($user->type_user != 3) text-left @else text-center @endif">
                         @if ($user->type_user != 3)
                             <th class="w-16 px-4 py-3">Prioridad</th>
@@ -196,13 +199,12 @@
                                                 </svg>
                                             </button>
                                         @endif
-                                        {{-- @if ($user->type_user == 3 || $user->type_user == 1 && $user->area_id == 1)
+                                        @if ($user->type_user == 3 || ($user->type_user == 1 && $user->area_id == 1))
                                             <button wire:click="showActivitiesClient({{ $project->id }})"
                                                 class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                    height="24" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round"
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                     class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                     <path
@@ -214,7 +216,7 @@
                                                     <path d="M4 16h3" />
                                                 </svg>
                                             </button>
-                                        @endif --}}
+                                        @endif
                                     @endif
                                     <button wire:click="showReports({{ $project->id }})"
                                         class="bg-secondary mx-1 mt-1 rounded-lg px-2 py-1 font-bold text-white">
@@ -322,11 +324,14 @@
             </table>
             @if ($user->type_user != 3)
                 @if ($activeTab == 'Activo')
-                    <div class="text-text1 bg-primaryColor w-full px-4 pt-2 text-xl font-semibold tracking-wide">
-                        <h2>Soportes</h2>
-                    </div>
                     <table class="whitespace-no-wrap table-hover table w-full">
                         <thead class="headTable border-0">
+                            <tr>
+                                <th class="text-text1 bg-primaryColor px-4 pt-2 text-xl font-semibold tracking-wide text-left"
+                                    colspan="5">
+                                    <h2>Soportes</h2>
+                                </th>
+                            </tr>
                             <tr class="text-left">
                                 <th class="w-16 px-4 py-3">Prioridad</th>
                                 <th class="w-1/4 px-4 py-3">Proyecto</th>
@@ -396,9 +401,10 @@
                                                 @if ($user->type_user != 3)
                                                     <button wire:click="showActivities({{ $project->id }})"
                                                         class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                            height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
                                                             class="icon icon-tabler icons-tabler-outline icon-tabler-book">
                                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                             <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
@@ -409,13 +415,13 @@
                                                         </svg>
                                                     </button>
                                                 @endif
-                                                {{-- @if ($user->type_user == 3 || $user->type_user == 1 && $user->area_id == 1)
+                                                @if ($user->type_user == 3 || ($user->type_user == 1 && $user->area_id == 1))
                                                     <button wire:click="showActivitiesClient({{ $project->id }})"
                                                         class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
                                                             class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
                                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                             <path
@@ -427,7 +433,7 @@
                                                             <path d="M4 16h3" />
                                                         </svg>
                                                     </button>
-                                                @endif --}}
+                                                @endif
                                             @endif
                                             <button wire:click="showReports({{ $project->id }})"
                                                 class="bg-secondary mx-1 mt-1 rounded-lg px-2 py-1 font-bold text-white">

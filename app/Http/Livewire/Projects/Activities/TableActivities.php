@@ -50,6 +50,8 @@ class TableActivities extends Component
     public $activityShow;
     // GRAFICA EFFORT POINTS
     public $starMonth, $endMonth;
+    // EXPECTED_DATE
+    public $expected_day;
 
     // Resetear paginación cuando se actualiza el campo de búsqueda
     public function updatingSearch()
@@ -191,6 +193,9 @@ class TableActivities extends Component
         }
         // ADD ATRIBUTES
         foreach ($activities as $activity) {
+            // FECHA DE ENTREGA
+            $currentDate = Carbon::parse($activity->expected_date);
+            $this->expected_day[$activity->id] = $currentDate->day;
             // ACTIONS
             $activity->filteredActions = $this->getFilteredActions($activity->state);
             // DELEGATE
@@ -402,6 +407,115 @@ class TableActivities extends Component
                     'title' => 'Estado actualizado',
                 ]);
             }
+        }
+    }
+
+    public function updateExpectedDay($id, $day)
+    {
+        $activity = Activity::find($id);
+
+        if ($activity) {
+            $currentDate = Carbon::parse($activity->expected_date);
+            $month = $currentDate->month;
+            $year = $currentDate->year;
+            $oldDay = $currentDate->day;
+            // Ajustar el día si no es válido para el mes/año actual
+            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
+
+            if ($lastDayOfMonth < $day) {
+                $this->expected_day[$activity->id] = $oldDay;
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'No se puede seleccionar un día fuera del mes y año de la fecha esperada'
+                ]);
+                return;
+            }
+
+            $newDate = $currentDate->setDay($day);
+            $activity->expected_date = $newDate;
+            $activity->save();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Día actualizado correctamente',
+            ]);
+        } else {
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Actividad no encontrada',
+            ]);
+        }
+    }
+
+    public function updateExpectedMonth($id, $month)
+    {
+        $activity = Activity::find($id);
+
+        if ($activity) {
+            $currentDate = Carbon::parse($activity->expected_date);
+            $year = $currentDate->year;
+            $day = $currentDate->day;
+            // Ajustar el día si no es válido para el mes/año actual
+            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
+            if ($lastDayOfMonth < $day) {
+                $day = $lastDayOfMonth; // Ajustar el día al último día del mes
+                $this->expected_day[$activity->id] = $day;
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'warning',
+                    'title' => 'Día ajustada al mes seleccionado'
+                ]);
+            }
+            // Crear la nueva fecha usando día, mes y año
+            $newDate = Carbon::create($year, $month, $day);
+            // Actualizar el registro
+            $activity->expected_date = $newDate;
+            $activity->save();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Mes actualizado correctamente',
+            ]);
+        } else {
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Actividad no encontrada',
+            ]);
+        }
+    }
+
+    public function updateExpectedYear($id, $year)
+    {
+        $activity = Activity::find($id);
+
+        if ($activity) {
+            $currentDate = Carbon::parse($activity->expected_date);
+            $month = $currentDate->month;
+            $day = $currentDate->day;
+            // Ajustar el día si no es válido para el mes/año actual
+            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
+            if ($lastDayOfMonth < $day) {
+                $day = $lastDayOfMonth; // Ajustar el día al último día del mes
+                $this->expected_day[$activity->id] = $day;
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'warning',
+                    'title' => 'Día ajustada al mes seleccionado'
+                ]);
+            }
+            // Crear la nueva fecha usando día, mes y año
+            $newDate = Carbon::create($year, $month, $day);
+            // Actualizar el registro
+            $activity->expected_date = $newDate;
+            $activity->save();
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Año actualizado correctamente',
+            ]);
+        } else {
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Actividad no encontrada',
+            ]);
         }
     }
     // MODAL

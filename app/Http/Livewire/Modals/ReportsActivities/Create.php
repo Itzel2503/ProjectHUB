@@ -131,8 +131,7 @@ class Create extends Component
         $activity->description = $this->description;
         $activity->priority = $this->priority;
         $activity->state = 'Abierto';
-
-        if ($this->changePoints == true) {
+        if ($this->changePoints != true) {
             if (!$this->points) {
                 $activity->points = 0;
             } else {

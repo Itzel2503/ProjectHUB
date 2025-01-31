@@ -212,7 +212,7 @@
                                 </svg>
                             </div>
                         </th>
-                        <th class="w-44 px-1 py-3">
+                        <th class="@if (Auth::user()->type_user == '1') w-1/4 @else w-44 @endif px-1 py-3">
                             <div class="flex items-center">
                                 Fecha de entrega
                                 {{-- down-up --}}
@@ -466,7 +466,45 @@
                             </td>
                             <td class="px-2 py-1">
                                 <div class="my-auto text-left">
-                                    {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                    @if ($activity->user)
+                                        @if (Auth::user()->id === $activity->user->id && Auth::user()->type_user === 1 && $activity->state != 'Resuelto')
+                                            <select
+                                                wire:change='updateExpectedDay({{ $activity->id }}, $event.target.value)'
+                                                wire:model="expected_day.{{ $activity->id }}" name="expected_day"
+                                                id="expected_day" class="inpSelectTable">
+                                                @for ($day = 1; $day <= 31; $day++)
+                                                    <option value={{ $day }}
+                                                        {{ $day == \Carbon\Carbon::parse($activity->expected_date)->day ? 'selected' : '' }}>
+                                                        {{ $day }}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                            <select
+                                                wire:change='updateExpectedMonth({{ $activity->id }}, $event.target.value)'
+                                                name="expected_month" id="expected_month" class="inpSelectTable">
+                                                @foreach (['01' => 'Enero', '02' => 'Febrero', '03' => 'Marzo', '04' => 'Abril', '05' => 'Mayo', '06' => 'Junio', '07' => 'Julio', '08' => 'Agosto', '09' => 'Septiembre', '10' => 'Octubre', '11' => 'Noviembre', '12' => 'Diciembre'] as $monthValue => $monthName)
+                                                    <option value="{{ $monthValue }}"
+                                                        {{ $monthValue == \Carbon\Carbon::parse($activity->expected_date)->format('m') ? 'selected' : '' }}>
+                                                        {{ $monthName }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <select
+                                                wire:change='updateExpectedYear({{ $activity->id }}, $event.target.value)'
+                                                name="expected_year" id="expected_year" class="inpSelectTable">
+                                                @for ($year = now()->year - 1; $year <= now()->year + 2; $year++)
+                                                    <option value="{{ $year }}"
+                                                        {{ $year == \Carbon\Carbon::parse($activity->expected_date)->year ? 'selected' : '' }}>
+                                                        {{ $year }}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                        @else
+                                            {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                        @endif
+                                    @else
+                                        {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                    @endif
                                 </div>
                             </td>
                             <td class="px-2 py-1">

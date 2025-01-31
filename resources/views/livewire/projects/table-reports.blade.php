@@ -204,7 +204,7 @@
                                 </svg>
                             </div>
                         </th>
-                        <th class="w-44 px-1 py-3">
+                        <th class="@if (Auth::user()->type_user == '1') w-1/4 @else w-44 @endif px-1 py-3">
                             <div class="flex items-center">
                                 Fecha de entrega
                                 {{-- down-up --}}
@@ -404,14 +404,52 @@
                                     </div>
                                 @else
                                     <div class="my-auto text-left">
-                                        {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                        @if ($report->user)
+                                            @if (Auth::user()->id === $report->user->id && Auth::user()->type_user === 1 && $report->state != 'Resuelto')
+                                                <select
+                                                    wire:change='updateExpectedDay({{ $report->id }}, $event.target.value)'
+                                                    wire:model="expected_day.{{ $report->id }}" name="expected_day"
+                                                    id="expected_day" class="inpSelectTable">
+                                                    @for ($day = 1; $day <= 31; $day++)
+                                                        <option value={{ $day }}
+                                                            {{ $day == \Carbon\Carbon::parse($report->expected_date)->day ? 'selected' : '' }}>
+                                                            {{ $day }}
+                                                        </option>
+                                                    @endfor
+                                                </select>
+                                                <select
+                                                    wire:change='updateExpectedMonth({{ $report->id }}, $event.target.value)'
+                                                    name="expected_month" id="expected_month" class="inpSelectTable">
+                                                    @foreach (['01' => 'Enero', '02' => 'Febrero', '03' => 'Marzo', '04' => 'Abril', '05' => 'Mayo', '06' => 'Junio', '07' => 'Julio', '08' => 'Agosto', '09' => 'Septiembre', '10' => 'Octubre', '11' => 'Noviembre', '12' => 'Diciembre'] as $monthValue => $monthName)
+                                                        <option value="{{ $monthValue }}"
+                                                            {{ $monthValue == \Carbon\Carbon::parse($report->expected_date)->format('m') ? 'selected' : '' }}>
+                                                            {{ $monthName }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <select
+                                                    wire:change='updateExpectedYear({{ $report->id }}, $event.target.value)'
+                                                    name="expected_year" id="expected_year" class="inpSelectTable">
+                                                    @for ($year = now()->year - 1; $year <= now()->year + 2; $year++)
+                                                        <option value="{{ $year }}"
+                                                            {{ $year == \Carbon\Carbon::parse($report->expected_date)->year ? 'selected' : '' }}>
+                                                            {{ $year }}
+                                                        </option>
+                                                    @endfor
+                                                </select>
+                                            @else
+                                                {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                            @endif
+                                        @else
+                                            {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                        @endif
                                     </div>
                                 @endif
                             </td>
                             <td class="px-2 py-1">
                                 <div class="mx-auto text-left">
                                     @if ($report->user)
-                                        <span class="font-semibold"> {{ $report->user->name }} </span> <br>
+                                        <span class="font-semibold"> {{ $report->user->name }}</span> <br>
                                     @else
                                         <span class="font-semibold"> Usuario eliminado </span> <br>
                                     @endif
@@ -424,8 +462,7 @@
                                 <div class="flex justify-center">
                                     @if ($project == null)
                                         @if ($report->project)
-                                            <a
-                                                href="{{ route('projects.reports.index', ['project' => $report->project->id, 'reports' => $report->id, 'highlight' => $report->id]) }}"
+                                            <a href="{{ route('projects.reports.index', ['project' => $report->project->id, 'reports' => $report->id, 'highlight' => $report->id]) }}"
                                                 target="_blank" rel="noopener noreferrer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -444,7 +481,7 @@
                                         @endif
                                     @else
                                         <div
-                                            class="@if (Auth::user()->type_user == 3) @if ($report->state != 'Abierto' && $report->state != 'Resuelto') hidden @else relative @endif @else @endif relative">
+                                            class="@if (Auth::user()->type_user == 3) @if ($report->state != 'Abierto' && $report->state != 'Resuelto') hidden @else relative @endif@else @endif relative">
                                             <!-- Button -->
                                             <button wire:click="togglePanel({{ $report->id }})" type="button"
                                                 class="flex items-center px-5 py-2.5">
@@ -682,14 +719,17 @@
                             <div class="-mx-3 flex flex-row">
                                 <div class="w-full px-3">
                                     <p class="text-justify">
-                                        Para completar tu reporte, haz clic en el botón <strong>"Continuar"</strong>. Serás redirigido a la página donde se encuentra el reporte. Una vez allí, selecciona la opción "Resuelto" y carga la evidencia correspondiente.
+                                        Para completar tu reporte, haz clic en el botón <strong>"Continuar"</strong>.
+                                        Serás redirigido a la página donde se encuentra el reporte. Una vez allí,
+                                        selecciona la opción "Resuelto" y carga la evidencia correspondiente.
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modalFooter">
-                        <button class="btnSave" wire:click="finishEvidence({{ $reportEvidence->project->id }}, {{ $reportEvidence->id }})">
+                        <button class="btnSave"
+                            wire:click="finishEvidence({{ $reportEvidence->project->id }}, {{ $reportEvidence->id }})">
                             Continuar
                         </button>
                     </div>

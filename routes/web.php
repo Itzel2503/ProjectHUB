@@ -44,7 +44,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('projects', Project::class)->only(['index']);
     Route::resource('priority', Priority::class)->middleware('user.type:1,2');
     Route::resource('projects.reports', Report::class);
-    Route::resource('projects.activities', Activity::class)->only(['index'])->middleware('user.type:1,2');
+    Route::resource('projects.activities', Activity::class)->only(['index']);
     // ACTIVITIES
     Route::resource('/activities-reports', ActivityReport::class)->only(['index'])->middleware('user.type:1,2');
     // NOTION

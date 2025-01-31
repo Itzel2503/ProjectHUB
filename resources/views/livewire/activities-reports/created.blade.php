@@ -171,7 +171,7 @@
                                 </svg>
                             </div>
                         </th>
-                        <th class="w-44 px-1 py-3">
+                        <th class="@if (Auth::user()->type_user == '1') w-1/3 @else w-44 @endif px-1 py-3">
                             <div class="flex items-center">
                                 Fecha de entrega
                                 {{-- down-up --}}
@@ -272,7 +272,9 @@
                                         <p
                                             class="@if ($task->state == 'Resuelto') font-semibold @else hidden @endif">
                                             {{ $task->delegate_name }}</p>
-                                        <select @if($task->project_activity) @if($task->sprint_state == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif @endif
+                                        <select
+                                            @if ($task->project_activity) @if ($task->sprint_state == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                            @endif
                                             @if ($task->project_activity) wire:change.defer="updateDelegate({{ $task->id }}, $event.target.value, 'activity')" @elseif($task->project_report) wire:change="updateDelegate({{ $task->id }},$event.target.value, 'report')" @endif
                                             name="delegate" id="delegate"
                                             class="inpSelectTable @if ($task->state == 'Resuelto') hidden @endif w-full text-sm">
@@ -315,7 +317,9 @@
                             </td>
                             <td class="px-2 py-1">
                                 @if ($task->project_activity || $task->project_report)
-                                    <select name="state" id="state" @if($task->project_activity) @if($task->sprint_state == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif @endif
+                                    <select name="state" id="state"
+                                        @if ($task->project_activity) @if ($task->sprint_state == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                        @endif
                                         class="inpSelectTable @if ($task->state == 'Abierto') bg-blue-500 text-white @endif @if ($task->state == 'Proceso') bg-yellow-400 @endif @if ($task->state == 'Resuelto') bg-lime-700 text-white @endif @if ($task->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
                                         @if ($task->project_activity) wire:change.defer="updateState({{ $task->id }}, null, $event.target.value)" @elseif($task->project_report) wire:change="updateState({{ $task->id }}, {{ $task->project_id }}, $event.target.value)" @endif>
                                         <option selected value={{ $task->state }}>{{ $task->state }}</option>
@@ -335,7 +339,41 @@
                             </td>
                             <td class="px-2 py-1">
                                 <div class="my-auto text-left">
-                                    {{ \Carbon\Carbon::parse($task->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                    @if ($task->state != 'Resuelto')
+                                        <select
+                                            @if ($task->project_activity) wire:change="updateExpectedDay({{ $task->id }}, 'activity', $event.target.value)" @elseif($task->project_report) wire:change="updateExpectedDay({{ $task->id }}, 'report', $event.target.value)" @endif
+                                            wire:model="expected_day.{{ $task->id }}" name="expected_day"
+                                            id="expected_day" class="inpSelectTable">
+                                            @for ($day = 1; $day <= 31; $day++)
+                                                <option value={{ $day }}
+                                                    {{ $day == \Carbon\Carbon::parse($task->expected_date)->day ? 'selected' : '' }}>
+                                                    {{ $day }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <select
+                                            @if ($task->project_activity) wire:change="updateExpectedMonth({{ $task->id }}, 'activity', $event.target.value)" @elseif($task->project_report) wire:change="updateExpectedMonth({{ $task->id }}, 'report', $event.target.value)" @endif
+                                            name="expected_month" id="expected_month" class="inpSelectTable">
+                                            @foreach (['01' => 'Enero', '02' => 'Febrero', '03' => 'Marzo', '04' => 'Abril', '05' => 'Mayo', '06' => 'Junio', '07' => 'Julio', '08' => 'Agosto', '09' => 'Septiembre', '10' => 'Octubre', '11' => 'Noviembre', '12' => 'Diciembre'] as $monthValue => $monthName)
+                                                <option value="{{ $monthValue }}"
+                                                    {{ $monthValue == \Carbon\Carbon::parse($task->expected_date)->format('m') ? 'selected' : '' }}>
+                                                    {{ $monthName }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <select
+                                            @if ($task->project_activity) wire:change="updateExpectedYear({{ $task->id }}, 'activity', $event.target.value)" @elseif($task->project_report) wire:change="updateExpectedYear({{ $task->id }}, 'report', $event.target.value)" @endif
+                                            name="expected_year" id="expected_year" class="inpSelectTable">
+                                            @for ($year = now()->year - 1; $year <= now()->year + 2; $year++)
+                                                <option value="{{ $year }}"
+                                                    {{ $year == \Carbon\Carbon::parse($task->expected_date)->year ? 'selected' : '' }}>
+                                                    {{ $year }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                    @else
+                                        {{ \Carbon\Carbon::parse($task->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                    @endif
                                 </div>
                             </td>
                             <td class="px-2 py-1">
@@ -349,8 +387,7 @@
                             <td class="px-2 py-1">
                                 <div class="flex justify-center">
                                     @if ($task->project_activity)
-                                        <a
-                                            href="{{ route('projects.activities.index', ['project' => $task->project_id, 'activity' => $task->id, 'highlight' => $task->id]) }}"
+                                        <a href="{{ route('projects.activities.index', ['project' => $task->project_id, 'activity' => $task->id, 'highlight' => $task->id]) }}"
                                             target="_blank" rel="noopener noreferrer">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -363,8 +400,7 @@
                                             </svg>
                                         </a>
                                     @elseif($task->project_report)
-                                        <a
-                                            href="{{ route('projects.reports.index', ['project' => $task->project_id, 'reports' => $task->id, 'highlight' => $task->id]) }}"
+                                        <a href="{{ route('projects.reports.index', ['project' => $task->project_id, 'reports' => $task->id, 'highlight' => $task->id]) }}"
                                             target="_blank" rel="noopener noreferrer">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -419,8 +455,8 @@
                     </div>
                     @if ($taskShowType == 'activity')
                         <livewire:modals.reports-activities.show :recordingshow="$taskShow->id" :type="'activity'">
-                    @else
-                        <livewire:modals.reports-activities.show :recordingshow="$taskShow->id" :type="'report'">
+                        @else
+                            <livewire:modals.reports-activities.show :recordingshow="$taskShow->id" :type="'report'">
                     @endif
                 </div>
             </div>
@@ -446,14 +482,17 @@
                             <div class="-mx-3 flex flex-row">
                                 <div class="w-full px-3">
                                     <p class="text-justify">
-                                        Para completar tu reporte, haz clic en el botón <strong>"Continuar"</strong>. Serás redirigido a la página donde se encuentra el reporte. Una vez allí, selecciona la opción "Resuelto" y carga la evidencia correspondiente.
+                                        Para completar tu reporte, haz clic en el botón <strong>"Continuar"</strong>.
+                                        Serás redirigido a la página donde se encuentra el reporte. Una vez allí,
+                                        selecciona la opción "Resuelto" y carga la evidencia correspondiente.
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modalFooter">
-                        <button class="btnSave" wire:click="finishEvidence({{ $reportEvidence->project->id }}, {{ $reportEvidence->id }})">
+                        <button class="btnSave"
+                            wire:click="finishEvidence({{ $reportEvidence->project->id }}, {{ $reportEvidence->id }})">
                             Continuar
                         </button>
                     </div>
@@ -463,7 +502,8 @@
     @endif
     {{-- END MODAL EVIDENCE --}}
     {{-- LOADING PAGE --}}
-    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading wire:target="$set('isOptionsVisible'), filterDown, filterUp, show, updateEvidence, finishEvidence">
+    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
+        wire:target="$set('isOptionsVisible'), filterDown, filterUp, show, updateEvidence, finishEvidence, updateExpectedDay, updateExpectedMonth, updateExpectedYear">
         <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40">
         </div>
         <div class="loadingspinner relative top-1/3 z-20">

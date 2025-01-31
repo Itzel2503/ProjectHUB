@@ -278,7 +278,7 @@ class Report extends Controller
                     if (Auth::user()->type_user == 3) {
                         // Usuario Soporte
                         $userSoporte = User::where('area_id', '4')->first();
-                        if (!isNull($userSoporte)) {
+                        if ($userSoporte) {
                             $delegate_id = $userSoporte->id;
                         } else {
                             // Usuario administradors

@@ -1259,6 +1259,10 @@ select {
   width: 25%;
 }
 
+.w-1\/5 {
+  width: 20%;
+}
+
 .w-1\/6 {
   width: 16.666667%;
 }
@@ -2194,6 +2198,11 @@ select {
 .text-primaryColor-dark {
   --tw-text-opacity: 1;
   color: rgb(23 40 51 / var(--tw-text-opacity, 1));
+}
+
+.text-primaryColor-light {
+  --tw-text-opacity: 1;
+  color: rgb(62 104 113 / var(--tw-text-opacity, 1));
 }
 
 .text-red-500 {

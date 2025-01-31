@@ -2,27 +2,27 @@
     <div class="px-4 py-4 sm:rounded-lg">
         <div class="flex flex-col justify-between gap-2 text-sm md:flex-row lg:text-base">
             @if ($sprints->isEmpty())
-                @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
-                    <!-- BTN NEW -->
-                    <div class="flex w-40 flex-wrap md:inline-flex md:flex-nowrap">
-                        <button wire:click="newSprint()" class="btnNuevo">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M12 5l0 14" />
-                                <path d="M5 12l14 0" />
-                            </svg>
-                            Sprint
-                        </button>
-                    </div>
-                @endif
+                <div class=" flex flex-col items-center w-full text-center mt-5 text-primaryColor-light">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-book-off">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 5.899 -1.096" />
+                        <path d="M3 6a9 9 0 0 1 2.114 -.884m3.8 -.21c1.07 .17 2.116 .534 3.086 1.094a9 9 0 0 1 9 0" />
+                        <path d="M3 6v13" />
+                        <path d="M12 6v2m0 4v7" />
+                        <path d="M21 6v11" />
+                        <path d="M3 3l18 18" />
+                    </svg>
+                    <p class="text-xl font-bold">No existen desarrollos</p>
+                </div>
             @else
                 <div class="flex w-full flex-wrap md:inline-flex md:w-4/5 md:flex-nowrap">
                     {{-- AVANCE ESTATUS --}}
                     <div class="mx-2 w-auto">
                         <span class="inline-block font-semibold">Avance:</span>
-                        <span class="{{ $percentageResolved == '100' ? 'text-lime-700' : ($percentageResolved >= 50 ? 'text-yellow-500' : 'text-red-600') }}">
+                        <span
+                            class="{{ $percentageResolved == '100' ? 'text-lime-700' : ($percentageResolved >= 50 ? 'text-yellow-500' : 'text-red-600') }}">
                             {{ $percentageResolved }}%
                         </span>
                         <br>
@@ -31,7 +31,7 @@
                     </div>
                     {{-- NOMBRE --}}
                     <div class="mb-2 inline-flex h-12 w-2/6 bg-transparent px-2 md:mx-3 md:px-0">
-                        
+
                         <select wire:model="selectSprint" wire:change="selectSprint($event.target.value)"
                             class="inputs">
                             @foreach ($sprints as $sprint)
@@ -44,18 +44,17 @@
                         <span class="inline-block font-semibold">Fecha de inicio:</span>
                         {{ \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
                         <span class="inline-block font-semibold">Fecha de cierre:</span>
-                        <span
-                            class="">
+                        <span class="">
                             {{ \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                         </span>
                     </div>
                 </div>
+                <div class="mb-2 h-12 w-1/6 bg-transparent md:inline-flex">
+                    <button wire:click="showBacklog()" class="btnNuevo">
+                        Backlog
+                    </button>
+                </div>
             @endif
-            <div class="mb-2 h-12 w-1/6 bg-transparent md:inline-flex">
-                <button wire:click="showBacklog()" class="btnNuevo">
-                    Backlog
-                </button>
-            </div>
         </div>
     </div>
     {{-- MODAL SHOW BACKLOG --}}
@@ -73,8 +72,8 @@
                             Backlog</h3>
                         <svg wire:click="showBacklog()" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
                             xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
-                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                             <path d="M18 6l-12 12"></path>
                             <path d="M6 6l12 12"></path>
@@ -176,7 +175,8 @@
         </div>
     </div>
     @if (!$sprints->isEmpty())
-        <livewire:projects.activities.table-activities-client :idsprint="$idSprint" :project="$project"  wire:key="table-activities-{{ $idSprint }}">
+        <livewire:projects.activities.table-activities-client :idsprint="$idSprint" :project="$project"
+            wire:key="table-activities-{{ $idSprint }}">
     @endif
     @push('js')
         <script>
