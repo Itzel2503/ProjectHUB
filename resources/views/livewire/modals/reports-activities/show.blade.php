@@ -208,6 +208,13 @@
                                 @endif
                             </div>
                         @endif
+                        @if ($recording->content == true)
+                            <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
+                                <a href="{{ asset('activities/' . $recording->content) }}" target="_blank">
+                                    <img src="{{ asset('activities/' . $recording->content) }}" alt="Report Image">
+                                </a>
+                            </div>
+                        @endif
                     @else
                         <div class="md-3/4 mb-5 mt-3 flex w-full flex-col items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -224,7 +231,7 @@
                             <p>Sin contenido</p>
                         </div>
                     @endif
-                    @if ($recording->image == true || $recording->video == true || $recording->file == true)
+                    @if ($recording->image == true || $recording->video == true || $recording->file == true || $recording->content == true)
                         @if ($recording->contentExists)
                             <div class="flex items-center justify-center">
                                 <a href="{{ asset('reportes/' . $recording->content) }}"

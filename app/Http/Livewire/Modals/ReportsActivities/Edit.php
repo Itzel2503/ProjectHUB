@@ -10,6 +10,7 @@ use App\Models\Sprint;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -116,6 +117,10 @@ class Edit extends Component
             $report = null;
         }
         $project = Project::find($project_id);
+        $projectName = Str::slug($project->name, '_');
+        $customerName = Str::slug($project->customer->name, '_');
+        $now = Carbon::now();
+        $dateString = $now->format("Y-m-d_H_i_s");
         // REPORTE
         if ($report) {
             if ($this->file) {
@@ -294,9 +299,9 @@ class Edit extends Component
                         ]);
                         return;
                     }
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $this->project->customer->name . '/' . $this->project->name;
-                    $fileName = $this->file->getClientOriginalName();
-                    $fileName = str_replace(' ', '_', $fileName);
+                    $fileExtension = $this->file->extension();
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName;
+                    $fileName = 'Actividad_' . $projectName . '_' . $dateString . '.' . $fileExtension;
                     $fullNewFilePath = $filePath . '/' . $fileName;
                     // Procesar la imagen
                     $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
@@ -308,31 +313,20 @@ class Edit extends Component
                     $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
                     $image->save(storage_path('app/' . $tempPath));
                     // Eliminar imagen anterior
-                    if (Storage::disk('activities')->exists($activity->image)) {
-                        Storage::disk('activities')->delete($activity->image);
+                    if (Storage::disk('activities')->exists($activity->content)) {
+                        Storage::disk('activities')->delete($activity->content);
                     }
                     // Guardar la imagen redimensionada en el almacenamiento local
                     Storage::disk('activities')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
                     // // Eliminar la imagen temporal
                     Storage::disk('local')->delete($tempPath);
-                    $activity->image = $fullNewFilePath;
+                    $activity->content = $fullNewFilePath;
                 } else {
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $this->project->customer->name . '/' . $this->project->name;
-                    $fileName = $this->file->getClientOriginalName();
-                    $fileName = str_replace(' ', '_', $fileName);
-                    $fullNewFilePath = $filePath . '/' . $fileName;
-    
-                    // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-                    if ($activity->image && Storage::disk('activities')->exists($activity->image)) {
-                        $existingFilePath = pathinfo($activity->image, PATHINFO_DIRNAME);
-    
-                        if ($existingFilePath == $filePath) {
-                            Storage::disk('activities')->delete($activity->image);
-                        }
-                    }
-                    // Guardar el archivo en el disco 'activities'
-                    $this->file->storeAs($filePath, $fileName, 'activities');
-                    $activity->image = $fullNewFilePath;
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'No es una imagen.',
+                    ]);
+                    return;
                 }
             }
             $activity->sprint_id = $this->moveActivity ?? $activity->sprint_id;

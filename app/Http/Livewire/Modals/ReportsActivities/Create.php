@@ -115,7 +115,7 @@ class Create extends Component
                 Storage::disk('activities')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
                 // // Eliminar la imagen temporal
                 Storage::disk('local')->delete($tempPath);
-                $activity->image = $fullNewFilePath;
+                $activity->content = $fullNewFilePath;
             } else {
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
