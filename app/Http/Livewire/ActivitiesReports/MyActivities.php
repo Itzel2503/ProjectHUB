@@ -281,9 +281,12 @@ class MyActivities extends Component
         ]);
     }
     // ACTIONS
-    public function updateDelegate($id, $delegate, $tpe)
+    public function updateDelegate($id, $delegate, $type)
     {
-        if ($tpe == 'report') {
+        // Emitir evento de carga iniciada
+        $this->emit('loadingStarted');
+        
+        if ($type == 'report') {
             $report = Report::find($id);
             if ($report) {
                 $report->delegate_id = $delegate;
@@ -292,7 +295,7 @@ class MyActivities extends Component
                 $report->look = false;
                 $report->state = 'Abierto';
                 $report->save();
-
+                
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'success',
                     'title' => 'Delegado actualizado',
@@ -314,10 +317,15 @@ class MyActivities extends Component
                 ]);
             }
         }
+        // Emitir evento de carga terminada
+        $this->emit('loadingEnded');
     }
 
     public function updateState($id, $project_id, $state)
     {
+        // Emitir evento de carga iniciada
+        $this->emit('loadingStarted');
+
         if ($project_id == null) {
             $activity = Activity::find($id);
 
@@ -404,10 +412,15 @@ class MyActivities extends Component
                 }
             }
         }
+        // Emitir evento de carga terminada
+        $this->emit('loadingEnded');
     }
 
     public function updateExpectedDay($id, $type, $day)
     {
+        // Emitir evento de carga iniciada
+        $this->emit('loadingStarted');
+
         if ($type == 'report') {
             $task = Report::find($id);
         } else {
@@ -424,6 +437,8 @@ class MyActivities extends Component
 
             if ($lastDayOfMonth < $day) {
                 $this->expected_day[$task->id] = $oldDay;
+                // Emitir evento de carga terminada
+                $this->emit('loadingEnded');
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
                     'title' => 'No se puede seleccionar un día fuera del mes y año de la fecha esperada'
@@ -434,7 +449,6 @@ class MyActivities extends Component
             $newDate = $currentDate->setDay($day);
             $task->expected_date = $newDate;
             $task->save();
-
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
                 'title' => 'Día actualizado correctamente',
@@ -445,10 +459,15 @@ class MyActivities extends Component
                 'title' => 'Tarea no encontrada',
             ]);
         }
+        // Emitir evento de carga terminada
+        $this->emit('loadingEnded');
     }
 
     public function updateExpectedMonth($id, $type, $month)
     {
+        // Emitir evento de carga iniciada
+        $this->emit('loadingStarted');
+
         if ($type == 'report') {
             $task = Report::find($id);
         } else {
@@ -464,6 +483,7 @@ class MyActivities extends Component
             if ($lastDayOfMonth < $day) {
                 $day = $lastDayOfMonth; // Ajustar el día al último día del mes
                 $this->expected_day[$task->id] = $day;
+
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'warning',
                     'title' => 'Día ajustada al mes seleccionado'
@@ -480,15 +500,23 @@ class MyActivities extends Component
                 'title' => 'Mes actualizado correctamente',
             ]);
         } else {
+            // Emitir evento de carga terminada
+            $this->emit('loadingEnded');
+
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
                 'title' => 'Tarea no encontrada',
             ]);
         }
+        // Emitir evento de carga terminada
+        $this->emit('loadingEnded');
     }
 
     public function updateExpectedYear($id, $type, $year)
     {
+        // Emitir evento de carga iniciada
+        $this->emit('loadingStarted');
+
         if ($type == 'report') {
             $task = Report::find($id);
         } else {
@@ -504,6 +532,7 @@ class MyActivities extends Component
             if ($lastDayOfMonth < $day) {
                 $day = $lastDayOfMonth; // Ajustar el día al último día del mes
                 $this->expected_day[$task->id] = $day;
+
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'warning',
                     'title' => 'Día ajustada al mes seleccionado'
@@ -525,6 +554,8 @@ class MyActivities extends Component
                 'title' => 'Tarea no encontrada',
             ]);
         }
+        // Emitir evento de carga terminada
+        $this->emit('loadingEnded');
     }
 
     public function finishEvidence($project_id, $report_id)
@@ -534,6 +565,9 @@ class MyActivities extends Component
     // MODAL
     public function show($id, $type)
     {
+        // Emitir evento de carga iniciada
+        $this->emit('loadingStarted');
+
         if ($this->show == true) {
             $this->show = false;
             $this->taskShow = null;
@@ -544,6 +578,7 @@ class MyActivities extends Component
                 $this->show = true;
             } else {
                 $this->show = false;
+
                 // Maneja un caso en el que no se encuentra el reporte (opcional)
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
@@ -551,10 +586,15 @@ class MyActivities extends Component
                 ]);
             }
         }
+        // Emitir evento de carga terminada
+        $this->emit('loadingEnded');
     }
     // FILTER
     public function filterDown($type)
     {
+        // Emitir evento de carga iniciada
+        $this->emit('loadingStarted');
+
         $this->filtered = false; // Cambio de flechas
         
         if ($type == 'priority') {
@@ -584,10 +624,15 @@ class MyActivities extends Component
             $this->orderByType = 'expected_date';
             $this->filteredExpected = 'asc';
         }
+        // Emitir evento de carga terminada
+        $this->emit('loadingEnded');
     }
 
     public function filterUp($type)
     {
+        // Emitir evento de carga iniciada
+        $this->emit('loadingStarted');
+
         $this->filtered = true; // Cambio de flechas
         
         if ($type == 'priority') {
@@ -617,6 +662,8 @@ class MyActivities extends Component
             $this->orderByType = 'expected_date';
             $this->filteredExpected = 'desc';
         }
+        // Emitir evento de carga terminada
+        $this->emit('loadingEnded');
     }
     // PROTECTED
     protected function getFilteredActions($currentState)

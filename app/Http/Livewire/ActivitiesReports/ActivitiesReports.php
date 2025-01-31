@@ -11,7 +11,11 @@ class ActivitiesReports extends Component
 {
     protected $paginationTheme = 'tailwind';
     
-    protected $listeners = ['refreshChart'];
+    protected $listeners = [
+        'refreshChart', 
+        'loadingStarted' => 'onLoadingStarted',
+        'loadingEnded' => 'onLoadingEnded',
+    ];
     // PESTAÑA
     public $activeTab = 'actividades';
     // DUKKE
@@ -42,5 +46,15 @@ class ActivitiesReports extends Component
             'series' => $series,
             'totalEffortPoints' => $totalEffortPoints,
         ]);
+    }
+
+    public function onLoadingStarted()
+    {
+        logger('El evento loadingStarted fue recibido.');
+    }
+
+    public function onLoadingEnded()
+    {
+        // Este método también puede quedar vacío.
     }
 }
