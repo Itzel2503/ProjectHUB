@@ -171,7 +171,7 @@
                                 </svg>
                             </div>
                         </th>
-                        <th class="@if (Auth::user()->type_user == '1') w-1/3 @else w-44 @endif px-1 py-3">
+                        <th class="@if (Auth::user()->type_user == '1') w-1/4 @else w-44 @endif px-1 py-3">
                             <div class="flex items-center">
                                 Fecha de entrega
                                 {{-- down-up --}}
@@ -425,7 +425,7 @@
             </table>
         </div>
         <div class="py-5">
-            {{-- {{ $tasks->links() }} --}}
+            {{ $tasks->links() }}
         </div>
     </div>
     {{-- END TABLE --}}

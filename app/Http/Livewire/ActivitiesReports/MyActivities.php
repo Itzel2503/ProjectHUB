@@ -13,9 +13,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
 class MyActivities extends Component
 {
+    use WithFileUploads;
+    use WithPagination;
+    protected $paginationTheme = 'tailwind';
+
     // FILTROS
     public $search, $allUsers;
     public $selectedDelegate = '';
@@ -25,8 +31,8 @@ class MyActivities extends Component
     public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
     public $perPage = '20';
     // variables para la consulta
-    public $filterPriotiry = false, $filterState = false;
-    public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredStateArrow = '', $filteredExpected = 'asc', $orderByType = 'expected_date';
+    public $filterPriotiry = false, $filterState = false, $filterExpected = true;
+    public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredExpected = 'asc';
     // MODAL SHOW
     public $show = false;
     public $taskShow = '';
@@ -39,13 +45,19 @@ class MyActivities extends Component
     // EXPECTED_DATE
     public $expected_day;
 
+    public function updatedSelectedStates()
+    {
+        // Resetear la página a 1 cuando se cambian los filtros
+        $this->resetPage();
+    }
+
     public function render()
     {
         // Filtro de consulta
         $userLogin = Auth::user();
         $user_id = $userLogin->id;
         // DELEGATE
-        $this->allUsers = User::where('type_user', '!=', 3)->where('id', '!=', Auth::id())->orderBy('name', 'asc')->get();
+        $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
         // TODOS LOS DELEGADOS
         $this->allUsersFiltered = [];
         foreach ($this->allUsers as $user) {
@@ -54,6 +66,10 @@ class MyActivities extends Component
                 'name' => $user->name,
             ];
         }
+        if ($this->selectedDelegate) {
+            // Reiniciar la paginación cuando se cambia el delegado
+            $this->resetPage();
+        }
         // Obtener los reports del usuario
         $reports = User::select(
             'users.id as user',
@@ -61,14 +77,8 @@ class MyActivities extends Component
             'reports.*'
         )
             ->leftJoin('reports', 'users.id', '=', 'reports.delegate_id')
-            ->where('reports.delegate_id', $user_id) 
+            ->where('reports.delegate_id', $user_id)
             ->where('reports.title', 'like', '%' . $this->search . '%')
-            ->when($this->filterPriotiry, function ($query) {
-                $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
-            })
-            ->when($this->filterState, function ($query) {
-                $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
-            })
             ->when(!empty($this->selectedStates), function ($query) {
                 // Filtrar por los estados seleccionados en los checkboxes
                 $query->whereIn('reports.state', $this->selectedStates);
@@ -79,9 +89,8 @@ class MyActivities extends Component
             ->when($this->selectedDelegate, function ($query) {
                 $query->where('user_id', $this->selectedDelegate);
             })
-            ->orderBy($this->orderByType, $this->filteredExpected)
             ->get();
-            
+
         // Obtener las activities del usuario
         $activities = User::select(
             'users.id as user',
@@ -89,14 +98,8 @@ class MyActivities extends Component
             'activities.*'
         )
             ->leftJoin('activities', 'users.id', '=', 'activities.delegate_id')
-            ->where('activities.delegate_id', $user_id) 
+            ->where('activities.delegate_id', $user_id)
             ->where('activities.title', 'like', '%' . $this->search . '%')
-            ->when($this->filterPriotiry, function ($query) {
-                $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
-            })
-            ->when($this->filterState, function ($query) {
-                $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
-            })
             ->when(!empty($this->selectedStates), function ($query) {
                 // Filtrar por los estados seleccionados en los checkboxes
                 $query->whereIn('activities.state', $this->selectedStates);
@@ -107,21 +110,47 @@ class MyActivities extends Component
             ->when($this->selectedDelegate, function ($query) {
                 $query->where('user_id', $this->selectedDelegate);
             })
-            ->orderBy($this->orderByType, $this->filteredExpected)
             ->get();
         // Combinar los resultados en una colección
         $tasks = $activities->merge($reports);
+        // Ordenar la colección combinada por prioridad si es necesario
+        if ($this->filterPriotiry) {
+            $tasks = $tasks->sortBy(function ($task) {
+                // Definir el orden de prioridad
+                $priorityOrder = [
+                    'Alto' => 1,
+                    'Medio' => 2,
+                    'Bajo' => 3,
+                ];
+                return $priorityOrder[$task->priority] ?? 4; // Valor por defecto si no coincide
+            }, SORT_REGULAR, $this->filteredPriority === 'desc');
+        }
+        // Ordenar la colección combinada por estado si es necesario
+        if ($this->filterState) {
+            $tasks = $tasks->sortBy(function ($task) {
+                // Definir el orden de prioridad
+                $statusOrder = [
+                    'Abierto' => 1,
+                    'Proceso' => 2,
+                    'Conflicto' => 3,
+                    'Resuelto' => 4,
+                ];
+                return $statusOrder[$task->state] ?? 5; // Valor por defecto si no coincide
+            }, SORT_REGULAR, $this->filteredState === 'desc');
+        }
         // Ordenar la colección combinada
-        $tasks = $tasks->sortBy(function ($task) {
-            return $task->expected_date;
-        }, SORT_REGULAR, $this->filteredExpected === 'desc');
-        // // Paginación manual
-        // $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        // $perPage = $this->perPage;
-        // $currentItems = $tasks->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        // $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
-        //     'path' => LengthAwarePaginator::resolveCurrentPath(),
-        // ]);
+        if ($this->filterExpected) {
+            $tasks = $tasks->sortBy(function ($task) {
+                return $task->expected_date;
+            }, SORT_REGULAR, $this->filteredExpected === 'desc');
+        }
+        // Paginación manual
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = $this->perPage;
+        $currentItems = $tasks->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
+            'path' => LengthAwarePaginator::resolveCurrentPath(),
+        ]);
 
         // ADD ATRIBUTES
         foreach ($tasks as $task) {
@@ -277,7 +306,7 @@ class MyActivities extends Component
             $task->messages_count = $messages->where('look', false)->count();
         }
         return view('livewire.activities-reports.my-activities', [
-            'tasks' => $tasks,
+            'tasks' => $paginatedTask,
         ]);
     }
     // ACTIONS
@@ -285,7 +314,7 @@ class MyActivities extends Component
     {
         // Emitir evento de carga iniciada
         $this->emit('loadingStarted');
-        
+
         if ($type == 'report') {
             $report = Report::find($id);
             if ($report) {
@@ -295,7 +324,7 @@ class MyActivities extends Component
                 $report->look = false;
                 $report->state = 'Abierto';
                 $report->save();
-                
+
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'success',
                     'title' => 'Delegado actualizado',
@@ -426,7 +455,7 @@ class MyActivities extends Component
         } else {
             $task = Activity::find($id);
         }
-        
+
         if ($task) {
             $currentDate = Carbon::parse($task->expected_date);
             $month = $currentDate->month;
@@ -572,8 +601,8 @@ class MyActivities extends Component
             $this->show = false;
             $this->taskShow = null;
         } else {
-            $this->taskShow = ($type == 'report') ? Report::find($id) : Activity::find($id) ;
-            $this->taskShowType = ($type == 'report') ? 'report' : 'activity' ;
+            $this->taskShow = ($type == 'report') ? Report::find($id) : Activity::find($id);
+            $this->taskShowType = ($type == 'report') ? 'report' : 'activity';
             if ($this->taskShow) {
                 $this->show = true;
             } else {
@@ -592,77 +621,55 @@ class MyActivities extends Component
     // FILTER
     public function filterDown($type)
     {
-        // Emitir evento de carga iniciada
         $this->emit('loadingStarted');
-
         $this->filtered = false; // Cambio de flechas
-        
+        // Reiniciar todos los filtros
+        $this->filterPriotiry = false;
+        $this->filterState = false;
+        $this->filterExpected = false;
+
         if ($type == 'priority') {
             $this->filterPriotiry = true;
-            $this->filterState = false;
-            $this->filteredPriority = 'asc';
-            $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+            $this->filteredPriority = 'asc'; // Orden ascendente
         }
 
         if ($type == 'state') {
-            $this->filterPriotiry = false;
             $this->filterState = true;
-            $this->filteredState = 'asc';
-            $this->priorityCase = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END";
-        }
-
-        if ($type == 'delegate') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
-            $this->orderByType = 'name';
-            $this->filteredExpected = 'asc';
+            $this->filteredState = 'asc'; // Orden ascendente
         }
 
         if ($type == 'expected_date') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
-            $this->orderByType = 'expected_date';
-            $this->filteredExpected = 'asc';
+            $this->filterExpected = true;
+            $this->filteredExpected = 'asc'; // Orden ascendente
         }
-        // Emitir evento de carga terminada
+
         $this->emit('loadingEnded');
     }
 
     public function filterUp($type)
     {
-        // Emitir evento de carga iniciada
         $this->emit('loadingStarted');
-
         $this->filtered = true; // Cambio de flechas
-        
+        // Reiniciar todos los filtros
+        $this->filterPriotiry = false;
+        $this->filterState = false;
+        $this->filterExpected = false;
+
         if ($type == 'priority') {
             $this->filterPriotiry = true;
-            $this->filterState = false;
-            $this->filteredPriority = 'asc';
-            $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
-        }
-        
-        if ($type == 'state') {
-            $this->filterPriotiry = false;
-            $this->filterState = true;
-            $this->filteredState = 'asc';
-            $this->priorityCase = "CASE WHEN state = 'Resuelto' THEN 1 WHEN state = 'Conflicto' THEN 2 WHEN state = 'Proceso' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END";
+            $this->filteredPriority = 'desc'; // Orden descendente
         }
 
-        if ($type == 'delegate') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
-            $this->orderByType = 'name';
-            $this->filteredExpected = 'desc';
+        if ($type == 'state') {
+            $this->filterState = true;
+            $this->filteredState = 'desc'; // Orden descendente
         }
 
         if ($type == 'expected_date') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
-            $this->orderByType = 'expected_date';
-            $this->filteredExpected = 'desc';
+            $this->filterExpected = true;
+            $this->filteredExpected = 'desc'; // Orden descendente
         }
-        // Emitir evento de carga terminada
+
         $this->emit('loadingEnded');
     }
     // PROTECTED
@@ -863,5 +870,5 @@ class MyActivities extends Component
         })->toArray();
         // Emitir los datos al componente padre
         $this->emitUp('refreshChart', $categories, $series, $totalEffortPoints);
-    }   
+    }
 }
