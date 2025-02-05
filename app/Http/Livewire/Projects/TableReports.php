@@ -27,11 +27,11 @@ class TableReports extends Component
     // ENVIADAS
     public $project;
     // FILTROS
-    public $search, $allUsers;
+    public $search, $allUsers, $allProjects;
     public $selectedDelegate = '';
-    public $allUsersFiltered = [], $selectedStates = [];
+    public $allUsersFiltered = [], $allProjectsFiltered = [], $selectedStates = [], $selectedProjects = [];
     public $filtered = false; // cambio de dirección de flechas
-    public $isOptionsVisible = false; // Controla la visibilidad del panel de opciones
+    public $isOptionsVisibleState = false, $isOptionsVisibleProject = false; // Controla la visibilidad del panel de opciones
     public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
     public $perPage = '20';
     // variables para la consulta
@@ -76,6 +76,18 @@ class TableReports extends Component
                 'name' => $user->name,
             ];
         }
+        // FILTRO PROYECTOS
+        if ($this->project == null) {
+            // PROYECTOS
+            $this->allProjects = Project::orderBy('name', 'asc')->get();
+            $this->allProjectsFiltered = [];
+            foreach ($this->allProjects as $project) {
+                $this->allProjectsFiltered[] = [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                ];
+            }
+        }
         // CONSULTAS DE DATOS
         if (Auth::user()->type_user == 1) {
             if ($this->project == null) {
@@ -92,6 +104,9 @@ class TableReports extends Component
                         // Incluir todos los estados seleccionados
                         $query->whereIn('state', $this->selectedStates);
                     }
+                    if (!empty($this->selectedProjects)) {
+                        $query->whereIn('project_id', $this->selectedProjects);
+                    } 
                 })
                     ->when($this->filterPriotiry, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
@@ -153,6 +168,9 @@ class TableReports extends Component
                         // Incluir todos los estados seleccionados
                         $query->whereIn('state', $this->selectedStates);
                     }
+                    if (!empty($this->selectedProjects)) {
+                        $query->whereIn('project_id', $this->selectedProjects);
+                    } 
                 })
                     ->where(function ($query) use ($user_id) {
                         $query->where('delegate_id', $user_id)
@@ -360,7 +378,9 @@ class TableReports extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        // Reiniciar todos los filtros
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
 
         $report = Report::find($id);
         if ($report) {
@@ -384,7 +404,9 @@ class TableReports extends Component
 
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        // Reiniciar todos los filtros
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
 
         if ($report) {
             if ($state == 'Proceso' || $state == 'Conflicto') {
@@ -683,7 +705,9 @@ class TableReports extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        // Reiniciar todos los filtros
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
 
         if ($this->showReport == true) {
             $this->showReport = false;
@@ -707,7 +731,9 @@ class TableReports extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        // Reiniciar todos los filtros
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
 
         if ($this->editReport == true) {
             $this->editReport = false;
@@ -734,7 +760,10 @@ class TableReports extends Component
     // FILTER
     public function togglePanel($reportId)
     {
-        $this->isOptionsVisible = false;
+        // Reiniciar todos los filtros
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
+
         // Si el panel ya está visible, lo cerramos
         if (isset($this->visiblePanels[$reportId]) && $this->visiblePanels[$reportId]) {
             unset($this->visiblePanels[$reportId]);
@@ -752,32 +781,28 @@ class TableReports extends Component
         $this->filtered = false; // Cambio de flechas
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        // Reiniciar todos los filtros
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
 
         if ($type == 'priority') {
             $this->filterPriotiry = true;
-            $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
         }
 
         if ($type == 'state') {
-            $this->filterPriotiry = false;
             $this->filterState = true;
             $this->filteredState = 'asc';
             $this->priorityCase = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END";
         }
 
         if ($type == 'delegate') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
             $this->orderByType = 'name';
             $this->filteredExpected = 'asc';
         }
 
         if ($type == 'expected_date') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
             $this->orderByType = 'expected_date';
             $this->filteredExpected = 'asc';
         }
@@ -788,32 +813,31 @@ class TableReports extends Component
         $this->filtered = true; // Cambio de flechas
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        // Reiniciar todos los filtros
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
+
+        $this->filterPriotiry = false;
+        $this->filterState = false;
 
         if ($type == 'priority') {
             $this->filterPriotiry = true;
-            $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
         }
 
         if ($type == 'state') {
-            $this->filterPriotiry = false;
             $this->filterState = true;
             $this->filteredState = 'asc';
             $this->priorityCase = "CASE WHEN state = 'Resuelto' THEN 1 WHEN state = 'Conflicto' THEN 2 WHEN state = 'Proceso' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END";
         }
 
         if ($type == 'delegate') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
             $this->orderByType = 'name';
             $this->filteredExpected = 'desc';
         }
 
         if ($type == 'expected_date') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
             $this->orderByType = 'expected_date';
             $this->filteredExpected = 'desc';
         }

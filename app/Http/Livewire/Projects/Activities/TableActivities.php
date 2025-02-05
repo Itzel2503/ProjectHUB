@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Projects\Activities;
 use App\Models\Activity;
 use App\Models\Backlog;
 use App\Models\ChatReportsActivities;
+use App\Models\Project;
 use App\Models\Report;
 use App\Models\Sprint;
 use App\Models\User;
@@ -30,11 +31,11 @@ class TableActivities extends Component
     // SPRINT
     public $sprint, $percentageResolved;
     // FILTROS
-    public $search, $allUsers;
+    public $search, $allUsers, $allProjects;
     public $selectedDelegate = '';
-    public $allUsersFiltered = [], $selectedStates = [];
+    public $allUsersFiltered = [], $allProjectsFiltered = [], $selectedStates = [], $selectedProjects = [];
     public $filtered = false; // cambio de dirección de flechas
-    public $isOptionsVisible = false; // Controla la visibilidad del panel de opciones
+    public $isOptionsVisibleState = false, $isOptionsVisibleProject = false; // Controla la visibilidad del panel de opciones
     public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
     public $perPage = '20';
     // variables para la consulta
@@ -73,6 +74,18 @@ class TableActivities extends Component
         $user_id = $user->id;
         // DELEGATE
         $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
+        // FILTRO PROYECTOS
+        if ($this->project == null) {
+            // PROYECTOS
+            $this->allProjects = Project::orderBy('name', 'asc')->get();
+            $this->allProjectsFiltered = [];
+            foreach ($this->allProjects as $project) {
+                $this->allProjectsFiltered[] = [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                ];
+            }
+        }
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
             if ($this->project == null && $this->idsprint == null) {
@@ -86,6 +99,13 @@ class TableActivities extends Component
                             // Incluir todos los estados seleccionados
                             $query->whereIn('state', $this->selectedStates);
                         }
+                        // Filtro de proyectos
+                        if (empty($this->selectedProjects)) {
+                            $query->whereNull('backlogs.project_id')
+                                ->orWhereNotNull('backlogs.project_id');
+                        } else {
+                            $query->whereIn('backlogs.project_id', $this->selectedProjects);
+                        }
                     })
                     ->when($this->filterPriotiry, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
@@ -96,6 +116,9 @@ class TableActivities extends Component
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
                     })
+                    ->join('sprints', 'activities.sprint_id', '=', 'sprints.id') // Join con sprints
+                    ->join('backlogs', 'sprints.backlog_id', '=', 'backlogs.id') // Join con backlogs
+                    ->join('projects', 'backlogs.project_id', '=', 'projects.id') // Join con proyectos
                     ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
                     ->select('activities.*', 'delegates.name')
                     ->orderBy($this->orderByType, $this->filteredExpected)
@@ -345,7 +368,8 @@ class TableActivities extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
 
         $activity = Activity::find($id);
         if ($activity) {
@@ -367,7 +391,8 @@ class TableActivities extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
 
         $activity = Activity::find($id);
 
@@ -523,7 +548,8 @@ class TableActivities extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
 
         if ($idProject != 0) {
             $this->createEdit = !$this->createEdit;
@@ -534,7 +560,8 @@ class TableActivities extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
 
         if ($this->showActivity == true) {
             $this->showActivity = false;
@@ -558,7 +585,8 @@ class TableActivities extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
 
         if ($this->createEdit == true) {
             $this->createEdit = false;
@@ -610,32 +638,30 @@ class TableActivities extends Component
         $this->filtered = false; // Cambio de flechas
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
+        // Reiniciar todos los filtros
+        $this->filterPriotiry = false;
+        $this->filterState = false;
         
         if ($type == 'priority') {
             $this->filterPriotiry = true;
-            $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
         }
 
         if ($type == 'state') {
-            $this->filterPriotiry = false;
             $this->filterState = true;
             $this->filteredState = 'asc';
             $this->priorityCase = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END";
         }
 
         if ($type == 'delegate') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
             $this->orderByType = 'name';
             $this->filteredExpected = 'asc';
         }
 
         if ($type == 'expected_date') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
             $this->orderByType = 'expected_date';
             $this->filteredExpected = 'asc';
         }
@@ -646,32 +672,30 @@ class TableActivities extends Component
         $this->filtered = true; // Cambio de flechas
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisible = false;
+        $this->isOptionsVisibleState = false;
+        $this->isOptionsVisibleProject = false;
+        // Reiniciar todos los filtros
+        $this->filterPriotiry = false;
+        $this->filterState = false;
         
         if ($type == 'priority') {
             $this->filterPriotiry = true;
-            $this->filterState = false;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
         }
         
         if ($type == 'state') {
-            $this->filterPriotiry = false;
             $this->filterState = true;
             $this->filteredState = 'asc';
             $this->priorityCase = "CASE WHEN state = 'Resuelto' THEN 1 WHEN state = 'Conflicto' THEN 2 WHEN state = 'Proceso' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END";
         }
 
         if ($type == 'delegate') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
             $this->orderByType = 'name';
             $this->filteredExpected = 'desc';
         }
 
         if ($type == 'expected_date') {
-            $this->filterPriotiry = false;
-            $this->filterState = false;
             $this->orderByType = 'expected_date';
             $this->filteredExpected = 'desc';
         }

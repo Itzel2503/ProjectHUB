@@ -23,11 +23,11 @@ class Created extends Component
     protected $paginationTheme = 'tailwind';
 
     // FILTROS
-    public $search, $allUsers;
+    public $search, $allUsers, $allProjects;
     public $selectedDelegate = '';
-    public $allUsersFiltered = [], $selectedStates = [];
+    public $allUsersFiltered = [], $allProjectsFiltered = [], $selectedStates = [], $selectedProjects = [];
     public $filtered = false; // cambio de dirección de flechas
-    public $isOptionsVisible = false; // Controla la visibilidad del panel de opciones
+    public $isOptionsVisibleState = false, $isOptionsVisibleProject = false; // Controla la visibilidad del panel de opciones
     public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
     public $perPage = '20';
     // variables para la consulta
@@ -62,6 +62,15 @@ class Created extends Component
             // Reiniciar la paginación cuando se cambia el delegado
             $this->resetPage();
         }
+        // FILTRO PROYECTOS
+        $this->allProjects = Project::orderBy('name', 'asc')->get();
+        $this->allProjectsFiltered = [];
+        foreach ($this->allProjects as $project) {
+            $this->allProjectsFiltered[] = [
+                'id' => $project->id,
+                'name' => $project->name,
+            ];
+        }
         // Obtener los reports del usuario
         $reports = User::select(
             'users.id as user',
@@ -75,6 +84,10 @@ class Created extends Component
                 // Filtrar por los estados seleccionados en los checkboxes
                 $query->whereIn('reports.state', $this->selectedStates);
             })
+            ->when(!empty($this->selectedProjects), function ($query) {
+                // Filtrar por los estados seleccionados en los checkboxes
+                $query->whereIn('reports.project_id', $this->selectedProjects);
+            })
             ->when($this->selectedDelegate, function ($query) {
                 $query->where('delegate_id', $this->selectedDelegate);
             })
@@ -85,15 +98,20 @@ class Created extends Component
             'users.name as user_name',
             'activities.*'
         )
-            ->leftJoin('activities', 'users.id', '=', 'activities.user_id')
+            ->leftJoin('activities', 'users.id', '=', 'activities.user_id') // JOIN con actividades
+            ->leftJoin('sprints', 'activities.sprint_id', '=', 'sprints.id') // JOIN con sprints
+            ->leftJoin('backlogs', 'sprints.backlog_id', '=', 'backlogs.id') // JOIN con backlogs
+            ->leftJoin('projects', 'backlogs.project_id', '=', 'projects.id') // JOIN con proyectos
             ->where('activities.user_id', $user_id)
             ->where('activities.title', 'like', '%' . $this->search . '%')
             ->when(!empty($this->selectedStates), function ($query) {
-                // Filtrar por los estados seleccionados en los checkboxes
-                $query->whereIn('activities.state', $this->selectedStates);
+                $query->whereIn('activities.state', $this->selectedStates); // Filtrar por estados seleccionados
+            })
+            ->when(!empty($this->selectedProjects), function ($query) {
+                $query->whereIn('backlogs.project_id', $this->selectedProjects); // Filtrar por proyectos seleccionados
             })
             ->when($this->selectedDelegate, function ($query) {
-                $query->where('delegate_id', $this->selectedDelegate);
+                $query->where('activities.delegate_id', $this->selectedDelegate); // Filtrar por delegado
             })
             ->get();
 

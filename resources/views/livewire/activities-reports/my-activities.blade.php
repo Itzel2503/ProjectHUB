@@ -3,7 +3,7 @@
     <div class="px-4 py-4 sm:rounded-lg">
         {{-- NAVEGADOR --}}
         <div class="flex flex-col justify-between gap-2 text-sm md:flex-row lg:text-base">
-            <div class="flex w-full flex-wrap md:inline-flex md:w-4/5 md:flex-nowrap">
+            <div class="flex w-full flex-wrap md:inline-flex md:flex-nowrap">
                 <!-- SEARCH -->
                 <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:w-2/5 md:px-0">
                     <div class="relative flex h-full w-full">
@@ -39,7 +39,7 @@
                         <div class="relative w-full">
                             <!-- Button -->
                             <button type="button" class="inputs flex h-12 items-center justify-between"
-                                wire:click="$set('isOptionsVisible', {{ $isOptionsVisible ? 'false' : 'true' }})">
+                                wire:click="$set('isOptionsVisibleState', {{ $isOptionsVisibleState ? 'false' : 'true' }})">
                                 <span>Estados</span>
                                 <!-- Heroicon: chevron-down -->
                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +51,7 @@
                                 </svg>
                             </button>
                             <!-- Panel -->
-                            @if ($isOptionsVisible)
+                            @if ($isOptionsVisibleState)
                                 <div class="absolute left-0 z-10 mt-2 w-full rounded-md bg-white">
                                     <label class="block px-4 py-2">
                                         <input type="checkbox" wire:model="selectedStates" value="Abierto"
@@ -73,6 +73,38 @@
                                             class="mr-2">
                                         Conflicto
                                     </label>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <!-- PROYECTOS -->
+                <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
+                    <div class="flex w-full justify-center">
+                        <div class="relative w-full">
+                            <!-- Button -->
+                            <button type="button" class="inputs flex h-12 items-center justify-between"
+                                wire:click="$set('isOptionsVisibleProject', {{ $isOptionsVisibleProject ? 'false' : 'true' }})">
+                                <span>Projectos</span>
+                                <!-- Heroicon: chevron-down -->
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="icon icon-tabler icon-tabler-chevron-down h-3 w-3" width="24"
+                                    height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M6 9l6 6l6 -6" />
+                                </svg>
+                            </button>
+                            <!-- Panel -->
+                            @if ($isOptionsVisibleProject)
+                                <div class="absolute left-0 z-10 mt-2 w-full rounded-md bg-white">
+                                    @foreach ($allProjectsFiltered as $projectFiltered)
+                                        <label class="block px-4 py-2">
+                                            <input type="checkbox" wire:model="selectedProjects"
+                                                value="{{ $projectFiltered['id'] }}" class="mr-2">
+                                            {{ $projectFiltered['name'] }}
+                                        </label>
+                                    @endforeach
                                 </div>
                             @endif
                         </div>
