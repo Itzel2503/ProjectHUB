@@ -21,6 +21,8 @@ class Show extends Component
     public $message;
     // EVIDENCE
     public $showEvidence = false;
+    // FOTO DE USUARIO
+    public $userPhoto;
 
 
     public function render()
@@ -117,6 +119,21 @@ class Show extends Component
         } else {
             $this->recording->contentExists = false;
         }
+
+        if (Auth::user()->profile_photo) {
+            // Verificar si el archivo existe en la carpeta
+            $filePath = public_path('usuarios/' . Auth::user()->profile_photo);
+
+            $fileExtension = pathinfo(Auth::user()->profile_photo, PATHINFO_EXTENSION);
+            if (file_exists($filePath)) {
+                $this->userPhoto = true;
+            } else {
+                $this->userPhoto = false;
+            }
+        } else {
+            $this->userPhoto = false;
+        }
+        
         return view('livewire.modals.reports-activities.show');
     }
 

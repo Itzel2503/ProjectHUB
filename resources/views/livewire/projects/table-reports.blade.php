@@ -88,7 +88,7 @@
                                 <!-- Button -->
                                 <button type="button" class="inputs flex h-12 items-center justify-between"
                                     wire:click="$set('isOptionsVisibleProject', {{ $isOptionsVisibleProject ? 'false' : 'true' }})">
-                                    <span>Projectos</span>
+                                    <span>Proyectos</span>
                                     <!-- Heroicon: chevron-down -->
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                         class="icon icon-tabler icon-tabler-chevron-down h-3 w-3" width="24"
@@ -516,8 +516,8 @@
                                     @else
                                         <div
                                             class="@if (Auth::user()->type_user == 3) @if ($report->state != 'Abierto' && $report->state != 'Resuelto') hidden @else relative @endif
-@else
-@endif relative">
+                                                @else
+                                                @endif relative">
                                             <!-- Button -->
                                             <button wire:click="togglePanel({{ $report->id }})" type="button"
                                                 class="flex items-center px-5 py-2.5">

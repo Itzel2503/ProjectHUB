@@ -6,6 +6,7 @@ use App\Http\Controllers\Notion\Notion;
 use App\Http\Controllers\Projects\Priority;
 use App\Http\Controllers\Projects\Project;
 use App\Http\Controllers\Projects\Report;
+use App\Http\Controllers\Test;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -48,7 +49,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     // ACTIVITIES
     Route::resource('/activities-reports', ActivityReport::class)->only(['index'])->middleware('user.type:1,2');
     // NOTION
-    Route::resource('/notion', Notion::class);
+    Route::resource('/calendar', Notion::class);
     // EFFORT POINTS
     Route::get('effortPoints', function () {
         return view('effortpoints/effortpoints');
@@ -58,5 +59,7 @@ Route::middleware(['web', 'auth'])->group(function () {
         return view('inventory/inventory');
     })->name('storage.index')->middleware('user.type:1', 'user.area:1');
 });
+
+Route::resource('test', Test::class)->only(['update']);
 // Rutas de autenticación generadas por Auth::routes();
 Auth::routes();

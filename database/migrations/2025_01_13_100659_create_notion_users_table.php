@@ -19,8 +19,8 @@ class CreateNotionUsersTable extends Migration
             $table->unsignedBigInteger('notion_id');
             $table->foreign('notion_id')->references('id')->on('notions')->onDelete('cascade');
             
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('delegate_id');
+            $table->foreign('delegate_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });

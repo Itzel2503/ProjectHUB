@@ -31,7 +31,7 @@ class CreateReportsTable extends Migration
             $table->text('content')->nullable();
             $table->string('priority');
             $table->string('state');
-            $table->longText('comment');
+            $table->longText('description');
             $table->boolean('evidence');
             $table->integer('points');
             $table->json('questions_points')->nullable();

@@ -48,7 +48,7 @@
                                             <!-- Columna para la foto de perfil -->
                                             <div class="ml-1 mt-1 flex w-auto justify-end">
                                                 <div class="relative flex justify-center">
-                                                    @if (Auth::user()->profile_photo)
+                                                    @if ($userPhoto == true)
                                                         <img class="h-8 w-8 rounded-full object-cover"
                                                             aria-hidden="true"
                                                             src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}"

@@ -26,7 +26,7 @@ class CreateActivitiesTable extends Migration
             $table->foreign('delegate_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->string('title');
-            $table->string('image')->nullable();
+            $table->string('content')->nullable();
             $table->longText('description')->nullable();
             $table->string('priority')->nullable();
             $table->string('state')->nullable();

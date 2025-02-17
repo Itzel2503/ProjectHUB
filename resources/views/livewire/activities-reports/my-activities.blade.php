@@ -85,7 +85,7 @@
                             <!-- Button -->
                             <button type="button" class="inputs flex h-12 items-center justify-between"
                                 wire:click="$set('isOptionsVisibleProject', {{ $isOptionsVisibleProject ? 'false' : 'true' }})">
-                                <span>Projectos</span>
+                                <span>Proyectos</span>
                                 <!-- Heroicon: chevron-down -->
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                     class="icon icon-tabler icon-tabler-chevron-down h-3 w-3" width="24"
