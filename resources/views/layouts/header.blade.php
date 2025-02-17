@@ -196,7 +196,7 @@
                                 <span class="ml-4">Actividades / Reportes</span>
                             </a>
                         </li>
-                        {{-- <li class="menu {{ request()->routeIs('calendar.index') ? 'active' : '' }}">
+                        <li class="menu {{ request()->routeIs('calendar.index') ? 'active' : '' }}">
                             <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="{{ route('calendar.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -219,7 +219,7 @@
                                 </svg>
                                 <span class="ml-4">Calendario</span>
                             </a>
-                        </li> --}}
+                        </li>
                     @endif
                     @if ($user->type_user == 1 && $user->area_id == 1)
                         <li class="menu">
@@ -427,7 +427,7 @@
                                 <span class="ml-4">Actividades / Reportes</span>
                             </a>
                         </li>
-                        {{-- <li class="menu {{ request()->routeIs('calendar.index') ? 'active' : '' }}">
+                        <li class="menu {{ request()->routeIs('calendar.index') ? 'active' : '' }}">
                             <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
                                 href="{{ route('calendar.index') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -450,7 +450,7 @@
                                 </svg>
                                 <span class="ml-4">Calendario</span>
                             </a>
-                        </li> --}}
+                        </li>
                     @endif
                     @if ($user->type_user == 1)
                         <li class="menu {{ request()->routeIs('effortPoints.index') ? 'active' : '' }}">

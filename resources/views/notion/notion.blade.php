@@ -759,27 +759,30 @@
         var form = document.getElementById('form-new-notion');
         var loadingPage = document.querySelector('.loadingspinner').parentElement; // Contenedor de la animación
 
+        // Función para formatear la hora en HH:mm
+        function formatTime(date) {
+            return date.toTimeString().split(' ')[0].substring(0, 5);
+        }
+
+        // Calcular la hora actual y 1 hora después
+        const startTimeNow = formatTime(now); // Hora actual
+        const endTimeNow = formatTime(new Date(now.getTime() + 60 * 60 * 1000)); // 1 hora después
+
         $(document).ready(function() {
             $("#btn-new").on("click", function() {
                 $("#modal-edit-create").removeClass("hidden").addClass("show");
 
                 // FECHA Y HORA
-                // Función para formatear la hora en HH:mm
-                function formatTime(date) {
-                    return date.toTimeString().split(' ')[0].substring(0, 5);
-                }
-
                 // Establecer la fecha en los campos de tipo 'date'
                 dateFirst.value = formattedDate;
                 dateSecond.value = formattedDate;
-
-                // Calcular la hora actual y 1 hora después
-                const startTimeNow = formatTime(now); // Hora actual
-                const endTimeNow = formatTime(new Date(now.getTime() + 60 * 60 * 1000)); // 1 hora después
-
+                
                 // Establecer los valores en los campos de tipo 'time'
-                starTime.value = startTimeNow;
-                endTime.value = endTimeNow;
+                checkboxAllDay.checked = true;
+                starTime.value = '';
+                endTime.value = '';
+                starTime.disabled = true;
+                endTime.disabled = true;
             });
             $("#btn-close-modal-create").on("click", function() {
                 $("#modal-edit-create").removeClass("show").addClass("hidden");
@@ -861,7 +864,7 @@
         // CHECKBOX TODO EL DIA
         checkboxAllDay.addEventListener('change', function() {
             if (checkboxAllDay.checked == false) {
-                // Fechas sin hora
+                // Fechas con hora
                 starTime.value = startTimeNow;
                 endTime.value = endTimeNow;
                 starTime.disabled = false;

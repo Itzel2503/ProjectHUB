@@ -289,7 +289,13 @@ class Notion extends Controller
                 // Eleccion de otro repeat del que ya esta guardado
                 if ($request->changeRepetition == true) {
                     // Eliminar todos los eventos relacionados por note_repeat
-                    $relatedNotions = ModelsNotion::where('note_repeat', $notion->note_repeat)->get();
+                    if ($request->repeat != 'Once') {
+                        $relatedNotions = ModelsNotion::where('note_repeat', $notion->note_repeat)->get();
+                    } else {
+                        $relatedNotions = ModelsNotion::where('note_repeat', $notion->note_repeat)
+                            ->where('id', '!=', $notion->id) // Excluir el registro actual
+                            ->get();
+                    }
 
                     // Recorrer cada evento relacionado
                     foreach ($relatedNotions as $relatedNotion) {
