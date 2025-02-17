@@ -176,7 +176,8 @@ class TableUsers extends Component
                     'client' => true,
                     'leader' => false,
                     'product_owner' => false,
-                    'developer' => false,
+                    'developer1' => false,
+                    'developer2' => false,
                 ]);
             }
             $user->area_id = 5;

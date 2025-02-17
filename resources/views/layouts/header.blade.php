@@ -196,31 +196,31 @@
                                 <span class="ml-4">Actividades / Reportes</span>
                             </a>
                         </li>
+                        {{-- <li class="menu {{ request()->routeIs('calendar.index') ? 'active' : '' }}">
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
+                                href="{{ route('calendar.index') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-week">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
+                                    <path d="M16 3v4" />
+                                    <path d="M8 3v4" />
+                                    <path d="M4 11h16" />
+                                    <path d="M7 14h.013" />
+                                    <path d="M10.01 14h.005" />
+                                    <path d="M13.01 14h.005" />
+                                    <path d="M16.015 14h.005" />
+                                    <path d="M13.015 17h.005" />
+                                    <path d="M7.01 17h.005" />
+                                    <path d="M10.01 17h.005" />
+                                </svg>
+                                <span class="ml-4">Calendario</span>
+                            </a>
+                        </li> --}}
                     @endif
-                    <li class="menu {{ request()->routeIs('calendar.index') ? 'active' : '' }}">
-                        <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
-                            href="{{ route('calendar.index') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round"
-                                class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-week">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
-                                <path d="M16 3v4" />
-                                <path d="M8 3v4" />
-                                <path d="M4 11h16" />
-                                <path d="M7 14h.013" />
-                                <path d="M10.01 14h.005" />
-                                <path d="M13.01 14h.005" />
-                                <path d="M16.015 14h.005" />
-                                <path d="M13.015 17h.005" />
-                                <path d="M7.01 17h.005" />
-                                <path d="M10.01 17h.005" />
-                            </svg>
-                            <span class="ml-4">Calendario</span>
-                        </a>
-                    </li>
                     @if ($user->type_user == 1 && $user->area_id == 1)
                         <li class="menu">
                             <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
@@ -427,31 +427,31 @@
                                 <span class="ml-4">Actividades / Reportes</span>
                             </a>
                         </li>
+                        {{-- <li class="menu {{ request()->routeIs('calendar.index') ? 'active' : '' }}">
+                            <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
+                                href="{{ route('calendar.index') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-week">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
+                                    <path d="M16 3v4" />
+                                    <path d="M8 3v4" />
+                                    <path d="M4 11h16" />
+                                    <path d="M7 14h.013" />
+                                    <path d="M10.01 14h.005" />
+                                    <path d="M13.01 14h.005" />
+                                    <path d="M16.015 14h.005" />
+                                    <path d="M13.015 17h.005" />
+                                    <path d="M7.01 17h.005" />
+                                    <path d="M10.01 17h.005" />
+                                </svg>
+                                <span class="ml-4">Calendario</span>
+                            </a>
+                        </li> --}}
                     @endif
-                    <li class="menu {{ request()->routeIs('calendar.index') ? 'active' : '' }}">
-                        <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
-                            href="{{ route('calendar.index') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round"
-                                class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-week">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
-                                <path d="M16 3v4" />
-                                <path d="M8 3v4" />
-                                <path d="M4 11h16" />
-                                <path d="M7 14h.013" />
-                                <path d="M10.01 14h.005" />
-                                <path d="M13.01 14h.005" />
-                                <path d="M16.015 14h.005" />
-                                <path d="M13.015 17h.005" />
-                                <path d="M7.01 17h.005" />
-                                <path d="M10.01 17h.005" />
-                            </svg>
-                            <span class="ml-4">Calendario</span>
-                        </a>
-                    </li>
                     @if ($user->type_user == 1)
                         <li class="menu {{ request()->routeIs('effortPoints.index') ? 'active' : '' }}">
                             <a class="inline-flex w-full items-center text-base font-normal transition-colors duration-150"
