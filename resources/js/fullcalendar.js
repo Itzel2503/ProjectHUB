@@ -31,11 +31,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         fechaFin.getHours() === 0 &&
                         fechaFin.getMinutes() === 0 &&
                         fechaFin.getSeconds() === 0;
-        // if (esTodoElDia) {
-        //     // Aumenta la fecha final para incluir todo el día (si falta tiempo)
-        //     fechaFin.setDate(fechaFin.getDate() + 1);
-        // }
-        
+        if (esTodoElDia) {
+            // Aumenta la fecha final para incluir todo el día (si falta tiempo)
+            fechaFin.setDate(fechaFin.getDate() + 1);
+        }
         
         var evento = {
             id: nota.id, // Asegúrate de incluir el ID de la nota
@@ -57,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
             delegates_id: nota.delegates.map(delegate => delegate.id), // Delegados id
             textColor: nota.color === '#facc15' ? 'black' : 'white' // Cambia el color del texto según el color del fondo
         };
-
+        
         return evento;
     });
 
@@ -162,7 +161,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 delegates_name: info.event.extendedProps.delegates_name || 'Sin delegados',
                 delegates_id: info.event.extendedProps.delegates_id || [], // Asegúrate de que sea un arreglo
             };
-        
+
+            if (nota.allDay === true && nota.end) {
+                // Restar un día a la fecha final (para incluir todo el día)
+                nota.end = new Date(nota.end); // Crear una copia de la fecha para evitar efectos secundarios
+                nota.end.setDate(nota.end.getDate() - 1);
+            }
+            
             // Actualiza los elementos del modal con la información de la nota
             document.getElementById('color-note').style.backgroundColor = nota.color;
         
@@ -248,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById("allDay-edit").checked = nota.allDay;
             
             document.getElementById("dateFirst-edit").value = nota.start.toISOString().split("T")[0];
-            // document.getElementById("dateSecond-edit").value = nota.end.toISOString().split("T")[0];
+            document.getElementById("dateSecond-edit").value = nota.end.toISOString().split("T")[0];
 
             const startTimeInput = document.getElementById("starTime-edit");
             const endTimeInput = document.getElementById("endTime-edit");
@@ -258,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let minutes = date.getMinutes().toString().padStart(2, "0");
                 return `${hours}:${minutes}`;
             }
-
+            
             if (nota.allDay) {
                 startTimeInput.disabled = true;
                 startTimeInput.value = '';
