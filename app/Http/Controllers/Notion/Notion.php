@@ -24,7 +24,7 @@ class Notion extends Controller
     {
         if (Auth::check()) {
             $allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
-            $projects = Project::all();
+            $projects = Project::orderBy('name', 'asc')->get();
             $userId = Auth::id();
 
             $notas = ModelsNotion::where('user_id', $userId)
