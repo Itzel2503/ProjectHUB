@@ -31,10 +31,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         fechaFin.getHours() === 0 &&
                         fechaFin.getMinutes() === 0 &&
                         fechaFin.getSeconds() === 0;
-        if (esTodoElDia) {
-            // Aumenta la fecha final para incluir todo el día (si falta tiempo)
-            fechaFin.setDate(fechaFin.getDate() + 1);
-        }
+        // if (esTodoElDia) {
+        //     // Aumenta la fecha final para incluir todo el día (si falta tiempo)
+        //     fechaFin.setDate(fechaFin.getDate() + 1);
+        // }
+        
         
         var evento = {
             id: nota.id, // Asegúrate de incluir el ID de la nota
@@ -245,8 +246,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById("title-edit").value = nota.title;
 
             document.getElementById("allDay-edit").checked = nota.allDay;
+            
             document.getElementById("dateFirst-edit").value = nota.start.toISOString().split("T")[0];
-            document.getElementById("dateSecond-edit").value = nota.end.toISOString().split("T")[0];
+            // document.getElementById("dateSecond-edit").value = nota.end.toISOString().split("T")[0];
 
             const startTimeInput = document.getElementById("starTime-edit");
             const endTimeInput = document.getElementById("endTime-edit");
