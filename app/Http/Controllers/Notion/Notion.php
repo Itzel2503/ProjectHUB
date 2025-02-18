@@ -76,7 +76,6 @@ class Notion extends Controller
      */
     public function store(Request $request)
     {
-        $id = null;
         // Combina la fecha y la hora
         $starTime = ($request->starTime) ? $request->starTime : '00:00';
         $endTime = ($request->endTime) ? $request->endTime : '00:00';
@@ -103,21 +102,21 @@ class Notion extends Controller
         }
 
         $notion->status = 'Abierto';
-        $notion->repeat = $request->repeat;
+        $notion->repeat = ($request->repeat != null) ? $request->repeat : 'Once';
 
         // Crear repeticiones según el filtro seleccionado
         switch ($request->repeat) {
             case 'Dairy':
-                $this->createDailyRepetitions($notion, $id);
+                $this->createDailyRepetitions($notion);
                 break;
             case 'Weeks':
-                $this->createWeeklyRepetitions($notion, $id);
+                $this->createWeeklyRepetitions($notion);
                 break;
             case 'Months':
-                $this->createMonthlyRepetitions($notion, $id);
+                $this->createMonthlyRepetitions($notion);
                 break;
             case 'Years':
-                $this->createYearlyRepetitions($notion, $id);
+                $this->createYearlyRepetitions($notion);
                 break;
             default:
                 // No se repite (opción "Once")
@@ -177,6 +176,17 @@ class Notion extends Controller
             // Formatear la fecha de inicio al formato deseado (Y-m-d H:i:s)
             $startDate = Carbon::parse($request->start)->format('Y-m-d H:i:s');
             $endDate = Carbon::parse($request->end)->format('Y-m-d H:i:s');
+
+            // Si el evento es de todo el día (allDay), ajustar las horas a 00:00:00
+            if ($request->allDay) {
+                // Ajustar la hora de "start" a 00:00:00
+                $startDate = Carbon::parse($startDate)->startOfDay()->format('Y-m-d H:i:s');
+
+                // Ajustar la hora de "end" a 00:00:00 y restar un día
+                if ($endDate) {
+                    $endDate = Carbon::parse($endDate)->startOfDay()->subDay()->format('Y-m-d H:i:s');
+                }
+            }
 
             // Actualizar las fechas
             $notion->start_date = $startDate;

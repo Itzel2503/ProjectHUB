@@ -87,6 +87,9 @@ document.addEventListener('DOMContentLoaded', function() {
         noEventsText: 'No hay eventos para mostrar',
         events: eventos, // Agrega los eventos al calendario
         editable: true, // Habilita la edición de eventos (arrastrar y soltar)
+        // Limitar el rango de horas visibles (7:00 AM a 9:00 PM)
+        slotMinTime: '07:00:00', // Hora mínima
+        slotMaxTime: '21:00:00', // Hora máxima
         eventDrop: function (info) {
             // Lógica para manejar el evento después de arrastrarlo
             updateEvent(info.event, info.revert); // Pasar info.revert como parámetro
@@ -347,6 +350,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateDates: true, // Modificacion de fecha y hora al arrastre
                     allDay: event.allDay, // Indicar si el evento es de todo el día
                 };
+                // Si el evento es de todo el día (allDay), restar un día a la fecha "end"
+                if (eventData.allDay && eventData.end) {
+                    const endDate = new Date(eventData.end);
+                    endDate.setDate(endDate.getDate() - 1); // Restar un día
+                    eventData.end = endDate.toISOString(); // Actualizar la fecha "end"
+                }
                 
                 // Si el evento es de todo el día, ajustar la fecha "end"
                 if (event.allDay) {
@@ -407,6 +416,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Selecciona el botón de guardar
     document.getElementById('btn-update-notion').addEventListener('click', function () {
+        // Obtener los valores de las fechas
+        var dateFirstEdit = document.getElementById('dateFirst-edit').value;
+        var dateSecondEdit = document.getElementById('dateSecond-edit').value;
+        // Obtener los valores de las fechas
+        var starTimeEdit = document.getElementById('starTime-edit').value;
+        var endTimeEdit = document.getElementById('endTime-edit').value;
+
+        // Convertir las fechas a objetos Date
+        var dateFirstEditObj = new Date(dateFirstEdit);
+        var dateSecondEditObj = new Date(dateSecondEdit);
+
+        // Validar si dateSecond es menor que dateFirst
+        if (dateSecondEditObj < dateFirstEditObj) {
+            toastr.error('La fecha final no puede ser menor que la fecha inicial.');
+            return; // Detener la ejecución de la función
+        } 
+
+        // Validar si dateSecond es menor que dateFirst
+        if (starTimeEdit > endTimeEdit) {
+            toastr.error('La hora de inicio no puede ser mayor o igual que la hora de finalización.');
+            return; // Detener la ejecución de la función
+        } 
         // Obtén los datos del formulario
         const form = document.getElementById('edit-notion-form');
         const formData = new FormData(form);

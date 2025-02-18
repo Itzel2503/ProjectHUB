@@ -227,48 +227,57 @@
                                                 <div class="flex justify-between">
                                                     <!--  🚀 Cohete: Propuestas; Lanzamientos -->
                                                     <label>
-                                                        <input type="checkbox" name="icon" value="&#x1F680;" class="icon-checkbox icon-style-edit">
+                                                        <input type="checkbox" name="icon" value="&#x1F680;"
+                                                            class="icon-checkbox icon-style-edit">
                                                         <span class="icon-event">&#x1F680;
                                                         </span>
                                                     </label>
                                                     <!-- 🔵 Círculo morado grande: Seguimiento -->
                                                     <label>
-                                                        <input type="checkbox" name="icon" value="&#x1F535;" class="icon-checkbox icon-style-edit">
+                                                        <input type="checkbox" name="icon" value="&#x1F535;"
+                                                            class="icon-checkbox icon-style-edit">
                                                         <span class="icon-event">&#x1F535;</span>
                                                     </label>
                                                     <!-- 💵 Dólar: Finanzas -->
                                                     <label>
-                                                        <input type="checkbox" name="icon" value="&#x1F4B5;" class="icon-checkbox icon-style-edit">
+                                                        <input type="checkbox" name="icon" value="&#x1F4B5;"
+                                                            class="icon-checkbox icon-style-edit">
                                                         <span class="icon-event">&#x1F4B5;</span>
                                                     </label>
                                                     <!-- 📅 Calendario: Cita -->
                                                     <label>
-                                                        <input type="checkbox" name="icon" value="&#x1F4C5;" class="icon-checkbox icon-style-edit">
+                                                        <input type="checkbox" name="icon" value="&#x1F4C5;"
+                                                            class="icon-checkbox icon-style-edit">
                                                         <span class="icon-event">&#x1F4C5;</span>
                                                     </label>
                                                     <!-- 💡 Bombilla: Ideas -->
                                                     <label>
-                                                        <input type="checkbox" name="icon" value="&#x1F4A1;" class="icon-checkbox icon-style-edit">
+                                                        <input type="checkbox" name="icon" value="&#x1F4A1;"
+                                                            class="icon-checkbox icon-style-edit">
                                                         <span class="icon-event">&#x1F4A1;</span>
                                                     </label>
                                                     <!-- 📎 Clip: Notas -->
                                                     <label>
-                                                        <input type="checkbox" name="icon" value="&#x1F4CE;" class="icon-checkbox icon-style-edit">
+                                                        <input type="checkbox" name="icon" value="&#x1F4CE;"
+                                                            class="icon-checkbox icon-style-edit">
                                                         <span class="icon-event">&#x1F4CE;</span>
                                                     </label>
                                                     <!-- ⭐ Estrella: Top -->
                                                     <label>
-                                                        <input type="checkbox" name="icon" value="&#x2B50;" class="icon-checkbox icon-style-edit">
+                                                        <input type="checkbox" name="icon" value="&#x2B50;"
+                                                            class="icon-checkbox icon-style-edit">
                                                         <span class="icon-event">&#x2B50;</span>
                                                     </label>
                                                     <!-- ⏸️ Doble barra vertical: Pausa -->
                                                     <label>
-                                                        <input type="checkbox" name="icon" value="&#x23F8;" class="icon-checkbox icon-style-edit">
+                                                        <input type="checkbox" name="icon" value="&#x23F8;"
+                                                            class="icon-checkbox icon-style-edit">
                                                         <span class="icon-event">&#x23F8;</span>
                                                     </label>
                                                     <!-- ✉️ Correo: Enviar -->
                                                     <label>
-                                                        <input type="checkbox" name="icon" value="&#x2709;" class="icon-checkbox icon-style-edit">
+                                                        <input type="checkbox" name="icon" value="&#x2709;"
+                                                            class="icon-checkbox icon-style-edit">
                                                         <span class="icon-event">&#x2709;</span>
                                                     </label>
                                                 </div>
@@ -746,6 +755,9 @@
         let dateSecond = document.getElementById('dateSecond');
         let starTime = document.getElementById('starTime');
         let endTime = document.getElementById('endTime');
+        // Definir las horas mínimas y máximas
+        const MIN_TIME = '07:00'; // 7:00 AM
+        const MAX_TIME = '21:00'; // 9:00 PM
         // REVISION DE CHECKBOX
         let checkboxAllDay = document.getElementById('allDay');
         let checkboxes = document.querySelectorAll('.priority-checkbox');
@@ -776,7 +788,7 @@
                 // Establecer la fecha en los campos de tipo 'date'
                 dateFirst.value = formattedDate;
                 dateSecond.value = formattedDate;
-                
+
                 // Establecer los valores en los campos de tipo 'time'
                 checkboxAllDay.checked = true;
                 starTime.value = '';
@@ -813,6 +825,42 @@
                     checkbox.checked = false;
                 });
             });
+        });
+
+        // Función para sumar una hora a una hora dada
+        function addOneHour(time) {
+            // Convertir la hora a un objeto Date
+            let date = new Date(`2000-01-01T${time}:00`);
+            // Sumar una hora (3600 segundos * 1000 milisegundos)
+            date.setTime(date.getTime() + 3600 * 1000);
+            // Formatear la hora resultante en formato HH:MM
+            return date.toTimeString().slice(0, 5);
+        }
+
+        // Validar starTime y actualizar endTime
+        starTime.addEventListener('input', function() {
+            // Validar que starTime no sea menor que 7:00 AM
+            if (starTime.value < MIN_TIME) {
+                starTime.value = MIN_TIME; // Ajustar a la hora mínima
+            }
+
+            // Calcular endTime sumando una hora a starTime
+            let newEndTime = addOneHour(starTime.value);
+
+            // Validar que endTime no sea mayor que 9:00 PM
+            if (newEndTime > MAX_TIME) {
+                newEndTime = MAX_TIME; // Ajustar a la hora máxima
+            }
+
+            // Actualizar el valor de endTime
+            endTime.value = newEndTime;
+        });
+
+        // Validar endTime (no puede ser mayor que 9:00 PM)
+        endTime.addEventListener('input', function() {
+            if (endTime.value > MAX_TIME) {
+                endTime.value = MAX_TIME; // Ajustar a la hora máxima
+            }
         });
 
         // CHECKBOX DE COLORES
@@ -914,10 +962,39 @@
         }
 
         // Mostrar la animación cuando se envíe el formulario
-        form.addEventListener('submit', function() {
-            loadingPage.classList.remove('hidden'); // Muestra la animación
-        });
+        form.addEventListener('submit', function(event) {
+            // Obtener los valores de las fechas
+            var dateFirstValue = dateFirst.value;
+            var dateSecondValue = dateSecond.value;
+            // Obtener los valores de las horas
+            var starTimeValue = starTime.value; // Valor de starTime (HH:MM)
+            var endTimeValue = endTime.value;   // Valor de endTime (HH:MM)
 
+            // Convertir las fechas a objetos Date
+            var dateFirstObj = new Date(dateFirstValue);
+            var dateSecondObj = new Date(dateSecondValue);
+
+            // Validar si dateSecond es menor que dateFirst
+            if (dateSecondObj < dateFirstObj) {
+                // Evitar que el formulario se envíe
+                event.preventDefault();
+
+                // Mostrar un mensaje de error con toastr
+                toastr.error('La fecha final no puede ser menor que la fecha inicial.', 'Error');
+            } 
+
+            // Validar si starTime es mayor o igual que endTime
+            if (starTimeValue > endTimeValue) {
+                // Evitar que el formulario se envíe
+                event.preventDefault();
+
+                // Mostrar un mensaje de error con toastr
+                toastr.error('La hora de inicio no puede ser mayor o igual que la hora de finalización.', 'Error');
+                return; // Detener la ejecución
+            }
+            // Mostrar la animación de carga
+            loadingPage.classList.remove('hidden');
+        });
         // ----------------------------------- MODAL MOSTRAR ----------------------------------- 
         $("#btn-close-modal-show").on("click", function() {
             $("#modal-show").removeClass("show").addClass("hidden");
@@ -969,6 +1046,44 @@
             $("#body-show").removeClass("hidden").addClass("block");
             $("#body-edit").removeClass("block").addClass("hidden");
             $("#div-edit-btn").removeClass("hidden").addClass("block");
+        });
+
+        let starTimeEdit = document.getElementById('starTime-edit');
+        let endTimeEdit = document.getElementById('endTime-edit');
+        // Función para sumar una hora a una hora dada
+        function addOneHour(time) {
+            // Convertir la hora a un objeto Date
+            let date = new Date(`2000-01-01T${time}:00`);
+            // Sumar una hora (3600 segundos * 1000 milisegundos)
+            date.setTime(date.getTime() + 3600 * 1000);
+            // Formatear la hora resultante en formato HH:MM
+            return date.toTimeString().slice(0, 5);
+        }
+
+        // Validar starTime y actualizar endTime
+        starTimeEdit.addEventListener('input', function() {
+            // Validar que starTime no sea menor que 7:00 AM
+            if (starTimeEdit.value < MIN_TIME) {
+                starTimeEdit.value = MIN_TIME; // Ajustar a la hora mínima
+            }
+
+            // Calcular endTime sumando una hora a starTime
+            let newEndTimeEdit = addOneHour(starTimeEdit.value);
+
+            // Validar que endTime no sea mayor que 9:00 PM
+            if (newEndTimeEdit > MAX_TIME) {
+                newEndTimeEdit = MAX_TIME; // Ajustar a la hora máxima
+            }
+
+            // Actualizar el valor de endTime
+            endTimeEdit.value = newEndTimeEdit;
+        });
+
+        // Validar endTime (no puede ser mayor que 9:00 PM)
+        endTimeEdit.addEventListener('input', function() {
+            if (endTimeEdit.value > MAX_TIME) {
+                endTimeEdit.value = MAX_TIME; // Ajustar a la hora máxima
+            }
         });
 
         // Manejador del dropdown
