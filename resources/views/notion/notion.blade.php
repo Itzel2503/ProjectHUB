@@ -751,7 +751,7 @@
         // FECHA Y HORA
         const now = new Date(); // Obtener la fecha y hora actuales
         const formattedDate = now.toISOString().split('T')[0]; // Formatear la fecha para los campos de tipo 'date'
-        let dateFirst = document.getElementById('dateFirst');
+        
         let dateSecond = document.getElementById('dateSecond');
         let starTime = document.getElementById('starTime');
         let endTime = document.getElementById('endTime');
@@ -777,8 +777,18 @@
         }
 
         // Calcular la hora actual y 1 hora después
-        const startTimeNow = formatTime(now); // Hora actual
-        const endTimeNow = formatTime(new Date(now.getTime() + 60 * 60 * 1000)); // 1 hora después
+        // Función para formatear la hora sin minutos
+        function formatTime(date) {
+            const hours = date.getHours().toString().padStart(2, '0'); // Obtener horas (HH)
+            return `${hours}:00`; // Formato HH:00
+        }
+
+        // Obtener la hora actual sin minutos
+        now.setMinutes(0, 0, 0); // Redondear la hora actual hacia abajo (minutos y segundos a 0)
+
+        const startTimeNow = formatTime(now); // Hora actual sin minutos (HH:00)
+        const endTimeNow = formatTime(new Date(now.getTime() + 60 * 60 * 1000)); // 1 hora después sin minutos (HH:00)
+
 
         $(document).ready(function() {
             $("#btn-new").on("click", function() {
@@ -825,6 +835,12 @@
                     checkbox.checked = false;
                 });
             });
+        });
+
+        // Evento para detectar cambios en dateFirst
+        dateFirst.addEventListener('input', function() {
+            // Asignar el valor de dateFirst a dateSecond
+            dateSecond.value = dateFirst.value;
         });
 
         // Función para sumar una hora a una hora dada
@@ -1048,8 +1064,18 @@
             $("#div-edit-btn").removeClass("hidden").addClass("block");
         });
 
+        let dateFirstEdit = document.getElementById('dateFirst-edit');
+        let dateSecondEdit = document.getElementById('dateSecond-edit');
         let starTimeEdit = document.getElementById('starTime-edit');
         let endTimeEdit = document.getElementById('endTime-edit');
+
+        // Evento para detectar cambios en dateFirst
+        dateFirstEdit.addEventListener('input', function() {
+            // Asignar el valor de dateFirst a dateSecond
+            dateSecondEdit.value = dateFirstEdit.value;
+        });
+
+        
         // Función para sumar una hora a una hora dada
         function addOneHour(time) {
             // Convertir la hora a un objeto Date

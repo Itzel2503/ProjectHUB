@@ -90,6 +90,54 @@ document.addEventListener('DOMContentLoaded', function() {
         // Limitar el rango de horas visibles (7:00 AM a 9:00 PM)
         slotMinTime: '07:00:00', // Hora mínima
         slotMaxTime: '21:00:00', // Hora máxima
+        dateClick: function(info) { // Evento al hacer clic en un día
+            // Obtener la fecha seleccionada
+            var selectedDate = info.dateStr; // Formato YYYY-MM-DD o YYYY-MM-DDTHH:mm:ssZ
+            console.log(selectedDate);
+
+            // Llenar los inputs de fecha con la fecha seleccionada
+            document.getElementById('dateFirst').value = selectedDate.split('T')[0]; // Extraer solo la fecha (YYYY-MM-DD)
+            document.getElementById('dateSecond').value = selectedDate.split('T')[0]; // Extraer solo la fecha (YYYY-MM-DD)
+
+            // Obtener referencias a los elementos del formulario
+            let starTime = document.getElementById('starTime');
+            let endTime = document.getElementById('endTime');
+            let allDayCheckbox = document.getElementById('allDay');
+
+            // Configurar el comportamiento inicial
+            allDayCheckbox.checked = true; // Marcar el checkbox "Todo el día"
+            starTime.value = ''; // Limpiar el campo de hora de inicio
+            endTime.value = '';  // Limpiar el campo de hora de finalización
+            starTime.disabled = true; // Deshabilitar el campo de hora de inicio
+            endTime.disabled = true;  // Deshabilitar el campo de hora de finalización
+
+            // Verificar si selectedDate incluye hora y minutos
+            if (selectedDate.includes('T')) {
+                // Extraer la hora y los minutos (formato HH:mm)
+                let timePart = selectedDate.split('T')[1].split('-')[0]; // Extraer "HH:mm:ss"
+                let [hours, minutes] = timePart.split(':'); // Separar horas y minutos
+
+                // Asignar la hora y los minutos a starTime
+                starTime.value = `${hours}:${minutes}`;
+                starTime.disabled = false; // Habilitar el campo de hora de inicio
+
+                // Calcular endTime sumando 1 hora a starTime
+                let endTimeDate = new Date(`2000-01-01T${hours}:${minutes}:00`); // Crear objeto Date
+                endTimeDate.setHours(endTimeDate.getHours() + 1); // Sumar 1 hora
+                let endTimeValue = endTimeDate.toTimeString().slice(0, 5); // Formatear a HH:MM
+
+                // Actualizar el campo endTime
+                endTime.value = endTimeValue;
+                endTime.disabled = false; // Habilitar el campo de hora de finalización
+
+                // Desmarcar y deshabilitar el checkbox "Todo el día"
+                allDayCheckbox.checked = false;
+                allDayCheckbox.disabled = true;
+            }
+
+            // Mostrar el modal
+            $("#modal-edit-create").removeClass("hidden").addClass("show");
+        },
         eventDrop: function (info) {
             // Lógica para manejar el evento después de arrastrarlo
             updateEvent(info.event, info.revert); // Pasar info.revert como parámetro
