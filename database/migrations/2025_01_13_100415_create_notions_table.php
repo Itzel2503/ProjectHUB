@@ -29,6 +29,7 @@ class CreateNotionsTable extends Migration
             $table->string('priority')->nullable();
             $table->dateTime('start_date');
             $table->dateTime('end_date');
+            $table->dateTime('deadline')->nullable();
             $table->string('status');
             $table->boolean('finish')->nullable();
             $table->string('repeat');

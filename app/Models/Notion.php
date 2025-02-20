@@ -20,6 +20,7 @@ class Notion extends Model
         'priority',
         'start_date',
         'end_date',
+        'deadline',
         'status',
         'repeat',
     ];

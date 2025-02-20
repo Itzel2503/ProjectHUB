@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
             priority: nota.priority, // Prioridad
             start: fechaInicio.toISOString(), // Fecha y hora de inicio del evento
             end: fechaFin.toISOString(), // Fecha y hora de finalización del evento
+            deadline: nota.deadline, // Fecha limite del evento
             status: nota.status,  // Estatus del evento
             allDay: esTodoElDia, // Marca el evento como de todo el día o no
             repeat: nota.repeat, // Repetir
@@ -93,7 +94,6 @@ document.addEventListener('DOMContentLoaded', function() {
         dateClick: function(info) { // Evento al hacer clic en un día
             // Obtener la fecha seleccionada
             var selectedDate = info.dateStr; // Formato YYYY-MM-DD o YYYY-MM-DDTHH:mm:ssZ
-            console.log(selectedDate);
 
             // Llenar los inputs de fecha con la fecha seleccionada
             document.getElementById('dateFirst').value = selectedDate.split('T')[0]; // Extraer solo la fecha (YYYY-MM-DD)
@@ -148,16 +148,45 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         // Personalización del contenido del evento
         eventContent: function(arg) {
-            // Construye el contenido del evento
-            var icon = arg.event.extendedProps.icon;
+            // Obtener los valores necesarios
+            var icon = arg.event.extendedProps.icon || '';
             var title = arg.event.title;
-            // var status = arg.event.extendedProps.status;
-            var project_name = arg.event.extendedProps.project_name;
-            var priority = arg.event.extendedProps.priority || 'Sin prioridad';
-            if (icon == null) {
-                icon = '';
+            var priority = arg.event.extendedProps.priority || '';
+            
+            // Definir los colores según la prioridad
+            var priorityColors = {
+                'Bajo': '#3b82f6',  // Azul
+                'Medio': '#facc15', // Amarillo
+                'Alto': '#dc2626'   // Rojo
+            };
+        
+            // Obtener el color correspondiente o dejar vacío si no hay prioridad
+            var priorityIcon = priorityColors[priority] 
+                ? `<span style="
+                        display: inline-block; 
+                        width: 12px; 
+                        height: 12px; 
+                        background-color: ${priorityColors[priority]}; 
+                        border-radius: 3px; 
+                        margin-right: 5px;
+                    "></span>` 
+                : '';
+        
+            // Convertir la hora al formato de 12 horas con AM/PM
+            var startDate = new Date(arg.event.start);
+            var hours = startDate.getHours();
+            var minutes = startDate.getMinutes();
+            var formattedTime = 'Todo el día';
+        
+            // Solo mostrar la hora si no es "00:00"
+            if (!(hours === 0 && minutes === 0)) {
+                var ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12; // Convierte 0 en 12
+                minutes = minutes < 10 ? '0' + minutes : minutes; // Asegura dos dígitos en minutos
+                formattedTime = ` - ${hours}:${minutes} ${ampm}`; // Hora final en formato 12h
             }
-            // Devuelve un objeto con nodos HTML
+        
+            // Devolver el contenido del evento
             return {
                 html: `
                     <div style="
@@ -165,19 +194,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         overflow: hidden; 
                         text-overflow: ellipsis; 
                         white-space: nowrap;
-                        max-width: 100%; /* Ajusta esto según tus necesidades */
+                        max-width: 100%;
                     ">
                         <div>
-                            <span style="margin-right: 0.25rem;">${icon}</span> <!-- Ícono de corazón con HTML entity -->
+                            <span style="margin-right: 0.25rem;">${icon}</span>
                             <strong>${title}</strong>
                         </div>
                         <div style="font-size: smaller">
-                        ${priority}, ${project_name}
+                            ${formattedTime} ${priorityIcon}
                         </div>
                     </div>
                 `
             };
-        },
+        },        
         eventClick: function (info) {
             // Función para formatear la fecha con hora
             function formatFecha(fecha) {
@@ -190,6 +219,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     hour12: false,
                 };
                 return new Intl.DateTimeFormat('es-MX', opciones).format(fecha);
+            }
+
+            function formatDeadline(fecha) {
+                if (!fecha) return '';
+                return new Date(fecha).toLocaleDateString('es-MX', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+
+            function formatTime(date) {
+                let hours = date.getHours().toString().padStart(2, "0");
+                let minutes = date.getMinutes().toString().padStart(2, "0");
+                return `${hours}:${minutes}`;
             }
         
             // Obtén los datos del evento
@@ -204,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 priority: info.event.extendedProps.priority,
                 start: info.event.start,
                 end: info.event.end,
+                deadline: info.event.extendedProps.deadline,
                 allDay: info.event.allDay,
                 status: info.event.extendedProps.status,
                 repeat: info.event.extendedProps.repeat,
@@ -213,42 +258,53 @@ document.addEventListener('DOMContentLoaded', function() {
                 delegates_id: info.event.extendedProps.delegates_id || [], // Asegúrate de que sea un arreglo
             };
 
+            // Titulo modal
+            let colorNote = document.getElementById('color-note');
+            let titleNote = document.getElementById('title-note');
+            // DATOS A MOSTRAR
+            var dateStart = document.getElementById('date-start');
+            var dateEnd = document.getElementById('date-end');
+            var repeatNote = document.getElementById('repeat-note');
+            var userNote = document.getElementById('user-note');
+            var priorityNote = document.getElementById('priority-note');
+            var delegateNote = document.getElementById('delegate-note');
+            var projectNote = document.getElementById('project-note');
+
             if (nota.allDay === true && nota.end) {
                 // Restar un día a la fecha final (para incluir todo el día)
                 nota.end = new Date(nota.end); // Crear una copia de la fecha para evitar efectos secundarios
                 nota.end.setDate(nota.end.getDate() - 1);
             }
             
-            // Actualiza los elementos del modal con la información de la nota
-            document.getElementById('color-note').style.backgroundColor = nota.color;
-        
+            // Actualiza los elementos del titulo del modal
+            colorNote.style.backgroundColor = nota.color;
+            
             // Lógica para cambiar el texto y borde del título
-            var titleNoteElement = document.getElementById('title-note');
             let icon = '';
             if (nota.icon != null) {
                 icon = nota.icon;
             }
-            titleNoteElement.textContent = icon + ' ' + nota.title;
-        
+            titleNote.textContent = icon + ' ' + nota.title;
+            
             // Cambia el color del texto según el color de fondo
             if (nota.color === '#facc15') {
-                titleNoteElement.style.color = 'black';
-                titleNoteElement.style.borderColor = 'black'; // Cambia el color del borde
+                titleNote.style.color = 'black';
+                titleNote.style.borderColor = 'black'; // Cambia el color del borde
             } else {
-                titleNoteElement.style.color = 'white';
-                titleNoteElement.style.borderColor = 'white'; // Cambia el color del borde
+                titleNote.style.color = 'white';
+                titleNote.style.borderColor = 'white'; // Cambia el color del borde
             }
-        
-            // Mostrar fecha dependiendo de si es allDay o no
-            var dateStartElement = document.getElementById('date-start');
-            var dateEndElement = document.getElementById('date-end');
-
+            
             // Si no es todo el día, muestra el rango completo con hora
-            dateStartElement.textContent = `Inicio: ${formatFecha(nota.start)}`;
-            dateEndElement.textContent = `Fin: ${formatFecha(nota.end)}`;
-
-        
-            // Actualiza el resto de la información en el modal
+            dateStart.textContent = `Inicio: ${formatFecha(nota.start)}`;
+            dateEnd.textContent = `Fin: ${formatFecha(nota.end)}`;
+            
+            // FECHA DE REPETICION
+            var noteDeadline = '';
+            if (nota.deadline) {
+                noteDeadline = ` hasta ${formatDeadline(nota.deadline)}`;
+            }
+            // Texto de repeticion
             var noteRepeat = '';
             if (nota.repeat == 'Dairy') {
                 noteRepeat = 'Todos los días'
@@ -261,15 +317,48 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 noteRepeat = 'No se repite'
             }
-            document.getElementById('repeat-note').textContent = noteRepeat;
-            document.getElementById('user-note').textContent = nota.user;
-            document.getElementById('priority-note').textContent = nota.priority === null ? 'Sin prioridad' : nota.priority ;
-            document.getElementById('delegate-note').textContent = nota.delegates_name;
-            document.getElementById('project-note').textContent = nota.project_name;
+
+            repeatNote.textContent = noteRepeat + noteDeadline;
+            userNote.textContent = nota.user;
+            priorityNote.textContent = nota.priority === null ? 'Sin prioridad' : nota.priority ;
+            delegateNote.textContent = nota.delegates_name;
+            projectNote.textContent = nota.project_name;
             // --------------------------------------------------------------------------------------------------------------------------------------------
+            let modalShow = document.getElementById('modal-show');
+            // Manejar la selección de inputs con valores por default
+            let idEdit = document.getElementById("id-edit");
+            let repeatEditInput = document.getElementById("repeat-edit-input");
+            let dateFirstEditInput = document.getElementById("dateFirst-edit-input");
+            let dateSecondEditInput = document.getElementById("dateSecond-edit-input");
+            let deadlineEditInput = document.getElementById("deadline-edit-input");
+            // Manejar la selección de colores
+            let circleColorEdit = document.querySelectorAll('.circle-color-edit');
+            // Manejar la selección de iconos
+            let checkboxesIconEdit = document.querySelectorAll('.icon-style-edit');
+
+            let titleEdit = document.getElementById('title-edit');
+            // Manejar la selección de Fecha y Hora
+            let allDayEdit = document.getElementById('allDay-edit');
+            let dateFirstEdit = document.getElementById('dateFirst-edit');
+            let dateSecondEdit = document.getElementById('dateSecond-edit');
+            let starTimeEdit = document.getElementById('starTime-edit');
+            let endTimeEdit = document.getElementById('endTime-edit');
+            // Manejar la selección de Repetir y fecha límite
+            let repeatEdit = document.getElementById('repeat-edit');
+            let divDeadlineEdit = document.getElementById('divDeadline-edit');
+            let deadlineEdit = document.getElementById('deadline-edit');
+            let deadlineEditDisabled = document.getElementById('deadline-edit-disabled');
+            // Manejar la selección de prioridad
+            let priority1Edit = document.getElementById('priority1-edit');
+            let priority2Edit = document.getElementById('priority2-edit');
+            let priority3Edit = document.getElementById('priority3-edit');
+
+            let project_idEdit = document.getElementById('project_id-edit');
+            // Manejar la selección de delegados
+            let delegateCheckboxes = document.querySelectorAll('.delegate-edit');
+
             // Actualiza los colores (checkboxes)
-            const colorCheckboxes = document.querySelectorAll('.circle-color-edit');
-            colorCheckboxes.forEach((checkbox) => {
+            circleColorEdit.forEach((checkbox) => {
                 // Comprueba si el checkbox coincide con el color seleccionado
                 if (checkbox.value === nota.color) {
                     checkbox.checked = true;
@@ -283,8 +372,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Actualiza los colores (checkboxes)
-            const iconsCheckboxes = document.querySelectorAll('.icon-style-edit');
-            iconsCheckboxes.forEach((checkbox) => {
+            checkboxesIconEdit.forEach((checkbox) => {
                 // Comprueba si el checkbox coincide con el color seleccionado
                 if (checkbox.value === nota.icon) {
                     checkbox.checked = true;
@@ -298,46 +386,53 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Actualiza los inputs del formulario con la información de la nota
-            document.getElementById("id-edit").value = nota.id;
-            document.getElementById("title-edit").value = nota.title;
+            idEdit.value = nota.id;
+            repeatEditInput.value = nota.repeat || "Once";
+            dateFirstEditInput.value = nota.start.toISOString().split("T")[0];
+            dateSecondEditInput.value = nota.end.toISOString().split("T")[0];
 
-            document.getElementById("allDay-edit").checked = nota.allDay;
-            
-            document.getElementById("dateFirst-edit").value = nota.start.toISOString().split("T")[0];
-            document.getElementById("dateSecond-edit").value = nota.end.toISOString().split("T")[0];
+            titleEdit.value = nota.title;
+            allDayEdit.checked = nota.allDay;
+            dateFirstEdit.value = nota.start.toISOString().split("T")[0];
+            dateSecondEdit.value = nota.end.toISOString().split("T")[0];
 
-            const startTimeInput = document.getElementById("starTime-edit");
-            const endTimeInput = document.getElementById("endTime-edit");
-
-            function formatTime(date) {
-                let hours = date.getHours().toString().padStart(2, "0");
-                let minutes = date.getMinutes().toString().padStart(2, "0");
-                return `${hours}:${minutes}`;
-            }
-            
             if (nota.allDay) {
-                startTimeInput.disabled = true;
-                startTimeInput.value = '';
-                endTimeInput.disabled = true;
-                endTimeInput.value = '';
+                starTimeEdit.disabled = true;
+                starTimeEdit.value = '';
+                endTimeEdit.disabled = true;
+                endTimeEdit.value = '';
             } else {
-                startTimeInput.disabled = false;
-                startTimeInput.value = formatTime(nota.start); // Usa la hora local
-                endTimeInput.disabled = false;
-                endTimeInput.value = formatTime(nota.end); // Usa la hora local
+                starTimeEdit.disabled = false;
+                starTimeEdit.value = formatTime(nota.start); // Usa la hora local
+                endTimeEdit.disabled = false;
+                endTimeEdit.value = formatTime(nota.end); // Usa la hora local
             }
 
-            document.getElementById("repeat-edit").value = nota.repeat || "Once";
-            document.getElementById("repeat-edit-input").value = nota.repeat || "Once";
-            document.getElementById("project_id-edit").value = String(nota.project_id) || String(0);
+            repeatEdit.value = nota.repeat || "Once";
+            
+            if (nota.repeat != 'Once') {
+                divDeadlineEdit.classList.remove('hidden');
+                // Verificar si nota.deadline no es null
+                if (nota.deadline) {
+                    let deadlineDate = new Date(nota.deadline); // Convertir a objeto Date
+                    deadlineEditDisabled.value = deadlineDate.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+                    deadlineEdit.value = deadlineDate.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+                    deadlineEditInput.value = deadlineDate.toISOString().split('T')[0];
+                } else {
+                    deadlineEditDisabled.value = '';
+                    deadlineEdit.value = ''; // Vaciar si no hay fecha
+                    deadlineEditInput.value = '';
+                }
+            } 
 
             // Actualiza la prioridad
-            document.getElementById("priority1-edit").checked = nota.priority === "Alto";
-            document.getElementById("priority2-edit").checked = nota.priority === "Medio";
-            document.getElementById("priority3-edit").checked = nota.priority === "Bajo";
+            priority1Edit.checked = nota.priority === "Alto";
+            priority2Edit.checked = nota.priority === "Medio";
+            priority3Edit.checked = nota.priority === "Bajo";
 
+            project_idEdit.value = String(nota.project_id) || String(0);
+            
             // Actualiza los delegados (checkboxes)
-            const delegateCheckboxes = document.querySelectorAll('.delegate-edit');
             delegateCheckboxes.forEach((checkbox) => {
                 checkbox.checked = nota.delegates_id.includes(parseInt(checkbox.value)); // Comprueba por ID
             });
@@ -348,7 +443,8 @@ document.addEventListener('DOMContentLoaded', function() {
             Livewire.emit('setEventId', eventId);
         
             // Muestra el modal
-            $("#modal-show").removeClass("hidden").addClass("show");
+            modalShow.classList.remove("hidden");
+            modalShow.classList.add("show");
         }        
     });
 
@@ -491,6 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(form);
         const noteId = document.getElementById('id-edit').value; // Obtén el ID de la nota
         const repeatValue = document.getElementById('repeat-edit-input').value; // Obtén el valor de repeat-edit-input
+        const deadlineValue = document.getElementById('deadline-edit-input').value; // Obtén el valor de repeat-edit-input
 
         // Convertir FormData a un objeto JSON
         const data = {};
@@ -508,15 +605,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Función para enviar la solicitud al backend
-        const sendRequest = (editAllEvents, changeRepetition = false, noRepeat = false) => {
+        const sendRequest = (editAllEvents, changeRepetition = false, noRepeat = false, deadlineChange = false) => {
             // Agrega la variable editAllEvents al objeto data
             data.editAllEvents = editAllEvents;
             data.changeRepetition = changeRepetition;
             data.noRepeat = noRepeat;
+            data.deadlineChange = deadlineChange;
             
             // Mostrar la animación de carga
             document.querySelector('.loadingspinner').parentElement.classList.remove('hidden');
-
+            console.log(data);
+            
             // Envía la solicitud AJAX
             fetch(`/calendar/${noteId}`, {
                 method: 'PUT', // Usa PUT para actualizar
@@ -561,33 +660,59 @@ document.addEventListener('DOMContentLoaded', function() {
         if (repeatValue !== 'Once') {
             // Evento original en repetición
             if (repeatValue === data.repeat) {
-                // Preguntar si se actualiza este evento o todos
-                Swal.fire({
-                    title: '¿Qué deseas editar?',
-                    html: `
-                        <strong style="color: red;">Advertencia:</strong> Si eliges "Todos los eventos", se eliminará toda la información de los chats asociados a estos eventos.
-                    `, // Usar HTML para mostrar el mensaje
-                    icon: 'question',
-                    showCancelButton: true,
-                    showCloseButton: true, // Habilita la "X" de cierre
-                    confirmButtonColor: '#202a33',
-                    confirmButtonText: 'Todos los eventos',
-                    cancelButtonText: 'Solo este evento',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // El usuario eligió editar todos los eventos
-                        sendRequest(true);
-                    } else {
-                        // El usuario eligió editar solo este evento o cerró el modal con la "X"
-                        if (result.dismiss === Swal.DismissReason.close) {
-                            // El usuario cerró el modal con la "X"
-                            Swal.close(); // Cierra el modal sin hacer nada
+                // Comparar fechas para detectar cambios
+                if (deadlineValue == data.deadline) {
+                    // Preguntar si se actualiza este evento o todos
+                    Swal.fire({
+                        title: '¿Qué deseas editar?',
+                        html: `
+                            <strong style="color: red;">Advertencia:</strong> Si eliges "Todos los eventos", se eliminará toda la información de los chats asociados a estos eventos.
+                        `, // Usar HTML para mostrar el mensaje
+                        icon: 'question',
+                        showCancelButton: true,
+                        showCloseButton: true, // Habilita la "X" de cierre
+                        confirmButtonColor: '#202a33',
+                        confirmButtonText: 'Todos los eventos',
+                        cancelButtonText: 'Solo este evento',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // El usuario eligió editar todos los eventos
+                            sendRequest(true);
                         } else {
-                            // El usuario eligió editar solo este evento
-                            sendRequest(false);
+                            // El usuario eligió editar solo este evento o cerró el modal con la "X"
+                            if (result.dismiss === Swal.DismissReason.close) {
+                                // El usuario cerró el modal con la "X"
+                                Swal.close(); // Cierra el modal sin hacer nada
+                            } else {
+                                // El usuario eligió editar solo este evento
+                                sendRequest(false);
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Cambio en la fecha límite',
+                        html: `
+                            <p>Se ha detectado un cambio en la fecha límite del evento.</p>
+                            <p><strong>Fecha anterior:</strong> ${deadlineValue || 'Sin fecha límite'}</p>
+                            <p><strong>Nueva fecha:</strong> ${data.deadline || 'Sin fecha límite'}</p>
+                            <p>Esto <strong style="color: red;">sumará o restará eventos</strong> relacionados.</p>
+                        `,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#202a33',
+                        confirmButtonText: 'Actualizar todos los eventos',
+                        cancelButtonText: 'Cancelar',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Si el usuario confirma, continuar con la actualización de todos los eventos
+                            sendRequest(true, false, false, true);
+                        } else {
+                            // Si cancela o cierra el modal, no hacer nada
+                            Swal.close();
+                        }
+                    });
+                }
             } else {
                 // Cambio de repetición en request
                 Swal.fire({

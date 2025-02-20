@@ -1120,9 +1120,6 @@ select {
 .w-2\/4 {
   width: 50%;
 }
-.w-2\/5 {
-  width: 40%;
-}
 .w-2\/6 {
   width: 33.333333%;
 }
@@ -1913,6 +1910,10 @@ select {
 .ring-gray-300 {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(209 213 219 / var(--tw-ring-opacity, 1));
+}
+.blur {
+  --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 .backdrop-blur-md {
   --tw-backdrop-blur: blur(12px);

@@ -92,6 +92,7 @@ class Notion extends Controller
         $notion->title = $request->title;
         $notion->start_date = $dateStartTime;
         $notion->end_date = $dateEndTime;
+        $notion->deadline = $request->deadline;
 
         if ($request->priority1) {
             $notion->priority = 'Alto';
@@ -283,6 +284,7 @@ class Notion extends Controller
             $notion->title = $request->title;
             $notion->start_date = $dateStartTime;
             $notion->end_date = $dateEndTime;
+            $notion->deadline = $request->deadline;
 
             if ($request->priority1) {
                 $notion->priority = 'Alto';
@@ -363,61 +365,111 @@ class Notion extends Controller
                 } else {
                     // Editar todos los eventos o solo el seleccionado
                     if ($request->editAllEvents == true) {
-                        // Eliminar todos los eventos relacionados por note_repeat
-                        $relatedNotions = ModelsNotion::where('note_repeat', $notion->note_repeat)->get();
+                        if ($request->deadlineChange == true) {   
+                            $lastNotion = ModelsNotion::where('note_repeat', $request->note_repeat)->orderBy('end_date', 'desc')->first();
+                            $notions = ModelsNotion::where('note_repeat', $request->note_repeat)->get();
 
-                        // Recorrer cada evento relacionado
-                        foreach ($relatedNotions as $relatedNotion) {
-                            // Eliminar los registros de la tabla pivote (notion_users) para este evento
-                            DB::table('notion_users')->where('notion_id', $relatedNotion->id)->delete();
-
-                            // Obtener todos los chats asociados al evento relacionado
-                            $chatNotion = ChatNotion::where('notion_id', $relatedNotion->id)->get();
-
-                            // Recorrer cada chat para eliminar archivos y mensajes
-                            foreach ($chatNotion as $chat) {
-                                // Si el chat tiene contenido (archivos), eliminarlos
-                                if ($chat->content) {
-                                    $contentPath = 'notion/' . $chat->content; // Ruta relativa del archivo
-                                    $fullPath = public_path($contentPath); // Ruta absoluta del archivo
-
-                                    // Verificar si el archivo existe y eliminarlo
-                                    if (File::exists($fullPath)) {
-                                        File::delete($fullPath);
-                                    }
-                                }
-
-                                // Eliminar el chat
-                                $chat->delete();
+                            foreach ($notions as $notion) {
+                                $notion->deadline = $request->deadline;
+                                // Guardar los cambios en la base de datos
+                                $notion->save();
                             }
 
-                            // Eliminar el evento relacionado
-                            $relatedNotion->delete();
-                        }
+                            // sin limite de repeticion
+                            if ($request->deadline == '') {
+                                
+                            } else {
+                                if ($notion->deadline < $request->deadline) {
+                                    // Se agregan fechas
+                                    $notion->start_date = Carbon::parse($lastNotion->start_date)->addDay()->format('Y-m-d H:i:s');
+                                    $notion->end_date = Carbon::parse($lastNotion->end_date)->addDay()->format('Y-m-d H:i:s');
+                                } else {
+                                    // Se restan fechas
 
-                        // Crear nuevos eventos según la frecuencia seleccionada
-                        switch ($request->repeat) {
-                            case 'Dairy':
-                                $this->createDailyRepetitions($notion);
-                                break;
-                            case 'Weeks':
-                                $this->createWeeklyRepetitions($notion);
-                                break;
-                            case 'Months':
-                                $this->createMonthlyRepetitions($notion);
-                                break;
-                            case 'Years':
-                                $this->createYearlyRepetitions($notion);
-                                break;
-                            default:
-                                // No se repite (opción "Once")
-                                $notion->save();
-
-                                // Sincronizar usuarios relacionados en la tabla pivote
-                                if ($request->has('delegate_id')) {
-                                    $notion->delegate()->sync($request->delegate_id);
                                 }
-                                break;
+                            }
+
+                            // Crear nuevos eventos según la frecuencia seleccionada
+                            switch ($request->repeat) {
+                                case 'Dairy':
+                                    $this->createDailyRepetitions($notion);
+                                    break;
+                                case 'Weeks':
+                                    $this->createWeeklyRepetitions($notion);
+                                    break;
+                                case 'Months':
+                                    $this->createMonthlyRepetitions($notion);
+                                    break;
+                                case 'Years':
+                                    $this->createYearlyRepetitions($notion);
+                                    break;
+                                default:
+                                    // No se repite (opción "Once")
+                                    $notion->save();
+
+                                    // Sincronizar usuarios relacionados en la tabla pivote
+                                    if ($request->has('delegate_id')) {
+                                        $notion->delegate()->sync($request->delegate_id);
+                                    }
+                                    break;
+                            }
+                        } else {
+                            // Eliminar todos los eventos relacionados por note_repeat
+                            $relatedNotions = ModelsNotion::where('note_repeat', $notion->note_repeat)->get();
+
+                            // Recorrer cada evento relacionado
+                            foreach ($relatedNotions as $relatedNotion) {
+                                // Eliminar los registros de la tabla pivote (notion_users) para este evento
+                                DB::table('notion_users')->where('notion_id', $relatedNotion->id)->delete();
+
+                                // Obtener todos los chats asociados al evento relacionado
+                                $chatNotion = ChatNotion::where('notion_id', $relatedNotion->id)->get();
+
+                                // Recorrer cada chat para eliminar archivos y mensajes
+                                foreach ($chatNotion as $chat) {
+                                    // Si el chat tiene contenido (archivos), eliminarlos
+                                    if ($chat->content) {
+                                        $contentPath = 'notion/' . $chat->content; // Ruta relativa del archivo
+                                        $fullPath = public_path($contentPath); // Ruta absoluta del archivo
+
+                                        // Verificar si el archivo existe y eliminarlo
+                                        if (File::exists($fullPath)) {
+                                            File::delete($fullPath);
+                                        }
+                                    }
+
+                                    // Eliminar el chat
+                                    $chat->delete();
+                                }
+
+                                // Eliminar el evento relacionado
+                                $relatedNotion->delete();
+                            }
+
+                            // Crear nuevos eventos según la frecuencia seleccionada
+                            switch ($request->repeat) {
+                                case 'Dairy':
+                                    $this->createDailyRepetitions($notion);
+                                    break;
+                                case 'Weeks':
+                                    $this->createWeeklyRepetitions($notion);
+                                    break;
+                                case 'Months':
+                                    $this->createMonthlyRepetitions($notion);
+                                    break;
+                                case 'Years':
+                                    $this->createYearlyRepetitions($notion);
+                                    break;
+                                default:
+                                    // No se repite (opción "Once")
+                                    $notion->save();
+
+                                    // Sincronizar usuarios relacionados en la tabla pivote
+                                    if ($request->has('delegate_id')) {
+                                        $notion->delegate()->sync($request->delegate_id);
+                                    }
+                                    break;
+                            }
                         }
                     } else {
                         // No se repite (opción "Once")
@@ -522,11 +574,9 @@ class Notion extends Controller
                             File::delete($fullPath);
                         }
                     }
-
                     // Eliminar el chat
                     $chat->delete();
                 }
-
                 // Eliminar el evento relacionado
                 $relatedNotion->delete();
             }
@@ -565,8 +615,42 @@ class Notion extends Controller
 
     private function createDailyRepetitions($notion)
     {
+        // // sin limite de repeticion
+        // $lastNotion = ModelsNotion::where('note_repeat', 7)->orderBy('end_date', 'desc')->first();
+
+        // $deadline = "2025-02-27";
+        // // Obtener todos los eventos con 'note_repeat' igual a 7
+        // $notions = ModelsNotion::where('note_repeat', 7)->get();
+
+        // foreach ($notions as $notion) {
+        //     $notion->deadline = $deadline;
+        //     // Guardar los cambios en la base de datos
+        //     $notion->save();
+        // }
+
+        // if ($deadline == '') {
+            
+        // } else {
+        //     if ($notion->deadline < $deadline) {
+        //         // Se agregan fechas
+        //         $notion->start_date = Carbon::parse($lastNotion->start_date)->addDay()->format('Y-m-d H:i:s');
+        //         $notion->end_date = Carbon::parse($lastNotion->end_date)->addDay()->format('Y-m-d H:i:s');
+        //         dd($notion);
+        //     } else {
+        //         // Se restan fechas
+
+        //     }
+        // }
+
+
+
+
         $startDate = Carbon::parse($notion->start_date);
         $endDate = Carbon::parse($notion->end_date);
+        $deadline = ($notion->deadline == null) ? ''  : Carbon::parse($notion->deadline);
+        // Calcular la diferencia en días entre la fecha de inicio y la fecha límite
+        $daysDifference = $startDate->diffInDays($deadline);
+        $deadlineDifference = ($daysDifference == 0) ? 365 : $daysDifference + 1;
 
         // Obtener el último número de repetición
         $notionLast = ModelsNotion::where('note_repeat', '!=', null)->orderBy('note_repeat', 'desc')->first();
@@ -574,7 +658,7 @@ class Notion extends Controller
 
         // Preparar los datos para la inserción masiva
         $events = [];
-        for ($i = 0; $i < 365; $i++) {
+        for ($i = 0; $i < $deadlineDifference; $i++) {
             $events[] = [
                 'project_id' => $notion->project_id,
                 'user_id' => $notion->user_id,
@@ -585,6 +669,7 @@ class Notion extends Controller
                 'priority' => $notion->priority,
                 'start_date' => $startDate->format('Y-m-d H:i:s'),
                 'end_date' => $endDate->format('Y-m-d H:i:s'),
+                'deadline' => ($deadline == null) ? null : $deadline->format('Y-m-d'),
                 'status' => 'Abierto',
                 'repeat' => $notion->repeat,
             ];
@@ -611,6 +696,9 @@ class Notion extends Controller
     {
         $startDate = Carbon::parse($notion->start_date);
         $endDate = Carbon::parse($notion->end_date);
+        $deadline = $notion->deadline ? Carbon::parse($notion->deadline) : null;
+        // Calcular la diferencia en semanas entre startDate y deadline
+        $weeksDifference = $deadline ? $startDate->diffInWeeks($deadline) + 1 : 52;
 
         // Obtener el último número de repetición
         $notionLast = ModelsNotion::all()->where('note_repeat', '!=', null)->last();
@@ -618,7 +706,7 @@ class Notion extends Controller
 
         // Preparar los datos para la inserción masiva
         $events = [];
-        for ($i = 0; $i < 52; $i++) {
+        for ($i = 0; $i < $weeksDifference; $i++) {
             $events[] = [
                 'project_id' => $notion->project_id,
                 'user_id' => $notion->user_id,
@@ -629,6 +717,7 @@ class Notion extends Controller
                 'priority' => $notion->priority,
                 'start_date' => $startDate->format('Y-m-d H:i:s'),
                 'end_date' => $endDate->format('Y-m-d H:i:s'),
+                'deadline' => ($deadline == null) ? null : $deadline->format('Y-m-d'),
                 'status' => 'Abierto',
                 'repeat' => $notion->repeat,
             ];
@@ -655,6 +744,9 @@ class Notion extends Controller
     {
         $startDate = Carbon::parse($notion->start_date);
         $endDate = Carbon::parse($notion->end_date);
+        $deadline = $notion->deadline ? Carbon::parse($notion->deadline) : null;
+        // Calcular la diferencia en meses entre startDate y deadline
+        $monthsDifference = $deadline ? $startDate->diffInMonths($deadline) + 1 : 12;
 
         // Obtener el último número de repetición
         $notionLast = ModelsNotion::all()->where('note_repeat', '!=', null)->last();
@@ -662,7 +754,7 @@ class Notion extends Controller
 
         // Preparar los datos para la inserción masiva
         $events = [];
-        for ($i = 0; $i < 12; $i++) {
+        for ($i = 0; $i < $monthsDifference; $i++) {
             $events[] = [
                 'project_id' => $notion->project_id,
                 'user_id' => $notion->user_id,
@@ -673,6 +765,7 @@ class Notion extends Controller
                 'priority' => $notion->priority,
                 'start_date' => $startDate->format('Y-m-d H:i:s'),
                 'end_date' => $endDate->format('Y-m-d H:i:s'),
+                'deadline' => ($deadline == null) ? null : $deadline->format('Y-m-d'),
                 'status' => 'Abierto',
                 'repeat' => $notion->repeat,
             ];
@@ -699,6 +792,9 @@ class Notion extends Controller
     {
         $startDate = Carbon::parse($notion->start_date);
         $endDate = Carbon::parse($notion->end_date);
+        $deadline = $notion->deadline ? Carbon::parse($notion->deadline) : null;
+        // Calcular la diferencia en años entre startDate y deadline
+        $yearsDifference = $deadline ? $startDate->diffInYears($deadline) + 1 : 12;
 
         // Obtener el último número de repetición
         $notionLast = ModelsNotion::all()->where('note_repeat', '!=', null)->last();
@@ -706,7 +802,7 @@ class Notion extends Controller
 
         // Preparar los datos para la inserción masiva
         $events = [];
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < $yearsDifference; $i++) {
             $events[] = [
                 'project_id' => $notion->project_id,
                 'user_id' => $notion->user_id,
@@ -717,6 +813,7 @@ class Notion extends Controller
                 'priority' => $notion->priority,
                 'start_date' => $startDate->format('Y-m-d H:i:s'),
                 'end_date' => $endDate->format('Y-m-d H:i:s'),
+                'deadline' => ($deadline == '') ? null : $deadline->format('Y-m-d'),
                 'status' => 'Abierto',
                 'repeat' => $notion->repeat,
             ];
