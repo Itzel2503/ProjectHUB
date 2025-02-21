@@ -253,7 +253,7 @@
                                         <small id="smallTime" class="text-red-600 text-xsm"></small>
                                     </div>
                                 </div>
-                                <div class="-mx-3 mb-6 flex flex-row">
+                                <div class="-mx-3 flex flex-row">
                                     <div class="mb-6 flex w-full flex-col px-3">
                                         <h5 class="inline-flex font-semibold" for="repeat">
                                             Repetir
@@ -302,7 +302,7 @@
                                     </div>
                                 </div>
                                 <div class="-mx-3 flex flex-row">
-                                    <div class="mb-6 flex w-full flex-col px-3">
+                                    <div class="flex w-full flex-col px-3">
                                         <h5 class="inline-flex font-semibold" for="project_id">
                                             Proyecto
                                         </h5>
@@ -313,7 +313,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="mb-6 flex w-full flex-col px-3">
+                                    <div class="flex w-full flex-col px-3">
                                         <h5 class="inline-flex font-semibold" for="dropdown-button-users">
                                             Delegar
                                         </h5>

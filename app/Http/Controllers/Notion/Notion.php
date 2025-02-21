@@ -258,7 +258,6 @@ class Notion extends Controller
                     'title' => 'required|string|max:255',
                     'dateFirst' => 'required|date',
                     'dateSecond' => 'required|date',
-                    'editAllEvents' => 'nullable|boolean', // Asegúrate de validar la nueva variable
                 ]);
                 // Aquí puedes continuar con tu lógica después de la validación exitosa
             } catch (\Illuminate\Validation\ValidationException $e) {
@@ -293,9 +292,8 @@ class Notion extends Controller
             } else if ($request->priority3) {
                 $notion->priority = 'Bajo';
             }
-
             $notion->repeat = $request->repeat;
-
+            
             // Si el evento tiene eventos relacionados
             if ($request->noRepeat == false) {
                 // Eleccion de otro repeat del que ya esta guardado
@@ -365,53 +363,31 @@ class Notion extends Controller
                 } else {
                     // Editar todos los eventos o solo el seleccionado
                     if ($request->editAllEvents == true) {
-                        if ($request->deadlineChange == true) {   
-                            $lastNotion = ModelsNotion::where('note_repeat', $request->note_repeat)->orderBy('end_date', 'desc')->first();
-                            $notions = ModelsNotion::where('note_repeat', $request->note_repeat)->get();
+                        if ($request->deadlineChange == true) {
+                            $lastNotion = ModelsNotion::where('note_repeat', $notion->note_repeat)
+                                ->orderBy('end_date', 'desc')
+                                ->first();
 
-                            foreach ($notions as $notion) {
-                                $notion->deadline = $request->deadline;
-                                // Guardar los cambios en la base de datos
-                                $notion->save();
-                            }
-
-                            // sin limite de repeticion
-                            if ($request->deadline == '') {
-                                
-                            } else {
-                                if ($notion->deadline < $request->deadline) {
-                                    // Se agregan fechas
-                                    $notion->start_date = Carbon::parse($lastNotion->start_date)->addDay()->format('Y-m-d H:i:s');
-                                    $notion->end_date = Carbon::parse($lastNotion->end_date)->addDay()->format('Y-m-d H:i:s');
+                            $formattedDate = Carbon::parse($lastNotion->deadline)->format('Y-m-d');
+                            // Evaluar si se deben agregar más eventos o no
+                            if ($request->deadline != '') {
+                                if ($lastNotion && $formattedDate < $request->deadline) {
+                                    $this->calculateMissingRepetitions($lastNotion, $request);
                                 } else {
-                                    // Se restan fechas
-
+                                    // Si la nueva deadline es menor, eliminar eventos sobrantes
+                                    $this->removeExtraRepetitions($lastNotion, $request);
                                 }
+                            } else {
+                                $this->calculateMissingRepetitions($lastNotion, $request);
                             }
 
-                            // Crear nuevos eventos según la frecuencia seleccionada
-                            switch ($request->repeat) {
-                                case 'Dairy':
-                                    $this->createDailyRepetitions($notion);
-                                    break;
-                                case 'Weeks':
-                                    $this->createWeeklyRepetitions($notion);
-                                    break;
-                                case 'Months':
-                                    $this->createMonthlyRepetitions($notion);
-                                    break;
-                                case 'Years':
-                                    $this->createYearlyRepetitions($notion);
-                                    break;
-                                default:
-                                    // No se repite (opción "Once")
+                            $notions = ModelsNotion::where('note_repeat', $notion->note_repeat)->get();
+                            // Si hay registros previos, actualizar su deadline
+                            if ($notions->isNotEmpty()) {
+                                foreach ($notions as $notion) {
+                                    $notion->deadline = $request->deadline;
                                     $notion->save();
-
-                                    // Sincronizar usuarios relacionados en la tabla pivote
-                                    if ($request->has('delegate_id')) {
-                                        $notion->delegate()->sync($request->delegate_id);
-                                    }
-                                    break;
+                                }
                             }
                         } else {
                             // Eliminar todos los eventos relacionados por note_repeat
@@ -615,46 +591,19 @@ class Notion extends Controller
 
     private function createDailyRepetitions($notion)
     {
-        // // sin limite de repeticion
-        // $lastNotion = ModelsNotion::where('note_repeat', 7)->orderBy('end_date', 'desc')->first();
-
-        // $deadline = "2025-02-27";
-        // // Obtener todos los eventos con 'note_repeat' igual a 7
-        // $notions = ModelsNotion::where('note_repeat', 7)->get();
-
-        // foreach ($notions as $notion) {
-        //     $notion->deadline = $deadline;
-        //     // Guardar los cambios en la base de datos
-        //     $notion->save();
-        // }
-
-        // if ($deadline == '') {
-            
-        // } else {
-        //     if ($notion->deadline < $deadline) {
-        //         // Se agregan fechas
-        //         $notion->start_date = Carbon::parse($lastNotion->start_date)->addDay()->format('Y-m-d H:i:s');
-        //         $notion->end_date = Carbon::parse($lastNotion->end_date)->addDay()->format('Y-m-d H:i:s');
-        //         dd($notion);
-        //     } else {
-        //         // Se restan fechas
-
-        //     }
-        // }
-
-
-
-
         $startDate = Carbon::parse($notion->start_date);
         $endDate = Carbon::parse($notion->end_date);
         $deadline = ($notion->deadline == null) ? ''  : Carbon::parse($notion->deadline);
         // Calcular la diferencia en días entre la fecha de inicio y la fecha límite
         $daysDifference = $startDate->diffInDays($deadline);
         $deadlineDifference = ($daysDifference == 0) ? 365 : $daysDifference + 1;
-
         // Obtener el último número de repetición
-        $notionLast = ModelsNotion::where('note_repeat', '!=', null)->orderBy('note_repeat', 'desc')->first();
-        $noteRepeat = ($notionLast) ? $notionLast->note_repeat + 1 : 1;
+        if ($notion->note_repeat != null) {
+            $noteRepeat = $notion->note_repeat;
+        } else {
+            $notionLast = ModelsNotion::where('note_repeat', '!=', null)->orderBy('note_repeat', 'desc')->first();
+            $noteRepeat = ($notionLast) ? $notionLast->note_repeat + 1 : 1;
+        }
 
         // Preparar los datos para la inserción masiva
         $events = [];
@@ -833,6 +782,52 @@ class Notion extends Controller
             foreach ($newNotions as $newNotion) {
                 $newNotion->delegate()->sync($delegateIds);
             }
+        }
+    }
+
+    private function calculateMissingRepetitions($notion, $request)
+    {
+        // Obtener la última repetición
+        $lastNotion = ModelsNotion::where('note_repeat', $notion->note_repeat)
+            ->orderBy('end_date', 'desc')
+            ->first();
+
+        // Si hay eventos previos, avanzar la fecha de inicio y fin
+        if ($lastNotion) {
+            $notion->note_repeat = $lastNotion->note_repeat;
+            $notion->start_date = Carbon::parse($lastNotion->start_date)->addDay()->format('Y-m-d H:i:s');
+            $notion->end_date = Carbon::parse($lastNotion->end_date)->addDay()->format('Y-m-d H:i:s');
+        }
+
+        // Llamar a la función correspondiente según la frecuencia
+        switch ($request->repeat) {
+            case 'Dairy':
+                $this->createDailyRepetitions($notion);
+                break;
+            case 'Weeks':
+                $this->createWeeklyRepetitions($notion);
+                break;
+            case 'Months':
+                $this->createMonthlyRepetitions($notion);
+                break;
+            case 'Years':
+                $this->createYearlyRepetitions($notion);
+                break;
+        }
+    }
+
+    private function removeExtraRepetitions($lastNotion, $request)
+    {
+        $deadline = Carbon::parse($request->deadline);
+
+        // Obtener eventos que exceden la nueva deadline
+        $notionsToDelete = ModelsNotion::where('note_repeat', $lastNotion->note_repeat)
+            ->where('end_date', '>', $deadline->format('Y-m-d H:i:s'))
+            ->get();
+
+        // Eliminar los eventos innecesarios
+        foreach ($notionsToDelete as $notion) {
+            $notion->delete();
         }
     }
 }

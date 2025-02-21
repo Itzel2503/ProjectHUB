@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Mostrar el modal
-            $("#modal-edit-create").removeClass("hidden").addClass("show");
+            $("#modal-create").removeClass("hidden").addClass("show");
         },
         eventDrop: function (info) {
             // Lógica para manejar el evento después de arrastrarlo
@@ -477,7 +477,6 @@ document.addEventListener('DOMContentLoaded', function() {
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed || result.isDenied) {
-
                 // Validar si la fecha 'end' es null
                 if (!event.end) {
                     toastr.warning('No es posible realizar el movimiento solicitado. Por favor, edite el evento manualmente haciendo clic sobre él');
