@@ -37,6 +37,15 @@
                 @endif
                 <!-- STATE -->
                 <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
+                    <select wire:model.lazy="selectedStates" class="inputs">
+                        <option value="">Estados</option>
+                        <option value="Abierto">Abierto</option>
+                        <option value="Proceso">Proceso</option>
+                        <option value="Resuelto">Resuelto</option>
+                        <option value="Conflicto">Conflicto</option>
+                    </select>
+                </div>
+                {{-- <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
                     <div class="flex w-full justify-center">
                         <div class="relative w-full">
                             <!-- Button -->
@@ -79,39 +88,16 @@
                             @endif
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <!-- PROYECTOS -->
                 @if ($project == null)
                     <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
-                        <div class="flex w-full justify-center">
-                            <div class="relative w-full">
-                                <!-- Button -->
-                                <button type="button" class="inputs flex h-12 items-center justify-between"
-                                    wire:click="$set('isOptionsVisibleProject', {{ $isOptionsVisibleProject ? 'false' : 'true' }})">
-                                    <span>Proyectos</span>
-                                    <!-- Heroicon: chevron-down -->
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-chevron-down h-3 w-3" width="24"
-                                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M6 9l6 6l6 -6" />
-                                    </svg>
-                                </button>
-                                <!-- Panel -->
-                                @if ($isOptionsVisibleProject)
-                                    <div class="absolute left-0 z-10 mt-2 w-full rounded-md bg-white">
-                                        @foreach ($allProjectsFiltered as $projectFiltered)
-                                            <label class="block px-4 py-2">
-                                                <input type="checkbox" wire:model="selectedProjects"
-                                                    value="{{ $projectFiltered['id'] }}" class="mr-2">
-                                                {{ $projectFiltered['name'] }}
-                                            </label>
-                                        @endforeach
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
+                        <select wire:model.lazy="selectedProjects" class="inputs">
+                            <option value="">Proyectos</option>
+                            @foreach ($allProjectsFiltered as $projectFiltered)
+                                <option value="{{ $projectFiltered['id'] }}">{{ $projectFiltered['name'] }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 @endif
                 @if ($project != null)

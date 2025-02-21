@@ -24,10 +24,9 @@ class MyActivities extends Component
 
     // FILTROS
     public $search, $allUsers, $allProjects;
-    public $selectedDelegate = '';
-    public $allUsersFiltered = [], $allProjectsFiltered = [], $selectedStates = [], $selectedProjects = [];
+    public $selectedDelegate = '', $selectedStates = '', $selectedProjects = '';
+    public $allUsersFiltered = [], $allProjectsFiltered = [];
     public $filtered = false; // cambio de dirección de flechas
-    public $isOptionsVisibleState = false, $isOptionsVisibleProject = false; // Controla la visibilidad del panel de opciones
     public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
     public $perPage = '20';
     // variables para la consulta
@@ -90,14 +89,14 @@ class MyActivities extends Component
             ->where('reports.title', 'like', '%' . $this->search . '%')
             ->when(!empty($this->selectedStates), function ($query) {
                 // Filtrar por los estados seleccionados en los checkboxes
-                $query->whereIn('reports.state', $this->selectedStates);
+                $query->where('reports.state', $this->selectedStates);
             }, function ($query) {
                 // Excluir "Resuelto" si no se seleccionan estados
                 $query->where('reports.state', '!=', 'Resuelto');
             })
             ->when(!empty($this->selectedProjects), function ($query) {
                 // Filtrar por los estados seleccionados en los checkboxes
-                $query->whereIn('reports.project_id', $this->selectedProjects);
+                $query->where('reports.project_id', $this->selectedProjects);
             })
             ->when($this->selectedDelegate, function ($query) {
                 $query->where('user_id', $this->selectedDelegate);
@@ -118,13 +117,13 @@ class MyActivities extends Component
             ->where('activities.title', 'like', '%' . $this->search . '%')
             ->when(!empty($this->selectedStates), function ($query) {
                 // Filtrar por los estados seleccionados en los checkboxes
-                $query->whereIn('activities.state', $this->selectedStates);
+                $query->where('activities.state', $this->selectedStates);
             }, function ($query) {
                 // Excluir "Resuelto" si no se seleccionan estados
                 $query->where('activities.state', '!=', 'Resuelto');
             })
             ->when(!empty($this->selectedProjects), function ($query) {
-                $query->whereIn('backlogs.project_id', $this->selectedProjects); // Filtrar por proyectos seleccionados
+                $query->where('backlogs.project_id', $this->selectedProjects); // Filtrar por proyectos seleccionados
             })
             ->when($this->selectedDelegate, function ($query) {
                 $query->where('user_id', $this->selectedDelegate);

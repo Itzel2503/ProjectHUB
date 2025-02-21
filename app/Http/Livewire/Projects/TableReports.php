@@ -28,10 +28,9 @@ class TableReports extends Component
     public $project;
     // FILTROS
     public $search, $allUsers, $allProjects;
-    public $selectedDelegate = '';
-    public $allUsersFiltered = [], $allProjectsFiltered = [], $selectedStates = [], $selectedProjects = [];
+    public $selectedDelegate = '', $selectedStates = '', $selectedProjects = '';
+    public $allUsersFiltered = [], $allProjectsFiltered = [];
     public $filtered = false; // cambio de dirección de flechas
-    public $isOptionsVisibleState = false, $isOptionsVisibleProject = false; // Controla la visibilidad del panel de opciones
     public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
     public $perPage = '20';
     // variables para la consulta
@@ -100,12 +99,9 @@ class TableReports extends Component
                     // Si no se seleccionan estados, excluir "Resuelto"
                     if (empty($this->selectedStates)) {
                         $query->where('reports.state', '!=', 'Resuelto');
-                    } else {
-                        // Incluir todos los estados seleccionados
-                        $query->whereIn('state', $this->selectedStates);
                     }
                     if (!empty($this->selectedProjects)) {
-                        $query->whereIn('project_id', $this->selectedProjects);
+                        $query->where('project_id', $this->selectedProjects);
                     } 
                 })
                     ->when($this->filterPriotiry, function ($query) {
@@ -113,6 +109,9 @@ class TableReports extends Component
                     })
                     ->when($this->selectedDelegate, function ($query) {
                         $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when($this->selectedStates, function ($query) {
+                        $query->where('state', $this->selectedStates);
                     })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
@@ -133,9 +132,6 @@ class TableReports extends Component
                         // Si no se seleccionan estados, excluir "Resuelto"
                         if (empty($this->selectedStates)) {
                             $query->where('reports.state', '!=', 'Resuelto');
-                        } else {
-                            // Incluir todos los estados seleccionados
-                            $query->whereIn('state', $this->selectedStates);
                         }
                     })
                     ->when($this->filterPriotiry, function ($query) {
@@ -143,6 +139,9 @@ class TableReports extends Component
                     })
                     ->when($this->selectedDelegate, function ($query) {
                         $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when($this->selectedStates, function ($query) {
+                        $query->where('reports.state', $this->selectedStates);
                     })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
@@ -164,12 +163,9 @@ class TableReports extends Component
                     // Si no se seleccionan estados, excluir "Resuelto"
                     if (empty($this->selectedStates)) {
                         $query->where('reports.state', '!=', 'Resuelto');
-                    } else {
-                        // Incluir todos los estados seleccionados
-                        $query->whereIn('state', $this->selectedStates);
                     }
                     if (!empty($this->selectedProjects)) {
-                        $query->whereIn('project_id', $this->selectedProjects);
+                        $query->where('project_id', $this->selectedProjects);
                     } 
                 })
                     ->where(function ($query) use ($user_id) {
@@ -185,6 +181,9 @@ class TableReports extends Component
                     })
                     ->when($this->selectedDelegate, function ($query) {
                         $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when($this->selectedStates, function ($query) {
+                        $query->where('state', $this->selectedStates);
                     })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
@@ -204,9 +203,6 @@ class TableReports extends Component
                         // Si no se seleccionan estados, excluir "Resuelto"
                         if (empty($this->selectedStates)) {
                             $query->where('reports.state', '!=', 'Resuelto');
-                        } else {
-                            // Incluir todos los estados seleccionados
-                            $query->whereIn('state', $this->selectedStates);
                         }
                     })
                     ->where(function ($query) use ($user_id) {
@@ -242,9 +238,6 @@ class TableReports extends Component
                     // Si no se seleccionan estados, excluir "Resuelto"
                     if (empty($this->selectedStates)) {
                         $query->where('reports.state', '!=', 'Resuelto');
-                    } else {
-                        // Incluir todos los estados seleccionados
-                        $query->whereIn('state', $this->selectedStates);
                     }
                 })
                 ->when($this->filterPriotiry, function ($query) {
@@ -378,9 +371,6 @@ class TableReports extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        // Reiniciar todos los filtros
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         $report = Report::find($id);
         if ($report) {
@@ -404,9 +394,6 @@ class TableReports extends Component
 
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        // Reiniciar todos los filtros
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         if ($report) {
             if ($state == 'Proceso' || $state == 'Conflicto') {
@@ -705,9 +692,6 @@ class TableReports extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        // Reiniciar todos los filtros
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         if ($this->showReport == true) {
             $this->showReport = false;
@@ -731,9 +715,6 @@ class TableReports extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        // Reiniciar todos los filtros
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         if ($this->editReport == true) {
             $this->editReport = false;
@@ -760,10 +741,6 @@ class TableReports extends Component
     // FILTER
     public function togglePanel($reportId)
     {
-        // Reiniciar todos los filtros
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
-
         // Si el panel ya está visible, lo cerramos
         if (isset($this->visiblePanels[$reportId]) && $this->visiblePanels[$reportId]) {
             unset($this->visiblePanels[$reportId]);
@@ -781,9 +758,6 @@ class TableReports extends Component
         $this->filtered = false; // Cambio de flechas
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        // Reiniciar todos los filtros
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         if ($type == 'priority') {
             $this->filterPriotiry = true;
@@ -813,9 +787,6 @@ class TableReports extends Component
         $this->filtered = true; // Cambio de flechas
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        // Reiniciar todos los filtros
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         $this->filterPriotiry = false;
         $this->filterState = false;

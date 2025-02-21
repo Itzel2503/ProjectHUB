@@ -32,10 +32,9 @@ class TableActivities extends Component
     public $sprint, $percentageResolved;
     // FILTROS
     public $search, $allUsers, $allProjects;
-    public $selectedDelegate = '';
-    public $allUsersFiltered = [], $allProjectsFiltered = [], $selectedStates = [], $selectedProjects = [];
+    public $selectedDelegate = '', $selectedStates = '', $selectedProjects = '';
+    public $allUsersFiltered = [], $allProjectsFiltered = [];
     public $filtered = false; // cambio de dirección de flechas
-    public $isOptionsVisibleState = false, $isOptionsVisibleProject = false; // Controla la visibilidad del panel de opciones
     public $visiblePanels = []; // Asociativa para controlar los paneles de opciones por ID de reporte
     public $perPage = '20';
     // variables para la consulta
@@ -95,16 +94,13 @@ class TableActivities extends Component
                         // Si no se seleccionan estados, excluir "Resuelto"
                         if (empty($this->selectedStates)) {
                             $query->where('activities.state', '!=', 'Resuelto');
-                        } else {
-                            // Incluir todos los estados seleccionados
-                            $query->whereIn('state', $this->selectedStates);
                         }
                         // Filtro de proyectos
                         if (empty($this->selectedProjects)) {
                             $query->whereNull('backlogs.project_id')
                                 ->orWhereNotNull('backlogs.project_id');
                         } else {
-                            $query->whereIn('backlogs.project_id', $this->selectedProjects);
+                            $query->where('backlogs.project_id', $this->selectedProjects);
                         }
                     })
                     ->when($this->filterPriotiry, function ($query) {
@@ -112,6 +108,9 @@ class TableActivities extends Component
                     })
                     ->when($this->selectedDelegate, function ($query) {
                         $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when($this->selectedStates, function ($query) {
+                        $query->where('activities.state', $this->selectedStates);
                     })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
@@ -137,7 +136,7 @@ class TableActivities extends Component
                         $query->where('delegate_id', $this->selectedDelegate);
                     })
                     ->when(!empty($this->selectedStates), function ($query) {
-                        $query->whereIn('state', $this->selectedStates);
+                        $query->where('state', $this->selectedStates);
                     })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
@@ -156,9 +155,6 @@ class TableActivities extends Component
                         // Si no se seleccionan estados, excluir "Resuelto"
                         if (empty($this->selectedStates)) {
                             $query->where('activities.state', '!=', 'Resuelto');
-                        } else {
-                            // Incluir todos los estados seleccionados
-                            $query->whereIn('state', $this->selectedStates);
                         }
                     })
                     ->when($this->filterPriotiry, function ($query) {
@@ -166,6 +162,9 @@ class TableActivities extends Component
                     })
                     ->when($this->selectedDelegate, function ($query) {
                         $query->where('delegate_id', $this->selectedDelegate);
+                    })
+                    ->when(!empty($this->selectedStates), function ($query) {
+                        $query->where('state', $this->selectedStates);
                     })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
@@ -191,7 +190,7 @@ class TableActivities extends Component
                         $query->where('delegate_id', $this->selectedDelegate);
                     })
                     ->when(!empty($this->selectedStates), function ($query) {
-                        $query->whereIn('state', $this->selectedStates);
+                        $query->where('state', $this->selectedStates);
                     })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
@@ -368,8 +367,6 @@ class TableActivities extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         $activity = Activity::find($id);
         if ($activity) {
@@ -391,8 +388,6 @@ class TableActivities extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         $activity = Activity::find($id);
 
@@ -548,8 +543,6 @@ class TableActivities extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         if ($idProject != 0) {
             $this->createEdit = !$this->createEdit;
@@ -560,8 +553,6 @@ class TableActivities extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         if ($this->showActivity == true) {
             $this->showActivity = false;
@@ -585,8 +576,6 @@ class TableActivities extends Component
     {
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
 
         if ($this->createEdit == true) {
             $this->createEdit = false;
@@ -638,8 +627,6 @@ class TableActivities extends Component
         $this->filtered = false; // Cambio de flechas
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
         // Reiniciar todos los filtros
         $this->filterPriotiry = false;
         $this->filterState = false;
@@ -647,13 +634,13 @@ class TableActivities extends Component
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filteredPriority = 'asc';
-            $this->priorityCase = "CASE WHEN priority = 'Bajo' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Alto' THEN 3 ELSE 4 END";
+            $this->priorityCase = "CASE WHEN activities.priority = 'Bajo' THEN 1 WHEN activities.priority = 'Medio' THEN 2 WHEN activities.priority = 'Alto' THEN 3 ELSE 4 END";
         }
 
         if ($type == 'state') {
             $this->filterState = true;
             $this->filteredState = 'asc';
-            $this->priorityCase = "CASE WHEN state = 'Abierto' THEN 1 WHEN state = 'Proceso' THEN 2 WHEN state = 'Conflicto' THEN 3 WHEN state = 'Resuelto' THEN 4 ELSE 5 END";
+            $this->priorityCase = "CASE WHEN activities.state = 'Abierto' THEN 1 WHEN activities.state = 'Proceso' THEN 2 WHEN activities.state = 'Conflicto' THEN 3 WHEN activities.state = 'Resuelto' THEN 4 ELSE 5 END";
         }
 
         if ($type == 'delegate') {
@@ -672,8 +659,6 @@ class TableActivities extends Component
         $this->filtered = true; // Cambio de flechas
         // Oculta todos los paneles
         $this->visiblePanels = [];
-        $this->isOptionsVisibleState = false;
-        $this->isOptionsVisibleProject = false;
         // Reiniciar todos los filtros
         $this->filterPriotiry = false;
         $this->filterState = false;
@@ -681,13 +666,13 @@ class TableActivities extends Component
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filteredPriority = 'asc';
-            $this->priorityCase = "CASE WHEN priority = 'Alto' THEN 1 WHEN priority = 'Medio' THEN 2 WHEN priority = 'Bajo' THEN 3 ELSE 4 END";
+            $this->priorityCase = "CASE WHEN activities.priority = 'Alto' THEN 1 WHEN activities.priority = 'Medio' THEN 2 WHEN activities.priority = 'Bajo' THEN 3 ELSE 4 END";
         }
         
         if ($type == 'state') {
             $this->filterState = true;
             $this->filteredState = 'asc';
-            $this->priorityCase = "CASE WHEN state = 'Resuelto' THEN 1 WHEN state = 'Conflicto' THEN 2 WHEN state = 'Proceso' THEN 3 WHEN state = 'Abierto' THEN 4 ELSE 5 END";
+            $this->priorityCase = "CASE WHEN activities.state = 'Resuelto' THEN 1 WHEN activities.state = 'Conflicto' THEN 2 WHEN activities.state = 'Proceso' THEN 3 WHEN activities.state = 'Abierto' THEN 4 ELSE 5 END";
         }
 
         if ($type == 'delegate') {
