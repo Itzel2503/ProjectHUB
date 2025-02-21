@@ -63,10 +63,8 @@ class TableActivities extends Component
     {
         // Verifica si se ha seleccionado un proyecto y un sprint
         if ($this->project != null && $this->idsprint != null) {
-            // Backlog
-            $this->backlog = Backlog::where('project_id', $this->project->id)->first();
-            // Sprint
-            $this->sprint = Sprint::find($this->idsprint);
+            $this->backlog = Backlog::where('project_id', $this->project->id)->first(); // Backlog
+            $this->sprint = Sprint::find($this->idsprint); // Sprint
         }
         // Filtro de consulta
         $user = Auth::user();
@@ -88,23 +86,20 @@ class TableActivities extends Component
         // ACTIVITIES
         if (Auth::user()->type_user == 1) {
             if ($this->project == null && $this->idsprint == null) {
-                $activities = Activity::where(function ($query) {
-                    $query
-                        ->where('title', 'like', '%' . $this->search . '%');
-                        // Si no se seleccionan estados, excluir "Resuelto"
-                        if (empty($this->selectedStates)) {
-                            $query->where('activities.state', '!=', 'Resuelto');
-                        }
-                        // Filtro de proyectos
-                        if (empty($this->selectedProjects)) {
-                            $query->whereNull('backlogs.project_id')
-                                ->orWhereNotNull('backlogs.project_id');
-                        } else {
-                            $query->where('backlogs.project_id', $this->selectedProjects);
-                        }
+                $activities = Activity::query()
+                    ->join('sprints', 'activities.sprint_id', '=', 'sprints.id')
+                    ->join('backlogs', 'sprints.backlog_id', '=', 'backlogs.id')
+                    ->join('projects', 'backlogs.project_id', '=', 'projects.id')
+                    ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
+                    ->select('activities.*', 'delegates.name')
+                    ->when($this->search, function ($query) {
+                        $query->where('activities.title', 'like', '%' . $this->search . '%');
                     })
-                    ->when($this->filterPriotiry, function ($query) {
-                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    ->when(empty($this->selectedStates), function ($query) {
+                        $query->where('activities.state', '!=', 'Resuelto');
+                    })
+                    ->when(!empty($this->selectedProjects), function ($query) {
+                        $query->where('backlogs.project_id', $this->selectedProjects);
                     })
                     ->when($this->selectedDelegate, function ($query) {
                         $query->where('delegate_id', $this->selectedDelegate);
@@ -112,14 +107,12 @@ class TableActivities extends Component
                     ->when($this->selectedStates, function ($query) {
                         $query->where('activities.state', $this->selectedStates);
                     })
+                    ->when($this->filterPriotiry, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
                     })
-                    ->join('sprints', 'activities.sprint_id', '=', 'sprints.id') // Join con sprints
-                    ->join('backlogs', 'sprints.backlog_id', '=', 'backlogs.id') // Join con backlogs
-                    ->join('projects', 'backlogs.project_id', '=', 'projects.id') // Join con proyectos
-                    ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
-                    ->select('activities.*', 'delegates.name')
                     ->orderBy($this->orderByType, $this->filteredExpected)
                     ->with(['user', 'delegate'])
                     ->paginate($this->perPage);
@@ -149,31 +142,33 @@ class TableActivities extends Component
             }
         } else {
             if ($this->project == null && $this->idsprint == null) {
-                $activities = Activity::where(function ($query) {
-                    $query
-                        ->where('title', 'like', '%' . $this->search . '%');
-                        // Si no se seleccionan estados, excluir "Resuelto"
-                        if (empty($this->selectedStates)) {
-                            $query->where('activities.state', '!=', 'Resuelto');
-                        }
+                $activities = Activity::query()
+                    ->join('sprints', 'activities.sprint_id', '=', 'sprints.id')
+                    ->join('backlogs', 'sprints.backlog_id', '=', 'backlogs.id')
+                    ->join('projects', 'backlogs.project_id', '=', 'projects.id')
+                    ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
+                    ->select('activities.*', 'delegates.name')
+                    ->when($this->search, function ($query) {
+                        $query->where('activities.title', 'like', '%' . $this->search . '%');
                     })
-                    ->when($this->filterPriotiry, function ($query) {
-                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                    ->when(empty($this->selectedStates), function ($query) {
+                        $query->where('activities.state', '!=', 'Resuelto');
+                    })
+                    ->when(!empty($this->selectedProjects), function ($query) {
+                        $query->where('backlogs.project_id', $this->selectedProjects);
                     })
                     ->when($this->selectedDelegate, function ($query) {
                         $query->where('delegate_id', $this->selectedDelegate);
                     })
-                    ->when(!empty($this->selectedStates), function ($query) {
-                        $query->where('state', $this->selectedStates);
+                    ->when($this->selectedStates, function ($query) {
+                        $query->where('activities.state', $this->selectedStates);
+                    })
+                    ->when($this->filterPriotiry, function ($query) {
+                        $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                     })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
                     })
-                    ->where(function ($query) use ($user_id) {
-                        $query->where('delegate_id', $user_id);
-                    })
-                    ->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
-                    ->select('activities.*', 'delegates.name')
                     ->orderBy($this->orderByType, $this->filteredExpected)
                     ->with(['user', 'delegate'])
                     ->paginate($this->perPage);
@@ -203,7 +198,7 @@ class TableActivities extends Component
                     ->orderBy($this->orderByType, $this->filteredExpected)
                     ->with(['user', 'delegate'])
                     ->paginate($this->perPage);
-                }
+            }
         }
         // TODOS LOS DELEGADOS
         $this->allUsersFiltered = [];
@@ -630,7 +625,7 @@ class TableActivities extends Component
         // Reiniciar todos los filtros
         $this->filterPriotiry = false;
         $this->filterState = false;
-        
+
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filteredPriority = 'asc';
@@ -662,13 +657,13 @@ class TableActivities extends Component
         // Reiniciar todos los filtros
         $this->filterPriotiry = false;
         $this->filterState = false;
-        
+
         if ($type == 'priority') {
             $this->filterPriotiry = true;
             $this->filteredPriority = 'asc';
             $this->priorityCase = "CASE WHEN activities.priority = 'Alto' THEN 1 WHEN activities.priority = 'Medio' THEN 2 WHEN activities.priority = 'Bajo' THEN 3 ELSE 4 END";
         }
-        
+
         if ($type == 'state') {
             $this->filterState = true;
             $this->filteredState = 'asc';
@@ -901,5 +896,5 @@ class TableActivities extends Component
         })->toArray();
         // Emitir los datos al componente padre
         $this->emitUp('refreshChart', $categories, $series, $totalEffortPoints);
-    }  
+    }
 }
