@@ -22,7 +22,7 @@ class CreateNotionsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             
-            $table->integer('note_repeat')->nullable();
+            $table->string('note_repeat')->nullable();
             $table->string('icon')->nullable();
             $table->string('color')->nullable();
             $table->string('title');

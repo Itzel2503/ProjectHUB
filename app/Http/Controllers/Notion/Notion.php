@@ -601,8 +601,7 @@ class Notion extends Controller
         if ($notion->note_repeat != null) {
             $noteRepeat = $notion->note_repeat;
         } else {
-            $notionLast = ModelsNotion::where('note_repeat', '!=', null)->orderBy('note_repeat', 'desc')->first();
-            $noteRepeat = ($notionLast) ? $notionLast->note_repeat + 1 : 1;
+            $noteRepeat = bin2hex(random_bytes(8)); // Genera un identificador hexadecimal aleatorio
         }
 
         // Preparar los datos para la inserción masiva
@@ -649,9 +648,11 @@ class Notion extends Controller
         // Calcular la diferencia en semanas entre startDate y deadline
         $weeksDifference = $deadline ? $startDate->diffInWeeks($deadline) + 1 : 52;
 
-        // Obtener el último número de repetición
-        $notionLast = ModelsNotion::all()->where('note_repeat', '!=', null)->last();
-        $noteRepeat = ($notionLast) ? $notionLast->note_repeat + 1 : 1;
+        if ($notion->note_repeat != null) {
+            $noteRepeat = $notion->note_repeat;
+        } else {
+            $noteRepeat = bin2hex(random_bytes(8)); // Genera un identificador hexadecimal aleatorio
+        }
 
         // Preparar los datos para la inserción masiva
         $events = [];
@@ -697,9 +698,11 @@ class Notion extends Controller
         // Calcular la diferencia en meses entre startDate y deadline
         $monthsDifference = $deadline ? $startDate->diffInMonths($deadline) + 1 : 12;
 
-        // Obtener el último número de repetición
-        $notionLast = ModelsNotion::all()->where('note_repeat', '!=', null)->last();
-        $noteRepeat = ($notionLast) ? $notionLast->note_repeat + 1 : 1;
+        if ($notion->note_repeat != null) {
+            $noteRepeat = $notion->note_repeat;
+        } else {
+            $noteRepeat = bin2hex(random_bytes(8)); // Genera un identificador hexadecimal aleatorio
+        }
 
         // Preparar los datos para la inserción masiva
         $events = [];
@@ -745,9 +748,11 @@ class Notion extends Controller
         // Calcular la diferencia en años entre startDate y deadline
         $yearsDifference = $deadline ? $startDate->diffInYears($deadline) + 1 : 12;
 
-        // Obtener el último número de repetición
-        $notionLast = ModelsNotion::all()->where('note_repeat', '!=', null)->last();
-        $noteRepeat = ($notionLast) ? $notionLast->note_repeat + 1 : 1;
+        if ($notion->note_repeat != null) {
+            $noteRepeat = $notion->note_repeat;
+        } else {
+            $noteRepeat = bin2hex(random_bytes(8)); // Genera un identificador hexadecimal aleatorio
+        }
 
         // Preparar los datos para la inserción masiva
         $events = [];
