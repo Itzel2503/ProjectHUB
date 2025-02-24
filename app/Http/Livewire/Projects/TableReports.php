@@ -235,10 +235,6 @@ class TableReports extends Component
                     if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
                         $query->orWhereNotNull('count');
                     }
-                    // Si no se seleccionan estados, excluir "Resuelto"
-                    if (empty($this->selectedStates)) {
-                        $query->where('reports.state', '!=', 'Resuelto');
-                    }
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
@@ -255,8 +251,7 @@ class TableReports extends Component
         // ADD ATRIBUTES
         foreach ($reports as $report) {
             // FECHA DE ENTREGA
-            $currentDate = Carbon::parse($report->expected_date);
-            $this->expected_day[$report->id] = $currentDate->day;
+            $this->expected_day[$report->id] = Carbon::parse($report->expected_date)->format('Y-m-d');
             // ACTIONS
             $report->filteredActions = $this->getFilteredActions($report->state);
             // DELEGATE
@@ -451,101 +446,16 @@ class TableReports extends Component
         $report = Report::find($id);
 
         if ($report) {
-            $currentDate = Carbon::parse($report->expected_date);
-            $month = $currentDate->month;
-            $year = $currentDate->year;
-            $oldDay = $currentDate->day;
-            // Ajustar el día si no es válido para el mes/año actual
-            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
-
-            if ($lastDayOfMonth < $day) {
-                $this->expected_day[$report->id] = $oldDay;
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'No se puede seleccionar un día fuera del mes y año de la fecha esperada'
-                ]);
-                return;
+            if ($report->updated_expected_date == false) {
+                $report->updated_expected_date = true;
             }
 
-            $newDate = $currentDate->setDay($day);
-            $report->expected_date = $newDate;
+            $report->expected_date = Carbon::parse($day)->format('Y-m-d');
             $report->save();
 
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
-                'title' => 'Día actualizado correctamente',
-            ]);
-        } else {
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Reporte no encontrado',
-            ]);
-        }
-    }
-
-    public function updateExpectedMonth($id, $month)
-    {
-        $report = Report::find($id);
-
-        if ($report) {
-            $currentDate = Carbon::parse($report->expected_date);
-            $year = $currentDate->year;
-            $day = $currentDate->day;
-            // Ajustar el día si no es válido para el mes/año actual
-            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
-            if ($lastDayOfMonth < $day) {
-                $day = $lastDayOfMonth; // Ajustar el día al último día del mes
-                $this->expected_day[$report->id] = $day;
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'warning',
-                    'title' => 'Día ajustada al mes seleccionado'
-                ]);
-            }
-            // Crear la nueva fecha usando día, mes y año
-            $newDate = Carbon::create($year, $month, $day);
-            // Actualizar el registro
-            $report->expected_date = $newDate;
-            $report->save();
-
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Mes actualizado correctamente',
-            ]);
-        } else {
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Reporte no encontrado',
-            ]);
-        }
-    }
-
-    public function updateExpectedYear($id, $year)
-    {
-        $report = Report::find($id);
-
-        if ($report) {
-            $currentDate = Carbon::parse($report->expected_date);
-            $month = $currentDate->month;
-            $day = $currentDate->day;
-            // Ajustar el día si no es válido para el mes/año actual
-            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
-            if ($lastDayOfMonth < $day) {
-                $day = $lastDayOfMonth; // Ajustar el día al último día del mes
-                $this->expected_day[$report->id] = $day;
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'warning',
-                    'title' => 'Día ajustada al mes seleccionado'
-                ]);
-            }
-            // Crear la nueva fecha usando día, mes y año
-            $newDate = Carbon::create($year, $month, $day);
-            // Actualizar el registro
-            $report->expected_date = $newDate;
-            $report->save();
-
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Año actualizado correctamente',
+                'title' => 'Fecha actualizada correctamente',
             ]);
         } else {
             $this->dispatchBrowserEvent('swal:modal', [

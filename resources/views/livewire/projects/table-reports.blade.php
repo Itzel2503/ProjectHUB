@@ -24,7 +24,7 @@
                             style="padding-left: 3em;">
                     </div>
                 </div>
-                @if (Auth::user()->type_user != 3)
+                @if (Auth::user()->type_user == 1)
                     <!-- DELEGATE -->
                     <div class="mb-2 inline-flex h-12 w-1/2 bg-transparent px-2 md:mx-3 md:w-1/5 md:px-0">
                         <select wire:model.lazy="selectedDelegate" class="inputs">
@@ -121,8 +121,8 @@
                 <div class="mb-2 hidden h-12 w-1/6 bg-transparent md:inline-flex">
                     <button wire:click="create({{ $project->id }})" class="btnNuevo">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2"
-                            width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                             <path d="M12 5l0 14" />
                             <path d="M5 12l14 0" />
@@ -154,10 +154,9 @@
                                     <path d="M20 6l-3 -3l-3 3" />
                                 </svg>
                                 {{-- up-down --}}
-                                <svg wire:click="filterUp('priority')" xmlns="http://www.w3.org/2000/svg"
-                                    width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                <svg wire:click="filterUp('priority')" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                     class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filtered) hidden @else block @endif ml-2 cursor-pointer">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M7 3l0 18" />
@@ -418,48 +417,23 @@
                                 @endif
                             </td>
                             <td class="px-2 py-1">
-                                @if ($report->updated_expected_date == false)
-                                    <div class="my-auto text-left">
-                                        En espera
-                                    </div>
+                                @if ($report->updated_expected_date == false && $report->state != 'Resuelto')
+                                    @if (Auth::user()->type_user != 3)
+                                        <div class="my-auto text-left">
+                                            <input type="date" wire:model='expected_day.{{ $report->id }}'
+                                                wire:change="updateExpectedDay({{ $report->id }}, $event.target.value)">
+                                            <p class="text-xs text-red-600">Cliente en espera de fecha</p>
+                                        </div>
+                                    @else
+                                        <div class="my-auto text-left">
+                                            En espera
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="my-auto text-left">
-                                        @if ($report->user)
-                                            @if (Auth::user()->id === $report->user->id && Auth::user()->type_user === 1 && $report->state != 'Resuelto')
-                                                <select
-                                                    wire:change='updateExpectedDay({{ $report->id }}, $event.target.value)'
-                                                    wire:model="expected_day.{{ $report->id }}" name="expected_day"
-                                                    id="expected_day" class="inpSelectTable">
-                                                    @for ($day = 1; $day <= 31; $day++)
-                                                        <option value={{ $day }}
-                                                            {{ $day == \Carbon\Carbon::parse($report->expected_date)->day ? 'selected' : '' }}>
-                                                            {{ $day }}
-                                                        </option>
-                                                    @endfor
-                                                </select>
-                                                <select
-                                                    wire:change='updateExpectedMonth({{ $report->id }}, $event.target.value)'
-                                                    name="expected_month" id="expected_month" class="inpSelectTable">
-                                                    @foreach (['01' => 'Enero', '02' => 'Febrero', '03' => 'Marzo', '04' => 'Abril', '05' => 'Mayo', '06' => 'Junio', '07' => 'Julio', '08' => 'Agosto', '09' => 'Septiembre', '10' => 'Octubre', '11' => 'Noviembre', '12' => 'Diciembre'] as $monthValue => $monthName)
-                                                        <option value="{{ $monthValue }}"
-                                                            {{ $monthValue == \Carbon\Carbon::parse($report->expected_date)->format('m') ? 'selected' : '' }}>
-                                                            {{ $monthName }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                <select
-                                                    wire:change='updateExpectedYear({{ $report->id }}, $event.target.value)'
-                                                    name="expected_year" id="expected_year" class="inpSelectTable">
-                                                    @for ($year = now()->year - 1; $year <= now()->year + 2; $year++)
-                                                        <option value="{{ $year }}"
-                                                            {{ $year == \Carbon\Carbon::parse($report->expected_date)->year ? 'selected' : '' }}>
-                                                            {{ $year }}
-                                                        </option>
-                                                    @endfor
-                                                </select>
-                                            @else
-                                                {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
-                                            @endif
+                                        @if (Auth::user()->type_user === 1 && $report->state != 'Resuelto')
+                                            <input type="date" wire:model='expected_day.{{ $report->id }}'
+                                                wire:change="updateExpectedDay({{ $report->id }}, $event.target.value)">
                                         @else
                                             {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                         @endif
@@ -502,8 +476,8 @@
                                     @else
                                         <div
                                             class="@if (Auth::user()->type_user == 3) @if ($report->state != 'Abierto' && $report->state != 'Resuelto') hidden @else relative @endif
-                                                @else
-                                                @endif relative">
+@else
+@endif relative">
                                             <!-- Button -->
                                             <button wire:click="togglePanel({{ $report->id }})" type="button"
                                                 class="flex items-center px-5 py-2.5">

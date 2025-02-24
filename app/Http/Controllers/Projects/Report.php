@@ -411,6 +411,7 @@ class Report extends Controller
                 }
                 $report->repeat = false;
                 $report->save();
+
                 if (isset($request->video)) {
                     $reportNew->project_id = $project_id;
                     $reportNew->user_id = $request->user_id;
@@ -418,14 +419,14 @@ class Report extends Controller
                     if (Auth::user()->type_user == 3) {
                         // Usuario Soporte
                         $userSoporte = User::where('area_id', '4')->first();
-                        if (!isNull($userSoporte)) {
+                        if ($userSoporte) {
                             $delegate_id = $userSoporte->id;
                         } else {
                             // Usuario administradors
                             $userSoporte = User::where('area_id', '1')->first();
                             $delegate_id = $userSoporte->id;
                         }
-                        $report->delegate_id =  $delegate_id;
+                        $reportNew->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
                     } else {
                         $reportNew->delegate_id = $request->delegate;
@@ -484,14 +485,14 @@ class Report extends Controller
                     if (Auth::user()->type_user == 3) {
                         // Usuario Soporte
                         $userSoporte = User::where('area_id', '4')->first();
-                        if (!isNull($userSoporte)) {
+                        if ($userSoporte) {
                             $delegate_id = $userSoporte->id;
                         } else {
                             // Usuario administradors
                             $userSoporte = User::where('area_id', '1')->first();
                             $delegate_id = $userSoporte->id;
                         }
-                        $report->delegate_id =  $delegate_id;
+                        $reportNew->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
                     } else {
                         $reportNew->delegate_id = $request->delegate;
@@ -552,14 +553,14 @@ class Report extends Controller
                     if (Auth::user()->type_user == 3) {
                         // Usuario Soporte
                         $userSoporte = User::where('area_id', '4')->first();
-                        if (!isNull($userSoporte)) {
+                        if ($userSoporte) {
                             $delegate_id = $userSoporte->id;
                         } else {
                             // Usuario administradors
                             $userSoporte = User::where('area_id', '1')->first();
                             $delegate_id = $userSoporte->id;
                         }
-                        $report->delegate_id =  $delegate_id;
+                        $reportNew->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
                     } else {
                         $reportNew->delegate_id = $request->delegate;
@@ -627,14 +628,15 @@ class Report extends Controller
                     if (Auth::user()->type_user == 3) {
                         // Usuario Soporte
                         $userSoporte = User::where('area_id', '4')->first();
-                        if (!isNull($userSoporte)) {
+
+                        if ($userSoporte) {
                             $delegate_id = $userSoporte->id;
                         } else {
                             // Usuario administradors
                             $userSoporte = User::where('area_id', '1')->first();
                             $delegate_id = $userSoporte->id;
                         }
-                        $report->delegate_id =  $delegate_id;
+                        $reportNew->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
                     } else {
                         $reportNew->delegate_id = $request->delegate;

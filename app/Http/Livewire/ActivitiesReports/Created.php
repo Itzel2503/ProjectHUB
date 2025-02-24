@@ -188,8 +188,7 @@ class Created extends Component
         // ADD ATRIBUTES
         foreach ($tasks as $task) {
             // FECHA DE ENTREGA
-            $currentDate = Carbon::parse($task->expected_date);
-            $this->expected_day[$task->id] = $currentDate->day;
+            $this->expected_day[$task->id] = Carbon::parse($task->expected_date)->format('Y-m-d');
             // ACTIONS
             $task->filteredActions = $this->getFilteredActions($task->state);
             // DELEGATE
@@ -492,128 +491,26 @@ class Created extends Component
         }
 
         if ($task) {
-            $currentDate = Carbon::parse($task->expected_date);
-            $month = $currentDate->month;
-            $year = $currentDate->year;
-            $oldDay = $currentDate->day;
-            // Ajustar el día si no es válido para el mes/año actual
-            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
-
-            if ($lastDayOfMonth < $day) {
-                $this->expected_day[$task->id] = $oldDay;
-                // Emitir evento de carga terminada
-                $this->emit('loadingEnded');
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'No se puede seleccionar un día fuera del mes y año de la fecha esperada'
-                ]);
-                return;
+            if ($task->updated_expected_date) {
+                if ($task->updated_expected_date == false) {
+                    $task->updated_expected_date = true;
+                }
             }
-
-            $newDate = $currentDate->setDay($day);
-            $task->expected_date = $newDate;
+            
+            $task->expected_date = Carbon::parse($day)->format('Y-m-d');
             $task->save();
 
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
-                'title' => 'Día actualizado correctamente',
+                'title' => 'Fecha actualizada correctamente',
             ]);
         } else {
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
-                'title' => 'Tarea no encontrada',
+                'title' => 'Reporte no encontrado',
             ]);
         }
-        // Emitir evento de carga terminada
-        $this->emit('loadingEnded');
-    }
 
-    public function updateExpectedMonth($id, $type, $month)
-    {
-        // Emitir evento de carga iniciada
-        $this->emit('loadingStarted');
-
-        if ($type == 'report') {
-            $task = Report::find($id);
-        } else {
-            $task = Activity::find($id);
-        }
-
-        if ($task) {
-            $currentDate = Carbon::parse($task->expected_date);
-            $year = $currentDate->year;
-            $day = $currentDate->day;
-            // Ajustar el día si no es válido para el mes/año actual
-            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
-            if ($lastDayOfMonth < $day) {
-                $day = $lastDayOfMonth; // Ajustar el día al último día del mes
-                $this->expected_day[$task->id] = $day;
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'warning',
-                    'title' => 'Día ajustada al mes seleccionado'
-                ]);
-            }
-            // Crear la nueva fecha usando día, mes y año
-            $newDate = Carbon::create($year, $month, $day);
-            // Actualizar el registro
-            $task->expected_date = $newDate;
-            $task->save();
-
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Mes actualizado correctamente',
-            ]);
-        } else {
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Tarea no encontrada',
-            ]);
-        }
-        // Emitir evento de carga terminada
-        $this->emit('loadingEnded');
-    }
-
-    public function updateExpectedYear($id, $type, $year)
-    {
-        // Emitir evento de carga iniciada
-        $this->emit('loadingStarted');
-
-        if ($type == 'report') {
-            $task = Report::find($id);
-        } else {
-            $task = Activity::find($id);
-        }
-
-        if ($task) {
-            $currentDate = Carbon::parse($task->expected_date);
-            $month = $currentDate->month;
-            $day = $currentDate->day;
-            // Ajustar el día si no es válido para el mes/año actual
-            $lastDayOfMonth = Carbon::create($year, $month)->endOfMonth()->day;
-            if ($lastDayOfMonth < $day) {
-                $day = $lastDayOfMonth; // Ajustar el día al último día del mes
-                $this->expected_day[$task->id] = $day;
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'warning',
-                    'title' => 'Día ajustada al mes seleccionado'
-                ]);
-            }
-            // Crear la nueva fecha usando día, mes y año
-            $newDate = Carbon::create($year, $month, $day);
-            // Actualizar el registro
-            $task->expected_date = $newDate;
-            $task->save();
-
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Año actualizado correctamente',
-            ]);
-        } else {
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Tarea no encontrada',
-            ]);
-        }
         // Emitir evento de carga terminada
         $this->emit('loadingEnded');
     }

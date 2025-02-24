@@ -305,47 +305,39 @@
                                 @endif
                             </td>
                             <td class="px-2 py-1">
-                                <div class="my-auto text-left">
-                                    @if ($task->created_id != null)
-                                        @if (Auth::user()->id === $task->created_id && $task->state != 'Resuelto')
-                                            <select
-                                                @if ($task->project_activity) wire:change="updateExpectedDay({{ $task->id }}, 'activity', $event.target.value)" @elseif($task->project_report) wire:change="updateExpectedDay({{ $task->id }}, 'report', $event.target.value)" @endif
-                                                wire:model="expected_day.{{ $task->id }}" name="expected_day"
-                                                id="expected_day" class="inpSelectTable">
-                                                @for ($day = 1; $day <= 31; $day++)
-                                                    <option value={{ $day }}
-                                                        {{ $day == \Carbon\Carbon::parse($task->expected_date)->day ? 'selected' : '' }}>
-                                                        {{ $day }}
-                                                    </option>
-                                                @endfor
-                                            </select>
-                                            <select
-                                                @if ($task->project_activity) wire:change="updateExpectedMonth({{ $task->id }}, 'activity', $event.target.value)" @elseif($task->project_report) wire:change="updateExpectedMonth({{ $task->id }}, 'report', $event.target.value)" @endif
-                                                name="expected_month" id="expected_month" class="inpSelectTable">
-                                                @foreach (['01' => 'Enero', '02' => 'Febrero', '03' => 'Marzo', '04' => 'Abril', '05' => 'Mayo', '06' => 'Junio', '07' => 'Julio', '08' => 'Agosto', '09' => 'Septiembre', '10' => 'Octubre', '11' => 'Noviembre', '12' => 'Diciembre'] as $monthValue => $monthName)
-                                                    <option value="{{ $monthValue }}"
-                                                        {{ $monthValue == \Carbon\Carbon::parse($task->expected_date)->format('m') ? 'selected' : '' }}>
-                                                        {{ $monthName }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <select
-                                                @if ($task->project_activity) wire:change="updateExpectedYear({{ $task->id }}, 'activity', $event.target.value)" @elseif($task->project_report) wire:change="updateExpectedYear({{ $task->id }}, 'report', $event.target.value)" @endif
-                                                name="expected_year" id="expected_year" class="inpSelectTable">
-                                                @for ($year = now()->year - 1; $year <= now()->year + 2; $year++)
-                                                    <option value="{{ $year }}"
-                                                        {{ $year == \Carbon\Carbon::parse($task->expected_date)->year ? 'selected' : '' }}>
-                                                        {{ $year }}
-                                                    </option>
-                                                @endfor
-                                            </select>
+                                @if ($task->project_report)
+                                    @if ($task->updated_expected_date == false && $task->state != 'Resuelto')
+                                        @if (Auth::user()->type_user != 3)
+                                            <div class="my-auto text-left">
+                                                <input type="date" wire:model='expected_day.{{ $task->id }}'
+                                                @if($task->project_report) wire:change="updateExpectedDay({{ $task->id }}, 'report', $event.target.value)" @endif>
+                                                <p class="text-xs text-red-600">Cliente en espera de fecha</p>
+                                            </div>
+                                        @else
+                                            <div class="my-auto text-left">
+                                                En espera
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="my-auto text-left">
+                                            @if (Auth::user()->type_user === 1 && $task->state != 'Resuelto')
+                                                <input type="date" wire:model='expected_day.{{ $task->id }}'
+                                                    @if ($task->project_activity) wire:change="updateExpectedDay({{ $task->id }}, 'activity', $event.target.value)" @elseif($task->project_report) wire:change="updateExpectedDay({{ $task->id }}, 'report', $event.target.value)" @endif>
+                                            @else
+                                                {{ \Carbon\Carbon::parse($task->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                            @endif
+                                        </div>
+                                    @endif
+                                @else
+                                    <div class="my-auto text-left">
+                                        @if (Auth::user()->type_user === 1 && $task->state != 'Resuelto')
+                                            <input type="date" wire:model='expected_day.{{ $task->id }}'
+                                                @if ($task->project_activity) wire:change="updateExpectedDay({{ $task->id }}, 'activity', $event.target.value)" @elseif($task->project_report) wire:change="updateExpectedDay({{ $task->id }}, 'report', $event.target.value)" @endif>
                                         @else
                                             {{ \Carbon\Carbon::parse($task->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                                         @endif
-                                    @else
-                                        {{ \Carbon\Carbon::parse($task->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
-                                    @endif
-                                </div>
+                                    </div>
+                                @endif
                             </td>
                             <td class="px-2 py-1">
                                 <div class="mx-auto text-left">
