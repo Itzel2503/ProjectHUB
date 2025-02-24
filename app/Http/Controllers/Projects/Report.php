@@ -428,6 +428,7 @@ class Report extends Controller
                         }
                         $reportNew->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
+                        $reportNew->updated_expected_date = false;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
@@ -494,6 +495,7 @@ class Report extends Controller
                         }
                         $reportNew->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
+                        $reportNew->updated_expected_date = false;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
@@ -562,6 +564,7 @@ class Report extends Controller
                         }
                         $reportNew->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
+                        $reportNew->updated_expected_date = false;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
@@ -638,6 +641,7 @@ class Report extends Controller
                         }
                         $reportNew->delegate_id =  $delegate_id;
                         $reportNew->expected_date = Carbon::now();
+                        $reportNew->updated_expected_date = false;
                     } else {
                         $reportNew->delegate_id = $request->delegate;
                         $reportNew->expected_date = $request->expected_date;
