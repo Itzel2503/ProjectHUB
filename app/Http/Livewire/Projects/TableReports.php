@@ -251,7 +251,11 @@ class TableReports extends Component
         // ADD ATRIBUTES
         foreach ($reports as $report) {
             // FECHA DE ENTREGA
-            $this->expected_day[$report->id] = Carbon::parse($report->expected_date)->format('Y-m-d');
+            if ($report->updated_expected_date == false) {
+                $this->expected_day[$report->id] = ''; // Deja el input vacío si no se ha actualizado la fecha
+            } else {
+                $this->expected_day[$report->id] = Carbon::parse($report->expected_date)->format('Y-m-d');
+            }
             // ACTIONS
             $report->filteredActions = $this->getFilteredActions($report->state);
             // DELEGATE

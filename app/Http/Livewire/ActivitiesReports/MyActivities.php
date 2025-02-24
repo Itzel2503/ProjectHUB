@@ -172,8 +172,6 @@ class MyActivities extends Component
 
         // ADD ATRIBUTES
         foreach ($tasks as $task) {
-            // FECHA DE ENTREGA
-            $this->expected_day[$task->id] = Carbon::parse($task->expected_date)->format('Y-m-d');
             // ACTIONS
             $task->filteredActions = $this->getFilteredActions($task->state);
             // DELEGATE
@@ -241,6 +239,7 @@ class MyActivities extends Component
                             $task->project_id = $sprint->backlog->project->id;
                             $task->sprint_state = $sprint->state;
                             $task->project_activity = true;
+                            $this->expected_day[$task->id] = Carbon::parse($task->expected_date)->format('Y-m-d');
                         } else {
                             // Manejar caso donde no hay backlog asociado
                             $task->project_name = 'Proyecto no disponible';
@@ -271,6 +270,12 @@ class MyActivities extends Component
                     $task->project_name = $project->name . ' (Reporte)';
                     $task->project_id = $project->id;
                     $task->project_report = true;
+                    // FECHA DE ENTREGA
+                    if ($task->updated_expected_date == false) {
+                        $this->expected_day[$task->id] = ''; // Deja el input vacío si no se ha actualizado la fecha
+                    } else {
+                        $this->expected_day[$task->id] = Carbon::parse($task->expected_date)->format('Y-m-d');
+                    }
                 } else {
                     // Manejar caso donde no se encuentra el proyecto
                     $task->project_name = 'Proyecto no encontrado';
