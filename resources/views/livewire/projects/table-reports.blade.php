@@ -476,8 +476,8 @@
                                     @else
                                         <div
                                             class="@if (Auth::user()->type_user == 3) @if ($report->state != 'Abierto' && $report->state != 'Resuelto') hidden @else relative @endif
-@else
-@endif relative">
+                                                @else
+                                                @endif relative">
                                             <!-- Button -->
                                             <button wire:click="togglePanel({{ $report->id }})" type="button"
                                                 class="flex items-center px-5 py-2.5">
@@ -737,8 +737,7 @@
     {{-- LOADING PAGE --}}
     <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
         wire:target="$set('isOptionsVisibleState'), create, filterDown, filterUp, showReport, togglePanel, editReport, deleteReport, reportRepeat, updateEvidence, finishEvidence">
-        <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40">
-        </div>
+        <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
         <div class="loadingspinner relative top-1/3 z-20">
             <div id="square1"></div>
             <div id="square2"></div>

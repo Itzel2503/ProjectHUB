@@ -175,45 +175,48 @@
                 </div>
                 @if (!empty($recording->content))
                     @if ($recording->contentExists)
-                        @if ($recording->image == true)
-                            <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                <a href="{{ asset('reportes/' . $recording->content) }}" target="_blank">
-                                    <img src="{{ asset('reportes/' . $recording->content) }}" alt="Report Image">
-                                </a>
-                            </div>
-                        @endif
-                        @if ($recording->video == true)
-                            @if (strpos($recording->content, 'Reporte') === 0)
-                                <div class="my-5 w-full text-center text-lg">
-                                    <p class="text-red my-5">Subir video '{{ $recording->content }}'
-                                    </p>
-                                </div>
-                            @else
+                        @if ($type == 'report')
+                            @if ($recording->image == true)
                                 <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
                                     <a href="{{ asset('reportes/' . $recording->content) }}" target="_blank">
-                                        <video src="{{ asset('reportes/' . $recording->content) }}" loop autoplay
-                                            alt="Report Video"></video>
+                                        <img src="{{ asset('reportes/' . $recording->content) }}" alt="Report Image">
                                     </a>
                                 </div>
                             @endif
-                        @endif
-                        @if ($recording->file == true)
-                            <div class="md-3/4 mb-3 mt-5 flex w-full flex-col">
-                                @if ($recording->fileExtension === 'pdf')
-                                    <iframe src="{{ asset('reportes/' . $recording->content) }}" width="auto"
-                                        height="600"></iframe>
+                            @if ($recording->video == true)
+                                @if (strpos($recording->content, 'Reporte') === 0)
+                                    <div class="my-5 w-full text-center text-lg">
+                                        <p class="text-red my-5">Subir video '{{ $recording->content }}'
+                                        </p>
+                                    </div>
                                 @else
-                                    <p class="text-center text-base">Vista previa no disponible para
-                                        este tipo de archivo.</p>
+                                    <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
+                                        <a href="{{ asset('reportes/' . $recording->content) }}" target="_blank">
+                                            <video src="{{ asset('reportes/' . $recording->content) }}" loop autoplay
+                                                alt="Report Video"></video>
+                                        </a>
+                                    </div>
                                 @endif
-                            </div>
-                        @endif
-                        @if ($recording->content == true)
-                            <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
-                                <a href="{{ asset('activities/' . $recording->content) }}" target="_blank">
-                                    <img src="{{ asset('activities/' . $recording->content) }}" alt="Report Image">
-                                </a>
-                            </div>
+                            @endif
+                            @if ($recording->file == true)
+                                <div class="md-3/4 mb-3 mt-5 flex w-full flex-col">
+                                    @if ($recording->fileExtension === 'pdf')
+                                        <iframe src="{{ asset('reportes/' . $recording->content) }}" width="auto"
+                                            height="600"></iframe>
+                                    @else
+                                        <p class="text-center text-base">Vista previa no disponible para
+                                            este tipo de archivo.</p>
+                                    @endif
+                                </div>
+                            @endif
+                        @else
+                            @if ($recording->content == true)
+                                <div class="md-3/4 mb-5 mt-3 flex w-full flex-col">
+                                    <a href="{{ asset('activities/' . $recording->content) }}" target="_blank">
+                                        <img src="{{ asset('activities/' . $recording->content) }}" alt="Report Image">
+                                    </a>
+                                </div>
+                            @endif
                         @endif
                     @else
                         <div class="md-3/4 mb-5 mt-3 flex w-full flex-col items-center justify-center">

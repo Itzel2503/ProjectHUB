@@ -22,19 +22,28 @@ class Inventory extends Component
 
     public $listeners = ['reloadPage' => 'reloadPage', 'disable', 'restore', 'destroy'];
     // modal
-    public $modalCreateEdit = false, $modalProduct = false;
-    public $showUpdate = false, $showProduct = false;
+    public $isOptionsVisibleCreate = false, $isOptionsVisibleShow = false, $showUpdate = false, $showProduct = false;
+    public $selectedManager = '', $selectedStates = '';
     public $productEdit, $productShow;
     // table, action's user
     public $search;
     // inputs
-    public $files = [], $selectedFiles = [];
+    public $files = [], $selectedFiles = [], $allUsersFiltered = [];
     public $name, $brand, $model, $serial_number, $status, $department, $manager, $observations, $purchase_date;
     
     public function render()
     {
         $areas = Area::whereNotIn('name', ['Cliente', 'Soporte'])->get();
         $allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
+
+        // FILTRO DELEGADOS
+        $this->allUsersFiltered = [];
+        foreach ($allUsers as $user) {
+            $this->allUsersFiltered[] = [
+                'id' => $user->id,
+                'name' => $user->name,
+            ];
+        }
 
         $products = ModelsInventory::with(['area', 'manager'])
             ->where(function ($query) {
@@ -46,6 +55,12 @@ class Inventory extends Component
                     ->orWhere('status', 'like', '%' . $this->search . '%')
                     ->orWhere('observations', 'like', '%' . $this->search . '%')
                     ->orWhere('purchase_date', 'like', '%' . $this->search . '%');
+            })
+            ->when($this->selectedManager, function ($query) {
+                $query->where('manager_id', $this->selectedManager);
+            })
+            ->when($this->selectedStates, function ($query) {
+                $query->where('status', $this->selectedStates);
             })
             ->withTrashed()
             ->orderBy('name', 'asc')
@@ -162,7 +177,7 @@ class Inventory extends Component
         }
 
         $this->clearInputs();
-        $this->modalCreateEdit = false;
+        $this->isOptionsVisibleCreate = false;
         // Emitir un evento de navegador
         $this->dispatchBrowserEvent('swal:modal', [
             'type' => 'success',
@@ -172,6 +187,36 @@ class Inventory extends Component
 
     public function update($id)
     {
+        try {
+            $rules = [
+                'name' => 'required',
+                'brand' => 'required',
+                'model' => 'required',
+                'serial_number' => 'required',
+                'status' => 'required',
+                'department' => 'required',
+                'manager' => 'required',
+            ];
+
+            $validator = Validator::make($this->all(), $rules);
+
+            if ($validator->fails()) {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Faltan campos o campos incorrectos',
+                ]);
+                throw new \Illuminate\Validation\ValidationException($validator);
+            }
+            // Aquí puedes continuar con tu lógica después de la validación exitosa
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Faltan campos o campos incorrectos',
+            ]);
+            throw $e;
+        }
+        
         $product = ModelsInventory::find($id);
 
         if ($product) {
@@ -339,7 +384,8 @@ class Inventory extends Component
             }
 
             $this->clearInputs();
-            $this->modalCreateEdit = false;
+            $this->isOptionsVisibleCreate = false;
+            $this->showUpdate = false;
             // Emitir un evento de navegador
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
@@ -399,7 +445,6 @@ class Inventory extends Component
         $product = ModelsInventory::withTrashed()->find($id);
 
         if ($product) {
-            
             if (!$product->files->isEmpty()) {
                 foreach ($this->productShow->files as $file) {
                     // Ruta del archivo en el sistema de archivos
@@ -425,43 +470,12 @@ class Inventory extends Component
             ]);
         }
     }
-    // MODAL
-    public function modalCreateEdit()
-    {
-        $this->showUpdate = false;
-
-        if ($this->modalCreateEdit == true) {
-            $this->modalCreateEdit = false;
-        } else {
-            $this->modalCreateEdit = true;
-        }
-        $this->clearInputs();
-        $this->resetErrorBag();
-        $this->dispatchBrowserEvent('file-reset');
-    }
-
-    public function modalProduct()
-    {
-        if ($this->modalProduct == true) {
-            $this->modalProduct = false;
-            $this->showProduct = false;
-        } else {
-            $this->modalProduct = true;
-        }
-
-        $this->clearInputs();
-        $this->resetErrorBag();
-    }
     // INFO MODAL
-    public function showEditProduct($id)
+    public function edit($id)
     {
         $this->showUpdate = true;
-
-        if ($this->modalCreateEdit == true) {
-            $this->modalCreateEdit = false;
-        } else {
-            $this->modalCreateEdit = true;
-        }
+        $this->isOptionsVisibleCreate = true;
+        $this->clearInputs();
 
         $this->productEdit = ModelsInventory::find($id);
         $this->name = $this->productEdit->name;
@@ -478,16 +492,12 @@ class Inventory extends Component
         $this->observations = $this->productEdit->observations ?? '';
     }
 
-    public function showProduct($id)
+    public function show($id)
     {
         $this->showProduct = true;
+        $this->isOptionsVisibleShow = true;
+        $this->clearInputs();
 
-        if ($this->modalProduct == true) {
-            $this->modalProduct = false;
-            $this->showProduct = false;
-        } else {
-            $this->modalProduct = true;
-        }
         // Usar withTrashed() para incluir productos eliminados
         $this->productShow = ModelsInventory::withTrashed()->find($id);
         if ($this->productShow) {
