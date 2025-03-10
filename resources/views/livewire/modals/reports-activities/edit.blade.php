@@ -18,6 +18,42 @@
             @endif
             <div class="-mx-3 mb-6 flex flex-row">
                 <div class="mb-6 flex w-full flex-col px-3">
+                    <h5 class="inline-flex font-semibold" for="">Icono</h5>
+                    <div class="flex justify-between mt-2">
+                        <!-- Íconos -->
+                        @foreach ([
+                            '🚀' => 'Propuestas; Lanzamientos',
+                            '🔵' => 'Seguimiento',
+                            '💵' => 'Finanzas',
+                            '📅' => 'Cita',
+                            '💡' => 'Ideas',
+                            '📎' => 'Notas',
+                            '⭐' => 'Top',
+                            '⏸️' => 'Pausa',
+                            '✉️' => 'Enviar',
+                            '🚫'=> 'Sin icono',
+                        ] as $icon => $tooltip)
+                            <label class="principal">
+                                <input type="radio" name="icon" value="{{ $icon }}" class="icon-checkbox"
+                                    wire:model="selectedIcon"
+                                >
+                                <span class="icon-event {{ $selectedIcon === $icon ? 'selected' : '' }}"
+                                    wire:click="selectIcon('{{ $icon }}')">
+                                    {{ $icon }}
+                                </span>
+                                <div class="relative">
+                                    <div
+                                        class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                        <p>{{ $tooltip }}</p>
+                                    </div>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <div class="-mx-3 mb-6 flex flex-row">
+                <div class="mb-6 flex w-full flex-col px-3">
                     <h5 class="inline-flex font-semibold" for="title">
                         Titulo<p class="text-red-600">*</p>
                     </h5>
@@ -148,9 +184,9 @@
                     @endif
                     <div class="mb-6 flex w-full flex-col px-3">
                         <h5 class="inline-flex font-semibold" for="expected_date">
-                            Fecha de entrega<p class="text-red-600">*</p>
+                            Fecha de entrega
                         </h5>
-                        <input wire:model='expected_date' required type="date" name="expected_date"
+                        <input wire:model='expected_date' type="date" name="expected_date"
                             id="expected_date" class="inputs">
                         <div>
                             <span class="text-xs italic text-red-600">

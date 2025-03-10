@@ -32,6 +32,14 @@
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <style>
+        .hidden-info {
+            display: none;
+        }
+
+        .principal:hover .hidden-info {
+            display: block;
+        }
+
         /* Style for the range slider */
         input[type="range"] {
             -webkit-appearance: none;
@@ -61,6 +69,27 @@
             border-radius: 50%;
             background: rgb(220 38 38);
             cursor: pointer;
+        }
+
+        /* Estilos para los iconos */
+        .icon-event {
+            font-size: 24px;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s ease, font-size 0.2s ease;
+        }
+
+        /* Estilo cuando un icono está seleccionado */
+        .icon-event.selected {
+            font-size: 36px;
+            /* Tamaño más grande */
+            transform: scale(1.2);
+            /* Efecto de agrandar */
+        }
+
+        /* Ocultar el checkbox real */
+        .icon-checkbox {
+            display: none;
         }
     </style>
 </head>
@@ -250,6 +279,125 @@
                     <input hidden type="text" id="inputPointKnow" name="pointKnow">
                     <input hidden type="text" id="inputPointMany" name="pointMany">
                     <input hidden type="text" id="inputPointEffort" name="pointEffort">
+                    @if (Auth::user()->type_user != 3)
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="">
+                                    Icono
+                                </h5>
+                                <div class="flex justify-between mt-2">
+                                    <!--  🚀 Cohete: Propuestas; Lanzamientos -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F680;" class="icon-checkbox">
+                                        <span class="icon-event">&#x1F680;
+                                        </span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Propuestas; Lanzamientos</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <!-- 🔵 Círculo morado grande: Seguimiento -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F535;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x1F535;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Seguimiento</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <!-- 💵 Dólar: Finanzas -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F4B5;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x1F4B5;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Finanzas</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <!-- 📅 Calendario: Cita -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F4C5;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x1F4C5;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Cita</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <!-- 💡 Bombilla: Ideas -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F4A1;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x1F4A1;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Ideas</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <!-- 📎 Clip: Notas -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F4CE;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x1F4CE;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Notas</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <!-- ⭐ Estrella: Top -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x2B50;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x2B50;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Top</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <!-- ⏸️ Doble barra vertical: Pausa -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x23F8;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x23F8;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Pausa</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <!-- ✉️ Correo: Enviar -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x2709;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x2709;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Enviar</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                     <div class="-mx-3 mb-6 flex flex-row">
                         <div id="viewText" class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
@@ -572,6 +720,8 @@
         let viewFile = document.getElementById('viewFile');
         let viewText = document.getElementById('viewText');
         // BUTTONS FORM
+        const icons = document.querySelectorAll('.icon-event');
+        let checkboxesIcon = document.querySelectorAll('.icon-checkbox');
         let checkboxes = document.querySelectorAll('.priority-checkbox');
         let downloadVideo = document.getElementById('downloadVideo');
         // LOAGING
@@ -669,6 +819,28 @@
             }
         });
         // ------------------------------ FORMULARIO ------------------------------
+        // CHECKBOX DE ICONOS
+        checkboxesIcon.forEach(function(checkbox, index) {
+            checkbox.addEventListener('change', function() {
+                // Desenmarcar el checkbox seleccionado      
+                if (checkbox.checked == false) {
+                    // Desmarcar todos los checkboxesIcon
+                    checkboxesIcon.forEach(function(input, i) {
+                        input.checked = false;
+                        icons[i].classList.remove('selected');
+                    });
+                } else {
+                    // Desmarcar todos los checkboxesIcon
+                    checkboxesIcon.forEach(function(input, i) {
+                        input.checked = false;
+                        icons[i].classList.remove('selected');
+                    });
+                    // Marcar el checkbox seleccionado
+                    checkbox.checked = true;
+                    icons[index].classList.add('selected');
+                }
+            });
+        });
         // REVISION DE CHECKBOX
         checkboxes.forEach(function(checkbox) {
             checkbox.addEventListener('change', function() {

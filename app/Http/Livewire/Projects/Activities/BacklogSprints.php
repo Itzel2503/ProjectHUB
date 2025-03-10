@@ -12,7 +12,7 @@ use Livewire\Component;
 
 class BacklogSprints extends Component
 {
-    public $listeners = ['activityUpdated' => 'recalculatePercentageResolved', 'destroySprint'];
+    public $listeners = ['activityUpdated' => 'recalculatePercentageResolved', 'destroySprint',  'sprintCreated' => 'sprintsUpdated'];
     protected $paginationTheme = 'tailwind';
     // ENVIADAS
     public $project, $backlog;
@@ -90,37 +90,38 @@ class BacklogSprints extends Component
             }
             // SELECT SPRINT
             $this->updateSprintData($this->selectSprint);
+            $this->filteredState = $this->getFilteredStates($this->sprintState);
             $this->firstSprint = Sprint::find($this->selectSprint);
+            // Condicion para que solo un Sprint se muestre en Curso
+            // if ($this->firstSprint) {
+            //     $sprintDesc = $this->sprints;
+            //     // Encuentra el sprint anterior en la secuencia
+            //     $previousSprint = $sprintDesc->sortByDesc('number')->first(function ($sprint) {
+            //         return $sprint->number < $this->firstSprint->number;
+            //     });
 
-            if ($this->firstSprint) {
-                $sprintDesc = $this->sprints;
-                // Encuentra el sprint anterior en la secuencia
-                $previousSprint = $sprintDesc->sortByDesc('number')->first(function ($sprint) {
-                    return $sprint->number < $this->firstSprint->number;
-                });
-
-                if ($previousSprint) {
-                    if ($previousSprint->state == 'Curso') {
-                        $this->filteredState = [];
-                    } else {
-                        if ($this->firstSprint->state == 'Curso') {
-                            $this->filteredState = [];
-                        } elseif ($this->firstSprint->state == 'Pendiente') {
-                            $this->filteredState = ['Curso'];
-                        } else {
-                            $this->filteredState = [];
-                        }
-                    }
-                } else {
-                    if ($this->firstSprint->state == 'Curso') {
-                        $this->filteredState = [];
-                    } elseif ($this->firstSprint->state == 'Pendiente') {
-                        $this->filteredState = ['Curso'];
-                    } else {
-                        $this->filteredState = [];
-                    }
-                }
-            }
+            //     if ($previousSprint) {
+            //         if ($previousSprint->state == 'Curso') {
+            //             $this->filteredState = [];
+            //         } else {
+            //             if ($this->firstSprint->state == 'Curso') {
+            //                 $this->filteredState = [];
+            //             } elseif ($this->firstSprint->state == 'Pendiente') {
+            //                 $this->filteredState = ['Curso'];
+            //             } else {
+            //                 $this->filteredState = [];
+            //             }
+            //         }
+            //     } else {
+            //         if ($this->firstSprint->state == 'Curso') {
+            //             $this->filteredState = [];
+            //         } elseif ($this->firstSprint->state == 'Pendiente') {
+            //             $this->filteredState = ['Curso'];
+            //         } else {
+            //             $this->filteredState = [];
+            //         }
+            //     }
+            // }
         } else {
             $this->selectSprint = null;
         }
@@ -214,6 +215,8 @@ class BacklogSprints extends Component
         $sprint->backlog_id = $this->backlog->id;
         $sprint->save();
 
+        // Emitir evento para actualizar la vista
+        $this->emit('sprintCreated');
         // Actualiza los sprints en la vista
         $this->sprintsUpdated();
         $this->newSprint();

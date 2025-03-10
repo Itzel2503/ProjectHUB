@@ -4,7 +4,9 @@ namespace App\Http\Livewire\Projects;
 
 use App\Models\Activity;
 use App\Models\ChatReportsActivities;
+use App\Models\ErrorLog;
 use App\Models\Evidence;
+use App\Models\Log;
 use App\Models\Project;
 use App\Models\Report;
 use App\Models\User;
@@ -57,6 +59,14 @@ class TableReports extends Component
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    public function mount()
+    {
+        // Si es cliente
+        if (Auth::user()->type_user == 3) {
+            $this->filteredExpected = 'desc';
+        }
     }
 
     public function render()
@@ -216,6 +226,9 @@ class TableReports extends Component
                     ->when($this->filterPriotiry, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                     })
+                    ->when($this->selectedStates, function ($query) {
+                        $query->where('state', $this->selectedStates);
+                    })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
                     })
@@ -235,9 +248,17 @@ class TableReports extends Component
                     if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
                         $query->orWhereNotNull('count');
                     }
+
+                    // Si no se seleccionan estados, excluir "Resuelto"
+                    if (empty($this->selectedStates)) {
+                        $query->where('reports.state', '!=', 'Resuelto');
+                    }
                 })
                 ->when($this->filterPriotiry, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->when($this->selectedStates, function ($query) {
+                    $query->where('state', $this->selectedStates);
                 })
                 ->when($this->filterState, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
@@ -254,7 +275,11 @@ class TableReports extends Component
             if ($report->updated_expected_date == false) {
                 $this->expected_day[$report->id] = ''; // Deja el input vacío si no se ha actualizado la fecha
             } else {
-                $this->expected_day[$report->id] = Carbon::parse($report->expected_date)->format('Y-m-d');
+                if ($report->expected_date == null) {
+                    $this->expected_day[$report->id] = '';
+                } else {
+                    $this->expected_day[$report->id] = Carbon::parse($report->expected_date)->format('Y-m-d');
+                }
             }
             // ACTIONS
             $report->filteredActions = $this->getFilteredActions($report->state);
@@ -368,71 +393,85 @@ class TableReports extends Component
 
     public function updateDelegate($id, $delegate)
     {
-        // Oculta todos los paneles
-        $this->visiblePanels = [];
+        try {
+            // Oculta todos los paneles
+            $this->visiblePanels = [];
 
-        $report = Report::find($id);
-        if ($report) {
-            $report->delegate_id = $delegate;
-            $report->delegated_date = Carbon::now();
-            $report->progress = null;
-            $report->look = false;
-            $report->state = 'Abierto';
-            $report->save();
+            $report = Report::find($id);
+            if ($report) {
+                $report->delegate_id = $delegate;
+                $report->delegated_date = Carbon::now();
+                $report->progress = null;
+                $report->look = false;
+                $report->state = 'Abierto';
+                $report->save();
 
+                Log::create([
+                    'user_id' => Auth::id(),
+                    'project_id'=> ($this->project != null) ? $this->project->id : null,
+                    'report_id' => $id,
+                    'view' => 'livewire/projects/table-reports',
+                    'action' => 'Cambio de delegado',
+                    'message' => 'Delegado actualizado',
+                    'details' => 'Delegado: ' . $report->delegate_id,
+                ]);
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Delegado actualizado',
+                ]);
+            }
+        } catch (\Exception $e) {
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'report_id' => $id,
+                'view' => 'livewire/projects/table-reports',
+                'action' => 'Cambio de delegado',
+                'message' => 'Error en actualizar delegado',
+                'details' => $e->getMessage(), // Mensaje de la excepción
+            ]);
+
+            // Manejar el error y mostrar un mensaje al usuario
             $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Delegado actualizado',
+                'type' => 'error',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
             ]);
         }
     }
 
     public function updateState($id, $project_id, $state)
     {
-        $report = Report::find($id);
+        try {
+            $report = Report::find($id);
 
-        // Oculta todos los paneles
-        $this->visiblePanels = [];
+            // Oculta todos los paneles
+            $this->visiblePanels = [];
 
-        if ($report) {
-            if ($state == 'Proceso' || $state == 'Conflicto') {
-                if ($report->progress == null && $report->look == false && $report->state == 'Abierto') {
-                    $report->progress = Carbon::now();
-                    $report->look = true;
-                }
-                if ($report->progress != null && $report->look == true && $report->state == 'Abierto') {
-                    $report->progress = Carbon::now();
-                    $report->look = false;
-                }
-
-                $report->state = $state;
-                $report->save();
-                // Actualizacion de grafica
-                $this->effortPoints();
-                // Emitir un evento de navegador
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Estado actualizado',
-                ]);
-            }
-
-            if ($state == 'Resuelto') {
-                if ($report->evidence == true) {
-                    if ($this->project == null) {
-                        $this->evidenceActRep = true;
-                        $this->reportEvidence = $report;
-                    } else {
-                        $this->showEvidence = true;
-                        $project = Project::find($project_id);
-                        $report->project_id = $project->id;
-                        $this->reportEvidence = $report;
+            if ($report) {
+                if ($state == 'Proceso' || $state == 'Conflicto') {
+                    if ($report->progress == null && $report->look == false && $report->state == 'Abierto') {
+                        $report->progress = Carbon::now();
+                        $report->look = true;
                     }
-                } else {
+                    if ($report->progress != null && $report->look == true && $report->state == 'Abierto') {
+                        $report->progress = Carbon::now();
+                        $report->look = false;
+                    }
+
                     $report->state = $state;
-                    $report->updated_expected_date = true;
-                    $report->end_date = Carbon::now();
-                    $report->repeat = true;
                     $report->save();
+
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'project_id'=> ($this->project != null) ? $this->project->id : null,
+                        'report_id' => $report->id,
+                        'view' => 'livewire/projects/table-reports',
+                        'action' => 'Cambio de estado',
+                        'message' => 'Estado actualizado',
+                        'details' => 'Estado: ' . $report->state,
+                    ]);
+
                     // Actualizacion de grafica
                     $this->effortPoints();
                     // Emitir un evento de navegador
@@ -441,158 +480,299 @@ class TableReports extends Component
                         'title' => 'Estado actualizado',
                     ]);
                 }
+
+                if ($state == 'Resuelto') {
+                    if ($report->evidence == true) {
+                        if ($this->project == null) {
+                            $this->evidenceActRep = true;
+                            $this->reportEvidence = $report;
+                        } else {
+                            $this->showEvidence = true;
+                            $project = Project::find($project_id);
+                            $report->project_id = $project->id;
+                            $this->reportEvidence = $report;
+                        }
+                    } else {
+                        $report->expected_date = ($report->expected_date) ? $report->expected_date : Carbon::now() ;
+                        $report->state = $state;
+                        $report->updated_expected_date = true;
+                        $report->end_date = Carbon::now();
+                        $report->repeat = true;
+                        $report->save();
+
+                        Log::create([
+                            'user_id' => Auth::id(),
+                            'project_id'=> ($this->project != null) ? $this->project->id : null,
+                            'report_id' => $report->id,
+                            'view' => 'livewire/projects/table-reports',
+                            'action' => 'Cambio de estado',
+                            'message' => 'Estado actualizado',
+                            'details' => 'Estado: ' . $report->state,
+                        ]);
+
+                        // Actualizacion de grafica
+                        $this->effortPoints();
+                        // Emitir un evento de navegador
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'success',
+                            'title' => 'Estado actualizado',
+                        ]);
+                    }
+                }
             }
+        } catch (\Exception $e) {
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'report_id' => $id,
+                'view' => 'livewire/projects/table-reports',
+                'action' => 'Cambio de delegado',
+                'message' => 'Error en actualizar delegado',
+                'details' => $e->getMessage(), // Mensaje de la excepción
+            ]);
+
+            // Manejar el error y mostrar un mensaje al usuario
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
+            ]);
         }
     }
 
     public function updateExpectedDay($id, $day)
     {
-        $report = Report::find($id);
+        try {
+            $report = Report::find($id);
 
-        if ($report) {
-            if ($report->updated_expected_date == false) {
-                $report->updated_expected_date = true;
+            if ($report) {
+                if ($report->updated_expected_date == false) {
+                    $report->updated_expected_date = true;
+                }
+
+                $report->expected_date = Carbon::parse($day)->format('Y-m-d');
+                $report->save();
+
+                Log::create([
+                    'user_id' => Auth::id(),
+                    'project_id'=> ($this->project != null) ? $this->project->id : null,
+                    'report_id' => $report->id,
+                    'view' => 'livewire/projects/table-reports',
+                    'action' => 'Actualizar fecha de entrega',
+                    'message' => 'Fecha de entrega actualizada',
+                    'details' => 'Estado: ' . $report->expected_date,
+                ]);
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Fecha actualizada correctamente',
+                ]);
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Reporte no encontrado',
+                ]);
             }
-
-            $report->expected_date = Carbon::parse($day)->format('Y-m-d');
-            $report->save();
-
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Fecha actualizada correctamente',
+        } catch (\Exception $e) {
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'report_id' => $id,
+                'view' => 'livewire/projects/table-reports',
+                'action' => 'Actualizar fecha de entrega',
+                'message' => 'Error en actualizar fecha de entrega',
+                'details' => $e->getMessage(), // Mensaje de la excepción
             ]);
-        } else {
+
+            // Manejar el error y mostrar un mensaje al usuario
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
-                'title' => 'Reporte no encontrado',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
             ]);
         }
     }
 
     public function updateEvidence($id, $project_id)
     {
-        $report = Report::find($id);
-        $project = Project::find($project_id);
+        try {
+            $report = Report::find($id);
+            $project = Project::find($project_id);
 
-        if ($report) {
-            if ($this->evidence) {
-                $now = Carbon::now();
-                $dateString = $now->format("Y-m-d H_i_s");
+            if ($report) {
+                if ($this->evidence) {
+                    $now = Carbon::now();
+                    $dateString = $now->format("Y-m-d H_i_s");
 
-                $fileExtension = $this->evidence->extension();
-                $evidence = new Evidence;
-                $evidence->report_id = $report->id;
+                    $fileExtension = $this->evidence->extension();
+                    $evidence = new Evidence;
+                    $evidence->report_id = $report->id;
 
-                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
-                if (in_array($fileExtension, $extensionesImagen)) {
-                    $maxSize = 5 * 1024 * 1024; // 5 MB
-                    // Verificar el tamaño del archivo
-                    if ($this->evidence->getSize() > $maxSize) {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'error',
-                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
-                        ]);
-                        return;
+                    $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+                    if (in_array($fileExtension, $extensionesImagen)) {
+                        $maxSize = 5 * 1024 * 1024; // 5 MB
+                        // Verificar el tamaño del archivo
+                        if ($this->evidence->getSize() > $maxSize) {
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'error',
+                                'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
+                            ]);
+                            return;
+                        }
+                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                        $fileName = $this->evidence->getClientOriginalName();
+                        $fullNewFilePath = $filePath . '/' . $fileName;
+                        // Procesar la imagen
+                        $image = \Intervention\Image\Facades\Image::make($this->evidence->getRealPath());
+                        // Redimensionar la imagen si es necesario
+                        $image->resize(800, null, function ($constraint) {
+                            $constraint->aspectRatio();
+                        });
+                        // Guardar la imagen temporalmente
+                        $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                        $image->save(storage_path('app/' . $tempPath));
+                        // Guardar la imagen redimensionada en el almacenamiento local
+                        Storage::disk('evidence')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                        // // Eliminar la imagen temporal
+                        Storage::disk('local')->delete($tempPath);
+
+                        $evidence->image = true;
+                        $evidence->video = false;
+                        $evidence->file = false;
+                    } elseif (in_array($fileExtension, $extensionesVideo)) {
+                        $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
+                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                        $fullNewFilePath = $filePath . '/' . $fileName;
+                        // Verificar si la ruta existe, si no, crearla
+                        if (!Storage::disk('evidence')->exists($filePath)) {
+                            Storage::disk('evidence')->makeDirectory($filePath);
+                        }
+                        // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
+                        $this->evidence->storeAs($filePath, $fileName, 'evidence');
+
+                        $evidence->image = false;
+                        $evidence->video = true;
+                        $evidence->file = false;
+                    } else {
+                        $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
+                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
+                        $fullNewFilePath = $filePath . '/' . $fileName;
+                        // Verificar si la ruta existe, si no, crearla
+                        if (!Storage::disk('evidence')->exists($filePath)) {
+                            Storage::disk('evidence')->makeDirectory($filePath);
+                        }
+                        // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
+                        $this->evidence->storeAs($filePath, $fileName, 'evidence');
+
+                        $evidence->image = false;
+                        $evidence->video = false;
+                        $evidence->file = true;
                     }
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                    $fileName = $this->evidence->getClientOriginalName();
-                    $fullNewFilePath = $filePath . '/' . $fileName;
-                    // Procesar la imagen
-                    $image = \Intervention\Image\Facades\Image::make($this->evidence->getRealPath());
-                    // Redimensionar la imagen si es necesario
-                    $image->resize(800, null, function ($constraint) {
-                        $constraint->aspectRatio();
-                    });
-                    // Guardar la imagen temporalmente
-                    $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
-                    $image->save(storage_path('app/' . $tempPath));
-                    // Guardar la imagen redimensionada en el almacenamiento local
-                    Storage::disk('evidence')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
-                    // // Eliminar la imagen temporal
-                    Storage::disk('local')->delete($tempPath);
+                    $evidence->content = $fullNewFilePath;
+                    $evidence->save();
 
-                    $evidence->image = true;
-                    $evidence->video = false;
-                    $evidence->file = false;
-                } elseif (in_array($fileExtension, $extensionesVideo)) {
-                    $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                    $fullNewFilePath = $filePath . '/' . $fileName;
-                    // Verificar si la ruta existe, si no, crearla
-                    if (!Storage::disk('evidence')->exists($filePath)) {
-                        Storage::disk('evidence')->makeDirectory($filePath);
-                    }
-                    // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
-                    $this->evidence->storeAs($filePath, $fileName, 'evidence');
+                    $report->expected_date = ($report->expected_date) ? $report->expected_date : Carbon::now() ;
+                    $report->updated_expected_date = true;
+                    $report->end_date = Carbon::now();
+                    $report->state = 'Resuelto';
+                    $report->repeat = true;
+                    $report->save();
 
-                    $evidence->image = false;
-                    $evidence->video = true;
-                    $evidence->file = false;
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'project_id'=> ($this->project != null) ? $this->project->id : null,
+                        'report_id' => $id,
+                        'view' => 'livewire/projects/table-reports',
+                        'action' => 'Subir evidencia',
+                        'message' => 'Evidencia cargada',
+                    ]);
+
+                    $this->dispatchBrowserEvent('file-reset');
+
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Evidencia actualizada',
+                    ]);
+
+                    $this->showEvidence = false;
                 } else {
-                    $fileName = 'Evidencia ' . $project->name . ', ' . $dateString . '.' . $fileExtension;
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                    $fullNewFilePath = $filePath . '/' . $fileName;
-                    // Verificar si la ruta existe, si no, crearla
-                    if (!Storage::disk('evidence')->exists($filePath)) {
-                        Storage::disk('evidence')->makeDirectory($filePath);
-                    }
-                    // Guardar el archivo en la ruta especificada dentro del disco 'evidence'
-                    $this->evidence->storeAs($filePath, $fileName, 'evidence');
-
-                    $evidence->image = false;
-                    $evidence->video = false;
-                    $evidence->file = true;
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'error',
+                        'title' => 'Selecciona un archivo',
+                    ]);
                 }
-                $evidence->content = $fullNewFilePath;
-                $evidence->save();
-                $this->dispatchBrowserEvent('file-reset');
-
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Evidencia actualizada',
-                ]);
-                $report->updated_expected_date = true;
-                $report->end_date = Carbon::now();
-                $report->state = 'Resuelto';
-                $report->repeat = true;
-                $report->save();
-                $this->showEvidence = false;
-            } else {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'Selecciona un archivo',
-                ]);
             }
+        } catch (\Exception $e) {
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'report_id' => $id,
+                'view' => 'livewire/projects/table-reports',
+                'action' => 'Subir evidencia',
+                'message' => 'Error al cargar evidencia',
+                'details' => $e->getMessage(), // Mensaje de la excepción
+            ]);
+
+            // Manejar el error y mostrar un mensaje al usuario
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
+            ]);
         }
     }
 
     public function delete($id, $project_id)
     {
-        $project = Project::find($project_id);
-        $report = Report::find($id);
+        try {
+            $project = Project::find($project_id);
+            $report = Report::find($id);
 
-        if ($report) {
-            if ($report->content) {
-                $contentPath = 'reportes/' . $report->content;
-                $fullPath = public_path($contentPath);
+            if ($report) {
+                if ($report->content) {
+                    $contentPath = 'reportes/' . $report->content;
+                    $fullPath = public_path($contentPath);
 
-                if (File::exists($fullPath)) {
-                    File::delete($fullPath);
+                    if (File::exists($fullPath)) {
+                        File::delete($fullPath);
+                    }
                 }
+                $report->delete();
+
+                Log::create([
+                    'user_id' => Auth::id(),
+                    'project_id'=> $project_id,
+                    'report_id' => $id,
+                    'view' => 'livewire/projects/table-reports',
+                    'action' => 'Eliminar reporte',
+                    'message' => 'Reporte eliminado',
+                ]);
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Reporte eliminado',
+                ]);
+
+                return redirect()->to('/projects/' . $project->id . '/reports');
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Reporte no encontrado',
+                ]);
             }
-            $report->delete();
-
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Reporte eliminado',
+        } catch (\Exception $e) {
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> $project_id,
+                'report_id' => $id,
+                'view' => 'livewire/projects/table-reports',
+                'action' => 'Eliminar reporte',
+                'message' => 'Error en eliminar reporte',
+                'details' => $e->getMessage(), // Mensaje de la excepción
             ]);
-
-            return redirect()->to('/projects/' . $project->id . '/reports');
-        } else {
+    
+            // Mostrar mensaje de error al usuario
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
-                'title' => 'Reporte no encontrado',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
             ]);
         }
     }
@@ -760,6 +940,7 @@ class TableReports extends Component
             return $action != $currentState;
         });
     }
+
     // PROTECTED
     protected function effortPoints()
     {

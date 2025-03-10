@@ -7,6 +7,27 @@
             flex-direction: column;
         }
     }
+
+    /* Estilos para los iconos */
+    .icon-event {
+        font-size: 24px;
+        cursor: pointer;
+        margin: 5px;
+        transition: transform 0.2s ease, font-size 0.2s ease;
+    }
+
+    /* Estilo cuando un icono está seleccionado */
+    .icon-event.selected {
+        font-size: 36px;
+        /* Tamaño más grande */
+        transform: scale(1.2);
+        /* Efecto de agrandar */
+    }
+
+    /* Ocultar el checkbox real */
+    .icon-checkbox {
+        display: none;
+    }
 </style>
 
 <div class="mt-4 w-full mx-auto">

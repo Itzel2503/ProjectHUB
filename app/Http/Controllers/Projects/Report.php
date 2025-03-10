@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Projects;
 
 use App\Http\Controllers\Controller;
+use App\Models\ErrorLog;
+use App\Models\Log;
 use App\Models\Project;
 use App\Models\Report as ModelsReport;
 use App\Models\User;
@@ -73,256 +75,295 @@ class Report extends Controller
             $now = Carbon::now();
             $dateString = $now->format("Y-m-d_H_i_s");
             if ($project && $report) {
-                if (Auth::user()->type_user != 3) {
-                    try {
+                try {
+                    if (Auth::user()->type_user != 3) {
                         // Validación de los campos
                         $validatedData = $request->validate([
                             'delegate' => 'required|not_in:0',
                         ]);
-                        // Aquí puedes continuar con tu lógica después de la validación exitosa
-                    } catch (\Illuminate\Validation\ValidationException $e) {
-                        return redirect()->back()->with('error', 'Faltan campos o campos incorrectos.');
-                        throw $e;
                     }
-                }
 
-                $projectName = Str::slug($project->name, '_');
-                $customerName = Str::slug($project->customer->name, '_');
+                    $projectName = Str::slug($project->name, '_');
+                    $customerName = Str::slug($project->customer->name, '_');
 
-                if (isset($request->video)) {
-                    $report->project_id = $project_id;
-                    $report->user_id = $request->user_id;
-                    if (Auth::user()->type_user == 3) {
-                        // Usuario Soporte
-                        $userSoporte = User::where('area_id', '4')->first();
-                        if (!isNull($userSoporte)) {
-                            $delegate_id = $userSoporte->id;
+                    if (isset($request->video)) {
+                        $report->project_id = $project_id;
+                        $report->user_id = $request->user_id;
+                        if (Auth::user()->type_user == 3) {
+                            // Usuario Soporte
+                            $userSoporte = User::where('area_id', '4')->first();
+                            if (!isNull($userSoporte)) {
+                                $delegate_id = $userSoporte->id;
+                            } else {
+                                // Usuario administradors
+                                $userSoporte = User::where('area_id', '1')->first();
+                                $delegate_id = $userSoporte->id;
+                            }
+                            $report->delegate_id =  $delegate_id;
+                            $report->expected_date = null;
+                            $report->updated_expected_date = false;
                         } else {
-                            // Usuario administradors
-                            $userSoporte = User::where('area_id', '1')->first();
-                            $delegate_id = $userSoporte->id;
+                            $report->delegate_id = $request->delegate;
+                            $report->expected_date = ($request->expected_date) ? $request->expected_date : null;
                         }
-                        $report->delegate_id =  $delegate_id;
-                        $report->expected_date = Carbon::now();
-                        $report->updated_expected_date = false;
-                    } else {
-                        $report->delegate_id = $request->delegate;
-                        $report->expected_date = $request->expected_date;
-                    }
-                    $report->title = $request->title;
-                    $report->content = $request->video;
+                        $report->icon = ($request->icon) ? $request->icon : null;
+                        $report->title = $request->title;
+                        $report->content = $request->video;
 
-                    if ($request->priority1) {
-                        $report->priority = 'Alto';
-                    } else if ($request->priority2) {
-                        $report->priority = 'Medio';
-                    } else {
-                        $report->priority = 'Bajo';
-                    }
-
-                    $report->state = "Abierto";
-                    $report->description = $request->description;
-                    $report->evidence = ($request->evidence) ? true : false;
-                    $report->points = $request->points ?? 0;
-                    // Crear un array asociativo con los valores
-                    $questionsPoints = [
-                        'pointKnow' => $request->pointKnow,
-                        'pointMany' => $request->pointMany,
-                        'pointEffort' => $request->pointEffort
-                    ];
-                    // Convertir el array a JSON
-                    $questionsPointsJson = json_encode($questionsPoints);
-                    // Asignar y guardar 
-                    $report->questions_points = $questionsPointsJson;
-                    $report->image = false;
-                    $report->video = true;
-                    $report->file = false;
-                    $report->delegated_date = Carbon::now();
-                    $report->save();
-                }
-
-                if (isset($request->photo)) {
-                    list($type, $data) = explode(';', $request->photo);
-                    list(, $data)      = explode(',', $data);
-                    $imageData = base64_decode($data);
-                    // Sanitizar nombres de archivo y directorios
-                    $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.jpg';
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
-                    Storage::disk('reports')->put($filePath, $imageData);
-
-                    $report->project_id = $project_id;
-                    $report->user_id = $request->user_id;
-                    if (Auth::user()->type_user == 3) {
-                        // Usuario Soporte
-                        $userSoporte = User::where('area_id', '4')->first();
-                        if (!isNull($userSoporte)) {
-                            $delegate_id = $userSoporte->id;
+                        if ($request->priority1) {
+                            $report->priority = 'Alto';
+                        } else if ($request->priority2) {
+                            $report->priority = 'Medio';
                         } else {
-                            // Usuario administradors
-                            $userSoporte = User::where('area_id', '1')->first();
-                            $delegate_id = $userSoporte->id;
+                            $report->priority = 'Bajo';
                         }
-                        $report->delegate_id =  $delegate_id;
-                        $report->expected_date = Carbon::now();
-                        $report->updated_expected_date = false;
-                    } else {
-                        $report->delegate_id = $request->delegate;
-                        $report->expected_date = $request->expected_date;
-                    }
-                    $report->title = $request->title;
-                    $report->content = $filePath;
-                    if ($request->priority1) {
-                        $report->priority = 'Alto';
-                    } else if ($request->priority2) {
-                        $report->priority = 'Medio';
-                    } else {
-                        $report->priority = 'Bajo';
-                    }
-                    $report->state = "Abierto";
-                    $report->description = $request->description;
-                    $report->evidence = ($request->evidence) ? true : false;
-                    $report->points = $request->points ?? 0;
-                    // Crear un array asociativo con los valores
-                    $questionsPriority = [
-                        'pointKnow' => $request->pointKnow,
-                        'pointMany' => $request->pointMany,
-                        'pointEffort' => $request->pointEffort
-                    ];
-                    // Convertir el array a JSON
-                    $questionsPriorityJson = json_encode($questionsPriority);
-                    // Asignar y guardar 
-                    $report->questions_points = $questionsPriorityJson;
-                    $report->image = true;
-                    $report->video = false;
-                    $report->file = false;
-                    $report->delegated_date = Carbon::now();
-                    $report->save();
-                }
 
-                if (isset($request->file)) {
-                    $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
-
-                    $file = $request->file('file');
-                    $fileExtension = $file->extension();
-                    // Sanitizar nombres de archivo y directorios
-                    $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.' . $fileExtension;
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
-                    Storage::disk('reports')->put($filePath, file_get_contents($file));
-
-                    $report->project_id = $project_id;
-                    $report->user_id = $request->user_id;
-                    if (Auth::user()->type_user == 3) {
-                        // Usuario Soporte
-                        $userSoporte = User::where('area_id', '4')->first();
-                        if (!isNull($userSoporte)) {
-                            $delegate_id = $userSoporte->id;
-                        } else {
-                            // Usuario administradors
-                            $userSoporte = User::where('area_id', '1')->first();
-                            $delegate_id = $userSoporte->id;
-                        }
-                        $report->delegate_id =  $delegate_id;
-                        $report->expected_date = Carbon::now();
-                        $report->updated_expected_date = false;
-                    } else {
-                        $report->delegate_id = $request->delegate;
-                        $report->expected_date = $request->expected_date;
-                    }
-                    $report->title = $request->title;
-                    $report->content = $filePath;
-
-                    if ($request->priority1) {
-                        $report->priority = 'Alto';
-                    } else if ($request->priority2) {
-                        $report->priority = 'Medio';
-                    } else {
-                        $report->priority = 'Bajo';
-                    }
-
-                    $report->state = "Abierto";
-                    $report->description = $request->description;
-                    $report->evidence = ($request->evidence) ? true : false;
-                    $report->points = $request->points ?? 0;
-                    // Crear un array asociativo con los valores
-                    $questionsPriority = [
-                        'pointKnow' => $request->pointKnow,
-                        'pointMany' => $request->pointMany,
-                        'pointEffort' => $request->pointEffort
-                    ];
-                    // Convertir el array a JSON
-                    $questionsPriorityJson = json_encode($questionsPriority);
-                    // Asignar y guardar 
-                    $report->questions_points = $questionsPriorityJson;
-                    if (in_array($file->extension(), $extensionesImagen)) {
-                        $report->image = true;
-                        $report->video = false;
-                        $report->file = false;
-                    } elseif (in_array($file->extension(), $extensionesVideo)) {
+                        $report->state = "Abierto";
+                        $report->description = $request->description;
+                        $report->evidence = ($request->evidence) ? true : false;
+                        $report->points = $request->points ?? 0;
+                        // Crear un array asociativo con los valores
+                        $questionsPoints = [
+                            'pointKnow' => $request->pointKnow,
+                            'pointMany' => $request->pointMany,
+                            'pointEffort' => $request->pointEffort
+                        ];
+                        // Convertir el array a JSON
+                        $questionsPointsJson = json_encode($questionsPoints);
+                        // Asignar y guardar 
+                        $report->questions_points = $questionsPointsJson;
                         $report->image = false;
                         $report->video = true;
                         $report->file = false;
-                    } else {
+                        $report->delegated_date = Carbon::now();
+                        $report->save();
+                    }
+
+                    if (isset($request->photo)) {
+                        list($type, $data) = explode(';', $request->photo);
+                        list(, $data)      = explode(',', $data);
+                        $imageData = base64_decode($data);
+                        // Sanitizar nombres de archivo y directorios
+                        $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.jpg';
+                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                        Storage::disk('reports')->put($filePath, $imageData);
+
+                        $report->project_id = $project_id;
+                        $report->user_id = $request->user_id;
+                        if (Auth::user()->type_user == 3) {
+                            // Usuario Soporte
+                            $userSoporte = User::where('area_id', '4')->first();
+                            if (!isNull($userSoporte)) {
+                                $delegate_id = $userSoporte->id;
+                            } else {
+                                // Usuario administradors
+                                $userSoporte = User::where('area_id', '1')->first();
+                                $delegate_id = $userSoporte->id;
+                            }
+                            $report->delegate_id =  $delegate_id;
+                            $report->expected_date = null;
+                            $report->updated_expected_date = false;
+                        } else {
+                            $report->delegate_id = $request->delegate;
+                            $report->expected_date = ($request->expected_date) ? $request->expected_date : null;
+                        }
+                        $report->icon = ($request->icon) ? $request->icon : null;
+                        $report->title = $request->title;
+                        $report->content = $filePath;
+                        if ($request->priority1) {
+                            $report->priority = 'Alto';
+                        } else if ($request->priority2) {
+                            $report->priority = 'Medio';
+                        } else {
+                            $report->priority = 'Bajo';
+                        }
+                        $report->state = "Abierto";
+                        $report->description = $request->description;
+                        $report->evidence = ($request->evidence) ? true : false;
+                        $report->points = $request->points ?? 0;
+                        // Crear un array asociativo con los valores
+                        $questionsPriority = [
+                            'pointKnow' => $request->pointKnow,
+                            'pointMany' => $request->pointMany,
+                            'pointEffort' => $request->pointEffort
+                        ];
+                        // Convertir el array a JSON
+                        $questionsPriorityJson = json_encode($questionsPriority);
+                        // Asignar y guardar 
+                        $report->questions_points = $questionsPriorityJson;
+                        $report->image = true;
+                        $report->video = false;
+                        $report->file = false;
+                        $report->delegated_date = Carbon::now();
+                        $report->save();
+                    }
+
+                    if (isset($request->file)) {
+                        $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                        $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+
+                        $file = $request->file('file');
+                        $fileExtension = $file->extension();
+                        // Sanitizar nombres de archivo y directorios
+                        $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.' . $fileExtension;
+                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name . '/' . $fileName;
+                        Storage::disk('reports')->put($filePath, file_get_contents($file));
+
+                        $report->project_id = $project_id;
+                        $report->user_id = $request->user_id;
+                        if (Auth::user()->type_user == 3) {
+                            // Usuario Soporte
+                            $userSoporte = User::where('area_id', '4')->first();
+                            if (!isNull($userSoporte)) {
+                                $delegate_id = $userSoporte->id;
+                            } else {
+                                // Usuario administradors
+                                $userSoporte = User::where('area_id', '1')->first();
+                                $delegate_id = $userSoporte->id;
+                            }
+                            $report->delegate_id =  $delegate_id;
+                            $report->expected_date = null;
+                            $report->updated_expected_date = false;
+                        } else {
+                            $report->delegate_id = $request->delegate;
+                            $report->expected_date = ($request->expected_date) ? $request->expected_date : null;
+                        }
+                        $report->icon = ($request->icon) ? $request->icon : null;
+                        $report->title = $request->title;
+                        $report->content = $filePath;
+
+                        if ($request->priority1) {
+                            $report->priority = 'Alto';
+                        } else if ($request->priority2) {
+                            $report->priority = 'Medio';
+                        } else {
+                            $report->priority = 'Bajo';
+                        }
+
+                        $report->state = "Abierto";
+                        $report->description = $request->description;
+                        $report->evidence = ($request->evidence) ? true : false;
+                        $report->points = $request->points ?? 0;
+                        // Crear un array asociativo con los valores
+                        $questionsPriority = [
+                            'pointKnow' => $request->pointKnow,
+                            'pointMany' => $request->pointMany,
+                            'pointEffort' => $request->pointEffort
+                        ];
+                        // Convertir el array a JSON
+                        $questionsPriorityJson = json_encode($questionsPriority);
+                        // Asignar y guardar 
+                        $report->questions_points = $questionsPriorityJson;
+                        if (in_array($file->extension(), $extensionesImagen)) {
+                            $report->image = true;
+                            $report->video = false;
+                            $report->file = false;
+                        } elseif (in_array($file->extension(), $extensionesVideo)) {
+                            $report->image = false;
+                            $report->video = true;
+                            $report->file = false;
+                        } else {
+                            $report->image = false;
+                            $report->video = false;
+                            $report->file = true;
+                        }
+
+                        $report->delegated_date = Carbon::now();
+                        $report->save();
+                    }
+
+                    if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
+                        $report->project_id = $project_id;
+                        $report->user_id = $request->user_id;
+                        if (Auth::user()->type_user == 3) {
+                            // Usuario Soporte
+                            $userSoporte = User::where('area_id', '4')->first();
+                            if ($userSoporte) {
+                                $delegate_id = $userSoporte->id;
+                            } else {
+                                // Usuario administradors
+                                $userSoporte = User::where('area_id', '1')->first();
+                                $delegate_id = $userSoporte->id;
+                            }
+                            $report->delegate_id =  $delegate_id;
+                            $report->expected_date = null;
+                            $report->updated_expected_date = false;
+                        } else {
+                            $report->delegate_id = $request->delegate;
+                            $report->expected_date = ($request->expected_date) ? $request->expected_date : null;
+                        }
+                        $report->icon = ($request->icon) ? $request->icon : null;
+                        $report->title = $request->title;
+
+                        if ($request->priority1) {
+                            $report->priority = 'Alto';
+                        } else if ($request->priority2) {
+                            $report->priority = 'Medio';
+                        } else {
+                            $report->priority = 'Bajo';
+                        }
+
+                        $report->state = "Abierto";
+                        $report->description = $request->description;
+                        $report->evidence = ($request->evidence) ? true : false;
+                        $report->points = $request->points ?? 0;
+                        // Crear un array asociativo con los valores
+                        $questionsPriority = [
+                            'pointKnow' => $request->pointKnow,
+                            'pointMany' => $request->pointMany,
+                            'pointEffort' => $request->pointEffort
+                        ];
+                        // Convertir el array a JSON
+                        $questionsPriorityJson = json_encode($questionsPriority);
+                        // Asignar y guardar 
+                        $report->questions_points = $questionsPriorityJson;
                         $report->image = false;
                         $report->video = false;
-                        $report->file = true;
+                        $report->file = false;
+                        $report->delegated_date = Carbon::now();
+                        $report->save();
                     }
 
-                    $report->delegated_date = Carbon::now();
-                    $report->save();
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'project_id' => $project->id,
+                        'report_id' => $report->id ,
+                        'view' => 'projects/reports/newreport',
+                        'action' => 'Crear reporte',
+                        'message' => 'Reporte creado exitosamente',
+                        'details' => ($userSoporte->id) ? 'Delegado: ' . $userSoporte->id : 'Delegado: ' . $request->delegate ,
+                    ]);
+
+                    return redirect()->route('projects.reports.index', ['project' => $project_id]);
+
+                    // Aquí puedes continuar con tu lógica después de la validación exitosa
+                } catch (\Illuminate\Validation\ValidationException $e) {
+                    // Guardar el error en la base de datos
+                    ErrorLog::create([
+                        'user_id' => Auth::id(),
+                        'project_id' => $project->id,
+                        'view' => 'projects/reports/newreport',
+                        'action' => 'Crear reporte',
+                        'message' => 'Error de validación en el formulario',
+                        'details' => $e->getMessage(),
+                    ]);
+
+                    // Redirigir con un mensaje de error
+                    return redirect()->back()->with('error', 'Faltan campos o campos incorrectos.');
+                } catch (\Exception $e) {
+                    // Guardar el error en la base de datos
+                    ErrorLog::create([
+                        'user_id' => Auth::id(),
+                        'project_id' => $project->id,
+                        'view' => 'projects/reports/newreport',
+                        'action' => 'Crear reporte',
+                        'message' => 'Error al guardar el reporte',
+                        'details' => $e->getMessage(),
+                    ]);
+
+                    // Redirigir con un mensaje de error
+                    return redirect()->back()->with('error', 'Ocurrió un error al guardar el reporte.');
                 }
-
-                if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
-                    $report->project_id = $project_id;
-                    $report->user_id = $request->user_id;
-                    if (Auth::user()->type_user == 3) {
-                        // Usuario Soporte
-                        $userSoporte = User::where('area_id', '4')->first();
-                        if ($userSoporte) {
-                            $delegate_id = $userSoporte->id;
-                        } else {
-                            // Usuario administradors
-                            $userSoporte = User::where('area_id', '1')->first();
-                            $delegate_id = $userSoporte->id;
-                        }
-                        $report->delegate_id =  $delegate_id;
-                        $report->expected_date = Carbon::now();
-                        $report->updated_expected_date = false;
-                    } else {
-                        $report->delegate_id = $request->delegate;
-                        $report->expected_date = $request->expected_date;
-                    }
-                    $report->title = $request->title;
-
-                    if ($request->priority1) {
-                        $report->priority = 'Alto';
-                    } else if ($request->priority2) {
-                        $report->priority = 'Medio';
-                    } else {
-                        $report->priority = 'Bajo';
-                    }
-
-                    $report->state = "Abierto";
-                    $report->description = $request->description;
-                    $report->evidence = ($request->evidence) ? true : false;
-                    $report->points = $request->points ?? 0;
-                    // Crear un array asociativo con los valores
-                    $questionsPriority = [
-                        'pointKnow' => $request->pointKnow,
-                        'pointMany' => $request->pointMany,
-                        'pointEffort' => $request->pointEffort
-                    ];
-                    // Convertir el array a JSON
-                    $questionsPriorityJson = json_encode($questionsPriority);
-                    // Asignar y guardar 
-                    $report->questions_points = $questionsPriorityJson;
-                    $report->image = false;
-                    $report->video = false;
-                    $report->file = false;
-                    $report->delegated_date = Carbon::now();
-                    $report->save();
-                }
-                return redirect()->route('projects.reports.index', ['project' => $project_id]);
             } else {
                 return redirect('/projects');
             }
@@ -394,284 +435,204 @@ class Report extends Controller
                     $validatedData = $request->validate([
                         'description' => 'required',
                     ]);
+
                     // Aquí puedes continuar con tu lógica después de la validación exitosa
-                } catch (\Illuminate\Validation\ValidationException $e) {
-                    return redirect()->back()->with('error', 'Faltan campos o campos incorrectos');
+                    $projectName = Str::slug($project->name, '_');
+                    $customerName = Str::slug($project->customer->name, '_');
 
-                    throw $e;
-                }
-
-                $projectName = Str::slug($project->name, '_');
-                $customerName = Str::slug($project->customer->name, '_');
-
-                if ($report->report_id == null) {
-                    $report->report_id = $id;
-                    $report->state = "Resuelto";
+                    if ($report->report_id == null) {
+                        $report->report_id = $id;
+                        $report->state = "Resuelto";
+                        $report->save();
+                    }
+                    $report->repeat = false;
                     $report->save();
-                }
-                $report->repeat = false;
-                $report->save();
 
-                if (isset($request->video)) {
-                    $reportNew->project_id = $project_id;
-                    $reportNew->user_id = $request->user_id;
+                    if (isset($request->video)) {
+                        $reportNew->project_id = $project_id;
+                        $reportNew->user_id = $request->user_id;
 
-                    if (Auth::user()->type_user == 3) {
-                        // Usuario Soporte
-                        $userSoporte = User::where('area_id', '4')->first();
-                        if ($userSoporte) {
-                            $delegate_id = $userSoporte->id;
+                        if (Auth::user()->type_user == 3) {
+                            // Usuario Soporte
+                            $userSoporte = User::where('area_id', '4')->first();
+                            if ($userSoporte) {
+                                $delegate_id = $userSoporte->id;
+                            } else {
+                                // Usuario administradors
+                                $userSoporte = User::where('area_id', '1')->first();
+                                $delegate_id = $userSoporte->id;
+                            }
+                            $reportNew->delegate_id =  $delegate_id;
+                            $reportNew->expected_date = null;
+                            $reportNew->updated_expected_date = false;
                         } else {
-                            // Usuario administradors
-                            $userSoporte = User::where('area_id', '1')->first();
-                            $delegate_id = $userSoporte->id;
+                            $reportNew->delegate_id = $request->delegate;
+                            $reportNew->expected_date = $request->expected_date;
                         }
-                        $reportNew->delegate_id =  $delegate_id;
-                        $reportNew->expected_date = Carbon::now();
-                        $reportNew->updated_expected_date = false;
-                    } else {
-                        $reportNew->delegate_id = $request->delegate;
-                        $reportNew->expected_date = $request->expected_date;
-                    }
 
-                    $reportNew->report_id = $report->report_id;
-                    $reportNew->title = $report->title;
-                    $reportNew->content = $request->video;
-                    if ($request->priority1) {
-                        $reportNew->priority = 'Alto';
-                    } else if ($request->priority2) {
-                        $reportNew->priority = 'Medio';
-                    } else {
-                        $reportNew->priority = 'Bajo';
-                    }
-                    $reportNew->state = "Abierto";
-                    $reportNew->description = $request->description;
-                    $reportNew->evidence = $request->evidence ?? $report->evidence;
-                    $reportNew->points = $request->points ?? 0;
-                    // Crear un array asociativo con los valores
-                    $questionsPriority = [
-                        'pointKnow' => $request->pointKnow,
-                        'pointMany' => $request->pointMany,
-                        'pointEffort' => $request->pointEffort
-                    ];
-                    // Convertir el array a JSON
-                    $questionsPriorityJson = json_encode($questionsPriority);
-                    // Asignar y guardar 
-                    $reportNew->questions_points = $questionsPriorityJson;
-                    $reportNew->image = false;
-                    $reportNew->video = true;
-                    $reportNew->file = false;
-                    if ($reportNew->count == null) {
-                        $reportNew->count = 1;
-                    } else {
-                        $reportNew->count = $report->count + 1;
-                    }
-                    $reportNew->repeat = true;
-                    $reportNew->delegated_date = Carbon::now();
-                    $reportNew->save();
-                }
-
-                if (isset($request->photo)) {
-                    list($type, $data) = explode(';', $request->photo);
-                    list(, $data)      = explode(',', $data);
-                    $imageData = base64_decode($data);
-                    // Sanitizar nombres de archivo y directorios
-                    $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.jpg';
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
-                    Storage::disk('reports')->put($filePath, $imageData);
-
-                    $reportNew->project_id = $project_id;
-                    $reportNew->user_id = $request->user_id;
-
-                    if (Auth::user()->type_user == 3) {
-                        // Usuario Soporte
-                        $userSoporte = User::where('area_id', '4')->first();
-                        if ($userSoporte) {
-                            $delegate_id = $userSoporte->id;
+                        $reportNew->report_id = $report->report_id;
+                        $reportNew->icon = ($request->icon) ? $request->icon : null;
+                        $reportNew->title = $report->title;
+                        $reportNew->content = $request->video;
+                        if ($request->priority1) {
+                            $reportNew->priority = 'Alto';
+                        } else if ($request->priority2) {
+                            $reportNew->priority = 'Medio';
                         } else {
-                            // Usuario administradors
-                            $userSoporte = User::where('area_id', '1')->first();
-                            $delegate_id = $userSoporte->id;
+                            $reportNew->priority = 'Bajo';
                         }
-                        $reportNew->delegate_id =  $delegate_id;
-                        $reportNew->expected_date = Carbon::now();
-                        $reportNew->updated_expected_date = false;
-                    } else {
-                        $reportNew->delegate_id = $request->delegate;
-                        $reportNew->expected_date = $request->expected_date;
-                    }
-
-                    $reportNew->report_id = $report->report_id;
-                    $reportNew->title = $report->title;
-                    $reportNew->content = $filePath;
-                    if ($request->priority1) {
-                        $reportNew->priority = 'Alto';
-                    } else if ($request->priority2) {
-                        $reportNew->priority = 'Medio';
-                    } else {
-                        $reportNew->priority = 'Bajo';
-                    }
-                    $reportNew->state = "Abierto";
-                    $reportNew->description = $request->description;
-                    $reportNew->evidence = $request->evidence ?? $report->evidence;
-                    $reportNew->points = $request->points ?? 0;
-                    // Crear un array asociativo con los valores
-                    $questionsPriority = [
-                        'pointKnow' => $request->pointKnow,
-                        'pointMany' => $request->pointMany,
-                        'pointEffort' => $request->pointEffort
-                    ];
-                    // Convertir el array a JSON
-                    $questionsPriorityJson = json_encode($questionsPriority);
-                    // Asignar y guardar 
-                    $reportNew->questions_points = $questionsPriorityJson;
-                    $reportNew->image = true;
-                    $reportNew->video = false;
-                    $reportNew->file = false;
-                    if ($reportNew->count == null) {
-                        $reportNew->count = 1;
-                    } else {
-                        $reportNew->count = $report->count + 1;
-                    }
-                    $reportNew->repeat = true;
-                    $reportNew->delegated_date = Carbon::now();
-                    $reportNew->save();
-                }
-
-                if (isset($request->file)) {
-                    $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
-
-                    $file = $request->file('file');
-                    $fileExtension = $file->extension();
-                    // Sanitizar nombres de archivo y directorios
-                    $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.' . $fileExtension;
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
-                    Storage::disk('reports')->put($filePath, file_get_contents($file));
-
-                    $reportNew->project_id = $project_id;
-                    $reportNew->user_id = $request->user_id;
-
-                    if (Auth::user()->type_user == 3) {
-                        // Usuario Soporte
-                        $userSoporte = User::where('area_id', '4')->first();
-                        if ($userSoporte) {
-                            $delegate_id = $userSoporte->id;
-                        } else {
-                            // Usuario administradors
-                            $userSoporte = User::where('area_id', '1')->first();
-                            $delegate_id = $userSoporte->id;
-                        }
-                        $reportNew->delegate_id =  $delegate_id;
-                        $reportNew->expected_date = Carbon::now();
-                        $reportNew->updated_expected_date = false;
-                    } else {
-                        $reportNew->delegate_id = $request->delegate;
-                        $reportNew->expected_date = $request->expected_date;
-                    }
-
-                    $reportNew->report_id = $report->report_id;
-                    $reportNew->title = $report->title;
-                    $reportNew->content = $filePath;
-                    if ($request->priority1) {
-                        $reportNew->priority = 'Alto';
-                    } else if ($request->priority2) {
-                        $reportNew->priority = 'Medio';
-                    } else {
-                        $reportNew->priority = 'Bajo';
-                    }
-                    $reportNew->state = "Abierto";
-                    $reportNew->description = $request->description;
-                    $reportNew->evidence = $request->evidence ?? $report->evidence;
-                    $reportNew->points = $request->points ?? 0;
-                    // Crear un array asociativo con los valores
-                    $questionsPriority = [
-                        'pointKnow' => $request->pointKnow,
-                        'pointMany' => $request->pointMany,
-                        'pointEffort' => $request->pointEffort
-                    ];
-                    // Convertir el array a JSON
-                    $questionsPriorityJson = json_encode($questionsPriority);
-                    // Asignar y guardar 
-                    $reportNew->questions_points = $questionsPriorityJson;
-                    if (in_array($fileExtension, $extensionesImagen)) {
-                        $reportNew->image = true;
-                        $reportNew->video = false;
-                        $reportNew->file = false;
-                    } elseif (in_array($fileExtension, $extensionesVideo)) {
+                        $reportNew->state = "Abierto";
+                        $reportNew->description = $request->description;
+                        $reportNew->evidence = $request->evidence ?? $report->evidence;
+                        $reportNew->points = $request->points ?? 0;
+                        // Crear un array asociativo con los valores
+                        $questionsPriority = [
+                            'pointKnow' => $request->pointKnow,
+                            'pointMany' => $request->pointMany,
+                            'pointEffort' => $request->pointEffort
+                        ];
+                        // Convertir el array a JSON
+                        $questionsPriorityJson = json_encode($questionsPriority);
+                        // Asignar y guardar 
+                        $reportNew->questions_points = $questionsPriorityJson;
                         $reportNew->image = false;
                         $reportNew->video = true;
                         $reportNew->file = false;
-                    } else {
-                        $reportNew->image = false;
-                        $reportNew->video = false;
-                        $reportNew->file = true;
-                    }
-
-                    if ($report->count == null) {
-                        $reportNew->count = 1;
-                    } else {
-                        $reportNew->count = $report->count + 1;
-                    }
-
-                    if ($reportNew->count == null) {
-                        $reportNew->count = 1;
-                    } else {
-                        $reportNew->count = $report->count + 1;
-                    }
-                    $reportNew->repeat = true;
-                    $reportNew->delegated_date = Carbon::now();
-                    $reportNew->save();
-                }
-
-                if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
-                    $reportNew->project_id = $project_id;
-                    $reportNew->user_id = $request->user_id;
-
-                    if (Auth::user()->type_user == 3) {
-                        // Usuario Soporte
-                        $userSoporte = User::where('area_id', '4')->first();
-
-                        if ($userSoporte) {
-                            $delegate_id = $userSoporte->id;
+                        if ($reportNew->count == null) {
+                            $reportNew->count = 1;
                         } else {
-                            // Usuario administradors
-                            $userSoporte = User::where('area_id', '1')->first();
-                            $delegate_id = $userSoporte->id;
+                            $reportNew->count = $report->count + 1;
                         }
-                        $reportNew->delegate_id =  $delegate_id;
-                        $reportNew->expected_date = Carbon::now();
-                        $reportNew->updated_expected_date = false;
-                    } else {
-                        $reportNew->delegate_id = $request->delegate;
-                        $reportNew->expected_date = $request->expected_date;
+                        $reportNew->repeat = true;
+                        $reportNew->delegated_date = Carbon::now();
+                        $reportNew->save();
                     }
 
-                    $reportNew->report_id = $report->report_id;
-                    $reportNew->title = $report->title;
+                    if (isset($request->photo)) {
+                        list($type, $data) = explode(';', $request->photo);
+                        list(, $data)      = explode(',', $data);
+                        $imageData = base64_decode($data);
+                        // Sanitizar nombres de archivo y directorios
+                        $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.jpg';
+                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
+                        Storage::disk('reports')->put($filePath, $imageData);
 
-                    $currentYear = date("Y");
-                    $startsWithYear = strpos($report->content, $currentYear) === 0;
-                    $startsWithReporte = strpos($report->content, "Reporte") === 0;
+                        $reportNew->project_id = $project_id;
+                        $reportNew->user_id = $request->user_id;
 
-                    if ($startsWithYear) {
-                        // $report->content comienza con el año actual
+                        if (Auth::user()->type_user == 3) {
+                            // Usuario Soporte
+                            $userSoporte = User::where('area_id', '4')->first();
+                            if ($userSoporte) {
+                                $delegate_id = $userSoporte->id;
+                            } else {
+                                // Usuario administradors
+                                $userSoporte = User::where('area_id', '1')->first();
+                                $delegate_id = $userSoporte->id;
+                            }
+                            $reportNew->delegate_id =  $delegate_id;
+                            $reportNew->expected_date = null;
+                            $reportNew->updated_expected_date = false;
+                        } else {
+                            $reportNew->delegate_id = $request->delegate;
+                            $reportNew->expected_date = $request->expected_date;
+                        }
+
+                        $reportNew->report_id = $report->report_id;
+                        $reportNew->icon = ($request->icon) ? $request->icon : null;
+                        $reportNew->title = $report->title;
+                        $reportNew->content = $filePath;
+                        if ($request->priority1) {
+                            $reportNew->priority = 'Alto';
+                        } else if ($request->priority2) {
+                            $reportNew->priority = 'Medio';
+                        } else {
+                            $reportNew->priority = 'Bajo';
+                        }
+                        $reportNew->state = "Abierto";
+                        $reportNew->description = $request->description;
+                        $reportNew->evidence = $request->evidence ?? $report->evidence;
+                        $reportNew->points = $request->points ?? 0;
+                        // Crear un array asociativo con los valores
+                        $questionsPriority = [
+                            'pointKnow' => $request->pointKnow,
+                            'pointMany' => $request->pointMany,
+                            'pointEffort' => $request->pointEffort
+                        ];
+                        // Convertir el array a JSON
+                        $questionsPriorityJson = json_encode($questionsPriority);
+                        // Asignar y guardar 
+                        $reportNew->questions_points = $questionsPriorityJson;
+                        $reportNew->image = true;
+                        $reportNew->video = false;
+                        $reportNew->file = false;
+                        if ($reportNew->count == null) {
+                            $reportNew->count = 1;
+                        } else {
+                            $reportNew->count = $report->count + 1;
+                        }
+                        $reportNew->repeat = true;
+                        $reportNew->delegated_date = Carbon::now();
+                        $reportNew->save();
+                    }
+
+                    if (isset($request->file)) {
                         $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
                         $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
 
-                        $sourcePath = public_path('reportes/' . $report->content); // Ruta del archivo existente
-                        $pathInfo = pathinfo($sourcePath); // Obtener información sobre la ruta del archivo
-                        $fileExtension = $pathInfo['extension']; // Obtener la extensión del archivo
+                        $file = $request->file('file');
+                        $fileExtension = $file->extension();
                         // Sanitizar nombres de archivo y directorios
                         $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.' . $fileExtension;
                         $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
+                        Storage::disk('reports')->put($filePath, file_get_contents($file));
 
-                        $destinationPath = public_path('reportes/' . $filePath); // Ruta donde se guardará la copia
+                        $reportNew->project_id = $project_id;
+                        $reportNew->user_id = $request->user_id;
 
-                        if (File::exists($sourcePath)) {
-                            File::copy($sourcePath, $destinationPath);
+                        if (Auth::user()->type_user == 3) {
+                            // Usuario Soporte
+                            $userSoporte = User::where('area_id', '4')->first();
+                            if ($userSoporte) {
+                                $delegate_id = $userSoporte->id;
+                            } else {
+                                // Usuario administradors
+                                $userSoporte = User::where('area_id', '1')->first();
+                                $delegate_id = $userSoporte->id;
+                            }
+                            $reportNew->delegate_id =  $delegate_id;
+                            $reportNew->expected_date = null;
+                            $reportNew->updated_expected_date = false;
+                        } else {
+                            $reportNew->delegate_id = $request->delegate;
+                            $reportNew->expected_date = $request->expected_date;
                         }
+
+                        $reportNew->report_id = $report->report_id;
+                        $reportNew->icon = ($request->icon) ? $request->icon : null;
+                        $reportNew->title = $report->title;
                         $reportNew->content = $filePath;
+                        if ($request->priority1) {
+                            $reportNew->priority = 'Alto';
+                        } else if ($request->priority2) {
+                            $reportNew->priority = 'Medio';
+                        } else {
+                            $reportNew->priority = 'Bajo';
+                        }
+                        $reportNew->state = "Abierto";
+                        $reportNew->description = $request->description;
+                        $reportNew->evidence = $request->evidence ?? $report->evidence;
+                        $reportNew->points = $request->points ?? 0;
+                        // Crear un array asociativo con los valores
+                        $questionsPriority = [
+                            'pointKnow' => $request->pointKnow,
+                            'pointMany' => $request->pointMany,
+                            'pointEffort' => $request->pointEffort
+                        ];
+                        // Convertir el array a JSON
+                        $questionsPriorityJson = json_encode($questionsPriority);
+                        // Asignar y guardar 
+                        $reportNew->questions_points = $questionsPriorityJson;
                         if (in_array($fileExtension, $extensionesImagen)) {
                             $reportNew->image = true;
                             $reportNew->video = false;
@@ -685,50 +646,164 @@ class Report extends Controller
                             $reportNew->video = false;
                             $reportNew->file = true;
                         }
-                    } elseif ($startsWithReporte) {
-                        // $report->content comienza con "Reporte"
-                        $reportNew->content = $report->content;
-                        $reportNew->image = false;
-                        $reportNew->video = true;
-                        $reportNew->file = false;
-                    } else {
-                        $reportNew->image = false;
-                        $reportNew->video = false;
-                        $reportNew->file = false;
+
+                        if ($report->count == null) {
+                            $reportNew->count = 1;
+                        } else {
+                            $reportNew->count = $report->count + 1;
+                        }
+
+                        if ($reportNew->count == null) {
+                            $reportNew->count = 1;
+                        } else {
+                            $reportNew->count = $report->count + 1;
+                        }
+                        $reportNew->repeat = true;
+                        $reportNew->delegated_date = Carbon::now();
+                        $reportNew->save();
                     }
 
-                    if ($request->priority1) {
-                        $reportNew->priority = 'Alto';
-                    } else if ($request->priority2) {
-                        $reportNew->priority = 'Medio';
-                    } else {
-                        $reportNew->priority = 'Bajo';
+                    if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
+                        $reportNew->project_id = $project_id;
+                        $reportNew->user_id = $request->user_id;
+
+                        if (Auth::user()->type_user == 3) {
+                            // Usuario Soporte
+                            $userSoporte = User::where('area_id', '4')->first();
+
+                            if ($userSoporte) {
+                                $delegate_id = $userSoporte->id;
+                            } else {
+                                // Usuario administradors
+                                $userSoporte = User::where('area_id', '1')->first();
+                                $delegate_id = $userSoporte->id;
+                            }
+                            $reportNew->delegate_id =  $delegate_id;
+                            $reportNew->expected_date = null;
+                            $reportNew->updated_expected_date = false;
+                        } else {
+                            $reportNew->delegate_id = $request->delegate;
+                            $reportNew->expected_date = $request->expected_date;
+                        }
+
+                        $reportNew->report_id = $report->report_id;
+                        $reportNew->icon = ($request->icon) ? $request->icon : null;
+                        $reportNew->title = $report->title;
+
+                        $currentYear = date("Y");
+                        $startsWithYear = strpos($report->content, $currentYear) === 0;
+                        $startsWithReporte = strpos($report->content, "Reporte") === 0;
+
+                        if ($startsWithYear) {
+                            // $report->content comienza con el año actual
+                            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                            $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+
+                            $sourcePath = public_path('reportes/' . $report->content); // Ruta del archivo existente
+                            $pathInfo = pathinfo($sourcePath); // Obtener información sobre la ruta del archivo
+                            $fileExtension = $pathInfo['extension']; // Obtener la extensión del archivo
+                            // Sanitizar nombres de archivo y directorios
+                            $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.' . $fileExtension;
+                            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName . '/' . $fileName;
+
+                            $destinationPath = public_path('reportes/' . $filePath); // Ruta donde se guardará la copia
+
+                            if (File::exists($sourcePath)) {
+                                File::copy($sourcePath, $destinationPath);
+                            }
+                            $reportNew->content = $filePath;
+                            if (in_array($fileExtension, $extensionesImagen)) {
+                                $reportNew->image = true;
+                                $reportNew->video = false;
+                                $reportNew->file = false;
+                            } elseif (in_array($fileExtension, $extensionesVideo)) {
+                                $reportNew->image = false;
+                                $reportNew->video = true;
+                                $reportNew->file = false;
+                            } else {
+                                $reportNew->image = false;
+                                $reportNew->video = false;
+                                $reportNew->file = true;
+                            }
+                        } elseif ($startsWithReporte) {
+                            // $report->content comienza con "Reporte"
+                            $reportNew->content = $report->content;
+                            $reportNew->image = false;
+                            $reportNew->video = true;
+                            $reportNew->file = false;
+                        } else {
+                            $reportNew->image = false;
+                            $reportNew->video = false;
+                            $reportNew->file = false;
+                        }
+
+                        if ($request->priority1) {
+                            $reportNew->priority = 'Alto';
+                        } else if ($request->priority2) {
+                            $reportNew->priority = 'Medio';
+                        } else {
+                            $reportNew->priority = 'Bajo';
+                        }
+                        $reportNew->state = "Abierto";
+                        $reportNew->description = $request->description;
+                        $reportNew->evidence = $request->evidence ?? $report->evidence;
+                        $reportNew->points = $request->points ?? 0;
+                        // Crear un array asociativo con los valores
+                        $questionsPriority = [
+                            'pointKnow' => $request->pointKnow,
+                            'pointMany' => $request->pointMany,
+                            'pointEffort' => $request->pointEffort
+                        ];
+                        // Convertir el array a JSON
+                        $questionsPriorityJson = json_encode($questionsPriority);
+                        // Asignar y guardar 
+                        $reportNew->questions_points = $questionsPriorityJson;
+                        if ($report->count == null) {
+                            $reportNew->count = 1;
+                        } else {
+                            $reportNew->count = $report->count + 1;
+                        }
+                        $reportNew->repeat = true;
+                        $reportNew->delegated_date = Carbon::now();
+                        $reportNew->save();
                     }
-                    $reportNew->state = "Abierto";
-                    $reportNew->description = $request->description;
-                    $reportNew->evidence = $request->evidence ?? $report->evidence;
-                    $reportNew->points = $request->points ?? 0;
-                    // Crear un array asociativo con los valores
-                    $questionsPriority = [
-                        'pointKnow' => $request->pointKnow,
-                        'pointMany' => $request->pointMany,
-                        'pointEffort' => $request->pointEffort
-                    ];
-                    // Convertir el array a JSON
-                    $questionsPriorityJson = json_encode($questionsPriority);
-                    // Asignar y guardar 
-                    $reportNew->questions_points = $questionsPriorityJson;
-                    if ($report->count == null) {
-                        $reportNew->count = 1;
-                    } else {
-                        $reportNew->count = $report->count + 1;
-                    }
-                    $reportNew->repeat = true;
-                    $reportNew->delegated_date = Carbon::now();
-                    $reportNew->save();
+
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'project_id' => $project->id,
+                        'report_id' => $reportNew->id ,
+                        'view' => 'projects/reports/clonereport',
+                        'action' => 'Reincidencia de reporte',
+                        'message' => 'Reincidencia creada exitosamente',
+                        'details' => 'Delegado: ' .  $request->delegate,
+                    ]);
+
+                    return redirect()->route('projects.reports.index', ['project' => $project_id]);
+                } catch (\Illuminate\Validation\ValidationException $e) {
+                    ErrorLog::create([
+                        'user_id' => Auth::id(),
+                        'project_id' => $project->id,
+                        'view' => 'projects/reports/clonereport',
+                        'action' => 'Reincidencia report',
+                        'message' => 'Error de validación en el formulario',
+                        'details' => $e->getMessage(),
+                    ]);
+
+                    return redirect()->back()->with('error', 'Faltan campos o campos incorrectos');
+                } catch (\Exception $e) {
+                    // Guardar el error en la base de datos
+                    ErrorLog::create([
+                        'user_id' => Auth::id(),
+                        'project_id' => $project->id,
+                        'view' => 'projects/reports/clonereport',
+                        'action' => 'Reincidencia report',
+                        'message' => 'Error al guardar el reporte',
+                        'details' => $e->getMessage(),
+                    ]);
+
+                    // Redirigir con un mensaje de error
+                    return redirect()->back()->with('error', 'Ocurrió un error al guardar el reporte.');
                 }
-
-                return redirect()->route('projects.reports.index', ['project' => $project_id]);
             } else {
                 return redirect('/projects');
             }

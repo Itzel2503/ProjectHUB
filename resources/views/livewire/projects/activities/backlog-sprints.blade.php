@@ -25,7 +25,8 @@
                             <div wire:poll.5s>
                                 <span class="m-auto mr-5">
                                     <span class="inline-block font-semibold">Avance</span>
-                                    <span class="{{ $percentageResolved == '100' ? 'text-lime-700' : ($percentageResolved >= 50 ? 'text-yellow-500' : 'text-red-600') }}">
+                                    <span
+                                        class="{{ $percentageResolved == '100' ? 'text-lime-700' : ($percentageResolved >= 50 ? 'text-yellow-500' : 'text-red-600') }}">
                                         {{ $percentageResolved }}%
                                     </span>
                                 </span>
@@ -55,8 +56,7 @@
                         <span class="inline-block font-semibold">Fecha de inicio:</span>
                         {{ \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
                         <span class="inline-block font-semibold">Fecha de cierre:</span>
-                        <span
-                            class="">
+                        <span class="">
                             {{ \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
                         </span>
                     </div>
@@ -125,6 +125,21 @@
                                                 <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
                                             </svg>
                                             Eliminar
+                                        </div>
+                                        <!-- Botón Abrir sprint -->
+                                        <div wire:click="$emit('openSprint')"
+                                            class="@if ($firstSprint->state != 'Cerrado') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-black">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-lock-open mr-2">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path
+                                                    d="M5 11m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+                                                <path d="M12 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                <path d="M8 11v-5a4 4 0 0 1 8 0" />
+                                            </svg>
+                                            Reabrir
                                         </div>
                                     </div>
                                 </div>
@@ -354,7 +369,7 @@
     @endif
     {{-- END MODAL EDIT / CREATE SPRINT --}}
     <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-        wire:target="newSprint, editSprint, deleteSprint, showBacklog, updateSprint, createSprint">
+        wire:target="$set('deleteSprint'), newSprint, editSprint, showBacklog, updateSprint, createSprint">
         <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
         <div class="loadingspinner relative top-1/3 z-20">
             <div id="square1"></div>
@@ -365,31 +380,38 @@
         </div>
     </div>
     @if (!$sprints->isEmpty())
-        <livewire:projects.activities.table-activities :idsprint="$idSprint" :project="$project"  wire:key="table-activities-{{ $idSprint }}">
+        <livewire:projects.activities.table-activities :idsprint="$idSprint" :project="$project"
+            wire:key="table-activities-{{ $idSprint }}">
     @endif
     @push('js')
         <script>
-            const toggleButton = document.getElementById('toggle-button');
-            const dropdownPanel = document.getElementById('dropdown-panel');
+            document.addEventListener('livewire:load', function() {
+                const toggleButton = document.getElementById('toggle-button');
+                const dropdownPanel = document.getElementById('dropdown-panel');
 
-            // Alternar la visibilidad del panel al hacer clic en el botón
-            toggleButton.addEventListener('click', () => {
-                const isHidden = dropdownPanel.classList.contains('hidden');
-                dropdownPanel.classList.toggle('hidden', !isHidden);
-            });
+                if (toggleButton && dropdownPanel) {
+                    toggleButton.addEventListener('click', () => {
+                        dropdownPanel.classList.toggle('hidden');
+                    });
 
-            // Ocultar el panel si se hace clic fuera de él
-            document.addEventListener('click', (event) => {
-                const isClickInside = toggleButton.contains(event.target) || dropdownPanel.contains(event.target);
-                if (!isClickInside) {
-                    dropdownPanel.classList.add('hidden');
+                    document.addEventListener('click', (event) => {
+                        if (!toggleButton.contains(event.target) && !dropdownPanel.contains(event.target)) {
+                            dropdownPanel.classList.add('hidden');
+                        }
+                    });
                 }
+
+                // Escuchar el evento de Livewire y recargar la página
+                Livewire.on('sprintCreated', () => {
+                    location.reload();
+                });
             });
+
             // MODAL
             window.addEventListener('swal:modal', event => {
                 toastr[event.detail.type](event.detail.text, event.detail.title);
             });
-
+            
             Livewire.on('deleteSprint', deletebyId => {
                 Swal.fire({
                     title: '¿Seguro que deseas eliminar este elemento?',
@@ -408,6 +430,24 @@
                             'Sprint eliminado',
                             'Exito'
                         )
+                    }
+                })
+            });
+
+            Livewire.on('openSprint', () => {
+                Swal.fire({
+                    title: '¿Seguro que deseas reabrir el sprint?',
+                    text: "Deberás crear una nueva tarea para volver abrir el srint",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#202a33',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Si, reabrir',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Emitir un evento para abrir el modal en el componente hijo
+                        window.livewire.emit('openCreateActivityModal');
                     }
                 })
             });

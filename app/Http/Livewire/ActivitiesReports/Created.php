@@ -4,6 +4,8 @@ namespace App\Http\Livewire\ActivitiesReports;
 
 use App\Models\Activity;
 use App\Models\ChatReportsActivities;
+use App\Models\ErrorLog;
+use App\Models\Log;
 use App\Models\Project;
 use App\Models\Report;
 use App\Models\Sprint;
@@ -253,7 +255,7 @@ class Created extends Component
                     if ($sprint->backlog) {
                         if ($sprint->backlog->project) {
                             // Acceder al proyecto asociado al backlog
-                            $task->project_name = $sprint->backlog->project->name . ' (Actividad)';
+                            $task->project_name = $sprint->backlog->project->name;
                             $task->project_id = $sprint->backlog->project->id;
                             $task->sprint_state = $sprint->state;
                             $task->project_activity = true;
@@ -284,7 +286,7 @@ class Created extends Component
                 $project = Project::where('id', $task->project_id)->first(); // Obtener solo un modelo, no una colección
                 if ($project) {
                     // Acceder al proyecto a
-                    $task->project_name = $project->name . ' (Reporte)';
+                    $task->project_name = $project->name;
                     $task->project_id = $project->id;
                     $task->project_report = true;
                 } else {
@@ -346,124 +348,114 @@ class Created extends Component
     // ACTIONS
     public function updateDelegate($id, $delegate, $tpe)
     {
-        // Emitir evento de carga iniciada
-        $this->emit('loadingStarted');
+        try {
+            if ($tpe == 'report') {
+                $report = Report::find($id);
+                if ($report) {
+                    $report->delegate_id = $delegate;
+                    $report->delegated_date = Carbon::now();
+                    $report->progress = null;
+                    $report->look = false;
+                    $report->state = 'Abierto';
+                    $report->save();
 
-        if ($tpe == 'report') {
-            $report = Report::find($id);
-            if ($report) {
-                $report->delegate_id = $delegate;
-                $report->delegated_date = Carbon::now();
-                $report->progress = null;
-                $report->look = false;
-                $report->state = 'Abierto';
-                $report->save();
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'report_id' => $id,
+                        'view' => 'livewire/activities-reports/created',
+                        'action' => 'Cambio de delegado',
+                        'message' => 'Delegado actualizado',
+                        'details' => 'Delegado: ' . $report->delegate_id,
+                    ]);
 
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Delegado actualizado',
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Delegado actualizado',
+                    ]);
+                }
+            } else {
+                $activity = Activity::find($id);
+                if ($activity) {
+                    $activity->delegate_id = $delegate;
+                    $activity->delegated_date = Carbon::now();
+                    $activity->progress = null;
+                    $activity->look = false;
+                    $activity->state = 'Abierto';
+                    $activity->save();
+
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'activity_id' => $id,
+                        'view' => 'livewire/activities-reports/created',
+                        'action' => 'Cambio de delegado',
+                        'message' => 'Delegado actualizado',
+                        'details' => 'Delegado: ' . $activity->delegate_id,
+                    ]);
+
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Delegado actualizado',
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            if ($tpe == 'report') {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'report_id' => $id,
+                    'view' => 'livewire/activities-reports/created',
+                    'action' => 'Cambio de delegado',
+                    'message' => 'Error en actualizar delegado',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            } else {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'activity_id' => $id,
+                    'view' => 'livewire/activities-reports/created',
+                    'action' => 'Cambio de delegado',
+                    'message' => 'Error en actualizar delegado',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
                 ]);
             }
-        } else {
-            $activity = Activity::find($id);
-            if ($activity) {
-                $activity->delegate_id = $delegate;
-                $activity->delegated_date = Carbon::now();
-                $activity->progress = null;
-                $activity->look = false;
-                $activity->state = 'Abierto';
-                $activity->save();
 
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Delegado actualizado',
-                ]);
-            }
+            // Manejar el error y mostrar un mensaje al usuario
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Error al actualizar el delegado',
+            ]);
         }
-        // Emitir evento de carga terminada
-        $this->emit('loadingEnded');
     }
 
     public function updateState($id, $project_id, $state)
     {
-        // Emitir evento de carga iniciada
-        $this->emit('loadingStarted');
+        try {
+            if ($project_id == null) {
+                $activity = Activity::find($id);
 
-        if ($project_id == null) {
-            $activity = Activity::find($id);
+                if ($activity) {
+                    if ($state == 'Proceso' || $state == 'Conflicto') {
+                        if ($activity->progress == null && $activity->look == false && $activity->state == 'Abierto') {
+                            $activity->progress = Carbon::now();
+                            $activity->look = true;
+                        }
+                        if ($activity->progress != null && $activity->look == true && $activity->state == 'Abierto') {
+                            $activity->progress = Carbon::now();
+                            $activity->look = false;
+                        }
 
-            if ($activity) {
-                if ($state == 'Proceso' || $state == 'Conflicto') {
-                    if ($activity->progress == null && $activity->look == false && $activity->state == 'Abierto') {
-                        $activity->progress = Carbon::now();
-                        $activity->look = true;
-                    }
-                    if ($activity->progress != null && $activity->look == true && $activity->state == 'Abierto') {
-                        $activity->progress = Carbon::now();
-                        $activity->look = false;
-                    }
+                        $activity->state = $state;
+                        $activity->save();
 
-                    $activity->state = $state;
-                    $activity->save();
-                    // Actualizacion de grafica
-                    $this->effortPoints();
-                    // Emitir un evento de navegador
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'success',
-                        'title' => 'Estado actualizado',
-                    ]);
-                }
+                        Log::create([
+                            'user_id' => Auth::id(),
+                            'activity_id' => $activity->id,
+                            'view' => 'livewire/activities-reports/created',
+                            'action' => 'Cambio de estado',
+                            'message' => 'Estado actualizado',
+                            'details' => 'Estado: ' . $activity->state,
+                        ]);
 
-                if ($state == 'Resuelto') {
-                    $activity->end_date = Carbon::now();
-                    $activity->state = $state;
-                    $activity->save();
-                    // Actualizacion de grafica
-                    $this->effortPoints();
-                    // Emitir un evento para notificar al componente padre
-                    $this->emitUp('activityUpdated');
-                    // Emitir un evento de navegador
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'success',
-                        'title' => 'Estado actualizado',
-                    ]);
-                }
-            }
-        } else {
-            $report = Report::find($id);
-
-            if ($report) {
-                if ($state == 'Proceso' || $state == 'Conflicto') {
-                    if ($report->progress == null && $report->look == false && $report->state == 'Abierto') {
-                        $report->progress = Carbon::now();
-                        $report->look = true;
-                    }
-                    if ($report->progress != null && $report->look == true && $report->state == 'Abierto') {
-                        $report->progress = Carbon::now();
-                        $report->look = false;
-                    }
-
-                    $report->state = $state;
-                    $report->save();
-                    // Actualizacion de grafica
-                    $this->effortPoints();
-                    // Emitir un evento de navegador
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'success',
-                        'title' => 'Estado actualizado',
-                    ]);
-                }
-
-                if ($state == 'Resuelto') {
-                    if ($report->evidence == true) {
-                        $this->evidenceActRep = true;
-                        $this->reportEvidence = $report;
-                    } else {
-                        $report->state = $state;
-                        $report->updated_expected_date = true;
-                        $report->end_date = Carbon::now();
-                        $report->repeat = true;
-                        $report->save();
                         // Actualizacion de grafica
                         $this->effortPoints();
                         // Emitir un evento de navegador
@@ -472,47 +464,206 @@ class Created extends Component
                             'title' => 'Estado actualizado',
                         ]);
                     }
+
+                    if ($state == 'Resuelto') {
+                        $activity->expected_date = ($activity->expected_date) ? $activity->expected_date : Carbon::now() ;
+                        $activity->end_date = Carbon::now();
+                        $activity->state = $state;
+                        $activity->save();
+
+                        Log::create([
+                            'user_id' => Auth::id(),
+                            'activity_id' => $activity->id,
+                            'view' => 'livewire/activities-reports/created',
+                            'action' => 'Cambio de estado',
+                            'message' => 'Estado actualizado',
+                            'details' => 'Estado: ' . $activity->state,
+                        ]);
+
+                        // Actualizacion de grafica
+                        $this->effortPoints();
+                        // Emitir un evento para notificar al componente padre
+                        $this->emitUp('activityUpdated');
+                        // Emitir un evento de navegador
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'success',
+                            'title' => 'Estado actualizado',
+                        ]);
+                    }
+                }
+            } else {
+                $report = Report::find($id);
+
+                if ($report) {
+                    if ($state == 'Proceso' || $state == 'Conflicto') {
+                        if ($report->progress == null && $report->look == false && $report->state == 'Abierto') {
+                            $report->progress = Carbon::now();
+                            $report->look = true;
+                        }
+                        if ($report->progress != null && $report->look == true && $report->state == 'Abierto') {
+                            $report->progress = Carbon::now();
+                            $report->look = false;
+                        }
+
+                        $report->state = $state;
+                        $report->save();
+
+                        Log::create([
+                            'user_id' => Auth::id(),
+                            'report_id' => $report->id,
+                            'view' => 'livewire/activities-reports/created',
+                            'action' => 'Cambio de estado',
+                            'message' => 'Estado actualizado',
+                            'details' => 'Estado: ' . $report->state,
+                        ]);
+
+                        // Actualizacion de grafica
+                        $this->effortPoints();
+                        // Emitir un evento de navegador
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'success',
+                            'title' => 'Estado actualizado',
+                        ]);
+                    }
+
+                    if ($state == 'Resuelto') {
+                        if ($report->evidence == true) {
+                            $this->evidenceActRep = true;
+                            $this->reportEvidence = $report;
+                        } else {
+                            $report->expected_date = ($report->expected_date) ? $report->expected_date : Carbon::now() ;
+                            $report->state = $state;
+                            $report->updated_expected_date = true;
+                            $report->end_date = Carbon::now();
+                            $report->repeat = true;
+                            $report->save();
+
+                            Log::create([
+                                'user_id' => Auth::id(),
+                                'report_id' => $report->id,
+                                'view' => 'livewire/activities-reports/created',
+                                'action' => 'Cambio de estado',
+                                'message' => 'Estado actualizado',
+                                'details' => 'Estado: ' . $report->state,
+                            ]);
+
+                            // Actualizacion de grafica
+                            $this->effortPoints();
+                            // Emitir un evento de navegador
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Estado actualizado',
+                            ]);
+                        }
+                    }
                 }
             }
+        } catch (\Exception $e) {
+            if ($project_id == null) {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'activity_id' => $id,
+                    'view' => 'livewire/activities-reports/created',
+                    'action' => 'Cambio de estado',
+                    'message' => 'Error en actualizar estado',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            } else {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'report_id' => $id,
+                    'view' => 'livewire/activities-reports/created',
+                    'action' => 'Cambio de estado',
+                    'message' => 'Error en actualizar estado',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            }
+
+            // Manejar el error y mostrar un mensaje al usuario
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Error al actualizar el estado',
+            ]);
         }
-        // Emitir evento de carga terminada
-        $this->emit('loadingEnded');
     }
 
     public function updateExpectedDay($id, $type, $day)
     {
-        // Emitir evento de carga iniciada
-        $this->emit('loadingStarted');
-
-        if ($type == 'report') {
-            $task = Report::find($id);
-        } else {
-            $task = Activity::find($id);
-        }
-
-        if ($task) {
-            if ($task->updated_expected_date) {
-                if ($task->updated_expected_date == false) {
-                    $task->updated_expected_date = true;
-                }
+        try {
+            if ($type == 'report') {
+                $task = Report::find($id);
+            } else {
+                $task = Activity::find($id);
             }
-            
-            $task->expected_date = Carbon::parse($day)->format('Y-m-d');
-            $task->save();
 
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Fecha actualizada correctamente',
-            ]);
-        } else {
+            if ($task) {
+                if ($task->updated_expected_date) {
+                    if ($task->updated_expected_date == false) {
+                        $task->updated_expected_date = true;
+                    }
+                }
+                
+                $task->expected_date = Carbon::parse($day)->format('Y-m-d');
+                $task->save();
+
+                if ($type == 'report') {
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'report_id' => $task->id,
+                        'view' => 'livewire/activities-reports/created',
+                        'action' => 'Actualizar fecha de entrega',
+                        'message' => 'Fecha de entrega actualizada',
+                        'details' => 'Fecha: ' . $task->expected_date,
+                    ]);
+                } else {
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'activity_id' => $task->id,
+                        'view' => 'livewire/activities-reports/created',
+                        'action' => 'Actualizar fecha de entrega',
+                        'message' => 'Fecha de entrega actualizada',
+                        'details' => 'Fecha: ' . $task->expected_date,
+                    ]);
+                }
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Fecha actualizada correctamente',
+                ]);
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Reporte no encontrado',
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            if ($type == 'report') {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'report_id' => $id,
+                    'view' => 'livewire/activities-reports/my-activities',
+                    'action' => 'Actualizar fecha de entrega',
+                    'message' => 'Error en actualizar fecha de entrega',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            } else {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'activity_id' => $id,
+                    'view' => 'livewire/activities-reports/my-activities',
+                    'action' => 'Actualizar fecha de entrega',
+                    'message' => 'Error en actualizar fecha de entrega',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            }
+
+            // Manejar el error y mostrar un mensaje al usuario
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
-                'title' => 'Reporte no encontrado',
+                'title' => 'Error al actualizar el delegado',
             ]);
         }
-
-        // Emitir evento de carga terminada
-        $this->emit('loadingEnded');
     }
 
     public function finishEvidence($project_id, $report_id)
@@ -522,9 +673,6 @@ class Created extends Component
     // MODAL
     public function show($id, $type)
     {
-        // Emitir evento de carga iniciada
-        $this->emit('loadingStarted');
-
         if ($this->show == true) {
             $this->show = false;
             $this->taskShow = null;
@@ -542,13 +690,10 @@ class Created extends Component
                 ]);
             }
         }
-        // Emitir evento de carga terminada
-        $this->emit('loadingEnded');
     }
     // FILTER
     public function filterDown($type)
     {
-        $this->emit('loadingStarted');
         $this->filtered = false; // Cambio de flechas
         // Reiniciar todos los filtros
         $this->filterPriotiry = false;
@@ -578,13 +723,10 @@ class Created extends Component
 
         // Reiniciar la paginación
         $this->resetPage();
-
-        $this->emit('loadingEnded');
     }
 
     public function filterUp($type)
     {
-        $this->emit('loadingStarted');
         $this->filtered = true; // Cambio de flechas
         // Reiniciar todos los filtros
         $this->filterPriotiry = false;
@@ -614,8 +756,6 @@ class Created extends Component
 
         // Reiniciar la paginación
         $this->resetPage();
-
-        $this->emit('loadingEnded');
     }
     // PROTECTED
     protected function getFilteredActions($currentState)

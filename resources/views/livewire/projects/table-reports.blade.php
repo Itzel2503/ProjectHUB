@@ -287,7 +287,7 @@
                                             </svg>
                                         </div>
                                         <p class="my-auto text-left text-xs font-semibold">
-                                            {{ $report->title }}
+                                            {{ $report->icon }} {{ $report->title }}
                                         </p>
                                     </div>
 
@@ -453,7 +453,7 @@
                                 </div>
                             </td>
                             <td class="px-2 py-1">
-                                <div class="flex justify-center">
+                                <div class="principal flex justify-center">
                                     @if ($project == null)
                                         @if ($report->project)
                                             <a href="{{ route('projects.reports.index', ['project' => $report->project->id, 'reports' => $report->id, 'highlight' => $report->id]) }}"
@@ -468,6 +468,12 @@
                                                         d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
                                                 </svg>
                                             </a>
+                                            <div class="relative">
+                                                <div
+                                                    class="hidden-info absolute -top-3 right-5 z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
+                                                    <p>Ver mas</p>
+                                                </div>
+                                            </div>
                                         @else
                                             <p class="text-justify text-xs font-semibold">
                                                 Proyecto no disponible
@@ -586,7 +592,7 @@
                         class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                         <h3
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                            {{ $reportShow->title }}
+                            {{ $reportShow->icon }} {{ $reportShow->title }}
                         </h3>
                         <svg wire:click="showReport(0)" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
                             xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
@@ -645,7 +651,8 @@
                         <h3
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
                             Evidencia</h3>
-                        <svg id="showEvidence" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
+                        <svg id="showEvidence" wire:click="$emit('evidenceReport',{{ $reportEvidence->id }})"
+                            class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
                             xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                             fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -735,17 +742,30 @@
     @endif
     {{-- END MODAL EVIDENCE --}}
     {{-- LOADING PAGE --}}
-    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-        wire:target="$set('isOptionsVisibleState'), create, filterDown, filterUp, showReport, togglePanel, editReport, deleteReport, reportRepeat, updateEvidence, finishEvidence">
-        <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
-        <div class="loadingspinner relative top-1/3 z-20">
-            <div id="square1"></div>
-            <div id="square2"></div>
-            <div id="square3"></div>
-            <div id="square4"></div>
-            <div id="square5"></div>
+    @if ($project != null)
+        <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
+            wire:target="$set('isOptionsVisibleState'), create, filterDown, filterUp, showReport, togglePanel, editReport, deleteReport, reportRepeat, updateEvidence, finishEvidence">
+            <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
+            <div class="loadingspinner relative top-1/3 z-20">
+                <div id="square1"></div>
+                <div id="square2"></div>
+                <div id="square3"></div>
+                <div id="square4"></div>
+                <div id="square5"></div>
+            </div>
         </div>
-    </div>
+    @else
+        <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading>
+            <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
+            <div class="loadingspinner relative top-1/3 z-20">
+                <div id="square1"></div>
+                <div id="square2"></div>
+                <div id="square3"></div>
+                <div id="square4"></div>
+                <div id="square5"></div>
+            </div>
+        </div>
+    @endif
     {{-- END LOADING PAGE --}}
     @push('js')
         <script>
@@ -798,8 +818,7 @@
                 })
             });
 
-            let showEvidence = document.getElementById('showEvidence');
-            showEvidence.addEventListener('click', function() {
+            Livewire.on('evidenceReport', (id) => {
                 Swal.fire({
                     title: 'Confirmación de cierre',
                     text: "Si cierras sin subir evidencia, el reporte permanecerá sin actualizar. ¿Seguro que quieres continuar?",
@@ -812,8 +831,6 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.reload();
-                    } else {
-
                     }
                 });
             });

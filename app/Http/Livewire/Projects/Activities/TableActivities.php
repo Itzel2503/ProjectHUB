@@ -5,6 +5,8 @@ namespace App\Http\Livewire\Projects\Activities;
 use App\Models\Activity;
 use App\Models\Backlog;
 use App\Models\ChatReportsActivities;
+use App\Models\ErrorLog;
+use App\Models\Log;
 use App\Models\Project;
 use App\Models\Report;
 use App\Models\Sprint;
@@ -23,7 +25,7 @@ class TableActivities extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['reloadPage' => 'reloadPage', 'sprintUpdated', 'delete'];
+    public $listeners = ['reloadPage' => 'reloadPage', 'sprintUpdated', 'delete', 'openCreateActivityModal' => 'openCreateModal'];
     // ENVIADAS
     public $idsprint, $project, $percentagetesolved;
     // BACKLOG
@@ -57,6 +59,12 @@ class TableActivities extends Component
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    // Método para abrir el modal de creación
+    public function openCreateModal()
+    {
+        $this->createEdit = true; // Abrir el modal
     }
 
     public function render()
@@ -214,7 +222,7 @@ class TableActivities extends Component
         // ADD ATRIBUTES
         foreach ($activities as $activity) {
             // FECHA DE ENTREGA
-            $this->expected_day[$activity->id] = Carbon::parse($activity->expected_date)->format('Y-m-d');
+            $this->expected_day[$activity->id] = ($activity->expected_date) ? Carbon::parse($activity->expected_date)->format('Y-m-d') : '' ;
             // ACTIONS
             $activity->filteredActions = $this->getFilteredActions($activity->state);
             // DELEGATE
@@ -335,114 +343,238 @@ class TableActivities extends Component
     // ACTIONS
     public function delete($id)
     {
-        $activity = Activity::find($id);
+        try {
+            $activity = Activity::find($id);
 
-        if ($activity) {
-            if ($activity->image) {
-                $contentPath = 'activities/' . $activity->image;
-                $fullPath = public_path($contentPath);
+            if ($activity) {
+                if ($activity->image) {
+                    $contentPath = 'activities/' . $activity->image;
+                    $fullPath = public_path($contentPath);
 
-                if (File::exists($fullPath)) {
-                    File::delete($fullPath);
+                    if (File::exists($fullPath)) {
+                        File::delete($fullPath);
+                    }
                 }
-            }
-            $activity->delete();
+                $activity->delete();
 
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Actividad eliminada',
+                Log::create([
+                    'user_id' => Auth::id(),
+                    'project_id'=> ($this->project != null) ? $this->project->id : null,
+                    'activity_id' => $id,
+                    'view' => 'livewire/projects/activities/table-activities',
+                    'action' => 'Eliminar actividad',
+                    'message' => 'Actividad eliminada',
+                ]);
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Actividad eliminada',
+                ]);
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Actividad no encontrada',
+                ]);
+            }
+        } catch (\Exception $e) {
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'activity_id' => $id,
+                'view' => 'livewire/projects/activities/table-activities',
+                'action' => 'Eliminar actividad',
+                'message' => 'Error en eliminar actividad',
+                'details' => $e->getMessage(), // Mensaje de la excepción
             ]);
-        } else {
+    
+            // Mostrar mensaje de error al usuario
             $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Actividad no encontrada',
+                'type' => 'error',                
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
             ]);
         }
     }
 
     public function updateDelegate($id, $delegate)
     {
-        // Oculta todos los paneles
-        $this->visiblePanels = [];
+        try {
+            // Oculta todos los paneles
+            $this->visiblePanels = [];
 
-        $activity = Activity::find($id);
-        if ($activity) {
-            $activity->delegate_id = $delegate;
-            $activity->delegated_date = Carbon::now();
-            $activity->progress = null;
-            $activity->look = false;
-            $activity->state = 'Abierto';
-            $activity->save();
+            $activity = Activity::find($id);
+            if ($activity) {
+                $activity->delegate_id = $delegate;
+                $activity->delegated_date = Carbon::now();
+                $activity->progress = null;
+                $activity->look = false;
+                $activity->state = 'Abierto';
+                $activity->save();
 
+                Log::create([
+                    'user_id' => Auth::id(),
+                    'project_id'=> ($this->project != null) ? $this->project->id : null,
+                    'activity_id' => $id,
+                    'view' => 'livewire/projects/activities/table-activities',
+                    'action' => 'Cambio de delegado',
+                    'message' => 'Delegado actualizado',
+                    'details' => 'Delegado: ' . $activity->delegate_id,
+                ]);
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Delegado actualizado',
+                ]);
+            }
+        } catch (\Exception $e) {
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'activity_id' => $id,
+                'view' => 'livewire/projects/activities/table-activities',
+                'action' => 'Cambio de delegado',
+                'message' => 'Error en actualizar delegado',
+                'details' => $e->getMessage(), // Mensaje de la excepción
+            ]);
+
+            // Manejar el error y mostrar un mensaje al usuario
             $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Delegado actualizado',
+                'type' => 'error',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
             ]);
         }
     }
 
     public function updateState($id, $state)
     {
-        // Oculta todos los paneles
-        $this->visiblePanels = [];
+        try {
+            // Oculta todos los paneles
+            $this->visiblePanels = [];
 
-        $activity = Activity::find($id);
+            $activity = Activity::find($id);
 
-        if ($activity) {
-            if ($state == 'Proceso' || $state == 'Conflicto') {
-                if ($activity->progress == null && $activity->look == false && $activity->state == 'Abierto') {
-                    $activity->progress = Carbon::now();
-                    $activity->look = true;
+            if ($activity) {
+                if ($state == 'Proceso' || $state == 'Conflicto') {
+                    if ($activity->progress == null && $activity->look == false && $activity->state == 'Abierto') {
+                        $activity->progress = Carbon::now();
+                        $activity->look = true;
+                    }
+                    if ($activity->progress != null && $activity->look == true && $activity->state == 'Abierto') {
+                        $activity->progress = Carbon::now();
+                        $activity->look = false;
+                    }
+
+                    $activity->state = $state;
+                    $activity->save();
+
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'project_id'=> ($this->project != null) ? $this->project->id : null,
+                        'activity_id' => $activity->id,
+                        'view' => 'livewire/projects/activities/table-activities',
+                        'action' => 'Cambio de estado',
+                        'message' => 'Estado actualizado',
+                        'details' => 'Estado: ' . $activity->state,
+                    ]);
+
+                    // Actualizacion de grafica
+                    $this->effortPoints();
+                    // Emitir un evento de navegador
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Estado actualizado',
+                    ]);
                 }
-                if ($activity->progress != null && $activity->look == true && $activity->state == 'Abierto') {
-                    $activity->progress = Carbon::now();
-                    $activity->look = false;
+
+                if ($state == 'Resuelto') {
+                    $activity->expected_date = ($activity->expected_date) ? $activity->expected_date : Carbon::now() ;
+                    $activity->end_date = Carbon::now();
+                    $activity->state = $state;
+                    $activity->save();
+
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'project_id'=> ($this->project != null) ? $this->project->id : null,
+                        'activity_id' => $activity->id,
+                        'view' => 'livewire/projects/activities/table-activities',
+                        'action' => 'Cambio de estado',
+                        'message' => 'Estado actualizado',
+                        'details' => 'Estado: ' . $activity->state,
+                    ]);
+
+                    // Emitir un evento para notificar al componente padre
+                    $this->emitUp('activityUpdated');
+                    // Actualizacion de grafica
+                    $this->effortPoints();
+                    // Emitir un evento de navegador
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Estado actualizado',
+                    ]);
                 }
-
-                $activity->state = $state;
-                $activity->save();
-                // Actualizacion de grafica
-                $this->effortPoints();
-                // Emitir un evento de navegador
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Estado actualizado',
-                ]);
             }
+        } catch (\Exception $e) {
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'activity_id' => $id,
+                'view' => 'livewire/projects/activities/table-activities',
+                'action' => 'Cambio de estado',
+                'message' => 'Error en actualizar estado',
+                'details' => $e->getMessage(), // Mensaje de la excepción
+            ]);
 
-            if ($state == 'Resuelto') {
-                $activity->end_date = Carbon::now();
-                $activity->state = $state;
-                $activity->save();
-                // Emitir un evento para notificar al componente padre
-                $this->emitUp('activityUpdated');
-                // Actualizacion de grafica
-                $this->effortPoints();
-                // Emitir un evento de navegador
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Estado actualizado',
-                ]);
-            }
+            // Manejar el error y mostrar un mensaje al usuario
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
+            ]);
         }
     }
 
     public function updateExpectedDay($id, $day)
     {
-        $Activity = Activity::find($id);
+        try {
+            $activity = Activity::find($id);
 
-        if ($Activity) {
-            $Activity->expected_date = Carbon::parse($day)->format('Y-m-d');
-            $Activity->save();
+            if ($activity) {
+                $activity->expected_date = Carbon::parse($day)->format('Y-m-d');
+                $activity->save();
 
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Fecha actualizada correctamente',
+                Log::create([
+                    'user_id' => Auth::id(),
+                    'project_id'=> ($this->project != null) ? $this->project->id : null,
+                    'activity_id' => $activity->id,
+                    'view' => 'livewire/projects/activities/table-activities',
+                    'action' => 'Actualizar fecha de entrega',
+                    'message' => 'Fecha de entrega actualizada',
+                    'details' => 'Estado: ' . $activity->expected_date,
+                ]);
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Fecha actualizada correctamente',
+                ]);
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Reporte no encontrado',
+                ]);
+            }
+        } catch (\Exception $e) {
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'activity_id' => $id,
+                'view' => 'livewire/projects/activities/table-activities',
+                'action' => 'Actualizar fecha de entrega',
+                'message' => 'Error en actualizar fecha de entrega',
+                'details' => $e->getMessage(), // Mensaje de la excepción
             ]);
-        } else {
+
+            // Manejar el error y mostrar un mensaje al usuario
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
-                'title' => 'Reporte no encontrado',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
             ]);
         }
     }

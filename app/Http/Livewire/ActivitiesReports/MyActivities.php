@@ -4,6 +4,8 @@ namespace App\Http\Livewire\ActivitiesReports;
 
 use App\Models\Activity;
 use App\Models\ChatReportsActivities;
+use App\Models\ErrorLog;
+use App\Models\Log;
 use App\Models\Project;
 use App\Models\Report;
 use App\Models\Sprint;
@@ -20,8 +22,13 @@ class MyActivities extends Component
 {
     use WithFileUploads;
     use WithPagination;
-    protected $paginationTheme = 'tailwind';
 
+    protected $listeners = ['modeUpdated', 'seeProjectsUpdated', 'taskMoved', 'showError']; // Escuchar el evento
+
+    protected $paginationTheme = 'tailwind';
+    // ENVIADAS
+    public $mode;
+    public $seeProjects;
     // FILTROS
     public $search, $allUsers, $allProjects;
     public $selectedDelegate = '', $selectedStates = '', $selectedProjects = '';
@@ -32,6 +39,38 @@ class MyActivities extends Component
     // variables para la consulta
     public $filterPriotiry = false, $filterState = false, $filterExpected = true;
     public $filteredPriority = '', $filteredState = '', $priorityCase = '', $filteredExpected = 'asc';
+    // KANVAN
+    public $tareasSinFecha = []; // Tareas sin fecha
+    public $fechaActual; // Fecha actual
+    public $fechasFuturas = []; // Arreglo para almacenar las fechas futuras
+    public $tareasAtrasadas = []; // Tareas con expected_date anterior a hoy
+    public $tareasActuales = []; // Tareas con expected_date hoy
+    public $tareasProximas = []; // Tareas con expected_date en las fechas futuras
+    public $tareasActualesFuturas = []; // Tareas con expected_date hoy o en las fechas futuras
+    public $tareasMasDeUnMes = []; // Tareas con expected_date después de las fechas futuras
+    public $tareasAgrupadasPorFecha = []; // Tareas agrupadas por fecha
+    public $mesesAdicionales = 1; // Número de meses adicionales a mostrar
+    public $ultimaFechaTarea; // Última fecha de las tareas
+    public $priorityOrder = [
+        'Alto' => 1,
+        'Medio' => 2,
+        'Bajo' => 3,
+    ]; // Definir la prioridad como propiedad
+    public $meses = [
+        'ene.' => 'Jan',
+        'feb.' => 'Feb',
+        'mar.' => 'Mar',
+        'abr.' => 'Apr',
+        'may.' => 'May',
+        'jun.' => 'Jun',
+        'jul.' => 'Jul',
+        'ago.' => 'Aug',
+        'sep.' => 'Sep',
+        'oct.' => 'Oct',
+        'nov.' => 'Nov',
+        'dic.' => 'Dec'
+    ]; // Mapeo de nombres de meses en español a inglés
+    public $projectPriorities; // Definir la prioridad de proyectos como propiedad
     // MODAL SHOW
     public $show = false;
     public $taskShow = '';
@@ -48,6 +87,35 @@ class MyActivities extends Component
     {
         // Resetear la página a 1 cuando se cambian los filtros
         $this->resetPage();
+    }
+
+    // Método para manejar el evento
+    public function modeUpdated($value)
+    {
+        $this->mode = $value; // Actualizar el modo
+    }
+
+    public function seeProjectsUpdated($value)
+    {
+        // Actualizar la propiedad seeProjects en el componente hijo
+        $this->seeProjects = $value;
+        // Forzar la actualización del componente para aplicar los cambios
+        $this->render();
+    }
+
+    public function mount()
+    {
+        // Obtener la fecha actual y formatearla
+        $this->fechaActual = Carbon::now()->isoFormat('D MMM YYYY'); // Formato: 26-Dic-2024
+
+        // Generar un arreglo con los próximos 4 días
+        for ($i = 1; $i <= 4; $i++) {
+            $fecha = Carbon::now()->addDays($i);
+            $this->fechasFuturas[] = [
+                'fecha' => $fecha->isoFormat('D MMM YYYY'), // Fecha en formato 26-Dic-2024
+                'dia_semana' => $fecha->isoFormat('dddd'), // Nombre del día de la semana
+            ];
+        }
     }
 
     public function render()
@@ -169,7 +237,6 @@ class MyActivities extends Component
         $paginatedTask = new LengthAwarePaginator($currentItems, $tasks->count(), $perPage, $currentPage, [
             'path' => LengthAwarePaginator::resolveCurrentPath(),
         ]);
-
         // ADD ATRIBUTES
         foreach ($tasks as $task) {
             // ACTIONS
@@ -235,11 +302,13 @@ class MyActivities extends Component
                     if ($sprint->backlog) {
                         if ($sprint->backlog->project) {
                             // Acceder al proyecto asociado al backlog
-                            $task->project_name = $sprint->backlog->project->name . ' (Actividad)';
+                            $task->project_name = $sprint->backlog->project->name;
+                            $task->project_priority = 'K' . $sprint->backlog->project->priority;
                             $task->project_id = $sprint->backlog->project->id;
                             $task->sprint_state = $sprint->state;
                             $task->project_activity = true;
-                            $this->expected_day[$task->id] = Carbon::parse($task->expected_date)->format('Y-m-d');
+                            // FECHA DE ENTREGA
+                            $this->expected_day[$task->id] = ($task->expected_date) ? Carbon::parse($task->expected_date)->format('Y-m-d') : '';
                         } else {
                             // Manejar caso donde no hay backlog asociado
                             $task->project_name = 'Proyecto no disponible';
@@ -267,7 +336,8 @@ class MyActivities extends Component
                 $project = Project::where('id', $task->project_id)->first(); // Obtener solo un modelo, no una colección
                 if ($project) {
                     // Acceder al proyecto a
-                    $task->project_name = $project->name . ' (Reporte)';
+                    $task->project_name = $project->name;
+                    $task->project_priority = 'K' . $project->priority;
                     $task->project_id = $project->id;
                     $task->project_report = true;
                     // FECHA DE ENTREGA
@@ -327,6 +397,44 @@ class MyActivities extends Component
             }
             $task->messages_count = $messages->where('look', false)->count();
         }
+
+        if ($this->mode) {
+            // Crear un arreglo de prioridades desde K1 hasta K10
+            $this->projectPriorities = collect(range(1, 10))->map(fn($i) => "K$i");
+
+            // Emitir un evento para inicializar los botones de desplazamiento
+            $this->dispatchBrowserEvent('initializeScrollButtons');
+            $this->dispatchBrowserEvent('initializeSortableJS');
+
+            // Obtener la última tarea con expected_date más lejana
+            $this->ultimaFechaTarea = $tasks->isNotEmpty()
+                ? Carbon::parse($tasks->last()->expected_date)->format('Y-m') // Formato Año-Mes
+                : null;
+
+            // Filtrar y ordenar tareas
+            $this->tareasSinFecha = $tasks->filter(fn($task) => is_null($task->expected_date)) // Tareas sin fecha
+                ->sortBy(fn($task) => [$this->priorityOrder[$task->priority] ?? 4, $this->parseProjectPriority($task)])->toArray();
+
+            $this->tareasAtrasadas = $tasks->filter(
+                fn($task) =>
+                !empty($task->expected_date) && Carbon::parse($task->expected_date)->lt(Carbon::today()) // Tareas atrasadas
+            )->sortBy(fn($task) => [$this->priorityOrder[$task->priority] ?? 4, $this->parseProjectPriority($task)])->toArray();
+
+            $this->tareasActualesFuturas = $tasks->filter(
+                fn($task) =>
+                !empty($task->expected_date) && Carbon::parse($task->expected_date)->gte(Carbon::today()) // Tareas actuales o futuras
+            )->sortBy(fn($task) => [$this->priorityOrder[$task->priority] ?? 4, $this->parseProjectPriority($task)])->toArray();
+
+            // Aplicar agrupación por proyecto si seeProjects es true
+            if ($this->seeProjects) {
+                $this->tareasSinFecha = $this->agruparYOrdenarPorProyecto($this->tareasSinFecha);
+                $this->tareasAtrasadas = $this->agruparYOrdenarPorProyecto($this->tareasAtrasadas);
+                $this->tareasActualesFuturas = $this->agruparYOrdenarPorFechaYProyecto($this->tareasActualesFuturas);
+            }
+
+            $this->actualizarTareas(); // Actualizar las tareas antes de renderizar
+        }
+
         return view('livewire.activities-reports.my-activities', [
             'tasks' => $paginatedTask,
         ]);
@@ -334,124 +442,114 @@ class MyActivities extends Component
     // ACTIONS
     public function updateDelegate($id, $delegate, $type)
     {
-        // Emitir evento de carga iniciada
-        $this->emit('loadingStarted');
+        try {
+            if ($type == 'report') {
+                $report = Report::find($id);
+                if ($report) {
+                    $report->delegate_id = $delegate;
+                    $report->delegated_date = Carbon::now();
+                    $report->progress = null;
+                    $report->look = false;
+                    $report->state = 'Abierto';
+                    $report->save();
 
-        if ($type == 'report') {
-            $report = Report::find($id);
-            if ($report) {
-                $report->delegate_id = $delegate;
-                $report->delegated_date = Carbon::now();
-                $report->progress = null;
-                $report->look = false;
-                $report->state = 'Abierto';
-                $report->save();
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'report_id' => $id,
+                        'view' => 'livewire/activities-reports/my-activities',
+                        'action' => 'Cambio de delegado',
+                        'message' => 'Delegado actualizado',
+                        'details' => 'Delegado: ' . $report->delegate_id,
+                    ]);
 
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Delegado actualizado',
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Delegado actualizado',
+                    ]);
+                }
+            } else {
+                $activity = Activity::find($id);
+                if ($activity) {
+                    $activity->delegate_id = $delegate;
+                    $activity->delegated_date = Carbon::now();
+                    $activity->progress = null;
+                    $activity->look = false;
+                    $activity->state = 'Abierto';
+                    $activity->save();
+
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'activity_id' => $id,
+                        'view' => 'livewire/activities-reports/my-activities',
+                        'action' => 'Cambio de delegado',
+                        'message' => 'Delegado actualizado',
+                        'details' => 'Delegado: ' . $activity->delegate_id,
+                    ]);
+
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'success',
+                        'title' => 'Delegado actualizado',
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            if ($type == 'report') {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'report_id' => $id,
+                    'view' => 'livewire/activities-reports/my-activities',
+                    'action' => 'Cambio de delegado',
+                    'message' => 'Error en actualizar delegado',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            } else {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'activity_id' => $id,
+                    'view' => 'livewire/activities-reports/my-activities',
+                    'action' => 'Cambio de delegado',
+                    'message' => 'Error en actualizar delegado',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
                 ]);
             }
-        } else {
-            $activity = Activity::find($id);
-            if ($activity) {
-                $activity->delegate_id = $delegate;
-                $activity->delegated_date = Carbon::now();
-                $activity->progress = null;
-                $activity->look = false;
-                $activity->state = 'Abierto';
-                $activity->save();
 
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Delegado actualizado',
-                ]);
-            }
+            // Manejar el error y mostrar un mensaje al usuario
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
+            ]);
         }
-        // Emitir evento de carga terminada
-        $this->emit('loadingEnded');
     }
 
     public function updateState($id, $project_id, $state)
     {
-        // Emitir evento de carga iniciada
-        $this->emit('loadingStarted');
+        try {
+            if ($project_id == null) {
+                $activity = Activity::find($id);
 
-        if ($project_id == null) {
-            $activity = Activity::find($id);
+                if ($activity) {
+                    if ($state == 'Proceso' || $state == 'Conflicto') {
+                        if ($activity->progress == null && $activity->look == false && $activity->state == 'Abierto') {
+                            $activity->progress = Carbon::now();
+                            $activity->look = true;
+                        }
+                        if ($activity->progress != null && $activity->look == true && $activity->state == 'Abierto') {
+                            $activity->progress = Carbon::now();
+                            $activity->look = false;
+                        }
 
-            if ($activity) {
-                if ($state == 'Proceso' || $state == 'Conflicto') {
-                    if ($activity->progress == null && $activity->look == false && $activity->state == 'Abierto') {
-                        $activity->progress = Carbon::now();
-                        $activity->look = true;
-                    }
-                    if ($activity->progress != null && $activity->look == true && $activity->state == 'Abierto') {
-                        $activity->progress = Carbon::now();
-                        $activity->look = false;
-                    }
+                        $activity->state = $state;
+                        $activity->save();
 
-                    $activity->state = $state;
-                    $activity->save();
-                    // Actualizacion de grafica
-                    $this->effortPoints();
-                    // Emitir un evento de navegador
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'success',
-                        'title' => 'Estado actualizado',
-                    ]);
-                }
+                        Log::create([
+                            'user_id' => Auth::id(),
+                            'activity_id' => $activity->id,
+                            'view' => 'livewire/activities-reports/my-activities',
+                            'action' => 'Cambio de estado',
+                            'message' => 'Estado actualizado',
+                            'details' => 'Estado: ' . $activity->state,
+                        ]);
 
-                if ($state == 'Resuelto') {
-                    $activity->end_date = Carbon::now();
-                    $activity->state = $state;
-                    $activity->save();
-                    // Actualizacion de grafica
-                    $this->effortPoints();
-                    // Emitir un evento para notificar al componente padre
-                    $this->emitUp('activityUpdated');
-                    // Emitir un evento de navegador
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'success',
-                        'title' => 'Estado actualizado',
-                    ]);
-                }
-            }
-        } else {
-            $report = Report::find($id);
-
-            if ($report) {
-                if ($state == 'Proceso' || $state == 'Conflicto') {
-                    if ($report->progress == null && $report->look == false && $report->state == 'Abierto') {
-                        $report->progress = Carbon::now();
-                        $report->look = true;
-                    }
-                    if ($report->progress != null && $report->look == true && $report->state == 'Abierto') {
-                        $report->progress = Carbon::now();
-                        $report->look = false;
-                    }
-
-                    $report->state = $state;
-                    $report->save();
-                    // Actualizacion de grafica
-                    $this->effortPoints();
-                    // Emitir un evento de navegador
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'success',
-                        'title' => 'Estado actualizado',
-                    ]);
-                }
-
-                if ($state == 'Resuelto') {
-                    if ($report->evidence == true) {
-                        $this->evidenceActRep = true;
-                        $this->reportEvidence = $report;
-                    } else {
-                        $report->state = $state;
-                        $report->updated_expected_date = true;
-                        $report->end_date = Carbon::now();
-                        $report->repeat = true;
-                        $report->save();
                         // Actualizacion de grafica
                         $this->effortPoints();
                         // Emitir un evento de navegador
@@ -460,46 +558,288 @@ class MyActivities extends Component
                             'title' => 'Estado actualizado',
                         ]);
                     }
+
+                    if ($state == 'Resuelto') {
+                        $activity->expected_date = ($activity->expected_date) ? $activity->expected_date : Carbon::now();
+                        $activity->end_date = Carbon::now();
+                        $activity->state = $state;
+                        $activity->save();
+
+                        Log::create([
+                            'user_id' => Auth::id(),
+                            'activity_id' => $activity->id,
+                            'view' => 'livewire/activities-reports/my-activities',
+                            'action' => 'Cambio de estado',
+                            'message' => 'Estado actualizado',
+                            'details' => 'Estado: ' . $activity->state,
+                        ]);
+                        // Actualizacion de grafica
+                        $this->effortPoints();
+                        // Emitir un evento para notificar al componente padre
+                        $this->emitUp('activityUpdated');
+                        // Emitir un evento de navegador
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'success',
+                            'title' => 'Estado actualizado',
+                        ]);
+                    }
+                }
+            } else {
+                $report = Report::find($id);
+
+                if ($report) {
+                    if ($state == 'Proceso' || $state == 'Conflicto') {
+                        if ($report->progress == null && $report->look == false && $report->state == 'Abierto') {
+                            $report->progress = Carbon::now();
+                            $report->look = true;
+                        }
+                        if ($report->progress != null && $report->look == true && $report->state == 'Abierto') {
+                            $report->progress = Carbon::now();
+                            $report->look = false;
+                        }
+
+                        $report->state = $state;
+                        $report->save();
+
+                        Log::create([
+                            'user_id' => Auth::id(),
+                            'report_id' => $report->id,
+                            'view' => 'livewire/activities-reports/my-activities',
+                            'action' => 'Cambio de estado',
+                            'message' => 'Estado actualizado',
+                            'details' => 'Estado: ' . $report->state,
+                        ]);
+
+                        // Actualizacion de grafica
+                        $this->effortPoints();
+                        // Emitir un evento de navegador
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'success',
+                            'title' => 'Estado actualizado',
+                        ]);
+                    }
+
+                    if ($state == 'Resuelto') {
+                        if ($report->evidence == true) {
+                            $this->evidenceActRep = true;
+                            $this->reportEvidence = $report;
+                        } else {
+                            $report->expected_date = ($report->expected_date) ? $report->expected_date : Carbon::now();
+                            $report->state = $state;
+                            $report->updated_expected_date = true;
+                            $report->end_date = Carbon::now();
+                            $report->repeat = true;
+                            $report->save();
+
+                            Log::create([
+                                'user_id' => Auth::id(),
+                                'report_id' => $report->id,
+                                'view' => 'livewire/activities-reports/my-activities',
+                                'action' => 'Cambio de estado',
+                                'message' => 'Estado actualizado',
+                                'details' => 'Estado: ' . $report->state,
+                            ]);
+                            // Actualizacion de grafica
+                            $this->effortPoints();
+                            // Emitir un evento de navegador
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Estado actualizado',
+                            ]);
+                        }
+                    }
                 }
             }
+        } catch (\Exception $e) {
+            if ($project_id == null) {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'activity_id' => $id,
+                    'view' => 'livewire/activities-reports/my-activities',
+                    'action' => 'Cambio de estado',
+                    'message' => 'Error en actualizar estado',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            } else {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'report_id' => $id,
+                    'view' => 'livewire/activities-reports/my-activities',
+                    'action' => 'Cambio de estado',
+                    'message' => 'Error en actualizar estado',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            }
+
+            // Manejar el error y mostrar un mensaje al usuario
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
+            ]);
         }
-        // Emitir evento de carga terminada
-        $this->emit('loadingEnded');
+    }
+
+    public function taskMoved($data)
+    {
+        $taskId = $data['taskId'];
+        $nuevaFecha = $data['nuevaFecha']; // Nueva fecha
+        $type = $data['type']; // 'activity' o 'report'
+
+        try {
+            if ($type == 'report') {
+                $task = Report::find($taskId);
+            } else {
+                $task = Activity::find($taskId);
+            }
+
+            if ($task) {
+                if ($type == 'report') {
+                    if ($task->updated_expected_date == false) {
+                        $task->updated_expected_date = true;
+                    }
+                }
+                if ($nuevaFecha == '') {
+                    $task->expected_date = null;
+                } else {
+                    $task->expected_date = Carbon::parse($nuevaFecha)->format('Y-m-d');
+                }
+                $task->save();
+
+                if ($type == 'report') {
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'report_id' => $task->id,
+                        'view' => 'livewire/activities-reports/my-activities',
+                        'action' => 'Drag-and-Drop Kanvan',
+                        'message' => 'Fecha de entrega actualizada',
+                        'details' => 'Fecha: ' . $task->expected_date,
+                    ]);
+                } else {
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'activity_id' => $task->id,
+                        'view' => 'livewire/activities-reports/my-activities',
+                        'action' => 'Drag-and-Drop Kanvan',
+                        'message' => 'Fecha de entrega actualizada',
+                        'details' => 'Fecha: ' . $task->expected_date,
+                    ]);
+                }
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Fecha actualizada correctamente',
+                ]);
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Tarea no encontrada',
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Registrar el error en la base de datos
+            if ($type == 'report') {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'report_id' => $task->id,
+                    'view' => 'livewire/activities-reports/my-activities',
+                    'action' => 'Drag-and-Drop Kanvan',
+                    'message' => 'Error en actualizar la fecha de entrega',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            } else {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'activity_id' => $task->id,
+                    'view' => 'livewire/activities-reports/my-activities',
+                    'action' => 'Drag-and-Drop Kanvan',
+                    'message' => 'Error en actualizar la fecha de entrega',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            }
+
+            // Notificar error al usuario
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
+            ]);
+        }
     }
 
     public function updateExpectedDay($id, $type, $day)
     {
-        // Emitir evento de carga iniciada
-        $this->emit('loadingStarted');
-
-        if ($type == 'report') {
-            $task = Report::find($id);
-        } else {
-            $task = Activity::find($id);
-        }
-        if ($task) {
+        try {
             if ($type == 'report') {
-                if ($task->updated_expected_date == false) {
-                    $task->updated_expected_date = true;
-                }
+                $task = Report::find($id);
+            } else {
+                $task = Activity::find($id);
             }
-            
-            $task->expected_date = Carbon::parse($day)->format('Y-m-d');
-            $task->save();
+            if ($task) {
+                if ($type == 'report') {
+                    if ($task->updated_expected_date == false) {
+                        $task->updated_expected_date = true;
+                    }
+                }
 
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'success',
-                'title' => 'Fecha actualizada correctamente',
-            ]);
-        } else {
+                $task->expected_date = Carbon::parse($day)->format('Y-m-d');
+                $task->save();
+
+                if ($type == 'report') {
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'report_id' => $task->id,
+                        'view' => 'livewire/activities-reports/my-activities',
+                        'action' => 'Actualizar fecha de entrega',
+                        'message' => 'Fecha de entrega actualizada',
+                        'details' => 'Fecha: ' . $task->expected_date,
+                    ]);
+                } else {
+                    Log::create([
+                        'user_id' => Auth::id(),
+                        'activity_id' => $task->id,
+                        'view' => 'livewire/activities-reports/my-activities',
+                        'action' => 'Actualizar fecha de entrega',
+                        'message' => 'Fecha de entrega actualizada',
+                        'details' => 'Fecha: ' . $task->expected_date,
+                    ]);
+                }
+
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Fecha actualizada correctamente',
+                ]);
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Reporte no encontrado',
+                ]);
+            }
+        } catch (\Exception $e) {
+            if ($type == 'report') {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'report_id' => $id,
+                    'view' => 'livewire/activities-reports/my-activities',
+                    'action' => 'Actualizar fecha de entrega',
+                    'message' => 'Error en actualizar fecha de entrega',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            } else {
+                ErrorLog::create([
+                    'user_id' => Auth::id(),
+                    'activity_id' => $id,
+                    'view' => 'livewire/activities-reports/my-activities',
+                    'action' => 'Actualizar fecha de entrega',
+                    'message' => 'Error en actualizar fecha de entrega',
+                    'details' => $e->getMessage(), // Mensaje de la excepción
+                ]);
+            }
+
+            // Manejar el error y mostrar un mensaje al usuario
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'error',
-                'title' => 'Reporte no encontrado',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
             ]);
         }
-
-        // Emitir evento de carga terminada
-        $this->emit('loadingEnded');
     }
 
     public function finishEvidence($project_id, $report_id)
@@ -509,9 +849,6 @@ class MyActivities extends Component
     // MODAL
     public function show($id, $type)
     {
-        // Emitir evento de carga iniciada
-        $this->emit('loadingStarted');
-
         if ($this->show == true) {
             $this->show = false;
             $this->taskShow = null;
@@ -530,13 +867,10 @@ class MyActivities extends Component
                 ]);
             }
         }
-        // Emitir evento de carga terminada
-        $this->emit('loadingEnded');
     }
     // FILTER
     public function filterDown($type)
     {
-        $this->emit('loadingStarted');
         $this->filtered = false; // Cambio de flechas
         // Reiniciar todos los filtros
         $this->filterPriotiry = false;
@@ -557,13 +891,10 @@ class MyActivities extends Component
             $this->filterExpected = true;
             $this->filteredExpected = 'asc'; // Orden ascendente
         }
-
-        $this->emit('loadingEnded');
     }
 
     public function filterUp($type)
     {
-        $this->emit('loadingStarted');
         $this->filtered = true; // Cambio de flechas
         // Reiniciar todos los filtros
         $this->filterPriotiry = false;
@@ -584,9 +915,19 @@ class MyActivities extends Component
             $this->filterExpected = true;
             $this->filteredExpected = 'desc'; // Orden descendente
         }
-
-        $this->emit('loadingEnded');
     }
+    //ERRORS
+    public function showError($data)
+    {
+        $message = $data['message'];
+
+        // Mostrar un mensaje de error al usuario
+        $this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'warning',
+            'title' => $message,
+        ]);
+    }
+
     // PROTECTED
     protected function getFilteredActions($currentState)
     {
@@ -785,5 +1126,191 @@ class MyActivities extends Component
         })->toArray();
         // Emitir los datos al componente padre
         $this->emitUp('refreshChart', $categories, $series, $totalEffortPoints);
+    }
+    // KANVAN
+    protected function agruparYOrdenarPorFechaYProyecto($tareas)
+    {
+        // Agrupar tareas por fecha
+        $tareasPorFecha = [];
+
+        foreach ($tareas as $task) {
+            $fecha = Carbon::parse($task['expected_date'])->isoFormat('D MMM YYYY');
+
+            // Si no existe la fecha, se inicializa
+            if (!isset($tareasPorFecha[$fecha])) {
+                $tareasPorFecha[$fecha] = [];
+            }
+
+            // Agregar la tarea a la fecha correspondiente
+            $tareasPorFecha[$fecha][] = $task;
+        }
+
+        // Aplicar agrupación por proyecto si seeProjects es true
+        if ($this->seeProjects) {
+            foreach ($tareasPorFecha as $fecha => $tareas) {
+                $tareasPorFecha[$fecha] = $this->agruparYOrdenarPorProyecto($tareas);
+            }
+        }
+
+        return $tareasPorFecha;
+    }
+    protected function agruparYOrdenarPorProyecto($tareas)
+    {
+        $tareasAgrupadas = [];
+
+        foreach ($tareas as $task) {
+            $priority = $task['project_priority'];
+
+            // Si no existe la prioridad, se inicializa
+            if (!isset($tareasAgrupadas[$priority])) {
+                $tareasAgrupadas[$priority] = [
+                    'project_name' => $task['project_name'], // Incluir el nombre del proyecto
+                    'tasks' => [], // Incluir la tarea completa
+                ];
+            }
+
+            // Agregar la tarea a la prioridad correspondiente, incluyendo el nombre del proyecto
+            $tareasAgrupadas[$priority]['tasks'][] = $task; // Incluir la tarea completa
+        }
+
+        // Ordenar el arreglo por prioridad (de menor a mayor)
+        uksort($tareasAgrupadas, function ($a, $b) {
+            // Extraer el número de la prioridad (por ejemplo, "K2" -> 2)
+            $numA = intval(substr($a, 1)); // Elimina la "K" y convierte a entero
+            $numB = intval(substr($b, 1)); // Elimina la "K" y convierte a entero
+
+            // Comparar los números
+            return $numA - $numB;
+        });
+
+        return $tareasAgrupadas;
+    }
+
+    public function parseProjectPriority($task)
+    {
+        // Función para extraer el número de project_priority
+        return (int) str_replace('K', '', $task->project_priority ?? 'K0'); // Usa 99 si no tiene prioridad
+    }
+
+    public function cargarMasMeses()
+    {
+        // Obtener la última fecha de tarea desde la propiedad
+        $ultimaTarea = $this->ultimaFechaTarea;
+        // Calcular el nuevo rango después de agregar más meses
+        $nuevoMes = Carbon::now()->addDays(5)->addMonths($this->mesesAdicionales)->format('Y-m');
+
+        // Si ya no hay más tareas después del último mes, mostrar un mensaje y no incrementar más
+        if ($ultimaTarea && $nuevoMes > $ultimaTarea) {
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'info',
+                'title' => 'Has llegado al último mes con tareas registradas',
+            ]);
+            return; // Detener la ejecución para no incrementar más meses
+        }
+
+        // Si todavía hay más tareas en el futuro, seguir cargando más meses
+        $this->mesesAdicionales += 1;
+        $this->actualizarTareas(); // Actualizar la lista de tareas
+    }
+
+    // Método para actualizar las tareas
+    // Método para actualizar las tareas
+    public function actualizarTareas()
+    {
+        // Obtener la fecha actual
+        $now = Carbon::now();
+        $today = now()->isoFormat('D MMM YYYY'); // Obtener la fecha de hoy en el mismo formato de las claves
+        // Rango de fechas (del día siguiente hasta 4 días después de hoy)
+        $startOfRangeFourDays = $now->copy();
+        $endOfRangeFourDays = $now->copy()->addDays(4);
+        // Definir el rango de fechas
+        $startOfRange = $now->copy()->addDays(4); // 5 días después de hoy (el día 5 es el inicio)
+        $endOfRange = $startOfRange->copy()->addMonths($this->mesesAdicionales); // N meses después del día 5
+        // Extraer la propiedad para usar dentro del closure
+        $meses = $this->meses;
+        $priorityOrder = $this->priorityOrder;
+        $tareasActualesFuturas = $this->tareasActualesFuturas;
+
+        if ($this->seeProjects) { // Filtro por proyecto
+            // Filtrar solo las tareas de hoy
+            $this->tareasActuales = $this->tareasActualesFuturas[$today] ?? [];
+
+            // Si $this->seeProjects es true, mostrar solo un mes a la vez
+            $tareasActualesFuturas = collect($this->tareasActualesFuturas);
+
+            // Filtrar las tareas dentro del rango
+            $this->tareasProximas = $tareasActualesFuturas
+            ->filter(function ($tasks, $dateKey) use ($startOfRangeFourDays, $endOfRangeFourDays, $meses) {
+                // Convertir `dateKey` al formato correcto usando Carbon
+                foreach ($meses as $esp => $eng) {
+                    $dateKey = str_replace($esp, $eng, $dateKey);
+                }
+                $dateKeyFormatted = Carbon::createFromFormat('d M Y', $dateKey);
+
+                return $dateKeyFormatted->between($startOfRangeFourDays, $endOfRangeFourDays);
+            })
+            ->toArray();
+
+            // Fechas despues de un mes
+            $tareasFiltradas = $tareasActualesFuturas
+                ->filter(function ($tasks, $dateKey) use ($startOfRange, $endOfRange, $meses) {
+                    foreach ($meses as $esp => $eng) {
+                        $dateKey = str_replace($esp, $eng, $dateKey);
+                    }
+
+                    $taskDate = Carbon::createFromFormat('d M Y', $dateKey);
+                    return $taskDate->between($startOfRange, $endOfRange);
+                })
+                ->sortBy(function ($tasks, $dateKey) use ($meses) {
+                    foreach ($meses as $esp => $eng) {
+                        $dateKey = str_replace($esp, $eng, $dateKey);
+                    }
+                    return Carbon::createFromFormat('d M Y', $dateKey)->timestamp;
+                })
+                ->map(function ($tasks) use ($priorityOrder) {
+                    return collect($tasks)->map(function ($taskGroup) use ($priorityOrder) {
+                        // Validar si $taskGroup tiene la clave 'tasks'
+                        if (!isset($taskGroup['tasks']) || !is_array($taskGroup['tasks'])) {
+                            return $taskGroup; // Retornar sin modificar si no es un array válido
+                        }
+
+                        // Ordenar las tareas dentro de 'tasks'
+                        $taskGroup['tasks'] = collect($taskGroup['tasks'])->sortBy(function ($task) use ($priorityOrder) {
+                            return [
+                                $priorityOrder[$task['priority']] ?? 4, // Ordenar por prioridad de la tarea
+                                $task['project_priority'] ?? 'K99' // Ordenar por prioridad del proyecto
+                            ];
+                        })->values();
+
+                        return $taskGroup;
+                    });
+                })
+                ->toArray();
+
+            // Obtener el primer mes dentro del rango
+            $this->tareasAgrupadasPorFecha = $tareasFiltradas; // Mostrar solo el primer mes
+
+        } else {
+            // Convertir el array a una Colección
+            $tareasActualesFuturas = collect($this->tareasActualesFuturas);
+
+            // 🔹 Combinar y filtrar las tareas actuales o futuras dentro del rango
+            $this->tareasMasDeUnMes = $tareasActualesFuturas
+                ->filter(fn($task) => Carbon::parse($task['expected_date'])->between($startOfRange, $endOfRange))
+                ->sortBy(fn($task) => [
+                    Carbon::parse($task['expected_date'])->timestamp, // Ordenar por fecha (más cercana primero)
+                    $this->priorityOrder[$task['priority']] ?? 4, // Ordenar por prioridad (según tu configuración)
+                    $this->parseProjectPriority($task) // Ordenar por prioridad del proyecto (K1, K2, etc.)
+                ])->values(); // 🔥 Asegura que Livewire maneje correctamente los índices
+
+            // Si $this->seeProjects es false, agrupar por fecha específica (formato: 'D MMM YYYY')
+            $this->tareasAgrupadasPorFecha = $this->tareasMasDeUnMes
+                ->groupBy(fn($task) => Carbon::parse($task['expected_date'])->isoFormat('D MMM YYYY')) // Agrupar por fecha formateada
+                ->map(fn($tasks) => $tasks->sortBy(fn($task) => [
+                    $this->priorityOrder[$task['priority']] ?? 4,
+                    $this->parseProjectPriority($task)
+                ])->values()) // 🔥 Asegura que los grupos también mantengan índices correctos
+                ->toArray();
+        }
     }
 }

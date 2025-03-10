@@ -59,6 +59,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@5.10.1/main.min.css">
 
     <style>
+        .hidden-info {
+            display: none;
+        }
+
+        .principal:hover .hidden-info {
+            display: block;
+        }
+        
         .scrollEdit::-webkit-scrollbar {
             width: 6px;
             /* width of the entire scrollbar */

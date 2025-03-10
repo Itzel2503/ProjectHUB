@@ -1,5 +1,6 @@
 {
     "/js/app.js": "/js/app.js",
+    "/js/kanvan-my-activities.js": "/js/kanvan-my-activities.js",
     "/js/fullcalendar.js": "/js/fullcalendar.js",
     "/css/app.css": "/css/app.css"
 }

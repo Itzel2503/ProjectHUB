@@ -1,6 +1,116 @@
 @extends('layouts.header')
 
 @section('content')
+    <style>
+        .bgK1 {
+            background-color: #F19632;
+        }
+
+        .bgK2 {
+            background-color: #F6B36B;
+        }
+
+        .bgK3 {
+            background-color: #FBC568;
+        }
+
+        .bgK4 {
+            background-color: #D5CF6F;
+        }
+
+        .bgK5 {
+            background-color: #ABC878;
+        }
+
+        .bgK6 {
+            background-color: #81C181;
+        }
+
+        .bgK7 {
+            background-color: #57BB8A;
+        }
+
+        .bgK8 {
+            background-color: #57BB8A;
+        }
+
+        .bgK9 {
+            background-color: #57BB8A;
+        }
+
+        .bgK10 {
+            background-color: #57BB8A;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 25px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgb(46 76 95 / var(--tw-bg-opacity, 1));
+            transition: 0.4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+        }
+
+        input:checked+.slider {
+            background-color: rgb(59 130 246 / var(--tw-bg-opacity, 1));
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Estilo para el elemento fantasma */
+        .sortable-ghost {
+            opacity: 0.5;
+            background: #c8ebfb;
+        }
+
+        /* Estilo para el elemento seleccionado */
+        .sortable-chosen {
+            background: #f0f0f0;
+        }
+
+        /* Estilo para el elemento arrastrado */
+        .sortable-drag {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+    </style>
+
     <div class="mx-auto mt-4 w-full">
         <div class="w-full space-y-6 px-4 py-3">
             <h1 class="tiitleHeader">
@@ -34,7 +144,7 @@
             var categories = @json($categories);
             var series = @json($series);
             var totalEffortPoints = @json($totalEffortPoints);
-            
+
             var options1 = {
                 series: series,
                 chart: {
@@ -196,17 +306,20 @@
             charts.chart1.render();
             charts.chart2.render();
             // Actualizar la gráfica al recibir el evento
-            window.addEventListener('update-chart', function (event) {
+            window.addEventListener('update-chart', function(event) {
                 Object.values(charts).forEach((chart) => {
                     chart.updateOptions({
                         series: event.detail.series,
-                        xaxis: { categories: event.detail.categories },
+                        xaxis: {
+                            categories: event.detail.categories
+                        },
                         plotOptions: {
                             bar: {
                                 dataLabels: {
                                     total: {
-                                        formatter: function (val, opt) {
-                                            return event.detail.totalEffortPoints[opt.dataPointIndex];
+                                        formatter: function(val, opt) {
+                                            return event.detail.totalEffortPoints[opt
+                                                .dataPointIndex];
                                         },
                                     },
                                 },

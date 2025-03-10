@@ -66,4 +66,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notion::class);
     }
+
+    public function layouts()
+    {
+        return $this->hasMany(Layout::class);
+    }
 }

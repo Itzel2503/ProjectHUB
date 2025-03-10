@@ -3,6 +3,9 @@
 namespace App\Http\Livewire\Modals\ReportsActivities;
 
 use App\Models\Activity;
+use App\Models\ErrorLog;
+use App\Models\Log;
+use App\Models\Sprint;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +26,7 @@ class Create extends Component
     public $recording;
     // DINAMICOS
     public $changePoints = true, $allUsers;
+    public $selectedIcon = null;
     // INPUTS
     public $title, $file, $description, $delegate, $expected_date, $priority, $points, $point_know, $point_many, $point_effort;
 
@@ -53,6 +57,12 @@ class Create extends Component
         $this->priority = $this->priority === $value ? null : $value;
     }
 
+    // Método para seleccionar un ícono
+    public function selectIcon($icon)
+    {   
+        $this->selectedIcon = $icon; 
+    }
+
     public function create()
     {
         try {
@@ -60,110 +70,94 @@ class Create extends Component
                 [
                     'title' => 'required|max:255',
                     'delegate' => 'required',
-                    'expected_date' => 'required|date',
                 ],
                 [
                     'title.required' => 'El título es obligatorio.',
                     'title.max:255' => 'El título no debe tener más caracteres que 255.',
                     'delegate.required' => 'El delegado es obligatorio.',
-                    'expected_date.required' => 'La fecha esperada es obligatoria.',
-                    'expected_date.date' => 'La fecha esperada debe ser una fecha válida.',
                 ],
             );
-            // Aquí puedes continuar con tu lógica después de la validación exitosa
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Emitir un evento de navegador
-            $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',
-                'title' => 'Faltan campos o campos incorrectos',
-            ]);
-            throw $e;
-        }
 
-        $activity = new Activity();
-        if ($this->file) {
-            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-            if (in_array($this->file->extension(), $extensionesImagen)) {
-                $maxSize = 5 * 1024 * 1024; // 5 MB
-                // Verificar el tamaño del archivo
-                if ($this->file->getSize() > $maxSize) {
+            $sprint = Sprint::find($this->sprint);
+
+            if ($sprint->state == 'Cerrado') {
+                $sprint->state = 'Curso';
+                $sprint->save();
+                $updateSprint = true;
+            } else {
+                $updateSprint = false;
+            }
+
+            $activity = new Activity();
+            if ($this->file) {
+                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+                if (in_array($this->file->extension(), $extensionesImagen)) {
+                    $maxSize = 5 * 1024 * 1024; // 5 MB
+                    // Verificar el tamaño del archivo
+                    if ($this->file->getSize() > $maxSize) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
+                        ]);
+                        return;
+                    }
+                    $projectName = Str::slug($this->project->name, '_');
+                    $customerName = Str::slug($this->project->customer->name, '_');
+                    $now = Carbon::now();
+                    $dateString = $now->format("Y-m-d H_i_s");
+                    $fileExtension = $this->file->extension();
+                    // Sanitizar nombres de archivo y directorios
+                    $fileName = 'Actividad_' . $projectName . '_' . $dateString . '.' . $fileExtension;
+                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName;
+                    $fullNewFilePath = $filePath . '/' . $fileName;
+                    // Procesar la imagen
+                    $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
+                    // Redimensionar la imagen si es necesario
+                    $image->resize(800, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    // Guardar la imagen temporalmente
+                    $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                    $image->save(storage_path('app/' . $tempPath));
+                    // Guardar la imagen redimensionada en el almacenamiento local
+                    Storage::disk('activities')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                    // // Eliminar la imagen temporal
+                    Storage::disk('local')->delete($tempPath);
+                    $activity->content = $fullNewFilePath;
+                } else {
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'error',
-                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
+                        'title' => 'El archivo no es una imagen.',
                     ]);
                     return;
                 }
-                $projectName = Str::slug($this->project->name, '_');
-                $customerName = Str::slug($this->project->customer->name, '_');
-                $now = Carbon::now();
-                $dateString = $now->format("Y-m-d H_i_s");
-                $fileExtension = $this->file->extension();
-                // Sanitizar nombres de archivo y directorios
-                $fileName = 'Actividad_' . $projectName . '_' . $dateString . '.' . $fileExtension;
-                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName;
-                $fullNewFilePath = $filePath . '/' . $fileName;
-                // Procesar la imagen
-                $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
-                // Redimensionar la imagen si es necesario
-                $image->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
-                // Guardar la imagen temporalmente
-                $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
-                $image->save(storage_path('app/' . $tempPath));
-                // Guardar la imagen redimensionada en el almacenamiento local
-                Storage::disk('activities')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
-                // // Eliminar la imagen temporal
-                Storage::disk('local')->delete($tempPath);
-                $activity->content = $fullNewFilePath;
-            } else {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'error',
-                    'title' => 'El archivo no es una imagen.',
-                ]);
-                return;
             }
-        }
-        $activity->sprint_id = $this->sprint;
-        $activity->delegate_id = $this->delegate;
-        $activity->user_id = Auth::id();
-        $activity->title = $this->title;
-        $activity->description = $this->description;
-        $activity->priority = $this->priority;
-        $activity->state = 'Abierto';
-        if ($this->changePoints != true) {
-            if (!$this->points) {
-                $activity->points = 0;
-            } else {
-                $validPoints = [1, 2, 3, 5, 8, 13];
-                $activity->points = $this->points;
 
-                if (!in_array($this->points, $validPoints)) {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Puntuaje no válido.',
-                    ]);
-                    return; // O cualquier otra acción que desees realizar
+            $activity->sprint_id = $this->sprint;
+            $activity->delegate_id = $this->delegate;
+            $activity->user_id = Auth::id();
+            $activity->icon = ($this->selectedIcon == "❌" || $this->selectedIcon == null) ? '' : $this->selectedIcon;
+            $activity->title = $this->title;
+            $activity->description = $this->description;
+            $activity->priority = $this->priority;
+            $activity->state = 'Abierto';
+            if ($this->changePoints != true) {
+                if (!$this->points) {
+                    $activity->points = 0;
                 } else {
+                    $validPoints = [1, 2, 3, 5, 8, 13];
                     $activity->points = $this->points;
+
+                    if (!in_array($this->points, $validPoints)) {
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'error',
+                            'title' => 'Puntuaje no válido.',
+                        ]);
+                        return; // O cualquier otra acción que desees realizar
+                    } else {
+                        $activity->points = $this->points;
+                    }
                 }
-            }
-            $questionsPoints = [
-                'pointKnow' => null,
-                'pointMany' => null,
-                'pointEffort' => null,
-            ];
-            // Convertir el array a JSON
-            $questionsPointsJson = json_encode($questionsPoints);
-            // Asignar y guardar 
-            $activity->questions_points = $questionsPointsJson;
-        } else {
-            if (!$this->point_know && !$this->point_many && !$this->point_effort) {
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'warning',
-                    'title' => 'El formulario está incompleto o no se han seleccionado los puntos necesarios.',
-                ]);
-                $activity->points = 0;
                 $questionsPoints = [
                     'pointKnow' => null,
                     'pointMany' => null,
@@ -174,33 +168,107 @@ class Create extends Component
                 // Asignar y guardar 
                 $activity->questions_points = $questionsPointsJson;
             } else {
-                $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
-                $activity->points = $maxPoint;
-                // Crear un array asociativo con los valores
-                $questionsPoints = [
-                    'pointKnow' => $this->point_know,
-                    'pointMany' => $this->point_many,
-                    'pointEffort' => $this->point_effort,
-                ];
-                // Convertir el array a JSON
-                $questionsPointsJson = json_encode($questionsPoints);
-                // Asignar y guardar 
-                $activity->questions_points = $questionsPointsJson;
+                if (!$this->point_know && !$this->point_many && !$this->point_effort) {
+                    $this->dispatchBrowserEvent('swal:modal', [
+                        'type' => 'warning',
+                        'title' => 'El formulario está incompleto o no se han seleccionado los puntos necesarios.',
+                    ]);
+                    $activity->points = 0;
+                    $questionsPoints = [
+                        'pointKnow' => null,
+                        'pointMany' => null,
+                        'pointEffort' => null,
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPointsJson = json_encode($questionsPoints);
+                    // Asignar y guardar 
+                    $activity->questions_points = $questionsPointsJson;
+                } else {
+                    $maxPoint = max($this->point_know, $this->point_many, $this->point_effort);
+                    $activity->points = $maxPoint;
+                    // Crear un array asociativo con los valores
+                    $questionsPoints = [
+                        'pointKnow' => $this->point_know,
+                        'pointMany' => $this->point_many,
+                        'pointEffort' => $this->point_effort,
+                    ];
+                    // Convertir el array a JSON
+                    $questionsPointsJson = json_encode($questionsPoints);
+                    // Asignar y guardar 
+                    $activity->questions_points = $questionsPointsJson;
+                }
             }
+            $activity->delegated_date = Carbon::now();
+            $activity->expected_date = ($this->expected_date != '') ? $this->expected_date : null;
+            $activity->save();
+            $this->clearInputs();
+
+            if ($updateSprint == true) {
+                Log::create([
+                    'user_id' => Auth::id(),
+                    'project_id'=> $this->project->id,
+                    'activity_id' => $activity->id,
+                    'view' => 'livewire/projects/activities/table-activities',
+                    'action' => 'Creación de actividad',
+                    'message' => 'Actividad creada',
+                    'details' => 'Sprint: ' . $sprint->id,
+                ]);
+            } else {
+                Log::create([
+                    'user_id' => Auth::id(),
+                    'project_id'=> $this->project->id,
+                    'activity_id' => $activity->id,
+                    'view' => 'livewire/projects/activities/table-activities',
+                    'action' => 'Creación de actividad',
+                    'message' => 'Actividad creada',
+                    'details' => 'Delegado: ' . $activity->delegate_id,
+                ]);
+            }
+
+            // Emitir un evento de navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'success',
+                'title' => 'Actividad creada',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Captura de errores de validación
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Faltan campos o campos incorrectos',
+            ]);
+
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> $this->project->id,
+                'view' => 'livewire/modals/reports-activities/create',
+                'action' => 'Creación de actividad',
+                'message' => 'Error en crear actividad',
+                'details' => $e->getMessage(), // Mensaje de la excepción
+            ]);
+            
+            throw $e;
+    
+        } catch (\Exception $e) {
+            // Captura de cualquier otro error
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id'=> $this->project->id,
+                'view' => 'livewire/modals/reports-activities/create',
+                'action' => 'Creación de actividad',
+                'message' => 'Error en crear actividad',
+                'details' => $e->getMessage(), // Mensaje de la excepción
+            ]);
+
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtalo de nuevo.',
+            ]);
         }
-        $activity->delegated_date = Carbon::now();
-        $activity->expected_date = $this->expected_date;
-        $activity->save();
-        $this->clearInputs();
-        // Emitir un evento de navegador
-        $this->dispatchBrowserEvent('swal:modal', [
-            'type' => 'success',
-            'title' => 'Actividad creada',
-        ]);
     }
 
     public function clearInputs()
     {
+        $this->selectedIcon = null;
         $this->title = '';
         $this->description = '';
         $this->delegate = '';

@@ -91,14 +91,6 @@
         .bgK10 {
             background-color: #57BB8A;
         }
-
-        .hidden-info {
-            display: none;
-        }
-
-        .principal:hover .hidden-info {
-            display: block;
-        }
     </style>
     <div class="mx-auto mt-4 w-full">
         <div class="w-full space-y-6 px-4 py-3">

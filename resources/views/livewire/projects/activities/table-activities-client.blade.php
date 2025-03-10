@@ -171,7 +171,9 @@
                                         @else
                                             <div class="w-12"></div>
                                         @endif
-                                        <p class="my-auto text-left text-xs font-semibold">{{ $activity->title }}</p>
+                                        <p class="my-auto text-left text-xs font-semibold">
+                                            {{ $activity->icon }} {{ $activity->title }}
+                                        </p>
                                     </div>
                                 </div>
                             </td>

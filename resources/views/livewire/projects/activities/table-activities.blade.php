@@ -256,7 +256,9 @@
                                         @else
                                             <div class="w-12"></div>
                                         @endif
-                                        <p class="my-auto text-left text-xs font-semibold">{{ $activity->title }}</p>
+                                        <p class="my-auto text-left text-xs font-semibold">
+                                            {{ $activity->icon }} {{ $activity->title }}
+                                        </p>
                                     </div>
                                     @if ($activity->messages_count >= 1)
                                         {{-- usuario --}}
@@ -413,7 +415,7 @@
                                     <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
                                         name="state" id="state"
                                         class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
-                                        @if ($sprint->state == 'Pendiente' && Auth::user()->type_user != 1) disabled @endif>
+                                        @if ($sprint->state == 'Pendiente' || Auth::user()->type_user != 1) disabled @endif>
                                         <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
                                         @foreach ($activity->filteredActions as $action)
                                             <option value="{{ $action }}">{{ $action }}</option>
@@ -466,7 +468,7 @@
                                 </div>
                             </td>
                             <td class="px-2 py-1">
-                                <div class="flex justify-center">
+                                <div class="principal flex justify-center">
                                     @if ($project == null && $idsprint == null)
                                         @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
                                             <a
@@ -482,6 +484,12 @@
                                                         d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
                                                 </svg>
                                             </a>
+                                            <div class="relative">
+                                                <div
+                                                    class="hidden-info absolute -top-3 right-5 z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
+                                                    <p>Ver mas</p>
+                                                </div>
+                                            </div>
                                         @else
                                             <p class="text-justify text-xs font-semibold">
                                                 Proyecto no disponible
@@ -575,7 +583,7 @@
                         class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                         <h3
                             class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                            {{ $activityShow->title }}
+                            {{ $activityShow->icon }} {{ $activityShow->title }}
                         </h3>
                         <svg wire:click="showActivity(0)" class="h-6 w-6 cursor-pointer text-black hover:stroke-2"
                             xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
@@ -623,8 +631,8 @@
                     @if ($activityEdit)
                         <livewire:modals.reports-activities.edit :recordingedit="$activityEdit->id" :backlog="$backlog" :sprint="$sprint->id"
                             :type="'activity'">
-                        @else
-                            <livewire:modals.reports-activities.create :project="$project" :sprint="$sprint->id">
+                    @else
+                        <livewire:modals.reports-activities.create :project="$project" :sprint="$sprint->id">
                     @endif
                 </div>
             </div>
@@ -632,17 +640,30 @@
     @endif
     {{-- END MODAL EDIT / CREATE ACTIVITY --}}
     {{-- LOADING PAGE --}}
-    <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-        wire:target="$set('isOptionsVisibleState'), create, filterDown, filterUp, showActivity, togglePanel, editActivity, deleteActivity, delete">
-        <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
-        <div class="loadingspinner relative top-1/3 z-20">
-            <div id="square1"></div>
-            <div id="square2"></div>
-            <div id="square3"></div>
-            <div id="square4"></div>
-            <div id="square5"></div>
+    @if ($project != null && $idsprint != null)
+        <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
+            wire:target="$set('isOptionsVisibleState'), create, filterDown, filterUp, showActivity, togglePanel, editActivity, deleteActivity, delete">
+            <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
+            <div class="loadingspinner relative top-1/3 z-20">
+                <div id="square1"></div>
+                <div id="square2"></div>
+                <div id="square3"></div>
+                <div id="square4"></div>
+                <div id="square5"></div>
+            </div>
         </div>
-    </div>
+    @else
+        <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading>
+            <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
+            <div class="loadingspinner relative top-1/3 z-20">
+                <div id="square1"></div>
+                <div id="square2"></div>
+                <div id="square3"></div>
+                <div id="square4"></div>
+                <div id="square5"></div>
+            </div>
+        </div>
+    @endif
     {{-- END LOADING PAGE --}}
     @push('js')
         <script>
