@@ -243,123 +243,125 @@
                     <input hidden type="text" id="inputPointKnow" name="pointKnow">
                     <input hidden type="text" id="inputPointMany" name="pointMany">
                     <input hidden type="text" id="inputPointEffort" name="pointEffort">
-                    <div class="-mx-3 mb-6">
-                        <div class="mb-6 flex w-full flex-col px-3">
-                            <h5 class="inline-flex font-semibold" for="">
-                                Icono
-                            </h5>
-                            <div class="flex justify-between mt-2">
-                                <!--  🚀 Cohete: Propuestas; Lanzamientos -->
-                                <label class="principal">
-                                    <input type="checkbox" name="icon" value="&#x1F680;" class="icon-checkbox">
-                                    <span class="icon-event">&#x1F680;
-                                    </span>
-                                    <div class="relative">
-                                        <div
-                                            class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
-                                            <p>Propuestas; Lanzamientos</p>
+                    @if (Auth::user()->type_user != 3)
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="">
+                                    Icono
+                                </h5>
+                                <div class="flex justify-between mt-2">
+                                    <!--  🚀 Cohete: Propuestas; Lanzamientos -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F680;" class="icon-checkbox">
+                                        <span class="icon-event">&#x1F680;
+                                        </span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Propuestas; Lanzamientos</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                                <!-- 🔵 Círculo morado grande: Seguimiento -->
-                                <label class="principal">
-                                    <input type="checkbox" name="icon" value="&#x1F535;"
-                                        class="icon-checkbox">
-                                    <span class="icon-event">&#x1F535;</span>
-                                    <div class="relative">
-                                        <div
-                                            class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
-                                            <p>Seguimiento</p>
+                                    </label>
+                                    <!-- 🔵 Círculo morado grande: Seguimiento -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F535;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x1F535;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Seguimiento</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                                <!-- 💵 Dólar: Finanzas -->
-                                <label class="principal">
-                                    <input type="checkbox" name="icon" value="&#x1F4B5;"
-                                        class="icon-checkbox">
-                                    <span class="icon-event">&#x1F4B5;</span>
-                                    <div class="relative">
-                                        <div
-                                            class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
-                                            <p>Finanzas</p>
+                                    </label>
+                                    <!-- 💵 Dólar: Finanzas -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F4B5;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x1F4B5;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Finanzas</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                                <!-- 📅 Calendario: Cita -->
-                                <label class="principal">
-                                    <input type="checkbox" name="icon" value="&#x1F4C5;"
-                                        class="icon-checkbox">
-                                    <span class="icon-event">&#x1F4C5;</span>
-                                    <div class="relative">
-                                        <div
-                                            class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
-                                            <p>Cita</p>
+                                    </label>
+                                    <!-- 📅 Calendario: Cita -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F4C5;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x1F4C5;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Cita</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                                <!-- 💡 Bombilla: Ideas -->
-                                <label class="principal">
-                                    <input type="checkbox" name="icon" value="&#x1F4A1;"
-                                        class="icon-checkbox">
-                                    <span class="icon-event">&#x1F4A1;</span>
-                                    <div class="relative">
-                                        <div
-                                            class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
-                                            <p>Ideas</p>
+                                    </label>
+                                    <!-- 💡 Bombilla: Ideas -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F4A1;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x1F4A1;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Ideas</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                                <!-- 📎 Clip: Notas -->
-                                <label class="principal">
-                                    <input type="checkbox" name="icon" value="&#x1F4CE;"
-                                        class="icon-checkbox">
-                                    <span class="icon-event">&#x1F4CE;</span>
-                                    <div class="relative">
-                                        <div
-                                            class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
-                                            <p>Notas</p>
+                                    </label>
+                                    <!-- 📎 Clip: Notas -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x1F4CE;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x1F4CE;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Notas</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                                <!-- ⭐ Estrella: Top -->
-                                <label class="principal">
-                                    <input type="checkbox" name="icon" value="&#x2B50;"
-                                        class="icon-checkbox">
-                                    <span class="icon-event">&#x2B50;</span>
-                                    <div class="relative">
-                                        <div
-                                            class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
-                                            <p>Top</p>
+                                    </label>
+                                    <!-- ⭐ Estrella: Top -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x2B50;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x2B50;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Top</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                                <!-- ⏸️ Doble barra vertical: Pausa -->
-                                <label class="principal">
-                                    <input type="checkbox" name="icon" value="&#x23F8;"
-                                        class="icon-checkbox">
-                                    <span class="icon-event">&#x23F8;</span>
-                                    <div class="relative">
-                                        <div
-                                            class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
-                                            <p>Pausa</p>
+                                    </label>
+                                    <!-- ⏸️ Doble barra vertical: Pausa -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x23F8;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x23F8;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Pausa</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                                <!-- ✉️ Correo: Enviar -->
-                                <label class="principal">
-                                    <input type="checkbox" name="icon" value="&#x2709;"
-                                        class="icon-checkbox">
-                                    <span class="icon-event">&#x2709;</span>
-                                    <div class="relative">
-                                        <div
-                                            class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
-                                            <p>Enviar</p>
+                                    </label>
+                                    <!-- ✉️ Correo: Enviar -->
+                                    <label class="principal">
+                                        <input type="checkbox" name="icon" value="&#x2709;"
+                                            class="icon-checkbox">
+                                        <span class="icon-event">&#x2709;</span>
+                                        <div class="relative">
+                                            <div
+                                                class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                                <p>Enviar</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                     <div class="-mx-3 mb-6 flex flex-row">
                         <div id="viewText" class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
