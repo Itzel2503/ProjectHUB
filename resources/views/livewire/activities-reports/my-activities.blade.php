@@ -293,6 +293,9 @@
                                 <td class="px-2 py-1">
                                     <div class="mx-auto w-full text-left">
                                         @if ($task->project_activity || $task->project_report)
+                                            <p
+                                                class="@if ($task->state == 'Resuelto') font-semibold @else hidden @endif">
+                                                {{ $task->delegate_name }}</p>
                                             <select
                                                 @if ($task->project_activity) wire:change.defer="updateDelegate({{ $task->id }}, $event.target.value, 'activity')" @elseif($task->project_report) wire:change="updateDelegate({{ $task->id }},$event.target.value, 'report')" @endif
                                                 name="delegate" id="delegate"
