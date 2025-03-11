@@ -74,6 +74,7 @@ class Report extends Controller
             $report = new ModelsReport();
             $now = Carbon::now();
             $dateString = $now->format("Y-m-d_H_i_s");
+
             if ($project && $report) {
                 try {
                     if (Auth::user()->type_user != 3) {
@@ -90,8 +91,8 @@ class Report extends Controller
                         $report->project_id = $project_id;
                         $report->user_id = $request->user_id;
                         if (Auth::user()->type_user == 3) {
-                            // Usuario Soporte
                             $userSoporte = User::where('area_id', '4')->first();
+                            // Usuario Soporte
                             if (!isNull($userSoporte)) {
                                 $delegate_id = $userSoporte->id;
                             } else {
@@ -105,6 +106,7 @@ class Report extends Controller
                         } else {
                             $report->delegate_id = $request->delegate;
                             $report->expected_date = ($request->expected_date) ? $request->expected_date : null;
+                            $userSoporte = null;
                         }
                         $report->icon = ($request->icon) ? $request->icon : null;
                         $report->title = $request->title;
@@ -166,6 +168,7 @@ class Report extends Controller
                         } else {
                             $report->delegate_id = $request->delegate;
                             $report->expected_date = ($request->expected_date) ? $request->expected_date : null;
+                            $userSoporte = null;
                         }
                         $report->icon = ($request->icon) ? $request->icon : null;
                         $report->title = $request->title;
@@ -227,6 +230,7 @@ class Report extends Controller
                         } else {
                             $report->delegate_id = $request->delegate;
                             $report->expected_date = ($request->expected_date) ? $request->expected_date : null;
+                            $userSoporte = null;
                         }
                         $report->icon = ($request->icon) ? $request->icon : null;
                         $report->title = $request->title;
@@ -275,6 +279,7 @@ class Report extends Controller
                     if (!isset($request->video) && !isset($request->photo) && !isset($request->file)) {
                         $report->project_id = $project_id;
                         $report->user_id = $request->user_id;
+
                         if (Auth::user()->type_user == 3) {
                             // Usuario Soporte
                             $userSoporte = User::where('area_id', '4')->first();
@@ -291,6 +296,7 @@ class Report extends Controller
                         } else {
                             $report->delegate_id = $request->delegate;
                             $report->expected_date = ($request->expected_date) ? $request->expected_date : null;
+                            $userSoporte = null;
                         }
                         $report->icon = ($request->icon) ? $request->icon : null;
                         $report->title = $request->title;
@@ -331,7 +337,7 @@ class Report extends Controller
                         'view' => 'projects/reports/newreport',
                         'action' => 'Crear reporte',
                         'message' => 'Reporte creado exitosamente',
-                        'details' => ($userSoporte->id) ? 'Delegado: ' . $userSoporte->id : 'Delegado: ' . $request->delegate ,
+                        'details' => ($userSoporte != null) ? 'Delegado: ' . $userSoporte->id : 'Delegado: ' . $request->delegate ,
                     ]);
 
                     return redirect()->route('projects.reports.index', ['project' => $project_id]);
