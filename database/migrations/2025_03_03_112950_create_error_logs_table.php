@@ -22,7 +22,7 @@ class CreateErrorLogsTable extends Migration
             $table->string('view');
             $table->string('action')->nullable();
             $table->string('message');
-            $table->string('details')->nullable();
+            $table->longText('details')->nullable();
             $table->timestamps();
         });
     }

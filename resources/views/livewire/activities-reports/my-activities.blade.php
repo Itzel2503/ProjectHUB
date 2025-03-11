@@ -535,7 +535,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="flex justify-between">
+                                            <div class="flex justify-between my-2">
                                                 <div>
                                                     @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
                                                         <select name="state" id="state"
@@ -617,30 +617,32 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                            @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
-                                                <select
-                                                    @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
-                                                    name="delegate" id="delegate"
-                                                    @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
-                                                    @endif
-                                                    class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
-                                                    <option selected value={{ $task['delegate_id'] }}>
-                                                        {{ $task['delegate_name'] }}
-                                                    </option>
-                                                    @foreach ($task['usersFiltered'] as $userFiltered)
-                                                        <option value="{{ $userFiltered->id }}">
-                                                            {{ $userFiltered->name }}
+                                            <div>
+                                                @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
+                                                    <select
+                                                        @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
+                                                        name="delegate" id="delegate"
+                                                        @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                                        @endif
+                                                        class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
+                                                        <option selected value={{ $task['delegate_id'] }}>
+                                                            {{ $task['delegate_name'] }}
                                                         </option>
-                                                    @endforeach
-                                                </select>
-                                            @else
-                                                <select name="delegate" id="delegate"
-                                                    class="inpSelectTable w-full text-sm">
-                                                    <option selected value={{ $task['delegate_id'] }}>
-                                                        {{ $task['delegate_name'] }}
-                                                    </option>
-                                                </select>
-                                            @endif
+                                                        @foreach ($task['usersFiltered'] as $userFiltered)
+                                                            <option value="{{ $userFiltered->id }}">
+                                                                {{ $userFiltered->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                @else
+                                                    <select name="delegate" id="delegate"
+                                                        class="inpSelectTable w-full text-sm">
+                                                        <option selected value={{ $task['delegate_id'] }}>
+                                                            {{ $task['delegate_name'] }}
+                                                        </option>
+                                                    </select>
+                                                @endif
+                                            </div>
                                         </div>
                                     @endforeach
                                 @endforeach
@@ -700,7 +702,7 @@
                                             </div>
                                         </div>
                                         <p class="text-left">{{ $task['icon'] }} {{ $task['title'] }}</p>
-                                        <div class="flex justify-between">
+                                        <div class="flex justify-between my-2">
                                             <div>
                                                 @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
                                                     <select name="state" id="state"
@@ -780,30 +782,32 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
-                                            <select
-                                                @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
-                                                name="delegate" id="delegate"
-                                                @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
-                                                @endif
-                                                class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
-                                                <option selected value={{ $task['delegate_id'] }}>
-                                                    {{ $task['delegate_name'] }}
-                                                </option>
-                                                @foreach ($task['usersFiltered'] as $userFiltered)
-                                                    <option value="{{ $userFiltered->id }}">
-                                                        {{ $userFiltered->name }}
+                                        <div>
+                                            @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
+                                                <select
+                                                    @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
+                                                    name="delegate" id="delegate"
+                                                    @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                                    @endif
+                                                    class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
+                                                    <option selected value={{ $task['delegate_id'] }}>
+                                                        {{ $task['delegate_name'] }}
                                                     </option>
-                                                @endforeach
-                                            </select>
-                                        @else
-                                            <select name="delegate" id="delegate"
-                                                class="inpSelectTable w-full text-sm">
-                                                <option selected value={{ $task['delegate_id'] }}>
-                                                    {{ $task['delegate_name'] }}
-                                                </option>
-                                            </select>
-                                        @endif
+                                                    @foreach ($task['usersFiltered'] as $userFiltered)
+                                                        <option value="{{ $userFiltered->id }}">
+                                                            {{ $userFiltered->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            @else
+                                                <select name="delegate" id="delegate"
+                                                    class="inpSelectTable w-full text-sm">
+                                                    <option selected value={{ $task['delegate_id'] }}>
+                                                        {{ $task['delegate_name'] }}
+                                                    </option>
+                                                </select>
+                                            @endif
+                                        </div>
                                     </div>
                                 @endforeach
                             @endif
@@ -868,7 +872,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="flex justify-between">
+                                            <div class="flex justify-between my-2">
                                                 <div>
                                                     @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
                                                         <select name="state" id="state"
@@ -950,30 +954,32 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                            @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
-                                                <select
-                                                    @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
-                                                    name="delegate" id="delegate"
-                                                    @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
-                                                    @endif
-                                                    class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
-                                                    <option selected value={{ $task['delegate_id'] }}>
-                                                        {{ $task['delegate_name'] }}
-                                                    </option>
-                                                    @foreach ($task['usersFiltered'] as $userFiltered)
-                                                        <option value="{{ $userFiltered->id }}">
-                                                            {{ $userFiltered->name }}
+                                            <div>
+                                                @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
+                                                    <select
+                                                        @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
+                                                        name="delegate" id="delegate"
+                                                        @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                                        @endif
+                                                        class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
+                                                        <option selected value={{ $task['delegate_id'] }}>
+                                                            {{ $task['delegate_name'] }}
                                                         </option>
-                                                    @endforeach
-                                                </select>
-                                            @else
-                                                <select name="delegate" id="delegate"
-                                                    class="inpSelectTable w-full text-sm">
-                                                    <option selected value={{ $task['delegate_id'] }}>
-                                                        {{ $task['delegate_name'] }}
-                                                    </option>
-                                                </select>
-                                            @endif
+                                                        @foreach ($task['usersFiltered'] as $userFiltered)
+                                                            <option value="{{ $userFiltered->id }}">
+                                                                {{ $userFiltered->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                @else
+                                                    <select name="delegate" id="delegate"
+                                                        class="inpSelectTable w-full text-sm">
+                                                        <option selected value={{ $task['delegate_id'] }}>
+                                                            {{ $task['delegate_name'] }}
+                                                        </option>
+                                                    </select>
+                                                @endif
+                                            </div>
                                         </div>
                                     @endforeach
                                 @endforeach
@@ -1033,7 +1039,7 @@
                                             </div>
                                         </div>
                                         <p class="text-left">{{ $task['icon'] }} {{ $task['title'] }}</p>
-                                        <div class="flex justify-between">
+                                        <div class="flex justify-between my-2">
                                             <div>
                                                 @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
                                                     <select name="state" id="state"
@@ -1113,30 +1119,32 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
-                                            <select
-                                                @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
-                                                name="delegate" id="delegate"
-                                                @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
-                                                @endif
-                                                class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
-                                                <option selected value={{ $task['delegate_id'] }}>
-                                                    {{ $task['delegate_name'] }}
-                                                </option>
-                                                @foreach ($task['usersFiltered'] as $userFiltered)
-                                                    <option value="{{ $userFiltered->id }}">
-                                                        {{ $userFiltered->name }}
+                                        <div>
+                                            @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
+                                                <select
+                                                    @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
+                                                    name="delegate" id="delegate"
+                                                    @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                                    @endif
+                                                    class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
+                                                    <option selected value={{ $task['delegate_id'] }}>
+                                                        {{ $task['delegate_name'] }}
                                                     </option>
-                                                @endforeach
-                                            </select>
-                                        @else
-                                            <select name="delegate" id="delegate"
-                                                class="inpSelectTable w-full text-sm">
-                                                <option selected value={{ $task['delegate_id'] }}>
-                                                    {{ $task['delegate_name'] }}
-                                                </option>
-                                            </select>
-                                        @endif
+                                                    @foreach ($task['usersFiltered'] as $userFiltered)
+                                                        <option value="{{ $userFiltered->id }}">
+                                                            {{ $userFiltered->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            @else
+                                                <select name="delegate" id="delegate"
+                                                    class="inpSelectTable w-full text-sm">
+                                                    <option selected value={{ $task['delegate_id'] }}>
+                                                        {{ $task['delegate_name'] }}
+                                                    </option>
+                                                </select>
+                                            @endif
+                                        </div>
                                     </div>
                                 @endforeach
                             @endif
@@ -1202,7 +1210,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="flex justify-between">
+                                            <div class="flex justify-between my-2">
                                                 <div>
                                                     @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
                                                         <select name="state" id="state"
@@ -1284,30 +1292,32 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                            @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
-                                                <select
-                                                    @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
-                                                    name="delegate" id="delegate"
-                                                    @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
-                                                    @endif
-                                                    class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
-                                                    <option selected value={{ $task['delegate_id'] }}>
-                                                        {{ $task['delegate_name'] }}
-                                                    </option>
-                                                    @foreach ($task['usersFiltered'] as $userFiltered)
-                                                        <option value="{{ $userFiltered->id }}">
-                                                            {{ $userFiltered->name }}
+                                            <div>
+                                                @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
+                                                    <select
+                                                        @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
+                                                        name="delegate" id="delegate"
+                                                        @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                                        @endif
+                                                        class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
+                                                        <option selected value={{ $task['delegate_id'] }}>
+                                                            {{ $task['delegate_name'] }}
                                                         </option>
-                                                    @endforeach
-                                                </select>
-                                            @else
-                                                <select name="delegate" id="delegate"
-                                                    class="inpSelectTable w-full text-sm">
-                                                    <option selected value={{ $task['delegate_id'] }}>
-                                                        {{ $task['delegate_name'] }}
-                                                    </option>
-                                                </select>
-                                            @endif
+                                                        @foreach ($task['usersFiltered'] as $userFiltered)
+                                                            <option value="{{ $userFiltered->id }}">
+                                                                {{ $userFiltered->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                @else
+                                                    <select name="delegate" id="delegate"
+                                                        class="inpSelectTable w-full text-sm">
+                                                        <option selected value={{ $task['delegate_id'] }}>
+                                                            {{ $task['delegate_name'] }}
+                                                        </option>
+                                                    </select>
+                                                @endif
+                                            </div>
                                         </div>
                                     @endforeach
                                 @endforeach
@@ -1368,7 +1378,7 @@
                                                 </div>
                                             </div>
                                             <p class="text-left">{{ $task['icon'] }} {{ $task['title'] }}</p>
-                                            <div class="flex justify-between">
+                                            <div class="flex justify-between my-2">
                                                 <div>
                                                     @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
                                                         <select name="state" id="state"
@@ -1450,30 +1460,32 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                            @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
-                                                <select
-                                                    @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
-                                                    name="delegate" id="delegate"
-                                                    @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
-                                                    @endif
-                                                    class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
-                                                    <option selected value={{ $task['delegate_id'] }}>
-                                                        {{ $task['delegate_name'] }}
-                                                    </option>
-                                                    @foreach ($task['usersFiltered'] as $userFiltered)
-                                                        <option value="{{ $userFiltered->id }}">
-                                                            {{ $userFiltered->name }}
+                                            <div>
+                                                @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
+                                                    <select
+                                                        @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
+                                                        name="delegate" id="delegate"
+                                                        @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                                        @endif
+                                                        class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
+                                                        <option selected value={{ $task['delegate_id'] }}>
+                                                            {{ $task['delegate_name'] }}
                                                         </option>
-                                                    @endforeach
-                                                </select>
-                                            @else
-                                                <select name="delegate" id="delegate"
-                                                    class="inpSelectTable w-full text-sm">
-                                                    <option selected value={{ $task['delegate_id'] }}>
-                                                        {{ $task['delegate_name'] }}
-                                                    </option>
-                                                </select>
-                                            @endif
+                                                        @foreach ($task['usersFiltered'] as $userFiltered)
+                                                            <option value="{{ $userFiltered->id }}">
+                                                                {{ $userFiltered->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                @else
+                                                    <select name="delegate" id="delegate"
+                                                        class="inpSelectTable w-full text-sm">
+                                                        <option selected value={{ $task['delegate_id'] }}>
+                                                            {{ $task['delegate_name'] }}
+                                                        </option>
+                                                    </select>
+                                                @endif
+                                            </div>
                                         </div>
                                     @endif
                                 @endforeach
@@ -1551,7 +1563,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="flex justify-between">
+                                                        <div class="flex justify-between my-2">
                                                             <div>
                                                                 @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
                                                                     <select name="state" id="state"
@@ -1639,30 +1651,32 @@
                                                                 @endif
                                                             </div>
                                                         </div>
-                                                        @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
-                                                            <select
-                                                                @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
-                                                                name="delegate" id="delegate"
-                                                                @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
-                                                                @endif
-                                                                class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
-                                                                <option selected value={{ $task['delegate_id'] }}>
-                                                                    {{ $task['delegate_name'] }}
-                                                                </option>
-                                                                @foreach ($task['usersFiltered'] as $userFiltered)
-                                                                    <option value="{{ $userFiltered->id }}">
-                                                                        {{ $userFiltered->name }}
+                                                        <div>
+                                                            @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
+                                                                <select
+                                                                    @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
+                                                                    name="delegate" id="delegate"
+                                                                    @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                                                    @endif
+                                                                    class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
+                                                                    <option selected value={{ $task['delegate_id'] }}>
+                                                                        {{ $task['delegate_name'] }}
                                                                     </option>
-                                                                @endforeach
-                                                            </select>
-                                                        @else
-                                                            <select name="delegate" id="delegate"
-                                                                class="inpSelectTable w-full text-sm">
-                                                                <option selected value={{ $task['delegate_id'] }}>
-                                                                    {{ $task['delegate_name'] }}
-                                                                </option>
-                                                            </select>
-                                                        @endif
+                                                                    @foreach ($task['usersFiltered'] as $userFiltered)
+                                                                        <option value="{{ $userFiltered->id }}">
+                                                                            {{ $userFiltered->name }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @else
+                                                                <select name="delegate" id="delegate"
+                                                                    class="inpSelectTable w-full text-sm">
+                                                                    <option selected value={{ $task['delegate_id'] }}>
+                                                                        {{ $task['delegate_name'] }}
+                                                                    </option>
+                                                                </select>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 @endforeach
                                             @endforeach
@@ -1728,7 +1742,7 @@
                                                     </div>
                                                 </div>
                                                 <p class="text-left">{{ $task['icon'] }} {{ $task['title'] }}</p>
-                                                <div class="flex justify-between">
+                                                <div class="flex justify-between my-2">
                                                     <div>
                                                         @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
                                                             <select name="state" id="state"
@@ -1810,30 +1824,32 @@
                                                         @endif
                                                     </div>
                                                 </div>
-                                                @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
-                                                    <select
-                                                        @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
-                                                        name="delegate" id="delegate"
-                                                        @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
-                                                        @endif
-                                                        class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
-                                                        <option selected value={{ $task['delegate_id'] }}>
-                                                            {{ $task['delegate_name'] }}
-                                                        </option>
-                                                        @foreach ($task['usersFiltered'] as $userFiltered)
-                                                            <option value="{{ $userFiltered->id }}">
-                                                                {{ $userFiltered->name }}
+                                                <div>
+                                                    @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
+                                                        <select
+                                                            @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
+                                                            name="delegate" id="delegate"
+                                                            @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                                            @endif
+                                                            class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
+                                                            <option selected value={{ $task['delegate_id'] }}>
+                                                                {{ $task['delegate_name'] }}
                                                             </option>
-                                                        @endforeach
-                                                    </select>
-                                                @else
-                                                    <select name="delegate" id="delegate"
-                                                        class="inpSelectTable w-full text-sm">
-                                                        <option selected value={{ $task['delegate_id'] }}>
-                                                            {{ $task['delegate_name'] }}
-                                                        </option>
-                                                    </select>
-                                                @endif
+                                                            @foreach ($task['usersFiltered'] as $userFiltered)
+                                                                <option value="{{ $userFiltered->id }}">
+                                                                    {{ $userFiltered->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    @else
+                                                        <select name="delegate" id="delegate"
+                                                            class="inpSelectTable w-full text-sm">
+                                                            <option selected value={{ $task['delegate_id'] }}>
+                                                                {{ $task['delegate_name'] }}
+                                                            </option>
+                                                        </select>
+                                                    @endif
+                                                </div>
                                             </div>
                                         @endif
                                     @endforeach
@@ -1905,7 +1921,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="flex justify-between">
+                                                <div class="flex justify-between my-2">
                                                     <div>
                                                         @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
                                                             <select name="state" id="state"
@@ -1989,30 +2005,32 @@
                                                         @endif
                                                     </div>
                                                 </div>
-                                                @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
-                                                    <select
-                                                        @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
-                                                        name="delegate" id="delegate"
-                                                        @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
-                                                        @endif
-                                                        class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
-                                                        <option selected value={{ $task['delegate_id'] }}>
-                                                            {{ $task['delegate_name'] }}
-                                                        </option>
-                                                        @foreach ($task['usersFiltered'] as $userFiltered)
-                                                            <option value="{{ $userFiltered->id }}">
-                                                                {{ $userFiltered->name }}
+                                                <div>
+                                                    @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
+                                                        <select
+                                                            @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
+                                                            name="delegate" id="delegate"
+                                                            @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                                            @endif
+                                                            class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
+                                                            <option selected value={{ $task['delegate_id'] }}>
+                                                                {{ $task['delegate_name'] }}
                                                             </option>
-                                                        @endforeach
-                                                    </select>
-                                                @else
-                                                    <select name="delegate" id="delegate"
-                                                        class="inpSelectTable w-full text-sm">
-                                                        <option selected value={{ $task['delegate_id'] }}>
-                                                            {{ $task['delegate_name'] }}
-                                                        </option>
-                                                    </select>
-                                                @endif
+                                                            @foreach ($task['usersFiltered'] as $userFiltered)
+                                                                <option value="{{ $userFiltered->id }}">
+                                                                    {{ $userFiltered->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    @else
+                                                        <select name="delegate" id="delegate"
+                                                            class="inpSelectTable w-full text-sm">
+                                                            <option selected value={{ $task['delegate_id'] }}>
+                                                                {{ $task['delegate_name'] }}
+                                                            </option>
+                                                        </select>
+                                                    @endif
+                                                </div>
                                             </div>
                                         @endforeach
                                     @endforeach
@@ -2072,7 +2090,7 @@
                                                 </div>
                                             </div>
                                             <p class="text-left">{{ $task['icon'] }} {{ $task['title'] }}</p>
-                                            <div class="flex justify-between">
+                                            <div class="flex justify-between my-2">
                                                 <div>
                                                     @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
                                                         <select name="state" id="state"
@@ -2154,30 +2172,32 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                            @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
-                                                <select
-                                                    @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
-                                                    name="delegate" id="delegate"
-                                                    @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
-                                                    @endif
-                                                    class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
-                                                    <option selected value={{ $task['delegate_id'] }}>
-                                                        {{ $task['delegate_name'] }}
-                                                    </option>
-                                                    @foreach ($task['usersFiltered'] as $userFiltered)
-                                                        <option value="{{ $userFiltered->id }}">
-                                                            {{ $userFiltered->name }}
+                                            <div>
+                                                @if (array_key_exists('project_activity', $task) || array_key_exists('project_report', $task))
+                                                    <select
+                                                        @if (array_key_exists('project_activity', $task)) wire:change.defer="updateDelegate({{ $task['id'] }}, $event.target.value, 'activity')" @elseif(array_key_exists('project_report', $task)) wire:change="updateDelegate({{ $task['id'] }},$event.target.value, 'report')" @endif
+                                                        name="delegate" id="delegate"
+                                                        @if (array_key_exists('project_activity', $task)) @if ($task['sprint_state'] == 'Pendiente' && Auth::user()->type_user != 1 && Auth::user()->area_id != 1) disabled @endif
+                                                        @endif
+                                                        class="inpSelectTable @if ($task['state'] == 'Resuelto') hidden @endif w-full text-sm">
+                                                        <option selected value={{ $task['delegate_id'] }}>
+                                                            {{ $task['delegate_name'] }}
                                                         </option>
-                                                    @endforeach
-                                                </select>
-                                            @else
-                                                <select name="delegate" id="delegate"
-                                                    class="inpSelectTable w-full text-sm">
-                                                    <option selected value={{ $task['delegate_id'] }}>
-                                                        {{ $task['delegate_name'] }}
-                                                    </option>
-                                                </select>
-                                            @endif
+                                                        @foreach ($task['usersFiltered'] as $userFiltered)
+                                                            <option value="{{ $userFiltered->id }}">
+                                                                {{ $userFiltered->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                @else
+                                                    <select name="delegate" id="delegate"
+                                                        class="inpSelectTable w-full text-sm">
+                                                        <option selected value={{ $task['delegate_id'] }}>
+                                                            {{ $task['delegate_name'] }}
+                                                        </option>
+                                                    </select>
+                                                @endif
+                                            </div>
                                         </div>
                                     @endforeach
                                 @endif
