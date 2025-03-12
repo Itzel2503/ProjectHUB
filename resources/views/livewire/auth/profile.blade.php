@@ -6,7 +6,8 @@
                     <div class="m-5">
                         <div class="text-left mb-5">
                             <h5 class="mb-1 mx-auto w-full text-text1 font-semibold">Nombre completo:</h5>
-                            <input wire:model.defer='name' type="text" name="name" id="name" class="inputs bg-white">
+                            <input wire:model.defer='name' type="text" name="name" id="name"
+                                class="inputs bg-white">
                         </div>
                         <div class="text-left mb-5">
                             <h5 class="mb-1 mx-auto w-full text-text1 font-semibold">Correo electrónico:</h5>
@@ -36,11 +37,16 @@
                     <div class="m-5 text-center">
                         <div class="h-52 w-52 mb-5 mt-4 shadow-xl mx-auto rounded-full overflow-hidden">
                             @if (Auth::user()->profile_photo)
-                            <img class="h-52 w-52 rounded-full object-cover mx-auto" aria-hidden="true"
-                                src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}" alt="profile" />
+                                @if ($userPhoto == true)
+                                    <img class="h-52 w-52 rounded-full object-cover mx-auto" aria-hidden="true"
+                                        src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}" alt="profile" />
+                                @else
+                                    <img class="h-52 w-52 rounded-full object-cover mx-auto" aria-hidden="true"
+                                        src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="profile" />
+                                @endif
                             @else
-                            <img class="h-52 w-52 rounded-full object-cover mx-auto" aria-hidden="true"
-                                src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="profile" />
+                                <img class="h-52 w-52 rounded-full object-cover mx-auto" aria-hidden="true"
+                                    src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="profile" />
                             @endif
                         </div>
                         <!-- arrastra y pega -->
@@ -53,8 +59,8 @@
                                     <p class="mx-auto w-full text-text1 font-semibold cursor-pointer">Subir
                                         foto de perfil</p>
                                 </div>
-                                <input onChange="fileChoose(event, this)" id="dropzone-file"
-                                    type="file" class="hidden" wire:model="photos" />
+                                <input onChange="fileChoose(event, this)" id="dropzone-file" type="file"
+                                    class="hidden" wire:model="photos" />
                             </label>
                         </div>
 
@@ -86,53 +92,53 @@
         @endif
     </div>
     @push('js')
-    @if(session('errorPassword'))
-    <script>
-        toastr['error']("No se actualizó la contraseña.");
-    </script>
-    @endif
+        @if (session('errorPassword'))
+            <script>
+                toastr['error']("No se actualizó la contraseña.");
+            </script>
+        @endif
 
-    @if(session('userUpdate'))
-    <script>
-        toastr['success']("Se actualizó correctamente.");
-    </script>
-    @endif
+        @if (session('userUpdate'))
+            <script>
+                toastr['success']("Se actualizó correctamente.");
+            </script>
+        @endif
 
-    @if(session('photoUpdate'))
-    <script>
-        toastr['success']("Foto actualizada correctamente.");
-    </script>
-    @endif
-    
+        @if (session('photoUpdate'))
+            <script>
+                toastr['success']("Foto actualizada correctamente.");
+            </script>
+        @endif
 
-    <script>
-        window.addEventListener('swal:modal', event => {
-            toastr[event.detail.type](event.detail.text, event.detail.title);
-        });
 
-        function drop_file_component(userId) {
-            return {
-                dropingFile: false,
-                handleFileDrop(e) {
-                    if (event.dataTransfer.files.length > 0) {
-                        console.log("entramos");
-                        const files = e.dataTransfer.files;
-                        @this.uploadMultiple('files', files,
-                            (uploadedFilename) => {}, () => {}, (event) => {}
-                        )
+        <script>
+            window.addEventListener('swal:modal', event => {
+                toastr[event.detail.type](event.detail.text, event.detail.title);
+            });
+
+            function drop_file_component(userId) {
+                return {
+                    dropingFile: false,
+                    handleFileDrop(e) {
+                        if (event.dataTransfer.files.length > 0) {
+                            console.log("entramos");
+                            const files = e.dataTransfer.files;
+                            @this.uploadMultiple('files', files,
+                                (uploadedFilename) => {}, () => {}, (event) => {}
+                            )
+                        }
                     }
-                }
-            };
-        }
-
-        function fileChoose(event, element, userId) {
-            if (event.target.files.length > 0) {
-                const files = event.target.files;
-                @this.uploadMultiple('files', files,
-                    (uploadedFilename) => {}, () => {}, (event) => {}
-                )
+                };
             }
-        }
-    </script>
+
+            function fileChoose(event, element, userId) {
+                if (event.target.files.length > 0) {
+                    const files = event.target.files;
+                    @this.uploadMultiple('files', files,
+                        (uploadedFilename) => {}, () => {}, (event) => {}
+                    )
+                }
+            }
+        </script>
     @endpush
 </div>

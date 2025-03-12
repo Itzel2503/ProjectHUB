@@ -385,36 +385,38 @@
                                 </div>
                             </td>
                             <td class="px-2 py-1">
-                                @if (Auth::user()->type_user == 3)
-                                    <p
-                                        class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-1/2 text-sm font-semibold">
-                                        {{ $report->state }}
-                                    </p>
-                                @else
-                                    @if ($project == null)
-                                        <select wire:change='updateState({{ $report->id }}, 0, $event.target.value)'
-                                            name="state" id="state"
-                                            class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold">
-                                            <option selected value={{ $report->state }}>{{ $report->state }}</option>
-                                            @foreach ($report->filteredActions as $action)
-                                                <option value="{{ $action }}">{{ $action }}</option>
-                                            @endforeach
-                                        </select>
+                                <div>
+                                    @if (Auth::user()->type_user == 3)
+                                        <p
+                                            class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif w-1/2 text-sm font-semibold">
+                                            {{ $report->state }}
+                                        </p>
                                     @else
-                                        <select
-                                            wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)'
-                                            name="state" id="state"
-                                            class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold">
-                                            <option selected value={{ $report->state }}>{{ $report->state }}</option>
-                                            @foreach ($report->filteredActions as $action)
-                                                <option value="{{ $action }}">{{ $action }}</option>
-                                            @endforeach
-                                        </select>
+                                        @if ($project == null)
+                                            <select wire:change='updateState({{ $report->id }}, 0, $event.target.value)'
+                                                name="state" id="state"
+                                                class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold">
+                                                <option selected value={{ $report->state }}>{{ $report->state }}</option>
+                                                @foreach ($report->filteredActions as $action)
+                                                    <option value="{{ $action }}">{{ $action }}</option>
+                                                @endforeach
+                                            </select>
+                                        @else
+                                            <select
+                                                wire:change='updateState({{ $report->id }}, {{ $project->id }}, $event.target.value)'
+                                                name="state" id="state"
+                                                class="inpSelectTable @if ($report->state == 'Abierto') bg-blue-500 text-white @endif @if ($report->state == 'Proceso') bg-yellow-400 @endif @if ($report->state == 'Resuelto') bg-lime-700 text-white @endif @if ($report->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold">
+                                                <option selected value={{ $report->state }}>{{ $report->state }}</option>
+                                                @foreach ($report->filteredActions as $action)
+                                                    <option value="{{ $action }}">{{ $action }}</option>
+                                                @endforeach
+                                            </select>
+                                        @endif
                                     @endif
-                                @endif
-                                @if ($report->count)
-                                    <p class="text-left text-xs text-red-600">Reincidencia {{ $report->count }}</p>
-                                @endif
+                                    @if ($report->count)
+                                        <p class="text-left text-xs text-red-600">Reincidencia {{ $report->count }}</p>
+                                    @endif
+                                </div>
                             </td>
                             <td class="px-2 py-1">
                                 @if ($report->updated_expected_date == false && $report->state != 'Resuelto')

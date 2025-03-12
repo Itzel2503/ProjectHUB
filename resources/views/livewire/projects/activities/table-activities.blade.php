@@ -411,39 +411,41 @@
                                 </div>
                             </td>
                             <td class="px-2 py-1">
-                                @if ($project != null && $idsprint != null)
-                                    <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
-                                        name="state" id="state"
-                                        class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
-                                        @if ($sprint->state == 'Pendiente') disabled @endif>
-                                        <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
-                                        @foreach ($activity->filteredActions as $action)
-                                            <option value="{{ $action }}">{{ $action }}</option>
-                                        @endforeach
-                                    </select>
-                                @else
-                                    @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
+                                <div>
+                                    @if ($project != null && $idsprint != null)
                                         <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
                                             name="state" id="state"
                                             class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
-                                            @if ($activity->sprint->state == 'Pendiente') disabled @endif>
+                                            @if ($sprint->state == 'Pendiente') disabled @endif>
                                             <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
                                             @foreach ($activity->filteredActions as $action)
                                                 <option value="{{ $action }}">{{ $action }}</option>
                                             @endforeach
                                         </select>
                                     @else
-                                        <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
-                                            name="state" id="state"
-                                            class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
-                                            disabled>
-                                            <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
-                                            @foreach ($activity->filteredActions as $action)
-                                                <option value="{{ $action }}">{{ $action }}</option>
-                                            @endforeach
-                                        </select>
+                                        @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
+                                            <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
+                                                name="state" id="state"
+                                                class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
+                                                @if ($activity->sprint->state == 'Pendiente') disabled @endif>
+                                                <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
+                                                @foreach ($activity->filteredActions as $action)
+                                                    <option value="{{ $action }}">{{ $action }}</option>
+                                                @endforeach
+                                            </select>
+                                        @else
+                                            <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
+                                                name="state" id="state"
+                                                class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
+                                                disabled>
+                                                <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
+                                                @foreach ($activity->filteredActions as $action)
+                                                    <option value="{{ $action }}">{{ $action }}</option>
+                                                @endforeach
+                                            </select>
+                                        @endif
                                     @endif
-                                @endif
+                                </div>
                             </td>
                             <td class="px-2 py-1">
                                 <div class="my-auto text-left">

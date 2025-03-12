@@ -116,11 +116,30 @@
                         $user = DB::table('users')
                             ->where('id', Auth::user()->id)
                             ->first();
+
+                            if (Auth::user()->profile_photo) {
+                                // Verificar si el archivo existe en la carpeta
+                                $filePath = public_path('usuarios/' . Auth::user()->profile_photo);
+
+                                $fileExtension = pathinfo(Auth::user()->profile_photo, PATHINFO_EXTENSION);
+                                if (file_exists($filePath)) {
+                                    $userPhoto = true;
+                                } else {
+                                    $userPhoto = false;
+                                }
+                            } else {
+                                $userPhoto = false;
+                            }
                     @endphp
                     <div class="relative mt-5 flex justify-center justify-items-center">
                         @if (Auth::user()->profile_photo)
-                            <img class="z-10 mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
-                                src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}" alt="Avatar" />
+                            @if ($userPhoto == true)
+                                <img class="z-10 mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
+                                    src="{{ asset('usuarios/' . Auth::user()->profile_photo) }}" alt="Avatar" />
+                            @else
+                                <img class="z-10 mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
+                                    src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar" />
+                            @endif
                         @else
                             <img class="z-10 mx-auto h-24 w-24 rounded-full object-cover" aria-hidden="true"
                                 src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar" />

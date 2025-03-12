@@ -286,23 +286,15 @@ class BacklogSprints extends Component
                     'title' => 'Estado de sprint actualizado',
                 ]);
             } elseif ($previousSprint) {
-                if ($previousSprint->state == 'Pendiente') {
-                    // Emitir un evento de navegador
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'Sprint anterior no iniciado',
-                    ]);
-                } else {
-                    $sprint->state = $state;
-                    $sprint->save();
-                    $this->emit('sprintsUpdated');
-                    $this->emit('sprintUpdated', $id);
-                    // Emitir un evento de navegador
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'success',
-                        'title' => 'Estado de sprint actualizado',
-                    ]);
-                }
+                $sprint->state = $state;
+                $sprint->save();
+                $this->emit('sprintsUpdated');
+                $this->emit('sprintUpdated', $id);
+                // Emitir un evento de navegador
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Estado de sprint actualizado',
+                ]);
             }
         } else {
             // Emitir un evento de navegador

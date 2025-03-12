@@ -16,6 +16,7 @@ class Profile extends Component
     public $listeners = ['reloadPage' => 'reloadPage'];
     public $name, $email, $password, $confirmPassword, $photos, $idUser;
     public $files = [];
+    public $userPhoto = false;
 
     public function render()
     {
@@ -24,6 +25,20 @@ class Profile extends Component
         $this->name = $user->name;
         $this->email = $user->email;
         $this->idUser = $user->id;
+
+        if (Auth::user()->profile_photo) {
+            // Verificar si el archivo existe en la carpeta
+            $filePath = public_path('usuarios/' . Auth::user()->profile_photo);
+
+            $fileExtension = pathinfo(Auth::user()->profile_photo, PATHINFO_EXTENSION);
+            if (file_exists($filePath)) {
+                $this->userPhoto = true;
+            } else {
+                $this->userPhoto = false;
+            }
+        } else {
+            $this->userPhoto = false;
+        }
 
         return view('livewire.auth.profile', [
             'user' => $user,
