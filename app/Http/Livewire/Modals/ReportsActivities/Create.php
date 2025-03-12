@@ -136,7 +136,7 @@ class Create extends Component
             $activity->sprint_id = $this->sprint;
             $activity->delegate_id = $this->delegate;
             $activity->user_id = Auth::id();
-            $activity->icon = ($this->selectedIcon == "❌" || $this->selectedIcon == null) ? '' : $this->selectedIcon;
+            $activity->icon = ($this->selectedIcon == "🚫" || $this->selectedIcon == null) ? '' : $this->selectedIcon;
             $activity->title = $this->title;
             $activity->description = $this->description;
             $activity->priority = $this->priority;

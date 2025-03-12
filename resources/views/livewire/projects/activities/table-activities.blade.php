@@ -690,15 +690,15 @@
                 }
             });
             // MODALS
-            const userType = @json(Auth::user()->type_user);
-            // Verificar el tipo de usuario antes de mostrar el mensaje
-            if (userType === 1) {
-                console.log('Usuario no autorizado para ver esta notificación.');
-            } else {
-                window.addEventListener('swal:modal', event => {
-                    toastr[event.detail.type](event.detail.text, event.detail.title);
-                });
-            }
+            // const userType = @json(Auth::user()->type_user);
+            // // Verificar el tipo de usuario antes de mostrar el mensaje
+            // if (userType === 1) {
+            //     console.log('Usuario no autorizado para ver esta notificación.');
+            // } else {
+            //     window.addEventListener('swal:modal', event => {
+            //         toastr[event.detail.type](event.detail.text, event.detail.title);
+            //     });
+            // }
             
             Livewire.on('deleteActivity', deletebyId => {
                 Swal.fire({

@@ -388,7 +388,8 @@ class Edit extends Component
                         return;
                     }
                 }
-                $activity->icon = ($this->selectedIcon == "❌" || $this->selectedIcon == null) ? '' : $this->selectedIcon;
+
+                $activity->icon = ($this->selectedIcon == "🚫" || $this->selectedIcon == null) ? '' : $this->selectedIcon;
                 $activity->title = $this->title ?? $activity->title;
                 $activity->description = $this->description ?? $activity->description;
                 $activity->priority = $this->priority ?? $activity->priority;

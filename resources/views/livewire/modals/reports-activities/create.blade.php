@@ -23,7 +23,7 @@
                             '⭐' => 'Top',
                             '⏸️' => 'Pausa',
                             '✉️' => 'Enviar',
-                            '❌'=> 'Sin icono',
+                            '🚫'=> 'Sin icono',
                         ] as $icon => $tooltip)
                             <label class="principal">
                                 <input type="radio" name="icon" value="{{ $icon }}" class="icon-checkbox"
