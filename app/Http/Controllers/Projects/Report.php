@@ -91,7 +91,7 @@ class Report extends Controller
                         $report->project_id = $project_id;
                         $report->user_id = $request->user_id;
                         if (Auth::user()->type_user == 3) {
-                            $userSoporte = User::where('area_id', '4')->first();
+                            /* $userSoporte = User::where('area_id', '4')->first();
                             // Usuario Soporte
                             if (!isNull($userSoporte)) {
                                 $delegate_id = $userSoporte->id;
@@ -99,8 +99,8 @@ class Report extends Controller
                                 // Usuario administradors
                                 $userSoporte = User::where('area_id', '1')->first();
                                 $delegate_id = $userSoporte->id;
-                            }
-                            $report->delegate_id =  $delegate_id;
+                            } */
+                            $report->delegate_id =  10;
                             $report->expected_date = null;
                             $report->updated_expected_date = false;
                         } else {
@@ -154,15 +154,15 @@ class Report extends Controller
                         $report->user_id = $request->user_id;
                         if (Auth::user()->type_user == 3) {
                             // Usuario Soporte
-                            $userSoporte = User::where('area_id', '4')->first();
+                            /* $userSoporte = User::where('area_id', '4')->first();
                             if (!isNull($userSoporte)) {
                                 $delegate_id = $userSoporte->id;
                             } else {
                                 // Usuario administradors
                                 $userSoporte = User::where('area_id', '1')->first();
                                 $delegate_id = $userSoporte->id;
-                            }
-                            $report->delegate_id =  $delegate_id;
+                            } */
+                            $report->delegate_id =  10;
                             $report->expected_date = null;
                             $report->updated_expected_date = false;
                         } else {
@@ -216,15 +216,15 @@ class Report extends Controller
                         $report->user_id = $request->user_id;
                         if (Auth::user()->type_user == 3) {
                             // Usuario Soporte
-                            $userSoporte = User::where('area_id', '4')->first();
+                            /* $userSoporte = User::where('area_id', '4')->first();
                             if (!isNull($userSoporte)) {
                                 $delegate_id = $userSoporte->id;
                             } else {
                                 // Usuario administradors
                                 $userSoporte = User::where('area_id', '1')->first();
                                 $delegate_id = $userSoporte->id;
-                            }
-                            $report->delegate_id =  $delegate_id;
+                            } */
+                            $report->delegate_id =  10;
                             $report->expected_date = null;
                             $report->updated_expected_date = false;
                         } else {
@@ -282,15 +282,15 @@ class Report extends Controller
 
                         if (Auth::user()->type_user == 3) {
                             // Usuario Soporte
-                            $userSoporte = User::where('area_id', '4')->first();
+                            /* $userSoporte = User::where('area_id', '4')->first();
                             if ($userSoporte) {
                                 $delegate_id = $userSoporte->id;
                             } else {
                                 // Usuario administradors
                                 $userSoporte = User::where('area_id', '1')->first();
                                 $delegate_id = $userSoporte->id;
-                            }
-                            $report->delegate_id =  $delegate_id;
+                            } */
+                            $report->delegate_id =  10;
                             $report->expected_date = null;
                             $report->updated_expected_date = false;
                         } else {
@@ -337,7 +337,7 @@ class Report extends Controller
                         'view' => 'projects/reports/newreport',
                         'action' => 'Crear reporte',
                         'message' => 'Reporte creado exitosamente',
-                        'details' => ($userSoporte != null) ? 'Delegado: ' . $userSoporte->id : 'Delegado: ' . $request->delegate ,
+                        'details' => 'Delegado: ' . $report->delegate_id,
                     ]);
 
                     return redirect()->route('projects.reports.index', ['project' => $project_id]);
