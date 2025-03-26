@@ -84,8 +84,8 @@
                             @if ($sprint->state == 'Pendiente' && Auth::user()->type_user != 1) class="btnDisabled" wire:click="create(0)" @else
                             class="btnNuevo" wire:click="create({{ $project->id }})" @endif>
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M12 5l0 14" />
                                 <path d="M5 12l14 0" />
@@ -118,10 +118,9 @@
                                     <path d="M20 6l-3 -3l-3 3" />
                                 </svg>
                                 {{-- up-down --}}
-                                <svg wire:click="filterUp('priority')" xmlns="http://www.w3.org/2000/svg"
-                                    width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                <svg wire:click="filterUp('priority')" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                     class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down @if ($filtered) hidden @else block @endif ml-2 cursor-pointer">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M7 3l0 18" />
@@ -297,7 +296,8 @@
                                 <div class="mx-auto w-auto text-left">
                                     @if ($project != null && $idsprint != null)
                                         @if ($activity->delegate)
-                                            <p class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
+                                            <p
+                                                class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
                                                 {{ $activity->delegate->name }}
                                             </p>
                                             <select
@@ -332,7 +332,8 @@
                                     @else
                                         @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
                                             @if ($activity->delegate)
-                                                <p class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
+                                                <p
+                                                    class="@if ($activity->state == 'Resuelto') font-semibold @else hidden @endif">
                                                     {{ $activity->delegate->name }}
                                                 </p>
                                                 <select
@@ -344,7 +345,8 @@
                                                         {{ $activity->delegate->name }}
                                                     </option>
                                                     @foreach ($activity->usersFiltered as $userFiltered)
-                                                        <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                        <option value="{{ $userFiltered->id }}">
+                                                            {{ $userFiltered->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -356,7 +358,8 @@
                                                     <option selected>
                                                         Seleccionar...</option>
                                                     @foreach ($activity->usersFiltered as $userFiltered)
-                                                        <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                        <option value="{{ $userFiltered->id }}">
+                                                            {{ $userFiltered->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -366,12 +369,14 @@
                                                 <select
                                                     wire:change.defer='updateDelegate({{ $activity->id }}, $event.target.value)'
                                                     name="delegate" id="delegate"
-                                                    class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm" disabled>
+                                                    class="inpSelectTable @if ($activity->state == 'Resuelto') hidden @endif w-full text-sm"
+                                                    disabled>
                                                     <option selected value={{ $activity->delegate->id }}>
                                                         {{ $activity->delegate->name }}
                                                     </option>
                                                     @foreach ($activity->usersFiltered as $userFiltered)
-                                                        <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                        <option value="{{ $userFiltered->id }}">
+                                                            {{ $userFiltered->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -383,7 +388,8 @@
                                                     <option selected>
                                                         Seleccionar...</option>
                                                     @foreach ($activity->usersFiltered as $userFiltered)
-                                                        <option value="{{ $userFiltered->id }}">{{ $userFiltered->name }}
+                                                        <option value="{{ $userFiltered->id }}">
+                                                            {{ $userFiltered->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -417,28 +423,33 @@
                                             name="state" id="state"
                                             class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
                                             @if ($sprint->state == 'Pendiente') disabled @endif>
-                                            <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
+                                            <option selected value={{ $activity->state }}>{{ $activity->state }}
+                                            </option>
                                             @foreach ($activity->filteredActions as $action)
                                                 <option value="{{ $action }}">{{ $action }}</option>
                                             @endforeach
                                         </select>
                                     @else
                                         @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
-                                            <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
+                                            <select
+                                                wire:change='updateState({{ $activity->id }}, $event.target.value)'
                                                 name="state" id="state"
                                                 class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
                                                 @if ($activity->sprint->state == 'Pendiente') disabled @endif>
-                                                <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
+                                                <option selected value={{ $activity->state }}>{{ $activity->state }}
+                                                </option>
                                                 @foreach ($activity->filteredActions as $action)
                                                     <option value="{{ $action }}">{{ $action }}</option>
                                                 @endforeach
                                             </select>
                                         @else
-                                            <select wire:change='updateState({{ $activity->id }}, $event.target.value)'
+                                            <select
+                                                wire:change='updateState({{ $activity->id }}, $event.target.value)'
                                                 name="state" id="state"
                                                 class="inpSelectTable @if ($activity->state == 'Abierto') bg-blue-500 text-white @endif @if ($activity->state == 'Proceso') bg-yellow-400 @endif @if ($activity->state == 'Resuelto') bg-lime-700 text-white @endif @if ($activity->state == 'Conflicto') bg-red-600 text-white @endif flex text-sm font-semibold"
                                                 disabled>
-                                                <option selected value={{ $activity->state }}>{{ $activity->state }}</option>
+                                                <option selected value={{ $activity->state }}>{{ $activity->state }}
+                                                </option>
                                                 @foreach ($activity->filteredActions as $action)
                                                     <option value="{{ $action }}">{{ $action }}</option>
                                                 @endforeach
@@ -452,8 +463,17 @@
                                     @if (Auth::user()->type_user === 1 && $activity->state != 'Resuelto')
                                         <input type="date" wire:model='expected_day.{{ $activity->id }}'
                                             wire:change="updateExpectedDay({{ $activity->id }}, $event.target.value)">
+                                        {{-- Mostrar mensaje de advertencia si la fecha es inválida --}}
+                                        @if (isset($this->errorMessages[$activity->id]))
+                                            <p class="pl-2 text-xs italic text-red-600">
+                                                {{ $this->errorMessages[$activity->id] }}</p>
+                                        @endif
                                     @else
-                                        {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                        @if ($activity->expected_date != '')
+                                            {{ \Carbon\Carbon::parse($activity->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                        @else
+                                            <p class="text-red-600">Sin fecha</p>
+                                        @endif
                                     @endif
                                 </div>
                             </td>
@@ -473,8 +493,7 @@
                                 <div class="principal flex justify-center">
                                     @if ($project == null && $idsprint == null)
                                         @if ($activity->sprint && $activity->sprint->backlog && $activity->sprint->backlog->project)
-                                            <a
-                                                href="{{ route('projects.activities.index', ['project' => $activity->sprint->backlog->project->id, 'activity' => $activity->id, 'highlight' => $activity->id]) }}"
+                                            <a href="{{ route('projects.activities.index', ['project' => $activity->sprint->backlog->project->id, 'activity' => $activity->id, 'highlight' => $activity->id]) }}"
                                                 target="_blank" rel="noopener noreferrer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -518,27 +537,30 @@
                                                 <div
                                                     class="@if (Auth::user()->type_user == 1 || Auth::user()->id == $activity->user->id) {{ $loop->last ? '-top-16' : 'top-3' }} @else {{ $loop->last ? '-top-8' : 'top-3' }} @endif absolute right-10 mt-2 w-32 rounded-md bg-gray-200">
                                                     <!-- Botón Editar -->
-                                                    <div wire:click="editActivity({{ $activity->id }})"
-                                                        class="@if ($activity->state == 'Resuelto') hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="icon icon-tabler icon-tabler-edit mr-2" width="24"
-                                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                                            stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                            <path
-                                                                d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
-                                                            </path>
-                                                            <path
-                                                                d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
-                                                            </path>
-                                                            <path d="M16 5l3 3"></path>
-                                                        </svg>
-                                                        Editar
-                                                    </div>
+                                                    @if ($activity->state != 'Resuelto')
+                                                        <div wire:click="editActivity({{ $activity->id }})"
+                                                            class="flex cursor-pointer content-center px-4 py-2 text-sm text-black">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                class="icon icon-tabler icon-tabler-edit mr-2"
+                                                                width="24" height="24" viewBox="0 0 24 24"
+                                                                stroke-width="2" stroke="currentColor" fill="none"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none">
+                                                                </path>
+                                                                <path
+                                                                    d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
+                                                                </path>
+                                                                <path
+                                                                    d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
+                                                                </path>
+                                                                <path d="M16 5l3 3"></path>
+                                                            </svg>
+                                                            Editar
+                                                        </div>
+                                                    @endif
                                                     @if (Auth::user()->type_user == 1 || Auth::user()->id == $activity->user->id)
                                                         <!-- Botón Eliminar -->
-                                                        <div wire:click="$emit('deleteActivity',{{ $activity->id }})"
+                                                        <div @if ($activity->activity_repeat != null) wire:click="$emit('deleteActivitiesRecurrent',{{ $activity->id }})" @else wire:click="$emit('deleteActivity',{{ $activity->id }})" @endif
                                                             class="@if ($activity->state != 'Abierto') hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-red-600">
                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                 class="icon icon-tabler icon-tabler-trash mr-2"
@@ -550,11 +572,19 @@
                                                                 <path d="M4 7l16 0"></path>
                                                                 <path d="M10 11l0 6"></path>
                                                                 <path d="M14 11l0 6"></path>
-                                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12">
+                                                                <path
+                                                                    d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12">
                                                                 </path>
-                                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3">
+                                                                </path>
                                                             </svg>
                                                             Eliminar
+                                                        </div>
+                                                    @endif
+                                                    @if ($activity->state == 'Resuelto')
+                                                        <div
+                                                            class="flex cursor-pointer content-center px-4 py-2 text-sm text-black">
+                                                            Sin acciones
                                                         </div>
                                                     @endif
                                                 </div>
@@ -633,8 +663,8 @@
                     @if ($activityEdit)
                         <livewire:modals.reports-activities.edit :recordingedit="$activityEdit->id" :backlog="$backlog" :sprint="$sprint->id"
                             :type="'activity'">
-                    @else
-                        <livewire:modals.reports-activities.create :project="$project" :sprint="$sprint->id">
+                        @else
+                            <livewire:modals.reports-activities.create :project="$project" :sprint="$sprint->id">
                     @endif
                 </div>
             </div>
@@ -644,7 +674,7 @@
     {{-- LOADING PAGE --}}
     @if ($project != null && $idsprint != null)
         <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
-            wire:target="$set('isOptionsVisibleState'), create, filterDown, filterUp, showActivity, togglePanel, editActivity, deleteActivity, delete">
+            wire:target="$set('isOptionsVisibleState'), create, filterDown, filterUp, showActivity, togglePanel, editActivity, deleteRecurrent, deleteActivity delete">
             <div class="absolute z-10 h-screen w-full bg-gray-200 opacity-40"></div>
             <div class="loadingspinner relative top-1/3 z-20">
                 <div id="square1"></div>
@@ -689,6 +719,7 @@
                     }
                 }
             });
+
             // MODALS
             // const userType = @json(Auth::user()->type_user);
             // // Verificar el tipo de usuario antes de mostrar el mensaje
@@ -699,7 +730,7 @@
             //         toastr[event.detail.type](event.detail.text, event.detail.title);
             //     });
             // }
-            
+
             Livewire.on('deleteActivity', deletebyId => {
                 Swal.fire({
                     title: '¿Seguro que deseas eliminar este elemento?',
@@ -713,11 +744,33 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         window.livewire.emit('delete', deletebyId);
-                        // Swal.fire(
-                        //   '¡Eliminado!',
-                        //   'Tu elemento ha sido eliminado.',
-                        //   'Exito'
-                        // )
+                    }
+                })
+            });
+
+            Livewire.on('deleteActivitiesRecurrent', deletebyId => {
+                Swal.fire({
+                    title: '¿Qué deseas eliminar?',
+                    text: "¿Deseas eliminar solo este evento o todos los eventos relacionados?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    showCloseButton: true, // Habilita la "X" de cierre
+                    confirmButtonColor: '#202a33',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Todos los eventos',
+                    cancelButtonText: 'Solo este evento',
+                    backdrop: 'static', // Evita que se cierre al hacer clic fuera
+                    allowOutsideClick: false // Evita que se cierre al hacer clic fuera
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // El usuario eligió eliminar todos los eventos
+                        window.livewire.emit('deleteRecurrent', deletebyId);
+                    } else if (result.dismiss === 'close') {
+                        // El usuario cerró el modal con la "X"
+                        Swal.close(); // Cierra el modal sin hacer nada
+                    } else {
+                        // El usuario eligió eliminar solo este evento
+                        window.livewire.emit('delete', deletebyId);
                     }
                 })
             });

@@ -57,10 +57,17 @@
                         <tr class="trTable">
                             <td class="flex justify-center px-4 py-1">
                                 @if ($user->profile_photo)
-                                    <img class="mx-auto h-14 w-14 rounded-full object-cover" aria-hidden="true"
-                                        src="{{ asset('usuarios/' . $user->profile_photo) }}" alt="Avatar" />
+                                    @if ($user->photo_exists == true)
+                                        <!-- Usar $user->profile_photo en lugar de Auth::user()->profile_photo -->
+                                        <img class="z-10 mx-auto w-24 rounded-full object-cover" aria-hidden="true"
+                                            src="{{ asset('usuarios/' . $user->profile_photo) }}" alt="Avatar" />
+                                    @else
+                                        <!-- Usar $user->name en lugar de Auth::user()->name -->
+                                        <img class="z-10 mx-auto w-24 rounded-full object-cover" aria-hidden="true"
+                                            src="{{ Avatar::create($user->name)->toBase64() }}" alt="Avatar" />
+                                    @endif
                                 @else
-                                    <img class="mx-auto h-14 w-14 rounded-full object-cover" aria-hidden="true"
+                                    <img class="mx-auto w-24 rounded-full object-cover" aria-hidden="true"
                                         src="{{ Avatar::create($user->name)->toBase64() }}" alt="Avatar" />
                                 @endif
                             </td>

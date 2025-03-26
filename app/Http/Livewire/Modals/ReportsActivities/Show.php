@@ -120,6 +120,27 @@ class Show extends Component
             $this->recording->contentExists = false;
         }
 
+        // Verificar si el archivo existe en la base de datos
+        if ($this->recording) {
+            foreach ($this->chat as $key => $message) {
+                if ($message->transmitter) {
+                    if ($message->transmitter->profile_photo != null) {
+                        // Verificar si el archivo existe en la carpeta
+                        $filePath = public_path('usuarios/' . $message->transmitter->profile_photo);
+
+                        $fileExtension = pathinfo($message->transmitter->profile_photo, PATHINFO_EXTENSION);
+                        if (file_exists($filePath)) {
+                            $message->transmitterContentExists = true;
+                        } else {
+                            $message->transmitterContentExists = false;
+                        }
+                    } else {
+                        $message->transmitterContentExists = false;
+                    }
+                }
+            }
+        }
+
         if (Auth::user()->profile_photo) {
             // Verificar si el archivo existe en la carpeta
             $filePath = public_path('usuarios/' . Auth::user()->profile_photo);

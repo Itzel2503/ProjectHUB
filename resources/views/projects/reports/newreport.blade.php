@@ -530,20 +530,22 @@
                 </div>
                 <div class="modalBody">
                     <div class="md-3/4 mb-5 flex w-full flex-col px-5 md:mb-0">
-                        <div class="mb-6 flex flex-row">
-                            <span id="addPoints"
-                                class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M7 10h14l-4 -4" />
-                                    <path d="M17 14h-14l4 4" />
-                                </svg>
-                                Agregar puntos directos
-                            </span>
-                        </div>
+                        @if(Auth::user()->type_user == 1)
+                            <div class="mb-6 flex flex-row">
+                                <span id="addPoints"
+                                    class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 10h14l-4 -4" />
+                                        <path d="M17 14h-14l4 4" />
+                                    </svg>
+                                    Agregar puntos directos
+                                </span>
+                            </div>
+                        @endif
                         <div id="divDirect" class="-mx-3 hidden">
                             <div class="mb-6 flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">

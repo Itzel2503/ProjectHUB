@@ -150,6 +150,7 @@ return [
         'effort_points'            => 'story points',
         'email'                    => 'correo electrónico',
         'excerpt'                  => 'extracto',
+        'expected_date'            => 'fecha de entrega',
         'file'                     => 'archivo',
         'filter'                   => 'filtro',
         'first_name'               => 'nombre',

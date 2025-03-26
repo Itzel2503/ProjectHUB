@@ -14,32 +14,31 @@
                     <div class="flex justify-between mt-2">
                         <!-- Íconos -->
                         @foreach ([
-                            '🚀' => 'Propuestas; Lanzamientos',
-                            '🔵' => 'Seguimiento',
-                            '💵' => 'Finanzas',
-                            '📅' => 'Cita',
-                            '💡' => 'Ideas',
-                            '📎' => 'Notas',
-                            '⭐' => 'Top',
-                            '⏸️' => 'Pausa',
-                            '✉️' => 'Enviar',
-                            '🚫'=> 'Sin icono',
+                        '🚀' => 'Propuestas; Lanzamientos',
+                        '🔵' => 'Seguimiento',
+                        '💵' => 'Finanzas',
+                        '📅' => 'Cita',
+                        '💡' => 'Ideas',
+                        '📎' => 'Notas',
+                        '⭐' => 'Top',
+                        '⏸️' => 'Pausa',
+                        '✉️' => 'Enviar',
+                        '🚫' => 'Sin icono',
                         ] as $icon => $tooltip)
-                            <label class="principal">
-                                <input type="radio" name="icon" value="{{ $icon }}" class="icon-checkbox"
-                                    wire:model="selectedIcon"
-                                >
-                                <span class="icon-event {{ $selectedIcon === $icon ? 'selected' : '' }}"
-                                    wire:click="selectIcon('{{ $icon }}')">
-                                    {{ $icon }}
-                                </span>
-                                <div class="relative">
-                                    <div
-                                        class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
-                                        <p>{{ $tooltip }}</p>
-                                    </div>
+                        <label class="principal">
+                            <input type="radio" name="icon" value="{{ $icon }}" class="icon-checkbox"
+                                wire:model="selectedIcon">
+                            <span class="icon-event {{ $selectedIcon === $icon ? 'selected' : '' }}"
+                                wire:click="selectIcon('{{ $icon }}')">
+                                {{ $icon }}
+                            </span>
+                            <div class="relative">
+                                <div
+                                    class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                    <p>{{ $tooltip }}</p>
                                 </div>
-                            </label>
+                            </div>
+                        </label>
                         @endforeach
                     </div>
                 </div>
@@ -54,9 +53,9 @@
                     <div>
                         <span class="text-xs italic text-red-600">
                             @error('title')
-                                <span class="pl-2 text-xs italic text-red-600">
-                                    {{ $message }}
-                                </span>
+                            <span class="pl-2 text-xs italic text-red-600">
+                                {{ $message }}
+                            </span>
                             @enderror
                         </span>
                     </div>
@@ -69,9 +68,9 @@
                     <div>
                         <span class="text-xs italic text-red-600">
                             @error('file')
-                                <span class="pl-2 text-xs italic text-red-600">
-                                    {{ $message }}
-                                </span>
+                            <span class="pl-2 text-xs italic text-red-600">
+                                {{ $message }}
+                            </span>
                             @enderror
                         </span>
                     </div>
@@ -88,9 +87,9 @@
                     <div>
                         <span class="text-xs italic text-red-600">
                             @error('description')
-                                <span class="pl-2 text-xs italic text-red-600">
-                                    {{ $message }}
-                                </span>
+                            <span class="pl-2 text-xs italic text-red-600">
+                                {{ $message }}
+                            </span>
                             @enderror
                         </span>
                     </div>
@@ -104,34 +103,60 @@
                     <select wire:model='delegate' required name="delegate" id="delegate" class="inputs">
                         <option selected>Selecciona...</option>
                         @foreach ($allUsers as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
                         @endforeach
                     </select>
                     <div>
                         <span class="text-xs italic text-red-600">
                             @error('delegate')
-                                <span class="pl-2 text-xs italic text-red-600">
-                                    {{ $message }}
-                                </span>
+                            <span class="pl-2 text-xs italic text-red-600">
+                                {{ $message }}
+                            </span>
                             @enderror
                         </span>
                     </div>
                 </div>
                 <div class="mb-6 flex w-full flex-col px-3">
                     <h5 class="inline-flex font-semibold" for="expected_date">
-                        Fecha de entrega
+                        Fecha de entrega @if ($chooseEndDate)
+                        <p class="text-red-600">*</p>
+                        @endif
                     </h5>
-                    <input wire:model='expected_date' type="date" name="expected_date" id="expected_date"
+                    <input @if ($chooseEndDate) require @endif wire:change="expected_date($event.target.value)" wire:model='expected_date' type="date" name="expected_date" id="expected_date"
                         class="inputs">
-                    <div>
-                        <span class="text-xs italic text-red-600">
-                            @error('expected_date')
-                                <span class="pl-2 text-xs italic text-red-600">
-                                    {{ $message }}
-                                </span>
-                            @enderror
-                        </span>
-                    </div>
+                    <span class="text-xs italic text-red-600">{{ $expectedDateMessage}}</span>
+                    @error('expected_date')
+                    <span class="pl-2 text-xs italic text-red-600">
+                        {{ $message }}
+                    </span>
+                    @enderror
+                </div>
+            </div>
+            <div class="-mx-3 mb-6 flex flex-row">
+                <div class="mb-6 flex w-full flex-col px-3">
+                    <h5 class="inline-flex font-semibold" for="repeat">
+                        Repetir
+                    </h5>
+                    <select wire:change.defer="repeat($event.target.value)" wire:model='repeat' required name="repeat"
+                        id="repeat" class="inputs">
+                        <option value="Once">No se repite</option>
+                        <option value="Dairy">Todos los días</option>
+                        <option value="Weekly">Todas las semanas</option>
+                        <option value="Monthly">Todos los meses</option>
+                        <option value="Yearly">Todos los años</option>
+                    </select>
+                    <span class="pl-2 text-xs italic text-red-600">
+                        {{ $repeatMessage }}
+                    </span>
+                </div>
+                <div class="@if ($chooseEndDate) flex @else hidden @endif mb-6 w-full flex-col px-3">
+                    <h5 class="inline-flex font-semibold" for="end_date">
+                        Fecha límite
+                    </h5>
+                    <input wire:change="end_date($event.target.value)" wire:model='end_date' type="date" name="end_date" id="end_date" class="inputs">
+                    <span class="pl-2 text-xs italic text-red-600">
+                        {{ $endDateMessage }}
+                    </span>
                 </div>
             </div>
             <div class="-mx-3 mb-6">
@@ -165,9 +190,9 @@
                     <div>
                         <span class="text-xs italic text-red-600">
                             @error('priority')
-                                <span class="pl-2 text-xs italic text-red-600">
-                                    {{ $message }}
-                                </span>
+                            <span class="pl-2 text-xs italic text-red-600">
+                                {{ $message }}
+                            </span>
                             @enderror
                         </span>
                     </div>
@@ -183,24 +208,24 @@
                     Story Points</h4>
             </div>
             @if (Auth::user()->type_user == 1)
-                <div class="mb-6 flex flex-row">
-                    <span wire:click="changePoints"
-                        class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M7 10h14l-4 -4" />
-                            <path d="M17 14h-14l4 4" />
-                        </svg>
-                        @if ($changePoints)
-                            Agregar puntos directos
-                        @else
-                            Cuestionario
-                        @endif
-                    </span>
-                </div>
+            <div class="mb-6 flex flex-row">
+                <span wire:click="changePoints"
+                    class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M7 10h14l-4 -4" />
+                        <path d="M17 14h-14l4 4" />
+                    </svg>
+                    @if ($changePoints)
+                    Agregar puntos directos
+                    @else
+                    Cuestionario
+                    @endif
+                </span>
+            </div>
             @endif
             <div class="@if ($changePoints) hidden @else block @endif -mx-3 mb-6">
                 <div class="mb-6 flex w-full flex-col px-3">

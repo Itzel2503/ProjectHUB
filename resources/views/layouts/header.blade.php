@@ -117,19 +117,19 @@
                             ->where('id', Auth::user()->id)
                             ->first();
 
-                            if (Auth::user()->profile_photo) {
-                                // Verificar si el archivo existe en la carpeta
-                                $filePath = public_path('usuarios/' . Auth::user()->profile_photo);
+                        if (Auth::user()->profile_photo) {
+                            // Verificar si el archivo existe en la carpeta
+                            $filePath = public_path('usuarios/' . Auth::user()->profile_photo);
 
-                                $fileExtension = pathinfo(Auth::user()->profile_photo, PATHINFO_EXTENSION);
-                                if (file_exists($filePath)) {
-                                    $userPhoto = true;
-                                } else {
-                                    $userPhoto = false;
-                                }
+                            $fileExtension = pathinfo(Auth::user()->profile_photo, PATHINFO_EXTENSION);
+                            if (file_exists($filePath)) {
+                                $userPhoto = true;
                             } else {
                                 $userPhoto = false;
                             }
+                        } else {
+                            $userPhoto = false;
+                        }
                     @endphp
                     <div class="relative mt-5 flex justify-center justify-items-center">
                         @if (Auth::user()->profile_photo)

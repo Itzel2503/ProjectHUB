@@ -25,6 +25,7 @@ class CreateActivitiesTable extends Migration
             $table->unsignedBigInteger('delegate_id');
             $table->foreign('delegate_id')->references('id')->on('users')->onDelete('cascade');
 
+            $table->string('icon')->nullable();
             $table->string('title');
             $table->string('content')->nullable();
             $table->longText('description')->nullable();
@@ -35,8 +36,10 @@ class CreateActivitiesTable extends Migration
 
             $table->boolean('look')->default(false);
 
+            $table->integer('activity_repeat')->nullable();
+
             $table->dateTime('delegated_date');
-            $table->dateTime('expected_date');
+            $table->dateTime('expected_date')->nullable();
             $table->dateTime('progress')->nullable();
             $table->dateTime('end_date')->nullable();
             $table->timestamps();

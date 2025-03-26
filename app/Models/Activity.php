@@ -11,6 +11,26 @@ class Activity extends Model
 
     protected $dates = ['progress', 'created_at', 'updated_at'];
 
+    // Agregar los campos que permiten asignación masiva
+    protected $fillable = [
+        'sprint_id',    // Aquí añades el campo 'project_id'
+        'user_id',
+        'delegate_id',
+        'icon',
+        'title',
+        'content',
+        'description',
+        'priority',
+        'state',
+        'points',
+        'questions_points',
+        'activity_repeat',
+        'delegated_date',
+        'expected_date',
+        'created_at',
+        'updated_at',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

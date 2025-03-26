@@ -61,6 +61,16 @@ class TableUsers extends Component
             ->orderBy('name', 'asc')
             ->get();
 
+        // Verificar si la foto de perfil existe para cada usuario
+        foreach ($users as $user) {
+            if ($user->profile_photo) {
+                $filePath = public_path('usuarios/' . $user->profile_photo);
+                $user->photo_exists = file_exists($filePath); // Agregar un atributo dinámico
+            } else {
+                $user->photo_exists = false; // Si no hay foto, establecer como false
+            }
+        }
+            
         return view('livewire.users.table-users', [
             'users' => $users,
             'areas' => $areas,

@@ -27,6 +27,7 @@ class CreateReportsTable extends Migration
 
             $table->unsignedBigInteger('report_id')->nullable();
 
+            $table->string('icon')->nullable();
             $table->string('title');
             $table->text('content')->nullable();
             $table->string('priority');
@@ -45,7 +46,7 @@ class CreateReportsTable extends Migration
             $table->boolean('updated_expected_date')->default(true);
 
             $table->dateTime('delegated_date');
-            $table->dateTime('expected_date');
+            $table->dateTime('expected_date')->nullable();
             $table->dateTime('progress')->nullable();
             $table->dateTime('end_date')->nullable();
 

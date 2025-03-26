@@ -15,7 +15,26 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Ejecutar el comando todos los días a las 8:00 AM
+        $schedule->command('command:activitiesRecurrent')->everyMinute();
+        // $schedule->command('command:activitiesRecurrent')->dailyAt('05:00');
+
+        // Otras opciones:
+        // ->everyMinute(); // Cada minuto
+        // ->hourly(); // Cada hora
+        // ->daily(); // Cada día a medianoche
+        // ->weekly(); // Cada semana
+        // ->monthly(); // Cada mes
+        // ->cron('* * * * *'); // Usando expresión cron personalizada
+        /*
+        **
+            Minuto (0 - 59)
+            Hora (0 - 23, formato de 24 horas)
+            Día del mes (1 - 31)
+            Mes (1 - 12)
+            Día de la semana (0 - 6 donde 0 es domingo y 6 es sábado)
+        ** 
+        */
     }
 
     /**
@@ -23,10 +42,14 @@ class Kernel extends ConsoleKernel
      *
      * @return void
      */
-    protected function commands()
-    {
-        $this->load(__DIR__.'/Commands');
+    // protected function commands()
+    // {
+    //     $this->load(__DIR__.'/Commands');
 
-        require base_path('routes/console.php');
-    }
+    //     require base_path('routes/console.php');
+    // }
+
+    protected $commands = [
+        \App\Console\Commands\ActivitiesRecurrent::class,
+    ];
 }

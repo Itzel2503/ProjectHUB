@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Modals\ReportsActivities;
 
 use App\Models\Activity;
+use App\Models\ActivityRecurrent;
 use App\Models\Backlog;
 use App\Models\ErrorLog;
 use App\Models\Log;
@@ -11,6 +12,7 @@ use App\Models\Report;
 use App\Models\Sprint;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -26,12 +28,17 @@ class Edit extends Component
     // REPORTE Y ACTIVIDAD
     public $recording;
     // DINAMICOS
-    public $evidenceEdit, $changePoints = false;
+    public $evidenceEdit, $changePoints = false, $chooseEndDate = false;
     public $selectedIcon = null;
+    // MENSJES
+    public $repeatMessage = '', $moveActivityMessage = '', $endDateMessage = '', $expectedDateMessage = '';
+    // ACTIVIDADES RECURRENTES
+    public $repeat_updated = false, $newActivityRecurrent = true, $deleteActivities = false, $createActivities = false;
+    public $activitiesNoResueltas, $activitiesAbiertas;
     // ACTIVIDADES
     public $sprints;
     // INPUTS
-    public $title, $file, $description, $expected_date, $moveActivity, $priority, $points, $point_know, $point_many, $point_effort;
+    public $title, $file, $description, $expected_date, $repeat, $end_date, $moveActivity, $priority, $points, $point_know, $point_many, $point_effort;
 
     public function mount()
     {
@@ -46,7 +53,7 @@ class Edit extends Component
             });
             // Reorganizar la colección para que el sprint coincidente sea el primero
             $this->sprints = $this->sprints->sortBy('number')->values();
-    
+
             $this->sprints = $this->sprints->partition(function ($sprint) {
                 return $sprint->id == $this->sprint; // Mueve el que coincide al principio
             })->flatten();
@@ -58,9 +65,40 @@ class Edit extends Component
         } else {
             $this->selectedIcon = $this->recording->icon;
         }
-        
+
         $this->description = $this->recording->description;
         $this->expected_date = (!empty($this->recording->expected_date)) ? Carbon::parse($this->recording->expected_date)->toDateString() : '';
+
+        if ($this->recording->activity_repeat) {
+            $activityRepeat = ($this->recording->activity_repeat != null) ? ActivityRecurrent::where('activity_repeat', $this->recording->activity_repeat)->first() : null;
+            $this->repeat = $activityRepeat->frequency;
+            $this->chooseEndDate = true;
+            $this->end_date = ($activityRepeat->end_date != null) ? Carbon::parse($activityRepeat->end_date)->toDateString() : '';
+
+            if ($this->end_date == '') {
+                switch ($activityRepeat->frequency) {
+                    case 'Dairy':
+                        $this->repeatMessage = 'Se repetirá diariamente desde el último registro.';
+                        break;
+                    case 'Weekly':
+                        $this->repeatMessage = 'Se repetirá semanalmente desde el último registro.';
+                        break;
+                    case 'Monthly':
+                        $this->repeatMessage = 'Se repetirá cada 3 meses desde el último registro.';
+                        break;
+                    case 'Yearly':
+                        $this->repeatMessage = 'Se repetirá anualmente un mes antes del último registro.';
+                        break;
+                    default:
+                        $this->repeatMessage = '';
+                        break;
+                }
+            }
+        } else {
+            $activityRepeat = null;
+            $this->repeat = 'Once';
+        }
+
         $this->priority = $this->recording->priority ?? null;
         $this->points = $this->recording->points;
         // Cargar las preguntas del reporte
@@ -81,8 +119,133 @@ class Edit extends Component
 
     // Método para seleccionar un ícono
     public function selectIcon($icon)
-    {   
-        $this->selectedIcon = $icon; 
+    {
+        $this->selectedIcon = $icon;
+    }
+
+    public function expected_date($day)
+    {
+        $now = Carbon::now()->format('Y-m-d'); // Fecha actual en formato 'Y-m-d'
+
+        // Convertir $day a Carbon para comparar
+        $dayFormatted = Carbon::parse($day)->format('Y-m-d');
+        $endDate = Carbon::parse($this->end_date)->format('Y-m-d');
+
+        if ($this->repeat_updated) {
+            if ($dayFormatted >= $endDate) {
+                $this->end_date = Carbon::parse($day)->addDay()->format('Y-m-d');
+                $this->endDateMessage = 'La fecha límite debe ser posterior a la fecha de entrega.';
+            } elseif ($dayFormatted < $now) {
+                $this->expected_date = $now;
+                $this->expectedDateMessage = 'La fecha de entrega debe ser posterior o igual a la fecha actual.';
+            } else {
+                $this->expectedDateMessage = '';
+                $this->endDateMessage = '';
+            }
+        } else {
+            // Verificar si $day es menor que $now
+            if ($dayFormatted < $now) {
+                $this->expected_date = $now;
+                $this->expectedDateMessage = 'La fecha de entrega debe ser posterior o igual a la fecha actual.';
+            } else {
+                $this->expectedDateMessage = '';
+            }
+        }
+    }
+
+    public function repeat_updated($checked)
+    {
+        $this->repeat_updated = $checked;
+
+        if ($this->recording->activity_repeat != null) {
+            // Obtener la nueva ultima actividad
+            $lastActivityRepeat = Activity::where('activity_repeat', $this->recording->activity_repeat)->where('state', '!=', 'Resuelto')->orderBy('expected_date', 'asc')->latest()->first();
+            $activityRecurrents = ActivityRecurrent::where('activity_repeat', $this->recording->activity_repeat)->first();
+            // Convertir $day a Carbon para comparar
+            $dayEndFormatted = Carbon::parse($lastActivityRepeat->expected_date)->format('Y-m-d');
+            if ($checked) {
+                $this->expected_date = $dayEndFormatted;
+                $this->expectedDateMessage = 'Fecha de la última actividad como referencia para actualizar o crear nuevas actividades, con opción a modificarla.';
+            } else {
+                $this->expected_date = Carbon::parse($this->recording->expected_date)->format('Y-m-d');
+                $this->end_date = Carbon::parse($activityRecurrents->end_date)->format('Y-m-d');
+                $this->expectedDateMessage = '';
+                $this->repeat = $activityRecurrents->frequency;
+            }
+        } else {
+            $this->expected_date = Carbon::parse($this->recording->expected_date)->format('Y-m-d');
+            $this->expectedDateMessage = ($checked) ? 'Fecha de inicio de las actividades recurrentes.' : '';
+            $this->repeat = ($checked) ? '' : 'Once';
+        }
+    }
+
+    public function repeat($type)
+    {
+        $this->chooseEndDate = ($type != 'Once') ? true : false;
+
+        if ($this->end_date == '') {
+            switch ($type) {
+                case 'Dairy':
+                    $this->repeatMessage = 'Se repetirá diariamente desde el último registro.';
+                    break;
+                case 'Weekly':
+                    $this->repeatMessage = 'Se repetirá semanalmente desde el último registro.';
+                    break;
+                case 'Monthly':
+                    $this->repeatMessage = 'Se repetirá cada 3 meses desde el último registro.';
+                    break;
+                case 'Yearly':
+                    $this->repeatMessage = 'Se repetirá anualmente un mes antes del último registro.';
+                    break;
+                default:
+                    $this->repeatMessage = '';
+                    break;
+            }
+        }
+    }
+
+    public function end_date($day)
+    {
+        $now = Carbon::now()->format('Y-m-d'); // Fecha actual en formato 'Y-m-d'
+        // Convertir $day a Carbon para comparar
+        $dayFormatted = ($day != '') ? Carbon::parse($day)->format('Y-m-d') : null;
+        if ($this->recording->activity_repeat != null) {
+            // Obtener la nueva ultima actividad
+            $lastActivityRepeat = Activity::where('activity_repeat', $this->recording->activity_repeat)->where('state', '!=', 'Abierto')->orderBy('expected_date', 'desc')->latest()->first();
+            // Convertir $day a Carbon para comparar
+            $dayEndFormatted = ($lastActivityRepeat) ? Carbon::parse($lastActivityRepeat->expected_date)->format('Y-m-d') : null;
+            $expectedDate = Carbon::parse($this->recording->expected_date)->format('Y-m-d');
+            if ($dayFormatted != null) {
+                if ($dayEndFormatted && $dayEndFormatted > $dayFormatted) {
+                    $this->end_date = Carbon::parse($dayEndFormatted)->format('Y-m-d');
+                    $this->endDateMessage = 'Debe ser posterior o igual a la última actividad no "Abierta".';
+                } elseif ($expectedDate >= $dayFormatted) {
+                    $this->end_date = Carbon::parse($this->recording->expected_date)->addDay()->format('Y-m-d');
+                    $this->endDateMessage = 'Debe ser posterior o igual a la fecha de entrega de esta actividad.';
+                } elseif ($dayFormatted <= $now) {
+                    $this->end_date = Carbon::parse($now)->addDay()->format('Y-m-d');
+                    $this->endDateMessage = 'Debe ser posterior a la fecha actual.';
+                } else {
+                    $this->endDateMessage = '';
+                }
+            } else {
+                $this->endDateMessage = '';
+            }
+        } else {
+            // Verificar si $day es menor que $now
+            if ($dayFormatted <= $now) {
+                $this->end_date = Carbon::parse($now)->addDay()->format('Y-m-d');
+                $this->endDateMessage = 'Debe ser posterior a la fecha actual.';
+            } else {
+                $this->endDateMessage = '';
+            }
+        }
+    }
+
+    public function selectPriority($value)
+    {
+        // Actualizar la prioridad seleccionada
+        $this->priority = $value;
     }
 
     public function changePoints()
@@ -91,10 +254,13 @@ class Edit extends Component
         $this->changePoints = !$this->changePoints;
     }
 
-    public function selectPriority($value)
+    public function moveActivity($sprint_id)
     {
-        // Actualizar la prioridad seleccionada
-        $this->priority = $value;
+        if ($this->recording->activity_repeat != null && $this->recording->sprint_id != $sprint_id) {
+            $this->moveActivityMessage = 'Todas las actividades recurrentes se moverán al sprint seleccionado.';
+        } else {
+            $this->moveActivityMessage = '';
+        }
     }
 
     public function update($id, $project_id)
@@ -128,7 +294,7 @@ class Edit extends Component
                 throw $e;
             }
         }
-        
+
         if ($this->type == 'report') {
             $report = Report::find($id);
             $activity = null;
@@ -234,7 +400,7 @@ class Edit extends Component
                 } else {
                     $report->expected_date = $this->expected_date ?? $report->expected_date;
                 }
-                
+
                 $report->evidence = $this->evidenceEdit  ?? $report->evidence;
                 $report->priority = $this->priority ?? $report->priority;
 
@@ -297,10 +463,11 @@ class Edit extends Component
                     }
                 }
                 $report->save();
-                
+
                 Log::create([
                     'user_id' => Auth::id(),
-                    'view' => 'livewire/modals/edit',
+                    'report_id' => $activity->id,
+                    'view' => 'livewire/modals/reports-activities/edit',
                     'action' => 'update report',
                     'message' => 'Reporte actualizado exitosamente',
                     'details' => 'Reporte: ' .  $report->id,
@@ -316,18 +483,18 @@ class Edit extends Component
                 // Guardar el error en la base de datos
                 ErrorLog::create([
                     'user_id' => Auth::id(),
-                    'view' => 'livewire/modals/edit',
+                    'view' => 'livewire/modals/reports-activities/edit',
                     'action' => 'update',
                     'message' => 'Error al editar el reporte',
                     'details' => $e->getMessage(),
                 ]);
-    
+
                 // Emitir un evento de navegador
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
                     'title' => 'Ocurrió un error al guardar el reporte',
                 ]);
-    
+
                 throw $e;
             }
         }
@@ -376,16 +543,29 @@ class Edit extends Component
                         return;
                     }
                 }
-                $activity->sprint_id = $this->moveActivity ?? $activity->sprint_id;
+
                 if ($this->moveActivity) {
                     $sprint = Sprint::find($this->moveActivity);
+
                     if ($sprint->state == 'Cerrado') {
+                        $this->moveActivity = $activity->sprint_id;
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'error',
                             'title' => 'Sprint cerrado',
                         ]);
-        
+
                         return;
+                    } else {
+                        if ($activity->activity_repeat != null) {
+                            $activities = Activity::where('activity_repeat', $activity->activity_repeat)->where('state', '!=', 'Resuelto')->get();
+
+                            foreach ($activities as $activityRepeat) {
+                                $activityRepeat->sprint_id = $this->moveActivity ?? $activity->sprint_id;
+                                $activityRepeat->save();
+                            }
+                        } else {
+                            $activity->sprint_id = $this->moveActivity ?? $activity->sprint_id;
+                        }
                     }
                 }
 
@@ -394,18 +574,10 @@ class Edit extends Component
                 $activity->description = $this->description ?? $activity->description;
                 $activity->priority = $this->priority ?? $activity->priority;
 
-                if ($this->expected_date == '' && $activity->expected_date == null) {
-                    $fecha = null;
-                } else {
-                    $fecha = $this->expected_date ?? $activity->expected_date;
-                }
-
-                $activity->expected_date = $fecha;
-                
                 if ($this->changePoints == false) {
                     $validPoints = [0, 1, 2, 3, 5, 8, 13];
                     $activity->points = $this->points;
-        
+
                     if (!in_array($this->points, $validPoints)) {
                         $this->dispatchBrowserEvent('swal:modal', [
                             'type' => 'error',
@@ -456,41 +628,1091 @@ class Edit extends Component
                         $activity->questions_points = $questionsPointsJson;
                     }
                 }
-                
-                $activity->save();
 
-                Log::create([
-                    'user_id' => Auth::id(),
-                    'view' => 'livewire/modals/edit',
-                    'action' => 'update activity',
-                    'message' => 'Actividad actualizado exitosamente',
-                    'details' => 'Actividad: ' .  $activity->id,
-                ]);
+                if ($activity->activity_repeat == null) {
+                    if ($this->expected_date == '' && $activity->expected_date == null) {
+                        $fecha = null;
+                    } else {
+                        $fecha = $this->expected_date ?? $activity->expected_date;
+                    }
+
+                    if ($this->repeat_updated == true) {
+                        $activity->activity_repeat = bin2hex(random_bytes(8));
+                    }
+
+                    $activity->expected_date = $fecha;
+                    $activity->save();
+
+                    // Crear repeticiones según el filtro seleccionado 
+                    switch ($this->repeat) {
+                        case 'Dairy':
+                            $this->createDailyRepetitions($activity);
+
+                            Log::create([
+                                'user_id' => Auth::id(),
+                                'activity_id' => $activity->id,
+                                'view' => 'livewire/modals/reports-activities/edit',
+                                'action' => 'Actividades recurrentes',
+                                'message' => 'Actividades diarias creadas',
+                                'details' => 'Delegado: ' . $activity->delegate_id,
+                            ]);
+
+                            // Emitir un evento de navegador
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Actividades diarias creadas',
+                            ]);
+
+                            break;
+                        case 'Weekly':
+                            $this->createWeeklyRepetitions($activity);
+
+                            Log::create([
+                                'user_id' => Auth::id(),
+                                'activity_id' => $activity->id,
+                                'view' => 'livewire/modals/reports-activities/edit',
+                                'action' => 'Actividades recurrentes',
+                                'message' => 'Actividades semanales creadas',
+                                'details' => 'Delegado: ' . $activity->delegate_id,
+                            ]);
+
+                            // Emitir un evento de navegador
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Actividades semanales creadas',
+                            ]);
+
+                            break;
+                        case 'Monthly':
+                            $this->createMonthlyRepetitions($activity);
+
+                            Log::create([
+                                'user_id' => Auth::id(),
+                                'activity_id' => $activity->id,
+                                'view' => 'livewire/modals/reports-activities/edit',
+                                'action' => 'Actividades recurrentes',
+                                'message' => 'Actividades mensuales creadas',
+                                'details' => 'Delegado: ' . $activity->delegate_id,
+                            ]);
+
+                            // Emitir un evento de navegador
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Actividades mensuales creadas',
+                            ]);
+
+                            break;
+                        case 'Yearly':
+                            // Guardar información de recurrencia
+                            $activityRecurrent = new ActivityRecurrent();
+                            $activityRecurrent->activity_repeat = $activity->activity_repeat;
+                            $activityRecurrent->frequency = $this->repeat;
+                            $activityRecurrent->day_created = $activity->created_at;
+                            // Aumentar un año a la fecha last_date
+                            $lastDate = Carbon::parse($this->expected_date)->addYear(); // Incrementa un año
+                            $activityRecurrent->last_date = $lastDate;
+                            $activityRecurrent->end_date = $this->end_date;
+                            $activityRecurrent->save();
+
+                            Log::create([
+                                'user_id' => Auth::id(),
+                                'activity_id' => $activity->id,
+                                'view' => 'livewire/modals/reports-activities/edit',
+                                'action' => 'Creación de actividad',
+                                'message' => 'Actividad anual creada',
+                                'details' => 'Delegado: ' . $activity->delegate_id,
+                            ]);
+
+                            // Emitir un evento de navegador
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Actividad anual creada',
+                            ]);
+
+                            break;
+                        default:
+                            Log::create([
+                                'user_id' => Auth::id(),
+                                'activity_id' => $activity->id,
+                                'view' => 'livewire/modals/reports-activities/edit',
+                                'action' => 'Creación de actividad',
+                                'message' => 'Actividad creada',
+                                'details' => 'Delegado: ' . $activity->delegate_id,
+                            ]);
+                            // No se repite (opción "Once")
+                            $activity->save();
+
+                            // Emitir un evento de navegador
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Actividad creada',
+                            ]);
+                    }
+                } else {
+                    $ActivityRepeat = Activity::where('activity_repeat', $activity->activity_repeat)->get();
+                    $activitiesRecurrents = ActivityRecurrent::where('activity_repeat', $activity->activity_repeat)->first();
+
+                    $activityExpectedDate = Carbon::parse($activity->expected_date)->startOfDay(); // Solo toma la fecha (sin hora)
+                    $thisExpectedDate = Carbon::parse($this->expected_date)->startOfDay(); // Solo toma la fecha (sin hora)
+                    // Actualizacion de fecha de entrega
+                    if ($activityExpectedDate != $thisExpectedDate) {
+                        // actualizar fecha de entrega de la actividad
+                        $activity->expected_date = $this->expected_date;
+                        $activity->save();
+
+                        if ($ActivityRepeat->count() == 1) { // solo existe una actividad recurrente
+                            switch ($activitiesRecurrents->frequency) {
+                                case 'Dairy':
+                                    if ($activitiesRecurrents->end_date != null) {
+                                        $activitiesRecurrents->end_date = Carbon::parse($thisExpectedDate);
+                                        $activitiesRecurrents->last_date = Carbon::parse($thisExpectedDate);
+                                    } else {
+                                        $activitiesRecurrents->last_date = Carbon::parse($thisExpectedDate)->addDay();
+                                    }
+                                    $activitiesRecurrents->save();
+                                    break;
+                                case 'Weekly':
+                                    if ($activitiesRecurrents->end_date != null) {
+                                        $activitiesRecurrents->end_date = Carbon::parse($thisExpectedDate);
+                                        $activitiesRecurrents->last_date = Carbon::parse($thisExpectedDate);
+                                    } else {
+                                        $activitiesRecurrents->last_date = Carbon::parse($thisExpectedDate)->addWeek();
+                                    }
+                                    $activitiesRecurrents->save();
+                                    break;
+                                case 'Monthly':
+                                    if ($activitiesRecurrents->end_date != null) {
+                                        $activitiesRecurrents->end_date = Carbon::parse($thisExpectedDate);
+                                        $activitiesRecurrents->last_date = Carbon::parse($thisExpectedDate);
+                                    } else {
+                                        $activitiesRecurrents->last_date = Carbon::parse($thisExpectedDate)->addMonth();
+                                    }
+                                    $activitiesRecurrents->save();
+                                    break;
+                                case 'Yearly':
+                                    if ($activitiesRecurrents->end_date != null) {
+                                        $activitiesRecurrents->end_date = Carbon::parse($thisExpectedDate);
+                                        $activitiesRecurrents->last_date = Carbon::parse($thisExpectedDate);
+                                    } else {
+                                        $activitiesRecurrents->last_date = Carbon::parse($thisExpectedDate)->addYear();
+                                    }
+                                    $activitiesRecurrents->save();
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            $lastActivityRepeat = Activity::where('activity_repeat', $activity->activity_repeat)->orderBy('expected_date', 'desc')->latest()->first();
+
+                            $activitiesRecurrents->last_date = Carbon::parse($lastActivityRepeat->expected_date)->format('Y-m-d');
+
+                            if ($activitiesRecurrents->end_date != null) {
+                                $activitiesRecurrents->end_date = Carbon::parse($lastActivityRepeat->expected_date)->format('Y-m-d');
+                            }
+
+                            $activitiesRecurrents->save();
+                        }
+                    }
+                    // Guardar actividad antes de crear repeticiones
+                    // $activity->save();
+
+                    // ACTUALIZACION DE REPETICIONES
+                    if ($this->repeat_updated) {
+                        $activitiesNoResueltas = $ActivityRepeat->whereIn('state', ['Proceso', 'Conflicto']);
+                        $this->activitiesNoResueltas = $activitiesNoResueltas->isNotEmpty() ? $activitiesNoResueltas : null;
+
+                        $activitiesAbiertas = $ActivityRepeat->where('state', 'Abierto');
+                        $this->activitiesAbiertas = $activitiesAbiertas->isNotEmpty() ? $activitiesAbiertas : null;
+
+                        switch ($this->repeat) {
+                            case 'Dairy':
+                                $this->createDailyRepetitions($activity);
+
+                                Log::create([
+                                    'user_id' => Auth::id(),
+                                    'activity_id' => $activity->id,
+                                    'view' => 'livewire/modals/reports-activities/edit',
+                                    'action' => 'Actividades recurrentes',
+                                    'message' => 'Actividades diarias actualizadas',
+                                    'details' => 'Delegado: ' . $activity->delegate_id,
+                                ]);
+
+                                // Emitir un evento de navegador
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'success',
+                                    'title' => 'Actividades diarias actualizadas',
+                                ]);
+
+                                break;
+                            case 'Weekly':
+                                $this->createWeeklyRepetitions($activity);
+
+                                Log::create([
+                                    'user_id' => Auth::id(),
+                                    'activity_id' => $activity->id,
+                                    'view' => 'livewire/modals/reports-activities/edit',
+                                    'action' => 'Actividades recurrentes',
+                                    'message' => 'Actividades semanales actualizadas',
+                                    'details' => 'Delegado: ' . $activity->delegate_id,
+                                ]);
+
+                                // Emitir un evento de navegador
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'success',
+                                    'title' => 'Actividades semanales actualizadas',
+                                ]);
+
+                                break;
+                            case 'Monthly':
+                                $this->createMonthlyRepetitions($activity);
+
+                                Log::create([
+                                    'user_id' => Auth::id(),
+                                    'activity_id' => $activity->id,
+                                    'view' => 'livewire/modals/reports-activities/edit',
+                                    'action' => 'Actividades recurrentes',
+                                    'message' => 'Actividades mensuales actualizadas',
+                                    'details' => 'Delegado: ' . $activity->delegate_id,
+                                ]);
+
+                                // Emitir un evento de navegador
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'success',
+                                    'title' => 'Actividades mensuales actualizadas',
+                                ]);
+
+                                break;
+                            case 'Yearly':
+                                $this->createYearlyRepetitions($activity);
+
+                                Log::create([
+                                    'user_id' => Auth::id(),
+                                    'activity_id' => $activity->id,
+                                    'view' => 'livewire/modals/reports-activities/edit',
+                                    'action' => 'Creación de actividad',
+                                    'message' => 'Actividad anual actualizadas',
+                                    'details' => 'Delegado: ' . $activity->delegate_id,
+                                ]);
+
+                                // Emitir un evento de navegador
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'success',
+                                    'title' => 'Actividad anual actualizadas',
+                                ]);
+
+                                break;
+                            default:
+                                $this->updatedNotRepetitions($activity);
+
+                                Log::create([
+                                    'user_id' => Auth::id(),
+                                    'activity_id' => $activity->id,
+                                    'view' => 'livewire/modals/reports-activities/edit',
+                                    'action' => 'No repeticiones',
+                                    'message' => 'Desactivar repeticiones correctamente',
+                                ]);
+
+                                // Emitir un evento de navegador
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'success',
+                                    'title' => 'Actividades sin repeticiones',
+                                ]);
+                        }
+                    } else {
+                        Log::create([
+                            'user_id' => Auth::id(),
+                            'activity_id' => $activity->id,
+                            'view' => 'livewire/modals/reports-activities/edit',
+                            'action' => 'Actividad actualizada',
+                            'message' => 'Actividad actualizada correctamente',
+                        ]);
+
+                        // Emitir un evento de navegador
+                        $this->dispatchBrowserEvent('swal:modal', [
+                            'type' => 'success',
+                            'title' => 'Actividad actualizada',
+                        ]);
+                    }
+                }
 
                 $this->dispatchBrowserEvent('file-reset');
-
-                $this->dispatchBrowserEvent('swal:modal', [
-                    'type' => 'success',
-                    'title' => 'Actividad actualizada.',
-                ]);
             } catch (\Exception $e) {
                 // Guardar el error en la base de datos
                 ErrorLog::create([
                     'user_id' => Auth::id(),
-                    'view' => 'livewire/modals/edit',
+                    'view' => 'livewire/modals/reports-activities/edit',
                     'action' => 'update',
                     'message' => 'Error al guardar la actividad',
                     'details' => $e->getMessage(),
                 ]);
-    
+
                 // Emitir un evento de navegador
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'error',
                     'title' => 'Ocurrió un error al guardar la actividad',
                 ]);
-    
+
                 throw $e;
             }
+        }
+    }
+
+    private function updatedNotRepetitions($task)
+    {
+        try {
+            $activities = Activity::where('activity_repeat', $task->activity_repeat)->get();
+            foreach ($activities as $activity) {
+                $activity->activity_repeat = null;
+                $activity->save(); // Guardar cambios en la BD
+            }
+
+            $activityRecurrent = ActivityRecurrent::where('activity_repeat', $task->activity_repeat)->first();
+            if ($activityRecurrent) {
+                $activityRecurrent->delete();
+            }
+        } catch (\Exception $e) {
+            // Registrar en el log de errores
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'view' => 'livewire/modals/reports-activities/edit',
+                'action' => 'No repeticiones',
+                'message' => 'Error al desactivar las repeticiones',
+                'details' => $e->getMessage(),
+            ]);
+
+            // Emitir evento para notificar error en el navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Error al desactivar las repeticiones',
+            ]);
+        }
+    }
+
+    private function createDailyRepetitions($task)
+    {
+        try {
+            $startDate = Carbon::now();
+
+            if ($this->repeat_updated) {
+                $expectedDate = Carbon::parse($this->expected_date);
+            } else {
+                $expectedDate = $task->expected_date ? Carbon::parse($task->expected_date)->addDay() : null;
+            }
+
+            $deadlineOneDay = $this->end_date ? Carbon::parse($this->end_date)->addDay() : null;
+            $deadline = $this->end_date ? Carbon::parse($this->end_date) : null;
+            // Calcular la diferencia en días
+            $daysDifference = $deadlineOneDay ? $expectedDate->diffInDays($deadlineOneDay) : Carbon::now()->diffInDays(Carbon::now()->addMonths(1));
+
+            // Obtener el identificador de repetición
+            $activityRepeat = $task->activity_repeat ?? bin2hex(random_bytes(8));
+            $tempStartDate = clone $startDate;
+            $tempExpectedDate = $expectedDate ? clone $expectedDate : null;
+
+            if ($this->repeat_updated) {
+                // Actualizar actividades en Proceso o Conflicto
+                if ($this->activitiesNoResueltas != null) {
+                    foreach ($this->activitiesNoResueltas as $activity) {
+                        // Avanzar la fecha de cada actividad
+                        $activity->expected_date = $tempExpectedDate->format('Y-m-d H:i:s');
+                        $activity->save(); // Guardar cambios en la BD
+                        $tempExpectedDate->modify('+1 day');
+                    }
+                    // Volver a fecha original
+                    $tempExpectedDate->modify('-1 day');
+                }
+
+                // Actualizar actividades Abiertas
+                if ($this->activitiesAbiertas != null) {
+                    if ($this->activitiesNoResueltas != null) {
+                        $tempExpectedDate->modify('+1 day');
+                    }
+
+                    foreach ($this->activitiesAbiertas as $activity) {
+                        // Avanzar la fecha de cada actividad
+                        $activity->expected_date = $tempExpectedDate->format('Y-m-d H:i:s');
+                        $activity->save(); // Guardar cambios en la BD
+                        $tempExpectedDate->modify('+1 day');
+                    }
+                    // Volver a fecha original
+                    $tempExpectedDate->modify('-1 day');
+                }
+
+                // Sobran fechas
+                if (!is_null($deadline) && $tempExpectedDate > $deadline) {
+                    foreach ($this->activitiesAbiertas as $activity) {
+                        $expectedDateActivity = Carbon::parse($activity->expected_date);
+
+                        if ($expectedDateActivity > $deadline) {
+                            if ($activity->image) {
+                                $contentPath = 'activities/' . $activity->image;
+                                $fullPath = public_path($contentPath);
+
+                                if (File::exists($fullPath)) {
+                                    File::delete($fullPath);
+                                }
+                            }
+
+                            $activity->delete();
+                            $tempExpectedDate->modify('-1 day');
+                        }
+                    }
+                }
+                // Faltan fechas
+                if ($tempExpectedDate < $deadline) {
+                    $daysDifference = $deadline ? $tempExpectedDate->diffInDays($deadline) : Carbon::now()->diffInDays(Carbon::now()->addMonths(1));
+                    // Preparar datos para inserción masiva
+                    $events = [];
+                    $tempExpectedDate->modify('+1 day');
+
+                    for ($i = 0; $i < $daysDifference; $i++) {
+                        $events[] = [
+                            'sprint_id' => $task->sprint_id,
+                            'user_id' => $task->user_id,
+                            'delegate_id' => $task->delegate_id,
+                            'icon' => $task->icon,
+                            'title' => $task->title,
+                            'content' => $task->content,
+                            'description' => $task->description,
+                            'priority' => $task->priority,
+                            'state' => 'Abierto',
+                            'points' => $task->points,
+                            'questions_points' => $task->questions_points,
+                            'activity_repeat' => $activityRepeat,
+                            'delegated_date' => $task->delegated_date,
+                            'expected_date' => $tempExpectedDate ? $tempExpectedDate->format('Y-m-d H:i:s') : null, // Verificación de null
+                            'created_at' => $startDate,
+                            'updated_at' => $startDate,
+                        ];
+
+                        $tempStartDate->modify('+1 day');
+                        // Avanzar un día sin modificar el original
+                        if ($tempExpectedDate) {
+                            $tempExpectedDate->modify('+1 day');
+                        }
+                    }
+                    // Restar una semana al resultado final
+                    $tempExpectedDate->modify('-1 day');
+
+                    // Inserción masiva en lotes si es necesario
+                    foreach (array_chunk($events, 500) as $batch) {
+                        Activity::insert($batch);
+                    }
+                }
+
+                // Guardar información de recurrencia
+                $activityRecurrent = ActivityRecurrent::where('activity_repeat', $task->activity_repeat)->first();
+                $activityRecurrent->frequency = $this->repeat;
+                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
+                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
+                $activityRecurrent->save();
+            } else {
+                // Preparar datos para inserción masiva
+                $events = [];
+
+                for ($i = 0; $i < $daysDifference; $i++) {
+                    $events[] = [
+                        'sprint_id' => $task->sprint_id,
+                        'user_id' => $task->user_id,
+                        'delegate_id' => $task->delegate_id,
+                        'icon' => $task->icon,
+                        'title' => $task->title,
+                        'content' => $task->content,
+                        'description' => $task->description,
+                        'priority' => $task->priority,
+                        'state' => 'Abierto',
+                        'points' => $task->points,
+                        'questions_points' => $task->questions_points,
+                        'activity_repeat' => $activityRepeat,
+                        'delegated_date' => $task->delegated_date,
+                        'expected_date' => $tempExpectedDate ? $tempExpectedDate->format('Y-m-d H:i:s') : null, // Verificación de null
+                        'created_at' => $startDate,
+                        'updated_at' => $startDate,
+                    ];
+
+                    $tempStartDate->modify('+1 day');
+                    // Avanzar un día sin modificar el original
+                    if ($tempExpectedDate) {
+                        $tempExpectedDate->modify('+1 day');
+                    }
+                }
+                // Restar una semana al resultado final
+                $tempExpectedDate->modify('-1 day');
+                // Inserción masiva en lotes si es necesario
+                foreach (array_chunk($events, 500) as $batch) {
+                    Activity::insert($batch);
+                }
+
+                // Guardar información de recurrencia
+                $activityRecurrent = new ActivityRecurrent();
+                $activityRecurrent->activity_repeat = $activityRepeat;
+                $activityRecurrent->frequency = $this->repeat;
+                $activityRecurrent->day_created = $startDate;
+                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
+                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
+                $activityRecurrent->save();
+            }
+        } catch (\Exception $e) {
+            // Registrar en el log de errores
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'view' => 'livewire/modals/reports-activities/edit',
+                'action' => 'Crear repeticiones diarias',
+                'message' => 'Error al crear repeticiones diarias',
+                'details' => $e->getMessage(),
+            ]);
+
+            // Emitir evento para notificar error en el navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Error al crear repeticiones diarias',
+            ]);
+        }
+    }
+
+    private function createWeeklyRepetitions($task)
+    {
+        try {
+            $startDate = Carbon::now();
+
+            if ($this->repeat_updated) {
+                $expectedDate = Carbon::parse($this->expected_date);
+            } else {
+                $expectedDate = $task->expected_date ? Carbon::parse($task->expected_date)->addWeek() : null;
+            }
+
+            $deadlineOneDay = $this->end_date ? Carbon::parse($this->end_date)->addDay() : null;
+            $deadline = $this->end_date ? Carbon::parse($this->end_date) : null;
+            // Calcular la diferencia en días
+            $daysDifference = $deadlineOneDay ? $expectedDate->diffInWeeks($deadlineOneDay) + 1 : Carbon::now()->diffInWeeks(Carbon::now()->addMonths(1));
+
+            // Obtener el identificador de repetición
+            $activityRepeat = $task->activity_repeat ?? bin2hex(random_bytes(8));
+            $tempStartDate = clone $startDate;
+            $tempExpectedDate = $expectedDate ? clone $expectedDate : null;
+
+            if ($this->repeat_updated) {
+                if ($this->activitiesNoResueltas != null) {
+                    // Actualizar actividades en Proceso o Conflicto
+                    foreach ($this->activitiesNoResueltas as $activity) {
+                        // Avanzar la fecha de cada actividad
+                        $activity->expected_date = $tempExpectedDate->format('Y-m-d H:i:s');
+                        $activity->save(); // Guardar cambios en la BD
+                        $tempExpectedDate->modify('+1 week');
+                    }
+                    // Volver a fecha original
+                    $tempExpectedDate->modify('-1 week');
+                }
+
+                // Actualizar actividades Abiertas
+                if ($this->activitiesAbiertas != null) {
+                    if ($this->activitiesNoResueltas != null) {
+                        $tempExpectedDate->modify('+1 week');
+                    }
+
+                    foreach ($this->activitiesAbiertas as $activity) {
+                        // Avanzar la fecha de cada actividad
+                        $activity->expected_date = $tempExpectedDate->format('Y-m-d H:i:s');
+                        $activity->save(); // Guardar cambios en la BD
+                        $tempExpectedDate->modify('+1 week');
+                    }
+                    // Volver a fecha original
+                    $tempExpectedDate->modify('-1 week');
+                }
+
+                // Sobran fechas
+                if (!is_null($deadline)  && $tempExpectedDate > $deadline) {
+                    foreach ($this->activitiesAbiertas as $activity) {
+                        $expectedDateActivity = Carbon::parse($activity->expected_date);
+
+                        if ($expectedDateActivity > $deadline) {
+                            if ($activity->image) {
+                                $contentPath = 'activities/' . $activity->image;
+                                $fullPath = public_path($contentPath);
+
+                                if (File::exists($fullPath)) {
+                                    File::delete($fullPath);
+                                }
+                            }
+                            $activity->delete();
+                            $tempExpectedDate->modify('-1 week');
+                        }
+                    }
+                }
+                // Faltan fechas
+                if ($tempExpectedDate < $deadline) {
+                    $daysDifference = $deadline ? $tempExpectedDate->diffInWeeks($deadline) : Carbon::now()->diffInWeeks(Carbon::now()->addMonths(1));
+                    // Preparar datos para inserción masiva
+                    $events = [];
+                    $tempExpectedDate->modify('+1 week');
+
+                    for ($i = 0; $i < $daysDifference; $i++) {
+                        $events[] = [
+                            'sprint_id' => $task->sprint_id,
+                            'user_id' => $task->user_id,
+                            'delegate_id' => $task->delegate_id,
+                            'icon' => $task->icon,
+                            'title' => $task->title,
+                            'content' => $task->content,
+                            'description' => $task->description,
+                            'priority' => $task->priority,
+                            'state' => 'Abierto',
+                            'points' => $task->points,
+                            'questions_points' => $task->questions_points,
+                            'activity_repeat' => $activityRepeat,
+                            'delegated_date' => $task->delegated_date,
+                            'expected_date' => $tempExpectedDate ? $tempExpectedDate->format('Y-m-d H:i:s') : null, // Verificación de null
+                            'created_at' => $startDate,
+                            'updated_at' => $startDate,
+                        ];
+
+                        $tempStartDate->modify('+1 week');
+                        // Avanzar un día sin modificar el original
+                        if ($tempExpectedDate) {
+                            $tempExpectedDate->modify('+1 week');
+                        }
+                    }
+                    // Restar una semana al resultado final
+                    $tempExpectedDate->modify('-1 week');
+
+                    // Inserción masiva en lotes si es necesario
+                    foreach (array_chunk($events, 500) as $batch) {
+                        Activity::insert($batch);
+                    }
+                }
+
+                // Guardar información de recurrencia
+                $activityRecurrent = ActivityRecurrent::where('activity_repeat', $task->activity_repeat)->first();
+                $activityRecurrent->frequency = $this->repeat;
+                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
+                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
+                $activityRecurrent->save();
+            } else {
+                // Preparar datos para inserción masiva
+                $events = [];
+
+                for ($i = 0; $i < $daysDifference; $i++) {
+                    $events[] = [
+                        'sprint_id' => $task->sprint_id,
+                        'user_id' => $task->user_id,
+                        'delegate_id' => $task->delegate_id,
+                        'icon' => $task->icon,
+                        'title' => $task->title,
+                        'content' => $task->content,
+                        'description' => $task->description,
+                        'priority' => $task->priority,
+                        'state' => 'Abierto',
+                        'points' => $task->points,
+                        'questions_points' => $task->questions_points,
+                        'activity_repeat' => $activityRepeat,
+                        'delegated_date' => $task->delegated_date,
+                        'expected_date' => $tempExpectedDate ? $tempExpectedDate->format('Y-m-d H:i:s') : null, // Verificación de null
+                        'created_at' => $startDate,
+                        'updated_at' => $startDate,
+                    ];
+
+                    $tempStartDate->modify('+1 week');
+                    // Avanzar un día sin modificar el original
+                    if ($tempExpectedDate) {
+                        $tempExpectedDate->modify('+1 week');
+                    }
+                }
+                // Restar una semana al resultado final
+                $tempExpectedDate->modify('-1 week');
+                // Inserción masiva en lotes si es necesario
+                foreach (array_chunk($events, 500) as $batch) {
+                    Activity::insert($batch);
+                }
+
+                // Guardar información de recurrencia
+                $activityRecurrent = new ActivityRecurrent();
+                $activityRecurrent->activity_repeat = $activityRepeat;
+                $activityRecurrent->frequency = $this->repeat;
+                $activityRecurrent->day_created = $startDate;
+                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
+                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
+                $activityRecurrent->save();
+            }
+        } catch (\Exception $e) {
+            // Registrar en el log de errores
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'view' => 'livewire/modals/reports-activities/edit',
+                'action' => 'Crear repeticiones semanales',
+                'message' => 'Error al crear repeticiones semanales',
+                'details' => $e->getMessage(),
+            ]);
+
+            // Emitir evento para notificar error en el navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Error al crear repeticiones semanales',
+            ]);
+        }
+    }
+
+    private function createMonthlyRepetitions($task)
+    {
+        try {
+            $startDate = Carbon::now();
+
+            if ($this->repeat_updated) {
+                $expectedDate = Carbon::parse($this->expected_date);
+            } else {
+                $expectedDate = $task->expected_date ? Carbon::parse($task->expected_date)->addMonth() : null;
+            }
+
+            $deadlineOneDay = $this->end_date ? Carbon::parse($this->end_date)->addDay() : null;
+            $deadline = $this->end_date ? Carbon::parse($this->end_date) : null;
+            // Calcular la diferencia en días
+            $daysDifference = $deadlineOneDay ? $expectedDate->diffInMonths($deadlineOneDay) + 1 : Carbon::now()->diffInMonths(Carbon::now()->addMonths(3));
+
+            // Obtener el identificador de repetición
+            $activityRepeat = $task->activity_repeat ?? bin2hex(random_bytes(8));
+            $tempStartDate = clone $startDate;
+            $tempExpectedDate = $expectedDate ? clone $expectedDate : null;
+
+            if ($this->repeat_updated) {
+                // Actualizar actividades en Proceso o Conflicto
+                if ($this->activitiesNoResueltas != null) {
+                    foreach ($this->activitiesNoResueltas as $activity) {
+                        // Avanzar la fecha de cada actividad
+                        $activity->expected_date = $tempExpectedDate->format('Y-m-d H:i:s');
+                        $activity->save(); // Guardar cambios en la BD
+                        $tempExpectedDate->modify('+1 month');
+                    }
+                    // Volver a fecha original
+                    $tempExpectedDate->modify('-1 month');
+                }
+
+                // Actualizar actividades Abiertas
+                if ($this->activitiesAbiertas != null) {
+                    if ($this->activitiesNoResueltas != null) {
+                        $tempExpectedDate->modify('+1 month');
+                    }
+
+                    foreach ($this->activitiesAbiertas as $activity) {
+                        // Avanzar la fecha de cada actividad
+                        $activity->expected_date = $tempExpectedDate->format('Y-m-d H:i:s');
+                        $activity->save(); // Guardar cambios en la BD
+                        $tempExpectedDate->modify('+1 month');
+                    }
+                    // Volver a fecha original
+                    $tempExpectedDate->modify('-1 month');
+                }
+
+                // Sobran fechas
+                if (!is_null($deadline) && $tempExpectedDate > $deadline) {
+                    foreach ($this->activitiesAbiertas as $activity) {
+                        $expectedDateActivity = Carbon::parse($activity->expected_date);
+
+                        if ($expectedDateActivity > $deadline) {
+                            if ($activity->image) {
+                                $contentPath = 'activities/' . $activity->image;
+                                $fullPath = public_path($contentPath);
+
+                                if (File::exists($fullPath)) {
+                                    File::delete($fullPath);
+                                }
+                            }
+
+                            $activity->delete();
+                            $tempExpectedDate->modify('-1 month');
+                        }
+                    }
+                }
+
+                // Faltan fechas
+                if ($tempExpectedDate < $deadline) {
+                    $daysDifference = $deadline ? $tempExpectedDate->diffInMonths($deadline) : Carbon::now()->diffInMonths(Carbon::now()->addMonths(3));
+                    // Preparar datos para inserción masiva
+                    $events = [];
+                    $tempExpectedDate->modify('+1 month');
+
+                    for ($i = 0; $i < $daysDifference; $i++) {
+                        $events[] = [
+                            'sprint_id' => $task->sprint_id,
+                            'user_id' => $task->user_id,
+                            'delegate_id' => $task->delegate_id,
+                            'icon' => $task->icon,
+                            'title' => $task->title,
+                            'content' => $task->content,
+                            'description' => $task->description,
+                            'priority' => $task->priority,
+                            'state' => 'Abierto',
+                            'points' => $task->points,
+                            'questions_points' => $task->questions_points,
+                            'activity_repeat' => $activityRepeat,
+                            'delegated_date' => $task->delegated_date,
+                            'expected_date' => $tempExpectedDate ? $tempExpectedDate->format('Y-m-d H:i:s') : null, // Verificación de null
+                            'created_at' => $startDate,
+                            'updated_at' => $startDate,
+                        ];
+
+                        $tempStartDate->modify('+1 month');
+                        // Avanzar un día sin modificar el original
+                        if ($tempExpectedDate) {
+                            $tempExpectedDate->modify('+1 month');
+                        }
+                    }
+                    // Restar una semana al resultado final
+                    $tempExpectedDate->modify('-1 month');
+
+                    // Inserción masiva en lotes si es necesario
+                    foreach (array_chunk($events, 500) as $batch) {
+                        Activity::insert($batch);
+                    }
+                }
+
+                // Guardar información de recurrencia
+                $activityRecurrent = ActivityRecurrent::where('activity_repeat', $task->activity_repeat)->first();
+                $activityRecurrent->frequency = $this->repeat;
+                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
+                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
+                $activityRecurrent->save();
+            } else {
+                // Preparar datos para inserción masiva
+                $events = [];
+
+                for ($i = 0; $i < $daysDifference; $i++) {
+                    $events[] = [
+                        'sprint_id' => $task->sprint_id,
+                        'user_id' => $task->user_id,
+                        'delegate_id' => $task->delegate_id,
+                        'icon' => $task->icon,
+                        'title' => $task->title,
+                        'content' => $task->content,
+                        'description' => $task->description,
+                        'priority' => $task->priority,
+                        'state' => 'Abierto',
+                        'points' => $task->points,
+                        'questions_points' => $task->questions_points,
+                        'activity_repeat' => $activityRepeat,
+                        'delegated_date' => $task->delegated_date,
+                        'expected_date' => $tempExpectedDate ? $tempExpectedDate->format('Y-m-d H:i:s') : null, // Verificación de null
+                        'created_at' => $startDate,
+                        'updated_at' => $startDate,
+                    ];
+
+                    // Avanzar un día sin modificar el original
+                    $tempStartDate->modify('+1 month');
+                    if ($tempExpectedDate) {
+                        $tempExpectedDate->modify('+1 month');
+                    }
+                }
+                // Restar una semana al resultado final
+                $tempExpectedDate->modify('-1 month');
+
+                // Inserción masiva en lotes si es necesario
+                foreach (array_chunk($events, 500) as $batch) {
+                    Activity::insert($batch);
+                }
+
+                $activityRecurrent = new ActivityRecurrent();
+                $activityRecurrent->activity_repeat = $activityRepeat;
+                $activityRecurrent->frequency = $this->repeat;
+                $activityRecurrent->day_created = $startDate;
+                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
+                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
+                $activityRecurrent->save();
+            }
+        } catch (\Exception $e) {
+            // Registrar en el log de errores
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'view' => 'livewire/modals/reports-activities/edit',
+                'action' => 'Crear repeticiones mensuales',
+                'message' => 'Error al crear repeticiones mensuales',
+                'details' => $e->getMessage(),
+            ]);
+
+            // Emitir evento para notificar error en el navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Error al crear repeticiones mensuales',
+            ]);
+        }
+    }
+
+    private function createYearlyRepetitions($task)
+    {
+        try {
+            $startDate = Carbon::now();
+
+            if ($this->repeat_updated) {
+                $expectedDate = Carbon::parse($this->expected_date);
+            } else {
+                $expectedDate = $task->expected_date ? Carbon::parse($task->expected_date)->addDay() : null;
+            }
+
+            $deadlineOneDay = $this->end_date ? Carbon::parse($this->end_date)->addDay() : null;
+            $deadline = $this->end_date ? Carbon::parse($this->end_date) : null;
+            // Calcular la diferencia en días
+            $daysDifference = $deadlineOneDay ? $expectedDate->diffInYears($deadlineOneDay) : Carbon::now()->diffInYears(Carbon::now()->addYears(1));
+
+            // Obtener el identificador de repetición
+            $activityRepeat = $task->activity_repeat ?? bin2hex(random_bytes(8));
+            $tempStartDate = clone $startDate;
+            $tempExpectedDate = $expectedDate ? clone $expectedDate : null;
+
+            if ($this->repeat_updated) {
+                // Actualizar actividades en Proceso o Conflicto
+                if ($this->activitiesNoResueltas != null) {
+                    foreach ($this->activitiesNoResueltas as $activity) {
+                        // Avanzar la fecha de cada actividad
+                        $activity->expected_date = $tempExpectedDate->format('Y-m-d H:i:s');
+                        $activity->save(); // Guardar cambios en la BD
+                        $tempExpectedDate->modify('+1 year');
+                    }
+                    // Volver a fecha original
+                    $tempExpectedDate->modify('-1 year');
+                }
+
+                // Actualizar actividades Abiertas
+                if ($this->activitiesAbiertas != null) {
+                    if ($this->activitiesNoResueltas != null) {
+                        $tempExpectedDate->modify('+1 year');
+                    }
+
+                    foreach ($this->activitiesAbiertas as $activity) {
+                        // Avanzar la fecha de cada actividad
+                        $activity->expected_date = $tempExpectedDate->format('Y-m-d H:i:s');
+                        $activity->save(); // Guardar cambios en la BD
+                        $tempExpectedDate->modify('+1 year');
+                    }
+                    // Volver a fecha original
+                    $tempExpectedDate->modify('-1 year');
+                }
+
+                // Sobran fechas
+                if (!is_null($deadline) && $tempExpectedDate > $deadline) {
+                    foreach ($this->activitiesAbiertas as $activity) {
+                        $expectedDateActivity = Carbon::parse($activity->expected_date);
+
+                        if ($expectedDateActivity > $deadline) {
+                            if ($activity->image) {
+                                $contentPath = 'activities/' . $activity->image;
+                                $fullPath = public_path($contentPath);
+
+                                if (File::exists($fullPath)) {
+                                    File::delete($fullPath);
+                                }
+                            }
+
+                            $activity->delete();
+                            $tempExpectedDate->modify('-1 year');
+                        }
+                    }
+                }
+                // Faltan fechas
+                if ($tempExpectedDate < $deadline) {
+                    $daysDifference = $deadline ? $tempExpectedDate->diffInYears($deadline) : Carbon::now()->diffInYears(Carbon::now()->addYears(1));
+                    // Preparar datos para inserción masiva
+                    $events = [];
+                    $tempExpectedDate->modify('+1 year');
+
+                    for ($i = 0; $i < $daysDifference; $i++) {
+                        $events[] = [
+                            'sprint_id' => $task->sprint_id,
+                            'user_id' => $task->user_id,
+                            'delegate_id' => $task->delegate_id,
+                            'icon' => $task->icon,
+                            'title' => $task->title,
+                            'content' => $task->content,
+                            'description' => $task->description,
+                            'priority' => $task->priority,
+                            'state' => 'Abierto',
+                            'points' => $task->points,
+                            'questions_points' => $task->questions_points,
+                            'activity_repeat' => $activityRepeat,
+                            'delegated_date' => $task->delegated_date,
+                            'expected_date' => $tempExpectedDate ? $tempExpectedDate->format('Y-m-d H:i:s') : null, // Verificación de null
+                            'created_at' => $startDate,
+                            'updated_at' => $startDate,
+                        ];
+
+                        $tempStartDate->modify('+1 year');
+                        // Avanzar un día sin modificar el original
+                        if ($tempExpectedDate) {
+                            $tempExpectedDate->modify('+1 year');
+                        }
+                    }
+                    // Restar una semana al resultado final
+                    $tempExpectedDate->modify('-1 year');
+
+                    // Inserción masiva en lotes si es necesario
+                    foreach (array_chunk($events, 500) as $batch) {
+                        Activity::insert($batch);
+                    }
+                }
+
+                // Guardar información de recurrencia
+                $activityRecurrent = ActivityRecurrent::where('activity_repeat', $task->activity_repeat)->first();
+                $activityRecurrent->frequency = $this->repeat;
+                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
+                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
+                $activityRecurrent->save();
+            } else {
+                // Preparar datos para inserción masiva
+                $events = [];
+
+                for ($i = 0; $i < $daysDifference; $i++) {
+                    $events[] = [
+                        'sprint_id' => $task->sprint_id,
+                        'user_id' => $task->user_id,
+                        'delegate_id' => $task->delegate_id,
+                        'icon' => $task->icon,
+                        'title' => $task->title,
+                        'content' => $task->content,
+                        'description' => $task->description,
+                        'priority' => $task->priority,
+                        'state' => 'Abierto',
+                        'points' => $task->points,
+                        'questions_points' => $task->questions_points,
+                        'activity_repeat' => $activityRepeat,
+                        'delegated_date' => $task->delegated_date,
+                        'expected_date' => $tempExpectedDate ? $tempExpectedDate->format('Y-m-d H:i:s') : null, // Verificación de null
+                        'created_at' => $startDate,
+                        'updated_at' => $startDate,
+                    ];
+
+                    $tempStartDate->modify('+1 year');
+                    // Avanzar un día sin modificar el original
+                    if ($tempExpectedDate) {
+                        $tempExpectedDate->modify('+1 year');
+                    }
+                }
+                // Restar una semana al resultado final
+                $tempExpectedDate->modify('-1 year');
+                // Inserción masiva en lotes si es necesario
+                foreach (array_chunk($events, 500) as $batch) {
+                    Activity::insert($batch);
+                }
+
+                // Guardar información de recurrencia
+                $activityRecurrent = new ActivityRecurrent();
+                $activityRecurrent->activity_repeat = $activityRepeat;
+                $activityRecurrent->frequency = $this->repeat;
+                $activityRecurrent->day_created = $startDate;
+                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
+                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
+                $activityRecurrent->save();
+            }
+        } catch (\Exception $e) {
+            // Registrar en el log de errores
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'view' => 'livewire/modals/reports-activities/edit',
+                'action' => 'Crear repeticiones diarias',
+                'message' => 'Error al crear repeticiones diarias',
+                'details' => $e->getMessage(),
+            ]);
+
+            // Emitir evento para notificar error en el navegador
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'title' => 'Error al crear repeticiones diarias',
+            ]);
         }
     }
 }

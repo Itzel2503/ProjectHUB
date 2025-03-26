@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Projects\Activities;
 
 use App\Models\Activity;
+use App\Models\ActivityRecurrent;
 use App\Models\Backlog;
 use App\Models\ChatReportsActivities;
 use App\Models\ErrorLog;
@@ -25,7 +26,7 @@ class TableActivities extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['reloadPage' => 'reloadPage', 'sprintUpdated', 'delete', 'openCreateActivityModal' => 'openCreateModal'];
+    public $listeners = ['reloadPage' => 'reloadPage', 'sprintUpdated', 'delete', 'deleteRecurrent', 'openCreateActivityModal' => 'openCreateModal'];
     // ENVIADAS
     public $idsprint, $project, $percentagetesolved;
     // BACKLOG
@@ -53,7 +54,8 @@ class TableActivities extends Component
     // GRAFICA EFFORT POINTS
     public $starMonth, $endMonth;
     // EXPECTED_DATE
-    public $expected_day;
+    public $expected_day = [];
+    public $errorMessages = []; // Para almacenar mensajes de error dinámicos
 
     // Resetear paginación cuando se actualiza el campo de búsqueda
     public function updatingSearch()
@@ -222,7 +224,7 @@ class TableActivities extends Component
         // ADD ATRIBUTES
         foreach ($activities as $activity) {
             // FECHA DE ENTREGA
-            $this->expected_day[$activity->id] = ($activity->expected_date) ? Carbon::parse($activity->expected_date)->format('Y-m-d') : '' ;
+            $this->expected_day[$activity->id] = ($activity->expected_date) ? Carbon::parse($activity->expected_date)->format('Y-m-d') : '';
             // ACTIONS
             $activity->filteredActions = $this->getFilteredActions($activity->state);
             // DELEGATE
@@ -347,19 +349,92 @@ class TableActivities extends Component
             $activity = Activity::find($id);
 
             if ($activity) {
-                if ($activity->image) {
-                    $contentPath = 'activities/' . $activity->image;
-                    $fullPath = public_path($contentPath);
+                if ($activity->activity_repeat != null) {
+                    $activities = Activity::where('activity_repeat', $activity->activity_repeat)->get();
+                    // Ya no existen actividades recurrentes
+                    $activitiesRecurrents = ActivityRecurrent::where('activity_repeat', $activity->activity_repeat)->first();
 
-                    if (File::exists($fullPath)) {
-                        File::delete($fullPath);
+                    if ($activities->count() === 1) {
+                        if ($activitiesRecurrents) {
+                            $activitiesRecurrents->delete();
+                        }
+
+                        if ($activity->image) {
+                            $contentPath = 'activities/' . $activity->image;
+                            $fullPath = public_path($contentPath);
+
+                            if (File::exists($fullPath)) {
+                                File::delete($fullPath);
+                            }
+                        }
+                        $activity->delete();
+                        // } else {
+                        //     $lastDateActivity = Carbon::parse($activity->expected_date)->startOfDay();
+                        //     $lastDateRecurrent = Carbon::parse($activitiesRecurrents->last_date)->startOfDay();
+
+                        //     if ($lastDateActivity == $lastDateRecurrent) {
+                        //         if ($activity->image) {
+                        //             $contentPath = 'activities/' . $activity->image;
+                        //             $fullPath = public_path($contentPath);
+
+                        //             if (File::exists($fullPath)) {
+                        //                 File::delete($fullPath);
+                        //             }
+                        //         }
+                        //         // Eliminar la actividad
+                        //         $activity->delete();
+
+                        //         // Actualizar la colección después de eliminar
+                        //         $activities = $activities->fresh();
+                        //         $activitiesRecurrents->last_date = $activities->last()->expected_date;
+                        //         $activitiesRecurrents->save();
+                        //     } else {
+                        //         if ($activity->image) {
+                        //             $contentPath = 'activities/' . $activity->image;
+                        //             $fullPath = public_path($contentPath);
+
+                        //             if (File::exists($fullPath)) {
+                        //                 File::delete($fullPath);
+                        //             }
+                        //         }
+                        //         $activity->delete();
+                        //     }
+                    } else {
+                        if ($activity->image) {
+                            $contentPath = 'activities/' . $activity->image;
+                            $fullPath = public_path($contentPath);
+
+                            if (File::exists($fullPath)) {
+                                File::delete($fullPath);
+                            }
+                        }
+                        $activity->delete();
+
+                        $lastActivityRepeat = Activity::where('activity_repeat', $activity->activity_repeat)->orderBy('expected_date', 'desc')->latest()->first();
+
+                        $activitiesRecurrents->last_date = Carbon::parse($lastActivityRepeat->expected_date)->format('Y-m-d');
+
+                        if ($activitiesRecurrents->end_date != null) {
+                            $activitiesRecurrents->end_date = Carbon::parse($lastActivityRepeat->expected_date)->format('Y-m-d');
+                        }
+
+                        $activitiesRecurrents->save();
                     }
+                } else {
+                    if ($activity->image) {
+                        $contentPath = 'activities/' . $activity->image;
+                        $fullPath = public_path($contentPath);
+
+                        if (File::exists($fullPath)) {
+                            File::delete($fullPath);
+                        }
+                    }
+                    $activity->delete();
                 }
-                $activity->delete();
 
                 Log::create([
                     'user_id' => Auth::id(),
-                    'project_id'=> ($this->project != null) ? $this->project->id : null,
+                    'project_id' => ($this->project != null) ? $this->project->id : null,
                     'activity_id' => $id,
                     'view' => 'livewire/projects/activities/table-activities',
                     'action' => 'Eliminar actividad',
@@ -379,17 +454,91 @@ class TableActivities extends Component
         } catch (\Exception $e) {
             ErrorLog::create([
                 'user_id' => Auth::id(),
-                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'project_id' => ($this->project != null) ? $this->project->id : null,
                 'activity_id' => $id,
                 'view' => 'livewire/projects/activities/table-activities',
                 'action' => 'Eliminar actividad',
                 'message' => 'Error en eliminar actividad',
                 'details' => $e->getMessage(), // Mensaje de la excepción
             ]);
-    
+
             // Mostrar mensaje de error al usuario
             $this->dispatchBrowserEvent('swal:modal', [
-                'type' => 'error',                
+                'type' => 'error',
+                'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
+            ]);
+        }
+    }
+
+    public function deleteRecurrent($id)
+    {
+        try {
+            $activity = Activity::find($id);
+            if ($activity) {
+                $activitiesAbierto = Activity::where('activity_repeat', $activity->activity_repeat)->where('state', 'Abierto')->get();
+                $activitiesNoAbierto = Activity::where('activity_repeat', $activity->activity_repeat)->where('state', '!=',  'Abierto')->orderBy('expected_date', 'asc')->get();
+                $activitiesRecurrents = ActivityRecurrent::where('activity_repeat', $activity->activity_repeat)->first();
+                
+                if ($activitiesNoAbierto->count() <= 1) {
+                    if ($activitiesRecurrents) {
+                        $activitiesRecurrents->delete();
+                    }
+                } else {
+                    if ($activitiesRecurrents && $activitiesRecurrents->end_date != null) {
+                        $activitiesRecurrents->last_date = $activitiesNoAbierto->last()->expected_date;
+                        $activitiesRecurrents->end_date = $activitiesNoAbierto->last()->expected_date;
+                        $activitiesRecurrents->save();
+                    }
+                }
+
+                // Recorrer y eliminar cada actividad principal
+                foreach ($activitiesAbierto as $activity) {
+                    if ($activity->image) {
+                        $contentPath = 'activities/' . $activity->image;
+                        $fullPath = public_path($contentPath);
+
+                        if (File::exists($fullPath)) {
+                            File::delete($fullPath);
+                        }
+                    }
+                    $activity->delete();
+                }
+
+                // Registrar en logs
+                Log::create([
+                    'user_id' => Auth::id(),
+                    'project_id' => ($this->project != null) ? $this->project->id : null,
+                    'activity_id' => $id,
+                    'view' => 'livewire/projects/activities/table-activities',
+                    'action' => 'Eliminar actividades recurrentes',
+                    'message' => 'Actividades eliminadas',
+                ]);
+
+                // Mostrar mensaje de éxito
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'success',
+                    'title' => 'Actividades eliminadas',
+                ]);
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Actividad no encontrada',
+                ]);
+            }
+        } catch (\Exception $e) {
+            ErrorLog::create([
+                'user_id' => Auth::id(),
+                'project_id' => ($this->project != null) ? $this->project->id : null,
+                'activity_id' => $id,
+                'view' => 'livewire/projects/activities/table-activities',
+                'action' => 'Eliminar actividades recurrentes',
+                'message' => 'Error en eliminar actividades',
+                'details' => $e->getMessage(),
+            ]);
+
+            // Mostrar mensaje de error
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
                 'title' => 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
             ]);
         }
@@ -412,7 +561,7 @@ class TableActivities extends Component
 
                 Log::create([
                     'user_id' => Auth::id(),
-                    'project_id'=> ($this->project != null) ? $this->project->id : null,
+                    'project_id' => ($this->project != null) ? $this->project->id : null,
                     'activity_id' => $id,
                     'view' => 'livewire/projects/activities/table-activities',
                     'action' => 'Cambio de delegado',
@@ -428,7 +577,7 @@ class TableActivities extends Component
         } catch (\Exception $e) {
             ErrorLog::create([
                 'user_id' => Auth::id(),
-                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'project_id' => ($this->project != null) ? $this->project->id : null,
                 'activity_id' => $id,
                 'view' => 'livewire/projects/activities/table-activities',
                 'action' => 'Cambio de delegado',
@@ -468,7 +617,7 @@ class TableActivities extends Component
 
                     Log::create([
                         'user_id' => Auth::id(),
-                        'project_id'=> ($this->project != null) ? $this->project->id : null,
+                        'project_id' => ($this->project != null) ? $this->project->id : null,
                         'activity_id' => $activity->id,
                         'view' => 'livewire/projects/activities/table-activities',
                         'action' => 'Cambio de estado',
@@ -486,14 +635,14 @@ class TableActivities extends Component
                 }
 
                 if ($state == 'Resuelto') {
-                    $activity->expected_date = ($activity->expected_date) ? $activity->expected_date : Carbon::now() ;
+                    $activity->expected_date = ($activity->expected_date) ? $activity->expected_date : Carbon::now();
                     $activity->end_date = Carbon::now();
                     $activity->state = $state;
                     $activity->save();
 
                     Log::create([
                         'user_id' => Auth::id(),
-                        'project_id'=> ($this->project != null) ? $this->project->id : null,
+                        'project_id' => ($this->project != null) ? $this->project->id : null,
                         'activity_id' => $activity->id,
                         'view' => 'livewire/projects/activities/table-activities',
                         'action' => 'Cambio de estado',
@@ -515,7 +664,7 @@ class TableActivities extends Component
         } catch (\Exception $e) {
             ErrorLog::create([
                 'user_id' => Auth::id(),
-                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'project_id' => ($this->project != null) ? $this->project->id : null,
                 'activity_id' => $id,
                 'view' => 'livewire/projects/activities/table-activities',
                 'action' => 'Cambio de estado',
@@ -537,12 +686,89 @@ class TableActivities extends Component
             $activity = Activity::find($id);
 
             if ($activity) {
+                // Convertir la fecha ingresada a un objeto Carbon
+                $newDate = Carbon::parse($day)->format('Y-m-d');
+                $today = Carbon::now()->format('Y-m-d');
+
+                if ($newDate < $today) {
+                    $this->errorMessages[$id] = 'No puedes seleccionar una fecha anterior a hoy.';
+                    $this->expected_day[$id] = $activity->expected_date
+                        ? Carbon::parse($activity->expected_date)->format('Y-m-d')
+                        : '';
+
+                    return;
+                }
+
+                // Limpiar mensaje de error si la fecha es válida
+                unset($this->errorMessages[$id]);
+
+                // Actualizar la fecha en la base de datos
                 $activity->expected_date = Carbon::parse($day)->format('Y-m-d');
                 $activity->save();
 
+                $repeat = ($activity->activity_repeat != null) ? true : false;
+
+                if ($repeat) {
+                    $ActivityRepeat = Activity::where('activity_repeat', $activity->activity_repeat)->get();
+                    $activitiesRecurrents = ActivityRecurrent::where('activity_repeat', $activity->activity_repeat)->first();
+
+                    if ($ActivityRepeat->count() == 1) {
+                        switch ($activitiesRecurrents->frequency) {
+                            case 'Dairy':
+                                if ($activitiesRecurrents->end_date != null) {
+                                    $activitiesRecurrents->end_date = Carbon::parse($day);
+                                    $activitiesRecurrents->last_date = Carbon::parse($day);
+                                } else {
+                                    $activitiesRecurrents->last_date = Carbon::parse($day)->addDay();
+                                }
+                                $activitiesRecurrents->save();
+                                break;
+                            case 'Weekly':
+                                if ($activitiesRecurrents->end_date != null) {
+                                    $activitiesRecurrents->end_date = Carbon::parse($day);
+                                    $activitiesRecurrents->last_date = Carbon::parse($day);
+                                } else {
+                                    $activitiesRecurrents->last_date = Carbon::parse($day)->addWeek();
+                                }
+                                $activitiesRecurrents->save();
+                                break;
+                            case 'Monthly':
+                                if ($activitiesRecurrents->end_date != null) {
+                                    $activitiesRecurrents->end_date = Carbon::parse($day);
+                                    $activitiesRecurrents->last_date = Carbon::parse($day);
+                                } else {
+                                    $activitiesRecurrents->last_date = Carbon::parse($day)->addMonth();
+                                }
+                                $activitiesRecurrents->save();
+                                break;
+                            case 'Yearly':
+                                if ($activitiesRecurrents->end_date != null) {
+                                    $activitiesRecurrents->end_date = Carbon::parse($day);
+                                    $activitiesRecurrents->last_date = Carbon::parse($day);
+                                } else {
+                                    $activitiesRecurrents->last_date = Carbon::parse($day)->addYear();
+                                }
+                                $activitiesRecurrents->save();
+                                break;
+                            default:
+                                break;
+                        }
+                    } else {
+                        $lastActivityRepeat = Activity::where('activity_repeat', $activity->activity_repeat)->orderBy('expected_date', 'desc')->latest()->first();
+
+                        $activitiesRecurrents->last_date = Carbon::parse($lastActivityRepeat->expected_date)->format('Y-m-d');
+
+                        if ($activitiesRecurrents->end_date != null) {
+                            $activitiesRecurrents->end_date = Carbon::parse($lastActivityRepeat->expected_date)->format('Y-m-d');
+                        }
+
+                        $activitiesRecurrents->save();
+                    }
+                }
+
                 Log::create([
                     'user_id' => Auth::id(),
-                    'project_id'=> ($this->project != null) ? $this->project->id : null,
+                    'project_id' => ($this->project != null) ? $this->project->id : null,
                     'activity_id' => $activity->id,
                     'view' => 'livewire/projects/activities/table-activities',
                     'action' => 'Actualizar fecha de entrega',
@@ -563,7 +789,7 @@ class TableActivities extends Component
         } catch (\Exception $e) {
             ErrorLog::create([
                 'user_id' => Auth::id(),
-                'project_id'=> ($this->project != null) ? $this->project->id : null,
+                'project_id' => ($this->project != null) ? $this->project->id : null,
                 'activity_id' => $id,
                 'view' => 'livewire/projects/activities/table-activities',
                 'action' => 'Actualizar fecha de entrega',

@@ -92,14 +92,12 @@
                                                 <div class="mr-1 mt-1 flex w-auto justify-end">
                                                     <div class="relative flex justify-center">
                                                         @if ($message->transmitter)
-                                                            @if ($message->transmitter->profile_photo)
-                                                                <img class="h-8 w-8 rounded-full object-cover"
-                                                                    aria-hidden="true"
+                                                            @if ($message->transmitterContentExists == true)
+                                                                <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
                                                                     src="{{ asset('usuarios/' . $message->transmitter->profile_photo) }}"
                                                                     alt="Avatar" />
                                                             @else
-                                                                <img class="h-8 w-8 rounded-full object-cover"
-                                                                    aria-hidden="true"
+                                                                <img class="h-8 w-8 rounded-full object-cover" aria-hidden="true"
                                                                     src="{{ Avatar::create($message->transmitter->name)->toBase64() }}"
                                                                     alt="Avatar" />
                                                             @endif

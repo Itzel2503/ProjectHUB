@@ -436,8 +436,16 @@
                                         @if (Auth::user()->type_user === 1 && $report->state != 'Resuelto')
                                             <input type="date" wire:model='expected_day.{{ $report->id }}'
                                                 wire:change="updateExpectedDay({{ $report->id }}, $event.target.value)">
+                                            {{-- Mostrar mensaje de advertencia si la fecha es inválida --}}
+                                            @if (isset($this->errorMessages[$report->id]))
+                                                <p class="pl-2 text-xs italic text-red-600">{{ $this->errorMessages[$report->id] }}</p>
+                                            @endif
                                         @else
-                                            {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                            @if($report->expected_date == '')
+                                                <p class="text-red-600">Sin fecha</p>
+                                            @else
+                                                {{ \Carbon\Carbon::parse($report->expected_date)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                            @endif
                                         @endif
                                     </div>
                                 @endif

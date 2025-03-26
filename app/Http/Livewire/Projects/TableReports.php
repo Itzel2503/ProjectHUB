@@ -53,7 +53,8 @@ class TableReports extends Component
     // GRAFICA EFFORT POINTS
     public $starMonth, $endMonth;
     // EXPECTED_DATE
-    public $expected_day;
+    public $expected_day = [];
+    public $errorMessages = []; // Para almacenar mensajes de error dinámicos
 
     // Resetear paginación cuando se actualiza el campo de búsqueda
     public function updatingSearch()
@@ -549,6 +550,24 @@ class TableReports extends Component
                     $report->updated_expected_date = true;
                 }
 
+                // Convertir la fecha ingresada a un objeto Carbon
+                $newDate = Carbon::parse($day)->format('Y-m-d');
+                $today = Carbon::now()->format('Y-m-d');
+
+                // Si la fecha es anterior a hoy, mostrar advertencia y revertir el cambio
+                if ($newDate < $today) {
+                    $this->errorMessages[$id] = 'No puedes seleccionar una fecha anterior a hoy.';
+                    $this->expected_day[$id] = $report->expected_date 
+                        ? Carbon::parse($report->expected_date)->format('Y-m-d') 
+                        : '';
+
+                    return;
+                }
+
+                // Limpiar mensaje de error si la fecha es válida
+                unset($this->errorMessages[$id]);
+
+                // Actualizar la fecha en la base de datos
                 $report->expected_date = Carbon::parse($day)->format('Y-m-d');
                 $report->save();
 
