@@ -42,8 +42,8 @@
         </div>
         @if ($client == false)
             <livewire:projects.activities.backlog-sprints :project="$project" :backlog="$backlog">
-            @else
-                <livewire:projects.activities.backlog-sprints-client :project="$project" :backlog="$backlog">
+        @else
+            <livewire:projects.activities.backlog-sprints-client :project="$project" :backlog="$backlog">
         @endif
 
         @livewireScripts

@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // Ejecutar el comando todos los días a las 8:00 AM
-        $schedule->command('command:activitiesRecurrent')->everyMinute();
+        $schedule->command('command:activitiesRecurrent')->daily();
         // $schedule->command('command:activitiesRecurrent')->dailyAt('05:00');
 
         // Otras opciones:

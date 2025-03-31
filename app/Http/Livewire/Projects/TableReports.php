@@ -25,7 +25,7 @@ class TableReports extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['delete'];
+    public $listeners = ['delete', 'goToPageWithReport'];
     // ENVIADAS
     public $project;
     // FILTROS
@@ -68,11 +68,16 @@ class TableReports extends Component
         if (Auth::user()->type_user == 3) {
             $this->filteredExpected = 'desc';
         }
+
+        if (request()->has('highlight')) {
+            $this->goToPageWithReport(request('highlight'));
+        }
     }
 
     public function render()
     {
         $this->dispatchBrowserEvent('reloadModalAfterDelay');
+        $highlightId = request()->get('highlight');
 
         $user = Auth::user();
         $user_id = $user->id;
@@ -924,6 +929,51 @@ class TableReports extends Component
         if ($type == 'expected_date') {
             $this->orderByType = 'expected_date';
             $this->filteredExpected = 'desc';
+        }
+    }
+
+    public function goToPageWithReport($reportId)
+    {
+        $report = Report::find($reportId);
+
+        if ($report) {
+            // Si el reporte está resuelto, forzar a mostrar los resueltos
+            if ($report->state === 'Resuelto') {
+                $this->selectedStates = 'Resuelto';
+            }
+
+            $query = Report::where('project_id', $report->project_id)
+                ->where(function ($query) {
+                    if (empty($this->selectedStates)) {
+                        $query->where('reports.state', '!=', 'Resuelto');
+                    }
+                })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
+                })
+                ->when($this->selectedStates, function ($query) {
+                    $query->where('reports.state', $this->selectedStates);
+                })
+                ->when($this->filterPriotiry, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->when($this->filterState, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
+                })
+                ->orderBy($this->orderByType, $this->filteredExpected);
+
+            // Buscar el índice del reporte dentro de la lista filtrada
+            $index = $query->pluck('id')->search($reportId);
+
+            if ($index !== false) {
+                $page = floor($index / $this->perPage) + 1;
+
+                // Forzar el cambio de página en Livewire
+                $this->setPage($page);
+
+                // Emitir evento para que el frontend haga scroll después de la actualización
+                $this->emit('activityHighlighted', $reportId);
+            }
         }
     }
     // EXTRAS

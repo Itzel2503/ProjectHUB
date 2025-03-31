@@ -699,37 +699,27 @@
     {{-- END LOADING PAGE --}}
     @push('js')
         <script>
-            // NOTIFICACIONES
-            document.addEventListener('DOMContentLoaded', function() {
-                // Verifica si la URL contiene el parámetro 'highlight'
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('highlight')) {
-                    // Obtiene el ID del activity a resaltar
-                    const activityId = urlParams.get('highlight');
-                    // Selecciona la fila que deseas resaltar
-                    const row = document.getElementById('activity-' + activityId);
-                    if (row) {
-                        // Cambia el color de la fila a rojo
-                        row.style.backgroundColor = 'rgb(215 229 231)';
+            document.addEventListener('DOMContentLoaded', function () {
+                Livewire.on('activityHighlighted', (activityId) => {
+                    setTimeout(() => {
+                        const row = document.getElementById('activity-' + activityId);
+                        if (row) {
+                            row.style.backgroundColor = 'rgb(215 229 231)';
+                            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                        // Después de 30 segundos, restaura el color original
-                        setTimeout(() => {
-                            row.style.backgroundColor = '';
-                        }, 15000); // segundos
-                    }
+                            setTimeout(() => {
+                                row.style.backgroundColor = '';
+                            }, 20000);
+                        }
+                    }, 800); // Espera breve para asegurar que la tabla se renderiza
+                });
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const activityId = urlParams.get('highlight');
+                if (activityId) {
+                    Livewire.emit('goToPageWithActivity', activityId);
                 }
             });
-
-            // MODALS
-            // const userType = @json(Auth::user()->type_user);
-            // // Verificar el tipo de usuario antes de mostrar el mensaje
-            // if (userType === 1) {
-            //     console.log('Usuario no autorizado para ver esta notificación.');
-            // } else {
-            //     window.addEventListener('swal:modal', event => {
-            //         toastr[event.detail.type](event.detail.text, event.detail.title);
-            //     });
-            // }
 
             Livewire.on('deleteActivity', deletebyId => {
                 Swal.fire({

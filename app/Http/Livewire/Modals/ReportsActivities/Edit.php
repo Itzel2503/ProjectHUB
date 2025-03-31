@@ -466,7 +466,7 @@ class Edit extends Component
 
                 Log::create([
                     'user_id' => Auth::id(),
-                    'report_id' => $activity->id,
+                    'report_id' => $report->id,
                     'view' => 'livewire/modals/reports-activities/edit',
                     'action' => 'update report',
                     'message' => 'Reporte actualizado exitosamente',

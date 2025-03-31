@@ -26,7 +26,7 @@ class TableActivities extends Component
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    public $listeners = ['reloadPage' => 'reloadPage', 'sprintUpdated', 'delete', 'deleteRecurrent', 'openCreateActivityModal' => 'openCreateModal'];
+    public $listeners = ['reloadPage' => 'reloadPage', 'sprintUpdated', 'goToPageWithActivity', 'delete', 'deleteRecurrent', 'openCreateActivityModal' => 'openCreateModal'];
     // ENVIADAS
     public $idsprint, $project, $percentagetesolved;
     // BACKLOG
@@ -67,6 +67,13 @@ class TableActivities extends Component
     public function openCreateModal()
     {
         $this->createEdit = true; // Abrir el modal
+    }
+
+    public function mount()
+    {
+        if (request()->has('highlight')) {
+            $this->goToPageWithActivity(request('highlight'));
+        }
     }
 
     public function render()
@@ -949,6 +956,29 @@ class TableActivities extends Component
         if ($type == 'expected_date') {
             $this->orderByType = 'expected_date';
             $this->filteredExpected = 'desc';
+        }
+    }
+
+    public function goToPageWithActivity($activityId)
+    {
+        $activity = Activity::find($activityId);
+
+        if ($activity) {
+            // Buscar la página en la que está la actividad
+            $index = Activity::where('sprint_id', $activity->sprint_id)
+                ->orderBy($this->orderByType, $this->filteredExpected)
+                ->pluck('id')
+                ->search($activityId);
+
+            if ($index !== false) {
+                $page = floor($index / $this->perPage) + 1;
+    
+                // Forzar el cambio de página en Livewire
+                $this->setPage($page);
+    
+                // Emitir evento para que el frontend haga scroll después de la actualización
+                $this->emit('activityHighlighted', $activityId);
+            }
         }
     }
     // PROTECTED

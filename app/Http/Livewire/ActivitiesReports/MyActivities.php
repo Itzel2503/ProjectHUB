@@ -305,6 +305,7 @@ class MyActivities extends Component
                             $task->project_name = $sprint->backlog->project->name;
                             $task->project_priority = 'K' . $sprint->backlog->project->priority;
                             $task->project_id = $sprint->backlog->project->id;
+                            $task->sprint_id = $sprint->id;
                             $task->sprint_state = $sprint->state;
                             $task->project_activity = true;
                             // FECHA DE ENTREGA

@@ -779,22 +779,30 @@
     {{-- END LOADING PAGE --}}
     @push('js')
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Verifica si la URL contiene el parámetro 'highlight'
+            document.addEventListener('DOMContentLoaded', function () {
+                Livewire.on('reportHighlighted', (reportId) => {
+                    setTimeout(() => {
+                        const row = document.getElementById('report-' + reportId);
+                        if (row) {
+                            // Resalta el reporte cambiando su fondo
+                            row.style.backgroundColor = 'rgb(215 229 231)';
+                            
+                            // Hace scroll al elemento
+                            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                            // Elimina el resaltado después de 15 segundos
+                            setTimeout(() => {
+                                row.style.backgroundColor = '';
+                            }, 20000);
+                        }
+                    }, 800); // Espera breve para asegurar que la tabla se renderiza
+                });
+
+                // Verifica si hay un parámetro 'highlight' en la URL y lo envía a Livewire
                 const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('highlight')) {
-                    // Obtiene el ID del reporte a resaltar
-                    const reportId = urlParams.get('highlight');
-                    // Selecciona la fila que deseas resaltar
-                    const row = document.getElementById('report-' + reportId);
-                    if (row) {
-                        // Cambia el color de la fila a rojo
-                        row.style.backgroundColor = 'rgb(215 229 231)';
-                        // Después de 30 segundos, restaura el color original
-                        setTimeout(() => {
-                            row.style.backgroundColor = '';
-                        }, 15000); // segundos
-                    }
+                const reportId = urlParams.get('highlight');
+                if (reportId) {
+                    Livewire.emit('reportHighlighted', reportId);
                 }
             });
 
