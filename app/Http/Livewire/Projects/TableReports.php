@@ -935,6 +935,7 @@ class TableReports extends Component
     public function goToPageWithReport($reportId)
     {
         $report = Report::find($reportId);
+        $user_id = Auth::id();
 
         if ($report) {
             // Si el reporte está resuelto, forzar a mostrar los resueltos
@@ -942,11 +943,19 @@ class TableReports extends Component
                 $this->selectedStates = 'Resuelto';
             }
 
+            // Replicar la misma lógica de consulta que en render()
             $query = Report::where('project_id', $report->project_id)
                 ->where(function ($query) {
+                    $query->where('title', 'like', '%' . $this->search . '%');
+                    if (strtolower($this->search) === 'reincidencia' || strtolower($this->search) === 'Reincidencia') {
+                        $query->orWhereNotNull('count');
+                    }
                     if (empty($this->selectedStates)) {
                         $query->where('reports.state', '!=', 'Resuelto');
                     }
+                })
+                ->when($this->filterPriotiry, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
                 })
                 ->when($this->selectedDelegate, function ($query) {
                     $query->where('delegate_id', $this->selectedDelegate);
@@ -954,12 +963,28 @@ class TableReports extends Component
                 ->when($this->selectedStates, function ($query) {
                     $query->where('reports.state', $this->selectedStates);
                 })
-                ->when($this->filterPriotiry, function ($query) {
-                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
-                })
                 ->when($this->filterState, function ($query) {
                     $query->orderByRaw($this->priorityCase . ' ' . $this->filteredState);
-                })
+                });
+
+            // Aplicar filtros según tipo de usuario
+            if (Auth::user()->type_user == 2) {
+                $query->where(function ($query) use ($user_id) {
+                    $query->where('delegate_id', $user_id)
+                        ->orWhere(function ($subQuery) use ($user_id) {
+                            $subQuery->where('user_id', $user_id)
+                                ->where('video', true);
+                        });
+                });
+            } elseif (Auth::user()->type_user == 3) {
+                $query->whereHas('user', function ($query) {
+                    $query->where('type_user', 3);
+                });
+            }
+
+            // Continuar con la consulta base
+            $query->join('users as delegates', 'reports.delegate_id', '=', 'delegates.id')
+                ->select('reports.*', 'delegates.name')
                 ->orderBy($this->orderByType, $this->filteredExpected);
 
             // Buscar el índice del reporte dentro de la lista filtrada
@@ -973,6 +998,11 @@ class TableReports extends Component
 
                 // Emitir evento para que el frontend haga scroll después de la actualización
                 $this->emit('activityHighlighted', $reportId);
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Reporte no está visible',
+                ]);
             }
         }
     }

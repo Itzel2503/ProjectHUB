@@ -466,7 +466,11 @@
                                 <div class="principal flex justify-center">
                                     @if ($project == null)
                                         @if ($report->project)
-                                            <a href="{{ route('projects.reports.index', ['project' => $report->project->id, 'reports' => $report->id, 'highlight' => $report->id]) }}"
+                                            <a href="{{ route('projects.reports.index', [
+                                                    'project' => $report->project->id,
+                                                    'highlight' => $report->id,
+                                                    'page' => request()->get('page', 1) // Agrega la página actual
+                                                ]) }}"
                                                 target="_blank" rel="noopener noreferrer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"

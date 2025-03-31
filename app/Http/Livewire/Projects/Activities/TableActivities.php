@@ -962,13 +962,36 @@ class TableActivities extends Component
     public function goToPageWithActivity($activityId)
     {
         $activity = Activity::find($activityId);
+        $user_id = Auth::user()->id;
 
         if ($activity) {
-            // Buscar la página en la que está la actividad
-            $index = Activity::where('sprint_id', $activity->sprint_id)
-                ->orderBy($this->orderByType, $this->filteredExpected)
-                ->pluck('id')
-                ->search($activityId);
+            // Replicar la misma lógica de consulta que en render()
+            $query = Activity::where('sprint_id', $activity->sprint_id)
+                ->when($this->filterPriotiry, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
+                })
+                ->when($this->selectedDelegate, function ($query) {
+                    $query->where('delegate_id', $this->selectedDelegate);
+                })
+                ->when(!empty($this->selectedStates), function ($query) {
+                    $query->where('state', $this->selectedStates);
+                })
+                ->when($this->filterState, function ($query) {
+                    $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);
+                });
+
+            // Aplicar filtro por tipo de usuario
+            if (Auth::user()->type_user != 1) {
+                $query->where('delegate_id', $user_id);
+            }
+
+            // Continuar con la consulta base
+            $query->join('users as delegates', 'activities.delegate_id', '=', 'delegates.id')
+                ->select('activities.*', 'delegates.name')
+                ->orderBy($this->orderByType, $this->filteredExpected);
+
+            // Buscar el índice considerando todos los filtros
+            $index = $query->pluck('activities.id')->search($activityId);
 
             if ($index !== false) {
                 $page = floor($index / $this->perPage) + 1;
@@ -978,6 +1001,11 @@ class TableActivities extends Component
     
                 // Emitir evento para que el frontend haga scroll después de la actualización
                 $this->emit('activityHighlighted', $activityId);
+            } else {
+                $this->dispatchBrowserEvent('swal:modal', [
+                    'type' => 'error',
+                    'title' => 'Actividad no está visible',
+                ]);
             }
         }
     }
