@@ -397,9 +397,8 @@ class Report extends Controller
                 $filteredUsers = $allUsers->reject(function ($user) use ($report) {
                     return $user->id == $report->delegate_id;
                 });
-                $expectedDate = Carbon::parse($report->expected_date)->toDateString();
 
-                return view('projects.reports.clonereport', compact('project', 'user', 'filteredUsers', 'report', 'expectedDate'));
+                return view('projects.reports.clonereport', compact('project', 'user', 'filteredUsers', 'report'));
             } else {
                 return redirect('/projects');
             }

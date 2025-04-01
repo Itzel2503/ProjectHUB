@@ -373,8 +373,8 @@
                             <h5 class="inline-flex font-semibold" for="name">
                                 Título del reporte <p class="text-red-600">*</p>
                             </h5>
-                            <input required type="text" placeholder="Título del reporte" name="title"
-                                id="title" class="inputs">
+                            <input required id="title" type="text" placeholder="Título del reporte" name="title"
+                                class="inputs">
                             @if ($errors->has('title'))
                                 <span class="pl-2 text-xs italic text-red-600">
                                     {{ $errors->first('title') }}
@@ -387,7 +387,7 @@
                             <h5 class="inline-flex font-semibold" for="name">
                                 Descripción del reporte <p class="text-red-600">*</p>
                             </h5>
-                            <textarea required type="text" rows="6"
+                            <textarea required type="text" rows="6" id="description"
                                 placeholder="Describa la observación y especifique el objetivo a cumplir." name="description" class="textarea"></textarea>
                             @if ($errors->has('description'))
                                 <span class="pl-2 text-xs italic text-red-600">
@@ -449,7 +449,7 @@
                     <div class="-mx-3 mb-6 flex flex-row">
                         <div class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
-                                Fecha esperada @if (Auth::user()->type_user == 3) <p class="text-red-600">*</p> @endif
+                                Fecha esperada
                             </h5>
                             <input type="date" name="expected_date" id="expected_date" class="inputs">
                         </div>
@@ -681,7 +681,10 @@
         let inputPointMany = document.getElementById("inputPointMany");
         let inputPointEffort = document.getElementById("inputPointEffort");
         let file = document.getElementById("file");
+        let title = document.getElementById('title');
+        let delegate = document.getElementById('delegate');
         let delegateSelect = document.getElementById('delegate');
+        let expectedDate = document.getElementById('expected_date');
         // FORM
         let formReport = document.getElementById('formReport');
         let viewPhoto = document.getElementById('viewPhoto');
@@ -717,6 +720,11 @@
         let user_type = @json($user->type_user);
         let project = @json($project->name);
         let formattedProject = project.replace(/\s+/g, '_'); // Reemplazar los espacios por guiones bajos
+        // FECHA DE ENTREGA
+        if (expectedDate) {
+            const today = new Date().toISOString().split('T')[0]; // Establecer la fecha mínima como hoy (formato YYYY-MM-DD)
+            expectedDate.min = today;
+        }
         // ------------------------------ MODAL ------------------------------
         let showingDirect = false; // Estado inicial
         let validNumbers = [1, 2, 3, 5, 8, 13];
@@ -729,84 +737,106 @@
             });
         }
         // CERRAR MODAL
-        closeModal.addEventListener('click', function(e) {
-            e.preventDefault();
-            modalPoints.classList.remove("block");
-            modalPoints.classList.add("hidden");
-        });
+        if (closeModal) {
+            closeModal.addEventListener('click', function(e) {
+                e.preventDefault();
+                modalPoints.classList.remove("block");
+                modalPoints.classList.add("hidden");
+            });
+        }
         // CAMBIO DE FORMULARIO
-        addPoints.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (showingDirect) {
-                // Cambiar a mostrar el formulario
-                addPoints.innerHTML =
-                    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 10h14l-4 -4" /><path d="M17 14h-14l4 4" /></svg>Agregar puntos directos';
-                divDirect.classList.add("hidden");
-                divDirect.classList.remove("block");
-                divForm.classList.add("block");
-                divForm.classList.remove("hidden");
-                // clearInputs
-                directPoints.value = '';
-                errorSpan.style.display = 'none';
-            } else {
-                // Cambiar a mostrar los puntos directos
-                addPoints.innerHTML =
-                    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 10h14l-4 -4" /><path d="M17 14h-14l4 4" /></svg>Cuestionario';
-                divDirect.classList.remove("hidden");
-                divDirect.classList.add("block");
-                divForm.classList.remove("block");
-                divForm.classList.add("hidden");
-                // clearInputs
-                pointKnow.value = 0;
-                pointMany.value = 0;
-                pointEffort.value = 0;
-                formErrorSpan.style.display = 'none';
-            }
-
-            showingDirect = !showingDirect; // Cambiar el estado
-        });
-        // MOVER INFO AL FORMULARIO
-        modalSave.addEventListener('click', function() {
-            if (showingDirect) {
-                let value = parseInt(directPoints.value, 10);
-
-                if (validNumbers.includes(value)) {
-                    inputPoints.value = directPoints.value;
+        if (addPoints) {
+            addPoints.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (showingDirect) {
+                    // Cambiar a mostrar el formulario
+                    addPoints.innerHTML =
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 10h14l-4 -4" /><path d="M17 14h-14l4 4" /></svg>Agregar puntos directos';
+                    divDirect.classList.add("hidden");
+                    divDirect.classList.remove("block");
+                    divForm.classList.add("block");
+                    divForm.classList.remove("hidden");
+                    // clearInputs
+                    directPoints.value = '';
                     errorSpan.style.display = 'none';
-                    // Questionary
-                    inputPointKnow.value = '';
-                    inputPointMany.value =  '';
-                    inputPointEffort.value =  '';
-                    // cerrar modal
-                    modalPoints.classList.remove("block");
-                    modalPoints.classList.add("hidden");
                 } else {
-                    errorSpan.style.display = 'block';
-                }
-            } else {
-                let pointKnow = parseInt(document.getElementById('pointKnow').value, 10) || 0;
-                let pointMany = parseInt(document.getElementById('pointMany').value, 10) || 0;
-                let pointEffort = parseInt(document.getElementById('pointEffort').value, 10) || 0;
-
-                if (!pointKnow || !pointMany || !pointEffort) {
-                    formErrorSpan.style.display = 'block';
-                } else {
+                    // Cambiar a mostrar los puntos directos
+                    addPoints.innerHTML =
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 10h14l-4 -4" /><path d="M17 14h-14l4 4" /></svg>Cuestionario';
+                    divDirect.classList.remove("hidden");
+                    divDirect.classList.add("block");
+                    divForm.classList.remove("block");
+                    divForm.classList.add("hidden");
+                    // clearInputs
+                    pointKnow.value = 0;
+                    pointMany.value = 0;
+                    pointEffort.value = 0;
                     formErrorSpan.style.display = 'none';
-                    // Find the maximum value
-                    let maxValue = Math.max(pointKnow, pointMany, pointEffort);
-                    // Set the maximum value to inputPoints
-                    inputPoints.value = maxValue > 0 ? maxValue : '';
-                    // Questionary
-                    inputPointKnow.value = pointKnow;
-                    inputPointMany.value =  pointMany;
-                    inputPointEffort.value =  pointEffort;
-                    // cerrar modal
-                    modalPoints.classList.remove("block");
-                    modalPoints.classList.add("hidden");
                 }
-            }
-        });
+
+                showingDirect = !showingDirect; // Cambiar el estado
+            });
+        }
+        // MOVER INFO AL FORMULARIO
+        if (modalSave) {
+            modalSave.addEventListener('click', function() {
+                if (showingDirect) {
+                    let value = parseInt(directPoints.value, 10);
+
+                    if (validNumbers.includes(value)) {
+                        inputPoints.value = directPoints.value;
+                        errorSpan.style.display = 'none';
+                        // Questionary
+                        inputPointKnow.value = '';
+                        inputPointMany.value =  '';
+                        inputPointEffort.value =  '';
+                        // cerrar modal
+                        modalPoints.classList.remove("block");
+                        modalPoints.classList.add("hidden");
+                    } else {
+                        errorSpan.style.display = 'block';
+                    }
+                } else {
+                    let pointKnow = parseInt(document.getElementById('pointKnow').value, 10) || 0;
+                    let pointMany = parseInt(document.getElementById('pointMany').value, 10) || 0;
+                    let pointEffort = parseInt(document.getElementById('pointEffort').value, 10) || 0;
+
+                    if (!pointKnow || !pointMany || !pointEffort) {
+                        formErrorSpan.style.display = 'block';
+                    } else {
+                        formErrorSpan.style.display = 'none';
+                        // Find the maximum value
+                        let maxValue = Math.max(pointKnow, pointMany, pointEffort);
+                        // Set the maximum value to inputPoints
+                        inputPoints.value = maxValue > 0 ? maxValue : '';
+                        // Questionary
+                        inputPointKnow.value = pointKnow;
+                        inputPointMany.value =  pointMany;
+                        inputPointEffort.value =  pointEffort;
+                        // cerrar modal
+                        modalPoints.classList.remove("block");
+                        modalPoints.classList.add("hidden");
+                    }
+                }
+            });
+        }
         // ------------------------------ FORMULARIO ------------------------------
+        // FECHA DE ENTREGA
+        if (expectedDate) {
+            expectedDate.addEventListener('change', function() {
+                const selectedDate = this.value;
+                const today = new Date().toISOString().split('T')[0];
+                
+                // Comparar fechas (formato YYYY-MM-DD permite comparación directa)
+                if (selectedDate < today) {
+                    // Si la fecha es anterior a hoy, establecer la fecha actual
+                    this.value = today;
+                    
+                    // Opcional: Mostrar mensaje al usuario
+                    toastr['error']("La fecha no puede ser anterior al dia actual.");
+                }
+            });
+        }
         // CHECKBOX DE ICONOS
         checkboxesIcon.forEach(function(checkbox, index) {
             checkbox.addEventListener('change', function() {
@@ -858,35 +888,59 @@
         }
         // Función de validación del formulario
         function validateForm() {
-            // Verificar si se seleccionó al menos un checkbox de prioridad
-            const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-
-            if (user_type != 3) {
-                // Verificar si se ha seleccionado una opción diferente de "Selecciona..."
-                const selectedValue = delegateSelect.value;
-                // Verificar si se cumplen todas las condiciones
-                if (selectedValue === '0') {
-                    toastr['error']("Selecciona un delegado.");
-                    return false; // Retorna false si no se cumplen todas las condiciones
-                }
-                if (!isChecked) {
-                    toastr['error']("Selecciona una prioridad.");
-                    return false; // Retorna false si no se cumplen todas las condiciones
-                }
-            } else {
-                if (!isChecked) {
-                    toastr['error']("Faltan campos o campos incorrectos.");
-                    return false; // Retorna false si no se cumplen todas las condiciones
-                }
+            let isValid = true;
+    
+            // Validar título
+            if (title.value.trim() === '') {
+                toastr.error("Escribe el título.");
+                title.focus();
+                isValid = false;
             }
-            return true; // Retorna true si se cumplen todas las condiciones
+            
+            // Validar descripción
+            if (description.value.trim() === '') {
+                toastr.error("Describe el problema del reporte.");
+                if (isValid) description.focus(); // Solo focus si no hay otro error antes
+                isValid = false;
+            }
+            
+            // Validar checkboxes de prioridad
+            const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            if (!isChecked) {
+                toastr.error("Selecciona una prioridad.");
+                isValid = false;
+            }
+            
+            // Validar delegado (solo para usuarios no tipo 3)
+            if (user_type != 3 && delegateSelect.value === '0') {
+                toastr.error("Selecciona un delegado.");
+                if (isValid) delegateSelect.focus();
+                isValid = false;
+            }
+            
+            return isValid;
         }
         // Evento 'click' para el botón "Guardar"
         buttonSave.addEventListener('click', function(e) {
-            if (!validateForm()) {
-                e.preventDefault(); // Detener el envío del formulario si la validación falla
-            } else {
+            if (validateForm()) {
+                // Deshabilitar scroll de la página
+                document.body.style.overflow = 'hidden';
+
+                // Desplazar al inicio de la página
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });     
+
                 loadingPage.classList.remove('hidden');
+                // El formulario se enviará normalmente
+            } else {
+                e.preventDefault();
+                // Opcional: scroll al primer error
+                const firstError = document.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }
         });
         // Evento 'click' para el botón "Guardar con video"

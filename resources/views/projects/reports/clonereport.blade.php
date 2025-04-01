@@ -425,7 +425,7 @@
                             </h5>
                             <textarea disabled type="text" placeholder="Describa la observación y especifique el objetivo a cumplir."
                                 class="textarea mb-2 text-gray-500">{{ $report->description }}</textarea>
-                            <textarea required type="text" rows="6"
+                            <textarea required type="text" rows="6" id="description"
                                 placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="description" class="textarea"></textarea>
                             @if ($errors->has('description'))
                                 <span class="pl-2 text-xs italic text-red-600">
@@ -490,8 +490,7 @@
                             <h5 class="inline-flex font-semibold" for="code">
                                 Fecha esperada
                             </h5>
-                            <input type="date" name="expected_date" id="expected_date" class="inputs"
-                                value="{{ $expectedDate }}">
+                            <input type="date" name="expected_date" id="expected_date" class="inputs">
                         </div>
                         <div class="m-auto flex w-full flex-row justify-center px-3">
                             <h5 class="inline-flex font-semibold" for="name">
@@ -508,7 +507,7 @@
                         @endif
                     </div>
                     <div class="mb-6 flex items-center justify-center">
-                        <button type="submit" class="btnSave">
+                        <button type="submit" id="buttonSave" class="btnSave">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
@@ -562,20 +561,22 @@
                 </div>
                 <div class="modalBody">
                     <div class="md-3/4 mb-5 flex w-full flex-col px-5 md:mb-0">
-                        <div class="mb-6 flex flex-row">
-                            <span id="addPoints"
-                                class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M7 10h14l-4 -4" />
-                                    <path d="M17 14h-14l4 4" />
-                                </svg>
-                                Agregar puntos directos
-                            </span>
-                        </div>
+                        @if(Auth::user()->type_user == 1)
+                            <div class="mb-6 flex flex-row">
+                                <span id="addPoints"
+                                    class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 10h14l-4 -4" />
+                                        <path d="M17 14h-14l4 4" />
+                                    </svg>
+                                    Agregar puntos directos
+                                </span>
+                            </div>
+                        @endif
                         <div id="divDirect" class="-mx-3 hidden">
                             <div class="mb-6 flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
@@ -678,6 +679,11 @@
     @endif
 
     <script>
+        // VARIABLES GLOBALES
+        let user = @json($user->id);
+        let user_type = @json($user->type_user);
+        let project = @json($project->name);
+        let formattedProject = project.replace(/\s+/g, '_'); // Reemplazar los espacios por guiones bajos
         // MENUS
         let viewReport = document.getElementById('viewReport');
         let artboard = document.getElementById('artboard');
@@ -713,6 +719,8 @@
         let inputPointMany = document.getElementById("inputPointMany");
         let inputPointEffort = document.getElementById("inputPointEffort");
         let file = document.getElementById("file");
+        let delegate = document.getElementById('delegate');
+        let expectedDate = document.getElementById('expected_date');
         // FORM
         let formReport = document.getElementById('formReport');
         let viewPhoto = document.getElementById('viewPhoto');
@@ -724,12 +732,30 @@
         let checkboxesIcon = document.querySelectorAll('.icon-checkbox');
         let checkboxes = document.querySelectorAll('.priority-checkbox');
         let downloadVideo = document.getElementById('downloadVideo');
+        let buttonSave = document.getElementById('buttonSave');
+        let buttonPoints = document.getElementById('buttonPoints');
+        // MODAL
+        let modalPoints = document.getElementById('modalPoints');
+        let closeModal = document.getElementById('closeModal');
+        let divDirect = document.getElementById('divDirect');
+        let divForm = document.getElementById('divForm');
+        // MODAL BUTTONS
+        let addPoints = document.getElementById('addPoints');
+        let modalSave = document.getElementById('modalSave');
+        // MODAL INPUTS Y SELECTS
+        let errorSpan = document.getElementById('errorSpan');
+        let formErrorSpan = document.getElementById('formErrorSpan');
+        let directPoints = document.getElementById('directPoints');
+        let pointKnow = document.getElementById('pointKnow');
+        let pointMany = document.getElementById('pointMany');
+        let pointEffort = document.getElementById('pointEffort');
         // LOAGING
         let loadingPage = document.getElementById('loadingPage');
-        // VARIABLES GLOBALES
-        let user = @json($user->id);
-        let project = @json($project->name);
-        let formattedProject = project.replace(/\s+/g, '_'); // Reemplazar los espacios por guiones bajos
+        // FECHA DE ENTREGA
+        if (expectedDate) { // Verifica si el elemento existe
+            const today = new Date().toISOString().split('T')[0]; // Establecer la fecha mínima como hoy (formato YYYY-MM-DD)
+            expectedDate.min = today;
+        }
         // ------------------------------ MODAL ------------------------------
         let showingDirect = false; // Estado inicial
         let validNumbers = [1, 2, 3, 5, 8, 13];
@@ -742,83 +768,105 @@
             });
         }
         // CERRAR MODAL
-        closeModal.addEventListener('click', function(e) {
-            e.preventDefault();
-            modalPoints.classList.remove("block");
-            modalPoints.classList.add("hidden");
-        });
+        if (closeModal) {
+            closeModal.addEventListener('click', function(e) {
+                e.preventDefault();
+                modalPoints.classList.remove("block");
+                modalPoints.classList.add("hidden");
+            });
+        }
         // CAMBIO DE FORMULARIO
-        addPoints.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (showingDirect) {
-                // Cambiar a mostrar el formulario
-                addPoints.innerHTML =
-                    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 10h14l-4 -4" /><path d="M17 14h-14l4 4" /></svg>Agregar puntos directos';
-                divDirect.classList.add("hidden");
-                divDirect.classList.remove("block");
-                divForm.classList.add("block");
-                divForm.classList.remove("hidden");
-                // clearInputs
-                errorSpan.style.display = 'none';
-            } else {
-                // Cambiar a mostrar los puntos directos
-                addPoints.innerHTML =
-                    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 10h14l-4 -4" /><path d="M17 14h-14l4 4" /></svg>Cuestionario';
-                divDirect.classList.remove("hidden");
-                divDirect.classList.add("block");
-                divForm.classList.remove("block");
-                divForm.classList.add("hidden");
-                // clearInputs
-                pointKnow.value = 0;
-                pointMany.value = 0;
-                pointEffort.value = 0;
-                formErrorSpan.style.display = 'none';
-            }
-
-            showingDirect = !showingDirect; // Cambiar el estado
-        });
-        // MOVER INFO AL FORMULARIO
-        modalSave.addEventListener('click', function() {
-            if (showingDirect) {
-                let value = parseInt(directPoints.value, 10);
-
-                if (validNumbers.includes(value)) {
-                    inputPoints.value = directPoints.value;
+        if (addPoints) {
+            addPoints.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (showingDirect) {
+                    // Cambiar a mostrar el formulario
+                    addPoints.innerHTML =
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 10h14l-4 -4" /><path d="M17 14h-14l4 4" /></svg>Agregar puntos directos';
+                    divDirect.classList.add("hidden");
+                    divDirect.classList.remove("block");
+                    divForm.classList.add("block");
+                    divForm.classList.remove("hidden");
+                    // clearInputs
                     errorSpan.style.display = 'none';
-                    // Questionary
-                    inputPointKnow.value = '';
-                    inputPointMany.value =  '';
-                    inputPointEffort.value =  '';
-                    // cerrar modal
-                    modalPoints.classList.remove("block");
-                    modalPoints.classList.add("hidden");
                 } else {
-                    errorSpan.style.display = 'block';
-                }
-            } else {
-                let pointKnow = parseInt(document.getElementById('pointKnow').value, 10) || 0;
-                let pointMany = parseInt(document.getElementById('pointMany').value, 10) || 0;
-                let pointEffort = parseInt(document.getElementById('pointEffort').value, 10) || 0;
-
-                if (!pointKnow || !pointMany || !pointEffort) {
-                    formErrorSpan.style.display = 'block';
-                } else {
+                    // Cambiar a mostrar los puntos directos
+                    addPoints.innerHTML =
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-exchange mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 10h14l-4 -4" /><path d="M17 14h-14l4 4" /></svg>Cuestionario';
+                    divDirect.classList.remove("hidden");
+                    divDirect.classList.add("block");
+                    divForm.classList.remove("block");
+                    divForm.classList.add("hidden");
+                    // clearInputs
+                    pointKnow.value = 0;
+                    pointMany.value = 0;
+                    pointEffort.value = 0;
                     formErrorSpan.style.display = 'none';
-                    // Find the maximum value
-                    let maxValue = Math.max(pointKnow, pointMany, pointEffort);
-                    // Set the maximum value to inputPoints
-                    inputPoints.value = maxValue > 0 ? maxValue : '';
-                    // Questionary
-                    inputPointKnow.value = pointKnow;
-                    inputPointMany.value =  pointMany;
-                    inputPointEffort.value =  pointEffort;
-                    // cerrar modal
-                    modalPoints.classList.remove("block");
-                    modalPoints.classList.add("hidden");
                 }
-            }
-        });
+
+                showingDirect = !showingDirect; // Cambiar el estado
+            });
+        }
+        // MOVER INFO AL FORMULARIO
+        if (modalSave) {
+            modalSave.addEventListener('click', function() {
+                if (showingDirect) {
+                    let value = parseInt(directPoints.value, 10);
+
+                    if (validNumbers.includes(value)) {
+                        inputPoints.value = directPoints.value;
+                        errorSpan.style.display = 'none';
+                        // Questionary
+                        inputPointKnow.value = '';
+                        inputPointMany.value =  '';
+                        inputPointEffort.value =  '';
+                        // cerrar modal
+                        modalPoints.classList.remove("block");
+                        modalPoints.classList.add("hidden");
+                    } else {
+                        errorSpan.style.display = 'block';
+                    }
+                } else {
+                    let pointKnow = parseInt(document.getElementById('pointKnow').value, 10) || 0;
+                    let pointMany = parseInt(document.getElementById('pointMany').value, 10) || 0;
+                    let pointEffort = parseInt(document.getElementById('pointEffort').value, 10) || 0;
+
+                    if (!pointKnow || !pointMany || !pointEffort) {
+                        formErrorSpan.style.display = 'block';
+                    } else {
+                        formErrorSpan.style.display = 'none';
+                        // Find the maximum value
+                        let maxValue = Math.max(pointKnow, pointMany, pointEffort);
+                        // Set the maximum value to inputPoints
+                        inputPoints.value = maxValue > 0 ? maxValue : '';
+                        // Questionary
+                        inputPointKnow.value = pointKnow;
+                        inputPointMany.value =  pointMany;
+                        inputPointEffort.value =  pointEffort;
+                        // cerrar modal
+                        modalPoints.classList.remove("block");
+                        modalPoints.classList.add("hidden");
+                    }
+                }
+            });
+        }
         // ------------------------------ FORMULARIO ------------------------------
+        // FECHA DE ENTREGA
+        if (expectedDate) {
+            expectedDate.addEventListener('change', function() {
+                const selectedDate = this.value;
+                const today = new Date().toISOString().split('T')[0];
+                
+                // Comparar fechas (formato YYYY-MM-DD permite comparación directa)
+                if (selectedDate < today) {
+                    // Si la fecha es anterior a hoy, establecer la fecha actual
+                    this.value = today;
+                    
+                    // Opcional: Mostrar mensaje al usuario
+                    toastr['error']("La fecha no puede ser anterior al dia actual.");
+                }
+            });
+        }
         // CHECKBOX DE ICONOS
         checkboxesIcon.forEach(function(checkbox, index) {
             checkbox.addEventListener('change', function() {
@@ -1011,21 +1059,54 @@
         });
         // FORM VIDEO
         formReport.addEventListener('submit', function(e) {
-            const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-
-            if (!isChecked) {
-                toastr['error']("Selecciona la prioridad");
-
-                e.preventDefault();
-                return;
-            } else {
-                loadingPage.classList.remove('hidden');
+            let isValid = true;
+            // Validar título
+            if (title.value.trim() === '') {
+                toastr.error("Escribe el título.");
+                title.focus();
+                isValid = false;
             }
-            // Verifica si el botón de descarga tiene una URL y descárgalo
-            if (downloadVideo.href) {
-                setTimeout(function() {
-                    downloadVideo.click();
-                }, 100);
+            
+            // Validar descripción
+            if (description.value.trim() === '') {
+                toastr.error("Describe el problema del reporte.");
+                if (isValid) description.focus(); // Solo focus si no hay otro error antes
+                isValid = false;
+            }
+            
+            // Validar checkboxes de prioridad
+            const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            if (!isChecked) {
+                toastr.error("Selecciona una prioridad.");
+                isValid = false;
+            }
+            
+            // Validar delegado (solo para usuarios no tipo 3)
+            if (user_type != 3 && delegateSelect.value === '0') {
+                toastr.error("Selecciona un delegado.");
+                if (isValid) delegateSelect.focus();
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Deshabilitar scroll de la página
+                document.body.style.overflow = 'hidden';
+
+                // Desplazar al inicio de la página
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });     
+
+                loadingPage.classList.remove('hidden');
+                // El formulario se enviará normalmente
+            } else {
+                e.preventDefault();
+                // Opcional: scroll al primer error
+                const firstError = document.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }
         });
         // ------------------------------ CAPTURA DE IMAGEN ------------------------------
