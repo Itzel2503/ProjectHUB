@@ -1,9 +1,4 @@
 <div>
-    @php
-        $user = DB::table('users')
-            ->where('id', Auth::user()->id)
-            ->first();
-    @endphp
     {{-- Tabla usuarios --}}
     <div class="px-4 py-4 sm:rounded-lg">
         {{-- NAVEGADOR --}}
@@ -30,55 +25,55 @@
             </div>
             <!-- BTN PRIORITY -->
             @if ($user->type_user != 3)
-                <div class="inline-flex h-12 w-1/2 bg-transparent px-2 md:w-1/4 md:px-0">
-                    <button wire:click="showProjectPriority()" class="btnNuevo">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-star mr-2">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path
-                                d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z" />
-                        </svg>
-                        <span>Prioridades</span>
-                    </button>
-                </div>
+            <div class="inline-flex h-12 w-1/2 bg-transparent px-2 md:w-1/4 md:px-0">
+                <button wire:click="showProjectPriority()" class="btnNuevo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-star mr-2">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path
+                            d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z" />
+                    </svg>
+                    <span>Prioridades</span>
+                </button>
+            </div>
             @endif
             <!-- BTN NEW -->
             @if ($user->type_user == 1)
-                <div class="inline-flex h-12 w-1/2 bg-transparent px-2 md:w-1/4 md:px-0">
-                    <button wire:click="modalCreateEdit()" class="btnNuevo">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2"
-                            width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M12 5l0 14" />
-                            <path d="M5 12l14 0" />
-                        </svg>
-                        <span>Proyecto</span>
-                    </button>
-                </div>
+            <div class="inline-flex h-12 w-1/2 bg-transparent px-2 md:w-1/4 md:px-0">
+                <button wire:click="modalCreateEdit()" class="btnNuevo">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus mr-2"
+                        width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                        fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 5l0 14" />
+                        <path d="M5 12l14 0" />
+                    </svg>
+                    <span>Proyecto</span>
+                </button>
+            </div>
             @endif
         </div>
         {{-- END NAVEGADOR --}}
         {{-- PESTAÑAS --}}
         @if ($user->type_user != 3)
-            <nav class="mt-5 flex">
-                <button wire:click="setActiveTab('Activo')"
-                    class="text-secundaryColor border-secondary @if ($activeTab === 'Activo') bg-gray-200 @endif mx-2 w-40 cursor-pointer border py-1 font-semibold">
-                    Activos
-                </button>
-                <button wire:click="setActiveTab('No activo')"
-                    class="text-secundaryColor @if ($activeTab === 'No activo') bg-gray-200 @endif mx-2 w-40 cursor-pointer border border-gray-500 py-1 font-semibold">
-                    No activos
-                </button>
-                <button wire:click="setActiveTab('Entregado')"
-                    class="text-secundaryColor @if ($activeTab === 'Entregado') bg-gray-200 @endif mx-2 w-40 cursor-pointer border border-lime-700 py-1 font-semibold">
-                    Entregados
-                </button>
-                <button wire:click="setActiveTab('Cerrado')"
-                    class="text-secundaryColor @if ($activeTab === 'Cerrado') bg-gray-200 @endif mx-2 w-40 cursor-pointer border border-red-600 py-1 font-semibold">
-                    Cerrados
-                </button>
-            </nav>
+        <nav class="mt-5 flex">
+            <button wire:click="setActiveTab('Activo')"
+                class="text-secundaryColor border-secondary @if ($activeTab === 'Activo') bg-gray-200 @endif mx-2 w-40 cursor-pointer border py-1 font-semibold">
+                Activos
+            </button>
+            <button wire:click="setActiveTab('No activo')"
+                class="text-secundaryColor @if ($activeTab === 'No activo') bg-gray-200 @endif mx-2 w-40 cursor-pointer border border-gray-500 py-1 font-semibold">
+                No activos
+            </button>
+            <button wire:click="setActiveTab('Entregado')"
+                class="text-secundaryColor @if ($activeTab === 'Entregado') bg-gray-200 @endif mx-2 w-40 cursor-pointer border border-lime-700 py-1 font-semibold">
+                Entregados
+            </button>
+            <button wire:click="setActiveTab('Cerrado')"
+                class="text-secundaryColor @if ($activeTab === 'Cerrado') bg-gray-200 @endif mx-2 w-40 cursor-pointer border border-red-600 py-1 font-semibold">
+                Cerrados
+            </button>
+        </nav>
         @endif
         {{-- END PESTAÑAS --}}
         {{-- TABLE --}}
@@ -86,470 +81,470 @@
             <table class="whitespace-no-wrap table-hover table w-full">
                 <thead class="headTable border-0">
                     @if ($user->type_user != 3)
-                        <tr>
-                            <th class="text-text1 bg-primaryColor px-4 pt-2 text-xl font-semibold tracking-wide text-left"
-                                colspan="5">
-                                @if ($activeTab == 'Activo')
-                                    <h2>Activos</h2>
-                                @endif
-                                @if ($activeTab == 'No activo')
-                                    <h2>No activos</h2>
-                                @endif
-                                @if ($activeTab == 'Entregado')
-                                    <h2>Entregados</h2>
-                                @endif
-                                @if ($activeTab == 'Cerrado')
-                                    <h2>Cerrados</h2>
-                                @endif
-                            </th>
-                        </tr>
+                    <tr>
+                        <th class="text-text1 bg-primaryColor px-4 pt-2 text-xl font-semibold tracking-wide text-left"
+                            colspan="5">
+                            @if ($activeTab == 'Activo')
+                            <h2>Activos</h2>
+                            @endif
+                            @if ($activeTab == 'No activo')
+                            <h2>No activos</h2>
+                            @endif
+                            @if ($activeTab == 'Entregado')
+                            <h2>Entregados</h2>
+                            @endif
+                            @if ($activeTab == 'Cerrado')
+                            <h2>Cerrados</h2>
+                            @endif
+                        </th>
+                    </tr>
                     @endif
                     <tr class="@if ($user->type_user != 3) text-left @else text-center @endif">
                         @if ($user->type_user != 3)
-                            <th class="w-16 px-4 py-3">Prioridad</th>
+                        <th class="w-16 px-4 py-3">Prioridad</th>
                         @endif
                         <th class="@if ($user->type_user != 3) w-1/4 @endif px-4 py-3">Proyecto</th>
                         @if ($user->type_user != 3)
-                            <th class="w-32 px-4 py-3">Cliente</th>
-                            <th class="px-4 py-3">Líder y Product Owner</th>
+                        <th class="w-32 px-4 py-3">Cliente</th>
+                        <th class="px-4 py-3">Líder y Product Owner</th>
                         @endif
                         <th class="@if ($user->type_user != 3) w-2 @endif px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($projects as $project)
-                        <tr class="trTable">
-                            @if ($user->type_user != 3)
-                                <th class="px-4 py-2">
-                                    <a @if ($user->type_user == 1 && $user->area_id == 1) wire:click="showPriority({{ $project->id }})" @endif
-                                        class="hover:text-secondary cursor-pointer p-3 hover:text-xl">K{{ $project->priority }}</a>
-                                </th>
-                            @endif
-                            <td class="px-4 py-2">
-                                <div
-                                    class="@if ($user->type_user != 3) text-justify @else text-center @endif mx-auto">
-                                    <span class="font-semibold">{{ $project->name }} @if (Auth::user()->area_id == 1)
-                                            - {{ $project->code }}
-                                        @endif
-                                    </span>
-                                </div>
-                            </td>
-                            @if ($user->type_user != 3)
-                                <td class="px-4 py-2">
-                                    <div class="mx-auto text-left">
-                                        <span class="font-bold">{{ $project->customer_name }}</span><br>
-                                    </div>
-                                </td>
-                                <td class="principal px-4 py-2">
-                                    <div class="mx-auto text-left">
-                                        <label class="{{ $project->leader ?: 'text-red-600' }}">-
-                                            {{ $project->leader ? $project->leader->name : 'Sin asignar' }}</label>
-                                        <br>
-                                        <label class="{{ $project->product_owner ?: 'text-red-600' }}">-
-                                            {{ $project->product_owner ? $project->product_owner->name : 'Sin asignar' }}</label>
-                                    </div>
-                                    <div class="relative">
-                                        <div
-                                            class="hidden-info absolute -top-20 left-36 z-10 w-60 bg-gray-100 p-2 text-left text-xs">
-                                            <p>
-                                                <strong>Líder/Scrum:</strong>
-                                                {{ $project->leader ? $project->leader->name : 'Sin asignar' }}
-                                            </p>
-                                            <p>
-                                                <strong>Product Owner</strong>
-                                                {{ $project->product_owner ? $project->product_owner->name : 'Sin asignar' }}
-                                            </p>
-                                            <p>
-                                                <strong>Developer 1:</strong>
-                                                @if ($project->developer1)
-                                                    {{ $project->developer1->name }}
-                                                @else
-                                                    Sin asignar
-                                                @endif
-                                            </p>
-                                            <p>
-                                                <strong>Developer 2:</strong>
-                                                @if ($project->developer2)
-                                                    {{ $project->developer2->name }}
-                                                @else
-                                                    Sin asignar
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </div>
-                                </td>
-                            @endif
-                            <td
-                                class="@if ($user->type_user != 3) justify-end @else justify-center @endif flex px-4 py-2">
-                                @if ($project->deleted_at == null)
-                                    @if ($project->backlog != null)
-                                        @if ($user->type_user != 3)
-                                            <button wire:click="showActivities({{ $project->id }})"
-                                                class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-book">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                                    <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                                    <path d="M3 6l0 13" />
-                                                    <path d="M12 6l0 13" />
-                                                    <path d="M21 6l0 13" />
-                                                </svg>
-                                            </button>
-                                        @endif
-                                        @if ($user->type_user == 3 || ($user->type_user == 1 && $user->area_id == 1))
-                                            <button wire:click="showActivitiesClient({{ $project->id }})"
-                                                class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path
-                                                        d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
-                                                    <path d="M10 16h6" />
-                                                    <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                                    <path d="M4 8h3" />
-                                                    <path d="M4 12h3" />
-                                                    <path d="M4 16h3" />
-                                                </svg>
-                                            </button>
-                                        @endif
+                    <tr class="trTable">
+                        @if ($user->type_user != 3)
+                        <th class="px-4 py-2">
+                            <a @if ($user->type_user == 1 && $user->area_id == 1) wire:click="showPriority({{ $project->id }})" @endif
+                                class="hover:text-secondary cursor-pointer p-3 hover:text-xl">K{{ $project->priority }}</a>
+                        </th>
+                        @endif
+                        <td class="px-4 py-2">
+                            <div
+                                class="@if ($user->type_user != 3) text-justify @else text-center @endif mx-auto">
+                                <span class="font-semibold">{{ $project->name }} @if (Auth::user()->area_id == 1)
+                                    - {{ $project->code }}
                                     @endif
-                                    <button wire:click="showReports({{ $project->id }})"
-                                        class="bg-secondary mx-1 mt-1 rounded-lg px-2 py-1 font-bold text-white">
+                                </span>
+                            </div>
+                        </td>
+                        @if ($user->type_user != 3)
+                        <td class="px-4 py-2">
+                            <div class="mx-auto text-left">
+                                <span class="font-bold">{{ $project->customer_name }}</span><br>
+                            </div>
+                        </td>
+                        <td class="principal px-4 py-2">
+                            <div class="mx-auto text-left">
+                                <label class="{{ $project->leader ?: 'text-red-600' }}">-
+                                    {{ $project->leader ? $project->leader->name : 'Sin asignar' }}</label>
+                                <br>
+                                <label class="{{ $project->product_owner ?: 'text-red-600' }}">-
+                                    {{ $project->product_owner ? $project->product_owner->name : 'Sin asignar' }}</label>
+                            </div>
+                            <div class="relative">
+                                <div
+                                    class="hidden-info absolute -top-20 left-36 z-10 w-60 bg-gray-100 p-2 text-left text-xs">
+                                    <p>
+                                        <strong>Líder/Scrum:</strong>
+                                        {{ $project->leader ? $project->leader->name : 'Sin asignar' }}
+                                    </p>
+                                    <p>
+                                        <strong>Product Owner</strong>
+                                        {{ $project->product_owner ? $project->product_owner->name : 'Sin asignar' }}
+                                    </p>
+                                    <p>
+                                        <strong>Developer 1:</strong>
+                                        @if ($project->developer1)
+                                        {{ $project->developer1->name }}
+                                        @else
+                                        Sin asignar
+                                        @endif
+                                    </p>
+                                    <p>
+                                        <strong>Developer 2:</strong>
+                                        @if ($project->developer2)
+                                        {{ $project->developer2->name }}
+                                        @else
+                                        Sin asignar
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </td>
+                        @endif
+                        <td
+                            class="@if ($user->type_user != 3) justify-end @else justify-center @endif flex px-4 py-2">
+                            @if ($project->deleted_at == null)
+                            @if ($project->backlog != null)
+                            @if ($user->type_user != 3)
+                            <button wire:click="showActivities({{ $project->id }})"
+                                class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                    <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                    <path d="M3 6l0 13" />
+                                    <path d="M12 6l0 13" />
+                                    <path d="M21 6l0 13" />
+                                </svg>
+                            </button>
+                            @endif
+                            @if ($user->type_user == 3 || ($user->type_user == 1 && $user->area_id == 1))
+                            <button wire:click="showActivitiesClient({{ $project->id }})"
+                                class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
+                                    <path d="M10 16h6" />
+                                    <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M4 8h3" />
+                                    <path d="M4 12h3" />
+                                    <path d="M4 16h3" />
+                                </svg>
+                            </button>
+                            @endif
+                            @endif
+                            <button wire:click="showReports({{ $project->id }})"
+                                class="bg-secondary mx-1 mt-1 rounded-lg px-2 py-1 font-bold text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="icon icon-tabler icon-tabler-bug" width="24" height="24"
+                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
+                                    <path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
+                                    <path d="M3 13l4 0" />
+                                    <path d="M17 13l4 0" />
+                                    <path d="M12 20l0 -6" />
+                                    <path d="M4 19l3.35 -2" />
+                                    <path d="M20 19l-3.35 -2" />
+                                    <path d="M4 7l3.75 2.4" />
+                                    <path d="M20 7l-3.75 2.4" />
+                                </svg>
+                            </button>
+                            @endif
+                            @if ($user->type_user == 1 || Auth::user()->area_id == 1)
+                            <div class="justify-righ flex">
+                                <div id="dropdown-button-{{ $project->id }}" class="relative">
+                                    <button onclick="toggleDropdown('{{ $project->id }}')" type="button"
+                                        class="flex items-center px-5 py-2.5">
                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-bug" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            class="icon icon-tabler icon-tabler-dots-vertical" width="24"
+                                            height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" fill="none" stroke-linecap="round"
+                                            stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
-                                            <path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
-                                            <path d="M3 13l4 0" />
-                                            <path d="M17 13l4 0" />
-                                            <path d="M12 20l0 -6" />
-                                            <path d="M4 19l3.35 -2" />
-                                            <path d="M20 19l-3.35 -2" />
-                                            <path d="M4 7l3.75 2.4" />
-                                            <path d="M20 7l-3.75 2.4" />
+                                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
                                         </svg>
                                     </button>
-                                @endif
-                                @if ($user->type_user == 1 || Auth::user()->area_id == 1)
-                                    <div class="justify-righ flex">
-                                        <div id="dropdown-button-{{ $project->id }}" class="relative">
-                                            <button onclick="toggleDropdown('{{ $project->id }}')" type="button"
-                                                class="flex items-center px-5 py-2.5">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-dots-vertical" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                                    <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                                    <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                                </svg>
-                                            </button>
-                                            <!-- Panel -->
-                                            <div id="dropdown-panel-{{ $project->id }}" style="display: none;"
-                                                class="@if ($user->type_user != 3) @if ($activeTab == 'Activo') top-3 @else {{ $loop->last ? '-top-16' : 'top-3' }} @endif @endif absolute right-10 z-10 mt-2 w-32 rounded-md bg-gray-200">
-                                                <!-- Botón Restaurar -->
-                                                <div wire:click="$emit('restartItem',{{ $project->id }})"
-                                                    class="@if ($project->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        class="icon icon-tabler icon-tabler-reload mr-2"
-                                                        width="24" height="24" viewBox="0 0 24 24"
-                                                        stroke-width="2" stroke="currentColor" fill="none"
-                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                        <path
-                                                            d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747">
-                                                        </path>
-                                                        <path d="M20 4v5h-5"></path>
-                                                    </svg>
-                                                    Restaurar
-                                                </div>
-                                                @if ($project->deleted_at == null)
-                                                    <!-- Botón Editar -->
-                                                    <div wire:click="showUpdate({{ $project->id }})"
-                                                        class="flex cursor-pointer content-center px-4 py-2 text-sm text-black">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="icon icon-tabler icon-tabler-edit mr-2"
-                                                            width="24" height="24" viewBox="0 0 24 24"
-                                                            stroke-width="2" stroke="currentColor" fill="none"
-                                                            stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none">
-                                                            </path>
-                                                            <path
-                                                                d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
-                                                            </path>
-                                                            <path
-                                                                d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
-                                                            </path>
-                                                            <path d="M16 5l3 3"></path>
-                                                        </svg>
-                                                        Editar
-                                                    </div>
-                                                    <!-- Botón Eliminar -->
-                                                    <div wire:click="$emit('deleteItem',{{ $project->id }})"
-                                                        class="@if ($user->type_user == 1) flex @else hidden @endif cursor-pointer content-center px-4 py-2 text-sm text-red-600">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="icon icon-tabler icon-tabler-trash mr-2"
-                                                            width="24" height="24" viewBox="0 0 24 24"
-                                                            stroke-width="2" stroke="currentColor" fill="none"
-                                                            stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none">
-                                                            </path>
-                                                            <path d="M4 7l16 0"></path>
-                                                            <path d="M10 11l0 6"></path>
-                                                            <path d="M14 11l0 6"></path>
-                                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12">
-                                                            </path>
-                                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                                        </svg>
-                                                        Eliminar
-                                                    </div>
-                                                @endif
-                                            </div>
+                                    <!-- Panel -->
+                                    <div id="dropdown-panel-{{ $project->id }}" style="display: none;"
+                                        class="@if ($user->type_user != 3) @if ($activeTab == 'Activo') top-3 @else {{ $loop->last ? '-top-16' : 'top-3' }} @endif @endif absolute right-10 z-10 mt-2 w-32 rounded-md bg-gray-200">
+                                        <!-- Botón Restaurar -->
+                                        <div wire:click="$emit('restartItem',{{ $project->id }})"
+                                            class="@if ($project->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-reload mr-2"
+                                                width="24" height="24" viewBox="0 0 24 24"
+                                                stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path
+                                                    d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747">
+                                                </path>
+                                                <path d="M20 4v5h-5"></path>
+                                            </svg>
+                                            Restaurar
                                         </div>
+                                        @if ($project->deleted_at == null)
+                                        <!-- Botón Editar -->
+                                        <div wire:click="showUpdate({{ $project->id }})"
+                                            class="flex cursor-pointer content-center px-4 py-2 text-sm text-black">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-edit mr-2"
+                                                width="24" height="24" viewBox="0 0 24 24"
+                                                stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none">
+                                                </path>
+                                                <path
+                                                    d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
+                                                </path>
+                                                <path
+                                                    d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
+                                                </path>
+                                                <path d="M16 5l3 3"></path>
+                                            </svg>
+                                            Editar
+                                        </div>
+                                        <!-- Botón Eliminar -->
+                                        <div wire:click="$emit('deleteItem',{{ $project->id }})"
+                                            class="@if ($user->type_user == 1) flex @else hidden @endif cursor-pointer content-center px-4 py-2 text-sm text-red-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-trash mr-2"
+                                                width="24" height="24" viewBox="0 0 24 24"
+                                                stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none">
+                                                </path>
+                                                <path d="M4 7l16 0"></path>
+                                                <path d="M10 11l0 6"></path>
+                                                <path d="M14 11l0 6"></path>
+                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12">
+                                                </path>
+                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                            </svg>
+                                            Eliminar
+                                        </div>
+                                        @endif
                                     </div>
-                                @endif
-                            </td>
-                        </tr>
+                                </div>
+                            </div>
+                            @endif
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
             @if ($user->type_user != 3)
-                @if ($activeTab == 'Activo')
-                    <table class="whitespace-no-wrap table-hover table w-full">
-                        <thead class="headTable border-0">
-                            <tr>
-                                <th class="text-text1 bg-primaryColor px-4 pt-2 text-xl font-semibold tracking-wide text-left"
-                                    colspan="5">
-                                    <h2>Soportes</h2>
-                                </th>
-                            </tr>
-                            <tr class="text-left">
-                                <th class="w-16 px-4 py-3">Prioridad</th>
-                                <th class="w-1/4 px-4 py-3">Proyecto</th>
-                                <th class="w-32 px-4 py-3">Cliente</th>
-                                <th class="px-4 py-3">Líder y Product Owner</th>
-                                <th class="w-2 px-4 py-2">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($projectsSoporte as $project)
-                                <tr class="trTable">
-                                    <th class="px-4 py-2">
-                                        <a @if ($user->type_user == 1 && $user->area_id == 1) wire:click="showPriority({{ $project->id }})" @endif
-                                            class="hover:text-secondary cursor-pointer p-3 hover:text-xl">K{{ $project->priority }}</a>
-                                    </th>
-                                    <td class="px-4 py-2">
-                                        <div class="mx-auto text-justify">
-                                            <span class="font-semibold">{{ $project->name }} @if (Auth::user()->area_id == 1)
-                                                    - {{ $project->code }}
-                                                @endif
-                                            </span>
+            @if ($activeTab == 'Activo')
+            <table class="whitespace-no-wrap table-hover table w-full">
+                <thead class="headTable border-0">
+                    <tr>
+                        <th class="text-text1 bg-primaryColor px-4 pt-2 text-xl font-semibold tracking-wide text-left"
+                            colspan="5">
+                            <h2>Soportes</h2>
+                        </th>
+                    </tr>
+                    <tr class="text-left">
+                        <th class="w-16 px-4 py-3">Prioridad</th>
+                        <th class="w-1/4 px-4 py-3">Proyecto</th>
+                        <th class="w-32 px-4 py-3">Cliente</th>
+                        <th class="px-4 py-3">Líder y Product Owner</th>
+                        <th class="w-2 px-4 py-2">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($projectsSoporte as $project)
+                    <tr class="trTable">
+                        <th class="px-4 py-2">
+                            <a @if ($user->type_user == 1 && $user->area_id == 1) wire:click="showPriority({{ $project->id }})" @endif
+                                class="hover:text-secondary cursor-pointer p-3 hover:text-xl">K{{ $project->priority }}</a>
+                        </th>
+                        <td class="px-4 py-2">
+                            <div class="mx-auto text-justify">
+                                <span class="font-semibold">{{ $project->name }} @if (Auth::user()->area_id == 1)
+                                    - {{ $project->code }}
+                                    @endif
+                                </span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-2">
+                            <div class="mx-auto text-left">
+                                <span class="font-bold">{{ $project->customer_name }}</span><br>
+                            </div>
+                        </td>
+                        <td class="principal px-4 py-2">
+                            <div class="mx-auto text-left">
+                                - {{ $project->leader->name }}<br>
+                                - {{ $project->product_owner->name }}
+                            </div>
+                            <div class="relative">
+                                <div
+                                    class="hidden-info absolute -top-20 left-36 z-10 w-60 bg-gray-100 p-2 text-left text-xs">
+                                    <p>
+                                        <strong>Líder/Scrum:</strong>
+                                        {{ $project->leader->name }}
+                                    </p>
+                                    <p>
+                                        <strong>Product Owner</strong>
+                                        {{ $project->product_owner->name }}
+                                    </p>
+                                    <p>
+                                        <strong>Developer 1:</strong>
+                                        @if ($project->developer1)
+                                        {{ $project->developer1->name }}
+                                        @else
+                                        Sin asignar
+                                        @endif
+                                    </p>
+                                    <p>
+                                        <strong>Developer 2:</strong>
+                                        @if ($project->developer2)
+                                        {{ $project->developer2->name }}
+                                        @else
+                                        Sin asignar
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="flex justify-end px-4 py-2">
+                            @if ($project->deleted_at == null)
+                            @if ($project->backlog != null)
+                            @if ($user->type_user != 3)
+                            <button wire:click="showActivities({{ $project->id }})"
+                                class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                    <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                    <path d="M3 6l0 13" />
+                                    <path d="M12 6l0 13" />
+                                    <path d="M21 6l0 13" />
+                                </svg>
+                            </button>
+                            @endif
+                            @if ($user->type_user == 3 || ($user->type_user == 1 && $user->area_id == 1))
+                            <button wire:click="showActivitiesClient({{ $project->id }})"
+                                class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
+                                    <path d="M10 16h6" />
+                                    <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M4 8h3" />
+                                    <path d="M4 12h3" />
+                                    <path d="M4 16h3" />
+                                </svg>
+                            </button>
+                            @endif
+                            @endif
+                            <button wire:click="showReports({{ $project->id }})"
+                                class="bg-secondary mx-1 mt-1 rounded-lg px-2 py-1 font-bold text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="icon icon-tabler icon-tabler-bug" width="24"
+                                    height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" fill="none" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
+                                    <path
+                                        d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
+                                    <path d="M3 13l4 0" />
+                                    <path d="M17 13l4 0" />
+                                    <path d="M12 20l0 -6" />
+                                    <path d="M4 19l3.35 -2" />
+                                    <path d="M20 19l-3.35 -2" />
+                                    <path d="M4 7l3.75 2.4" />
+                                    <path d="M20 7l-3.75 2.4" />
+                                </svg>
+                            </button>
+                            @endif
+                            @if ($user->type_user == 1 || Auth::user()->area_id == 1)
+                            <div class="justify-righ flex">
+                                <div id="dropdown-button-{{ $project->id }}" class="relative">
+                                    <button onclick="toggleDropdown('{{ $project->id }}')"
+                                        type="button" class="flex items-center px-5 py-2.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="icon icon-tabler icon-tabler-dots-vertical"
+                                            width="24" height="24" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                        </svg>
+                                    </button>
+                                    <!-- Panel -->
+                                    <div id="dropdown-panel-{{ $project->id }}"
+                                        style="display: none;"
+                                        class="{{ $loop->last ? '-top-16' : 'top-3' }} absolute right-10 z-10 mt-2 w-32 rounded-md bg-gray-200">
+                                        <!-- Botón Restaurar -->
+                                        <div wire:click="$emit('restartItem',{{ $project->id }})"
+                                            class="@if ($project->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-reload mr-2"
+                                                width="24" height="24" viewBox="0 0 24 24"
+                                                stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none">
+                                                </path>
+                                                <path
+                                                    d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747">
+                                                </path>
+                                                <path d="M20 4v5h-5"></path>
+                                            </svg>
+                                            Restaurar
                                         </div>
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <div class="mx-auto text-left">
-                                            <span class="font-bold">{{ $project->customer_name }}</span><br>
-                                        </div>
-                                    </td>
-                                    <td class="principal px-4 py-2">
-                                        <div class="mx-auto text-left">
-                                            - {{ $project->leader->name }}<br>
-                                            - {{ $project->product_owner->name }}
-                                        </div>
-                                        <div class="relative">
-                                            <div
-                                                class="hidden-info absolute -top-20 left-36 z-10 w-60 bg-gray-100 p-2 text-left text-xs">
-                                                <p>
-                                                    <strong>Líder/Scrum:</strong>
-                                                    {{ $project->leader->name }}
-                                                </p>
-                                                <p>
-                                                    <strong>Product Owner</strong>
-                                                    {{ $project->product_owner->name }}
-                                                </p>
-                                                <p>
-                                                    <strong>Developer 1:</strong>
-                                                    @if ($project->developer1)
-                                                        {{ $project->developer1->name }}
-                                                    @else
-                                                        Sin asignar
-                                                    @endif
-                                                </p>
-                                                <p>
-                                                    <strong>Developer 2:</strong>
-                                                    @if ($project->developer2)
-                                                        {{ $project->developer2->name }}
-                                                    @else
-                                                        Sin asignar
-                                                    @endif
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="flex justify-end px-4 py-2">
                                         @if ($project->deleted_at == null)
-                                            @if ($project->backlog != null)
-                                                @if ($user->type_user != 3)
-                                                    <button wire:click="showActivities({{ $project->id }})"
-                                                        class="mx-1 mt-1 rounded-lg bg-yellow-500 px-2 py-1 font-bold text-white">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-book">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                            <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                                            <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                                            <path d="M3 6l0 13" />
-                                                            <path d="M12 6l0 13" />
-                                                            <path d="M21 6l0 13" />
-                                                        </svg>
-                                                    </button>
-                                                @endif
-                                                @if ($user->type_user == 3 || ($user->type_user == 1 && $user->area_id == 1))
-                                                    <button wire:click="showActivitiesClient({{ $project->id }})"
-                                                        class="mx-1 mt-1 rounded-lg bg-lime-700 px-2 py-1 font-bold text-white">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                            <path
-                                                                d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
-                                                            <path d="M10 16h6" />
-                                                            <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                                            <path d="M4 8h3" />
-                                                            <path d="M4 12h3" />
-                                                            <path d="M4 16h3" />
-                                                        </svg>
-                                                    </button>
-                                                @endif
-                                            @endif
-                                            <button wire:click="showReports({{ $project->id }})"
-                                                class="bg-secondary mx-1 mt-1 rounded-lg px-2 py-1 font-bold text-white">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-bug" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
-                                                    <path
-                                                        d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
-                                                    <path d="M3 13l4 0" />
-                                                    <path d="M17 13l4 0" />
-                                                    <path d="M12 20l0 -6" />
-                                                    <path d="M4 19l3.35 -2" />
-                                                    <path d="M20 19l-3.35 -2" />
-                                                    <path d="M4 7l3.75 2.4" />
-                                                    <path d="M20 7l-3.75 2.4" />
-                                                </svg>
-                                            </button>
+                                        <!-- Botón Editar -->
+                                        <div wire:click="showUpdate({{ $project->id }})"
+                                            class="flex cursor-pointer content-center px-4 py-2 text-sm text-black">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-edit mr-2"
+                                                width="24" height="24" viewBox="0 0 24 24"
+                                                stroke-width="2" stroke="currentColor"
+                                                fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z"
+                                                    fill="none">
+                                                </path>
+                                                <path
+                                                    d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
+                                                </path>
+                                                <path
+                                                    d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
+                                                </path>
+                                                <path d="M16 5l3 3"></path>
+                                            </svg>
+                                            Editar
+                                        </div>
+                                        <!-- Botón Eliminar -->
+                                        <div wire:click="$emit('deleteItem',{{ $project->id }})"
+                                            class="@if ($user->type_user == 1) flex @else hidden @endif cursor-pointer content-center px-4 py-2 text-sm text-red-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-trash mr-2"
+                                                width="24" height="24" viewBox="0 0 24 24"
+                                                stroke-width="2" stroke="currentColor"
+                                                fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z"
+                                                    fill="none">
+                                                </path>
+                                                <path d="M4 7l16 0"></path>
+                                                <path d="M10 11l0 6"></path>
+                                                <path d="M14 11l0 6"></path>
+                                                <path
+                                                    d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12">
+                                                </path>
+                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3">
+                                                </path>
+                                            </svg>
+                                            Eliminar
+                                        </div>
                                         @endif
-                                        @if ($user->type_user == 1 || Auth::user()->area_id == 1)
-                                            <div class="justify-righ flex">
-                                                <div id="dropdown-button-{{ $project->id }}" class="relative">
-                                                    <button onclick="toggleDropdown('{{ $project->id }}')"
-                                                        type="button" class="flex items-center px-5 py-2.5">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="icon icon-tabler icon-tabler-dots-vertical"
-                                                            width="24" height="24" viewBox="0 0 24 24"
-                                                            stroke-width="1.5" stroke="currentColor" fill="none"
-                                                            stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                                        </svg>
-                                                    </button>
-                                                    <!-- Panel -->
-                                                    <div id="dropdown-panel-{{ $project->id }}"
-                                                        style="display: none;"
-                                                        class="{{ $loop->last ? '-top-16' : 'top-3' }} absolute right-10 z-10 mt-2 w-32 rounded-md bg-gray-200">
-                                                        <!-- Botón Restaurar -->
-                                                        <div wire:click="$emit('restartItem',{{ $project->id }})"
-                                                            class="@if ($project->deleted_at == null) hidden @endif flex cursor-pointer content-center px-4 py-2 text-sm text-black">
-                                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                                class="icon icon-tabler icon-tabler-reload mr-2"
-                                                                width="24" height="24" viewBox="0 0 24 24"
-                                                                stroke-width="2" stroke="currentColor" fill="none"
-                                                                stroke-linecap="round" stroke-linejoin="round">
-                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none">
-                                                                </path>
-                                                                <path
-                                                                    d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747">
-                                                                </path>
-                                                                <path d="M20 4v5h-5"></path>
-                                                            </svg>
-                                                            Restaurar
-                                                        </div>
-                                                        @if ($project->deleted_at == null)
-                                                            <!-- Botón Editar -->
-                                                            <div wire:click="showUpdate({{ $project->id }})"
-                                                                class="flex cursor-pointer content-center px-4 py-2 text-sm text-black">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    class="icon icon-tabler icon-tabler-edit mr-2"
-                                                                    width="24" height="24" viewBox="0 0 24 24"
-                                                                    stroke-width="2" stroke="currentColor"
-                                                                    fill="none" stroke-linecap="round"
-                                                                    stroke-linejoin="round">
-                                                                    <path stroke="none" d="M0 0h24v24H0z"
-                                                                        fill="none">
-                                                                    </path>
-                                                                    <path
-                                                                        d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1">
-                                                                    </path>
-                                                                    <path
-                                                                        d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z">
-                                                                    </path>
-                                                                    <path d="M16 5l3 3"></path>
-                                                                </svg>
-                                                                Editar
-                                                            </div>
-                                                            <!-- Botón Eliminar -->
-                                                            <div wire:click="$emit('deleteItem',{{ $project->id }})"
-                                                                class="@if ($user->type_user == 1) flex @else hidden @endif cursor-pointer content-center px-4 py-2 text-sm text-red-600">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    class="icon icon-tabler icon-tabler-trash mr-2"
-                                                                    width="24" height="24" viewBox="0 0 24 24"
-                                                                    stroke-width="2" stroke="currentColor"
-                                                                    fill="none" stroke-linecap="round"
-                                                                    stroke-linejoin="round">
-                                                                    <path stroke="none" d="M0 0h24v24H0z"
-                                                                        fill="none">
-                                                                    </path>
-                                                                    <path d="M4 7l16 0"></path>
-                                                                    <path d="M10 11l0 6"></path>
-                                                                    <path d="M14 11l0 6"></path>
-                                                                    <path
-                                                                        d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12">
-                                                                    </path>
-                                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3">
-                                                                    </path>
-                                                                </svg>
-                                                                Eliminar
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
             @endif
         </div>
     </div>
@@ -565,13 +560,13 @@
                 <div
                     class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                     @if ($showUpdate)
-                        <h3
-                            class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                            Editar</h3>
+                    <h3
+                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                        Editar</h3>
                     @else
-                        <h3
-                            class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
-                            Crear</h3>
+                    <h3
+                        class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
+                        Crear</h3>
                     @endif
                     <svg wire:click="modalCreateEdit" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
                         xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
@@ -601,9 +596,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('code')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -617,9 +612,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('name')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -629,29 +624,29 @@
                             <div class="mb-6 flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Estatus @if (!$showUpdate)
-                                        <p class="text-red-600">*</p>
+                                    <p class="text-red-600">*</p>
                                     @endif
                                 </h5>
                                 @if ($showUpdate)
-                                    <select wire:model='type' required name="type" id="type" class="inputs">
-                                        @foreach ($allType as $type)
-                                            <option value='{{ $type }}'>{{ $type }}</option>
-                                        @endforeach
-                                    </select>
+                                <select wire:model='type' required name="type" id="type" class="inputs">
+                                    @foreach ($allType as $type)
+                                    <option value='{{ $type }}'>{{ $type }}</option>
+                                    @endforeach
+                                </select>
                                 @else
-                                    <select wire:model='type' required name="type" id="type" class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        @foreach ($allType as $type)
-                                            <option value='{{ $type }}'>{{ $type }}</option>
-                                        @endforeach
-                                    </select>
+                                <select wire:model='type' required name="type" id="type" class="inputs">
+                                    <option value="0">Selecciona...</option>
+                                    @foreach ($allType as $type)
+                                    <option value='{{ $type }}'>{{ $type }}</option>
+                                    @endforeach
+                                </select>
                                 @endif
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('type')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -660,7 +655,7 @@
                                 <div class="flex justify-between">
                                     <h5 class="inline-flex font-semibold" for="name">
                                         Cliente @if (!$showUpdate)
-                                            <p class="text-red-600">*</p>
+                                        <p class="text-red-600">*</p>
                                         @endif
                                     </h5>
                                     <span id="addClient" wire:click="customerType"
@@ -677,34 +672,34 @@
                                     <input wire:model='customerInput' type="hidden" id="customerInput">
                                 </div>
                                 @if ($customertype)
-                                    <input wire:model='nameClient' required type="text"
-                                        placeholder="Nuevo cliente" name="nameClient" id="nameClient"
-                                        class="inputs">
+                                <input wire:model='nameClient' required type="text"
+                                    placeholder="Nuevo cliente" name="nameClient" id="nameClient"
+                                    class="inputs">
                                 @else
-                                    @if ($showUpdate)
-                                        <select wire:model.defer='customer' name="customer" id="customer"
-                                            class="inputs">
-                                            @foreach ($allCustomers as $customer)
-                                                <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    @else
-                                        <select wire:model.defer='customer' required name="customer" id="customer"
-                                            class="inputs">
-                                            <option selected>Selecciona...</option>
-                                            @foreach ($allCustomers as $allCustomer)
-                                                <option value="{{ $allCustomer->id }}">{{ $allCustomer->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    @endif
+                                @if ($showUpdate)
+                                <select wire:model.defer='customer' name="customer" id="customer"
+                                    class="inputs">
+                                    @foreach ($allCustomers as $customer)
+                                    <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                    @endforeach
+                                </select>
+                                @else
+                                <select wire:model.defer='customer' required name="customer" id="customer"
+                                    class="inputs">
+                                    <option value="0">Selecciona...</option>
+                                    @foreach ($allCustomers as $allCustomer)
+                                    <option value="{{ $allCustomer->id }}">{{ $allCustomer->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @endif
                                 @endif
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('customer')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -713,252 +708,258 @@
                         <div class="-mx-3 mb-6 flex flex-row">
                             <div class="mb-6 flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Líder @if (!$showUpdate)
-                                        <p class="text-red-600">*</p>
-                                    @endif
+                                    Líder<p class="text-red-600">*</p>
                                 </h5>
                                 @if ($showUpdate)
-                                    <select wire:model='leader' required name="leader" id="leader"
-                                        class="inputs">
-                                        @foreach ($allUsers as $user)
-                                            <option value="{{ $user->id }}"
-                                                @if ($user->id == $leader) selected @endif>{{ $user->name }}
-                                                {{ $user->lastname }}</option>
-                                        @endforeach
-                                    </select>
+                                <select wire:model='leader' required name="leader" id="leader"
+                                    class="inputs">
+                                    @if ($leader == 0)
+                                    <option value="0">Usuario eliminado</option>
+                                    @endif
+                                    @foreach ($allUsers as $user)
+                                    <option value="{{ $user->id }}"
+                                        @if ($user->id == $leader) selected @endif>{{ $user->name }}
+                                        {{ $user->lastname }}
+                                    </option>
+                                    @endforeach
+                                </select>
                                 @else
-                                    <select wire:model='leader' required name="leader" id="leader"
-                                        class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        @foreach ($allUsers as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }}
-                                                {{ $user->lastname }}</option>
-                                        @endforeach
-                                    </select>
+                                <select wire:model='leader' required name="leader" id="leader"
+                                    class="inputs">
+                                    <option value="0">Selecciona...</option>
+                                    @foreach ($allUsers as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}
+                                        {{ $user->lastname }}
+                                    </option>
+                                    @endforeach
+                                </select>
                                 @endif
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('leader')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
                             </div>
                             <div class="flex w-full flex-col px-3">
                                 <h5 class="inline-flex font-semibold" for="name">
-                                    Product Owner @if (!$showUpdate)
-                                        <p class="text-red-600">*</p>
-                                    @endif
+                                    Product Owner<p class="text-red-600">*</p>
                                 </h5>
                                 @if ($showUpdate)
-                                    <select wire:model='product_owner' required name="product_owner"
-                                        id="product_owner" class="inputs">
-                                        @foreach ($allUsers as $user)
-                                            <option value="{{ $user->id }}"
-                                                @if ($user->id == $product_owner) selected @endif>{{ $user->name }}
-                                                {{ $user->lastname }}</option>
-                                        @endforeach
-                                    </select>
+                                <select wire:model='product_owner' required name="product_owner"
+                                    id="product_owner" class="inputs">
+                                    @if ($product_owner == 0)
+                                    <option value="0">Usuario eliminado</option>
+                                    @endif
+                                    @foreach ($allUsers as $user)
+                                    <option value="{{ $user->id }}"
+                                        @if ($user->id == $product_owner) selected @endif>{{ $user->name }}
+                                        {{ $user->lastname }}
+                                    </option>
+                                    @endforeach
+                                </select>
                                 @else
-                                    <select wire:model='product_owner' required name="product_owner"
-                                        id="product_owner" class="inputs">
-                                        <option selected>Selecciona...</option>
-                                        @foreach ($allUsers as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }}
-                                                {{ $user->lastname }}</option>
-                                        @endforeach
-                                    </select>
+                                <select wire:model='product_owner' required name="product_owner"
+                                    id="product_owner" class="inputs">
+                                    <option value="0">Selecciona...</option>
+                                    @foreach ($allUsers as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}
+                                        {{ $user->lastname }}
+                                    </option>
+                                    @endforeach
+                                </select>
                                 @endif
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('product_owner')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
                             </div>
                         </div>
                         @if (!$showUpdate)
-                            <div
-                                class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
-                                <h4
-                                    class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
-                                    Prioridad</h4>
-                            </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        Gravedad<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select name="pointKnow" id="pointKnow" class="inputs" wire:model='severity'>
-                                        <option selected>Selecciona...</option>
-                                        <option value="0">Cero - No afecta de ninguna manera</option>
-                                        <option value="6">Bajo - Se le queda mal al cliente</option>
-                                        <option value="18">Alto - Daña la posibilidad de trabajar con el cliente
-                                        </option>
-                                        <option value="24">Crítico - Se pierde la relación con el cliente</option>
-                                    </select>
-                                    <div>
-                                        <span class="text-xs italic text-red-600">
-                                            @error('severity')
-                                                <span class="pl-2 text-xs italic text-red-600">
-                                                    {{ $message }}
-                                                </span>
-                                            @enderror
+                        <div
+                            class="mb-10 flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-2 py-2 text-white">
+                            <h4
+                                class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-base font-medium">
+                                Prioridad</h4>
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Gravedad<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointKnow" id="pointKnow" class="inputs" wire:model='severity'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - No afecta de ninguna manera</option>
+                                    <option value="6">Bajo - Se le queda mal al cliente</option>
+                                    <option value="18">Alto - Daña la posibilidad de trabajar con el cliente
+                                    </option>
+                                    <option value="24">Crítico - Se pierde la relación con el cliente</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('severity')
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
                                         </span>
-                                    </div>
+                                        @enderror
+                                    </span>
                                 </div>
                             </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        Impacto<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select name="pointMany" id="pointMany" class="inputs" wire:model='impact'>
-                                        <option selected>Selecciona...</option>
-                                        <option value="0">Cero - No tiene beneficio</option>
-                                        <option value="10">Medio - Representa beneficio sin impacto</option>
-                                        <option value="15">Alto - Representa beneficio con impacto</option>
-                                        <option value="20">Crítico - Para no tener perdidas</option>
-                                    </select>
-                                    <div>
-                                        <span class="text-xs italic text-red-600">
-                                            @error('impact')
-                                                <span class="pl-2 text-xs italic text-red-600">
-                                                    {{ $message }}
-                                                </span>
-                                            @enderror
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Impacto<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='impact'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - No tiene beneficio</option>
+                                    <option value="10">Medio - Representa beneficio sin impacto</option>
+                                    <option value="15">Alto - Representa beneficio con impacto</option>
+                                    <option value="20">Crítico - Para no tener perdidas</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('impact')
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
                                         </span>
-                                    </div>
+                                        @enderror
+                                    </span>
                                 </div>
                             </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        Satisfacción<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select name="pointMany" id="pointMany" class="inputs"
-                                        wire:model='satisfaction'>
-                                        <option selected>Selecciona...</option>
-                                        <option value="0">Cero - No afecta en ninguna manera</option>
-                                        <option value="6">Bajo - Entregamos más de los esperado</option>
-                                        <option value="12">Medio - Mantenemos relación</option>
-                                        <option value="18">Alto - Abre la posibilidad a más proyectos</option>
-                                        <option value="24">Crítico- Ganamos un nuevo cliente / generamos lealtad
-                                        </option>
-                                    </select>
-                                    <div>
-                                        <span class="text-xs italic text-red-600">
-                                            @error('satisfaction')
-                                                <span class="pl-2 text-xs italic text-red-600">
-                                                    {{ $message }}
-                                                </span>
-                                            @enderror
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Satisfacción<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs"
+                                    wire:model='satisfaction'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - No afecta en ninguna manera</option>
+                                    <option value="6">Bajo - Entregamos más de los esperado</option>
+                                    <option value="12">Medio - Mantenemos relación</option>
+                                    <option value="18">Alto - Abre la posibilidad a más proyectos</option>
+                                    <option value="24">Crítico- Ganamos un nuevo cliente / generamos lealtad
+                                    </option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('satisfaction')
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
                                         </span>
-                                    </div>
+                                        @enderror
+                                    </span>
                                 </div>
                             </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        Temporalidad<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select name="pointMany" id="pointMany" class="inputs" wire:model='temporality'>
-                                        <option selected>Selecciona...</option>
-                                        <option value="0">Cero - Indefinido</option>
-                                        <option value="4">2 o más veces el tiempo que se requiere</option>
-                                        <option value="12">Tiempo exacto para hacerlo</option>
-                                        <option value="16">Menos del tiempo que se requiere para hacer</option>
-                                    </select>
-                                    <div>
-                                        <span class="text-xs italic text-red-600">
-                                            @error('temporality')
-                                                <span class="pl-2 text-xs italic text-red-600">
-                                                    {{ $message }}
-                                                </span>
-                                            @enderror
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Temporalidad<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='temporality'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - Indefinido</option>
+                                    <option value="4">2 o más veces el tiempo que se requiere</option>
+                                    <option value="12">Tiempo exacto para hacerlo</option>
+                                    <option value="16">Menos del tiempo que se requiere para hacer</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('temporality')
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
                                         </span>
-                                    </div>
+                                        @enderror
+                                    </span>
                                 </div>
                             </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        Magnitud<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select name="pointMany" id="pointMany" class="inputs" wire:model='magnitude'>
-                                        <option selected>Selecciona...</option>
-                                        <option value="0">Cero - 1 persona</option>
-                                        <option value="2">Bajo - Departamento</option>
-                                        <option value="6">Alto - Gente externa</option>
-                                        <option value="8">Crítico - Cliente</option>
-                                    </select>
-                                    <div>
-                                        <span class="text-xs italic text-red-600">
-                                            @error('magnitude')
-                                                <span class="pl-2 text-xs italic text-red-600">
-                                                    {{ $message }}
-                                                </span>
-                                            @enderror
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Magnitud<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='magnitude'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - 1 persona</option>
+                                    <option value="2">Bajo - Departamento</option>
+                                    <option value="6">Alto - Gente externa</option>
+                                    <option value="8">Crítico - Cliente</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('magnitude')
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
                                         </span>
-                                    </div>
+                                        @enderror
+                                    </span>
                                 </div>
                             </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="mb-6 flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        Estrategia<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select name="pointMany" id="pointMany" class="inputs" wire:model='strategy'>
-                                        <option selected>Selecciona...</option>
-                                        <option value="0">Cero - No se alinea en ninguna manera</option>
-                                        <option value="6">Medio - Es lo que hacemos</option>
-                                        <option value="9">Alto - Nos ayuda a avanzar</option>
-                                        <option value="12">Crítico - Nos lleva a donde queremos llegar</option>
-                                    </select>
-                                    <div>
-                                        <span class="text-xs italic text-red-600">
-                                            @error('strategy')
-                                                <span class="pl-2 text-xs italic text-red-600">
-                                                    {{ $message }}
-                                                </span>
-                                            @enderror
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="mb-6 flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Estrategia<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='strategy'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Cero - No se alinea en ninguna manera</option>
+                                    <option value="6">Medio - Es lo que hacemos</option>
+                                    <option value="9">Alto - Nos ayuda a avanzar</option>
+                                    <option value="12">Crítico - Nos lleva a donde queremos llegar</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('strategy')
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
                                         </span>
-                                    </div>
+                                        @enderror
+                                    </span>
                                 </div>
                             </div>
-                            <div class="-mx-3 mb-6">
-                                <div class="flex w-full flex-col px-3">
-                                    <h5 class="inline-flex font-semibold" for="name">
-                                        Etapa<p class="text-red-600">*</p>
-                                    </h5>
-                                    <select name="pointMany" id="pointMany" class="inputs" wire:model='stage'>
-                                        <option selected>Selecciona...</option>
-                                        <option value="0">Iniciativa - Idea que se empieza a desarrollar que no
-                                            tiene
-                                            el cliente</option>
-                                        <option value="1">Actualización - Cambios que no pide el cliente, que
-                                            Kircof
-                                            propone</option>
-                                        <option value="2">Cambios - Cambios por decisión del cliente</option>
-                                        <option value="3">Correción - Cambios por error interno</option>
-                                        <option value="4">Nuevo - Primera vez que se hace</option>
-                                    </select>
-                                    <div>
-                                        <span class="text-xs italic text-red-600">
-                                            @error('stage')
-                                                <span class="pl-2 text-xs italic text-red-600">
-                                                    {{ $message }}
-                                                </span>
-                                            @enderror
+                        </div>
+                        <div class="-mx-3 mb-6">
+                            <div class="flex w-full flex-col px-3">
+                                <h5 class="inline-flex font-semibold" for="name">
+                                    Etapa<p class="text-red-600">*</p>
+                                </h5>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model='stage'>
+                                    <option selected>Selecciona...</option>
+                                    <option value="0">Iniciativa - Idea que se empieza a desarrollar que no
+                                        tiene
+                                        el cliente</option>
+                                    <option value="1">Actualización - Cambios que no pide el cliente, que
+                                        Kircof
+                                        propone</option>
+                                    <option value="2">Cambios - Cambios por decisión del cliente</option>
+                                    <option value="3">Correción - Cambios por error interno</option>
+                                    <option value="4">Nuevo - Primera vez que se hace</option>
+                                </select>
+                                <div>
+                                    <span class="text-xs italic text-red-600">
+                                        @error('stage')
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
                                         </span>
-                                    </div>
+                                        @enderror
+                                    </span>
                                 </div>
                             </div>
+                        </div>
                         @endif
                     </div>
                     {{-- BACKLOG --}}
@@ -980,9 +981,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('general_objective')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -994,17 +995,17 @@
                                     Alcances<p class="text-red-600">*</p>
                                 </h5>
                                 @if ($showUpdate && $backlogEdit)
-                                    @foreach ($backlogEdit->files as $file)
-                                        <div class="center my-auto flex items-center justify-end py-3">
-                                            <label for="backlogFile{{ $file->id }}"
-                                                class="mr-2 text-red-600">Eliminar</label>
-                                            <input type="checkbox" id="backlogFile{{ $file->id }}"
-                                                class="delete-checkbox border-gray-300 bg-transparent"
-                                                style="height: 24px; width: 24px; accent-color: #2e4c5f;"
-                                                wire:model="selectedFiles" value="{{ $file->id }}">
-                                        </div>
-                                        <img src="{{ asset('backlogs/' . $file->route) }}" alt="Backlog Image">
-                                    @endforeach
+                                @foreach ($backlogEdit->files as $file)
+                                <div class="center my-auto flex items-center justify-end py-3">
+                                    <label for="backlogFile{{ $file->id }}"
+                                        class="mr-2 text-red-600">Eliminar</label>
+                                    <input type="checkbox" id="backlogFile{{ $file->id }}"
+                                        class="delete-checkbox border-gray-300 bg-transparent"
+                                        style="height: 24px; width: 24px; accent-color: #2e4c5f;"
+                                        wire:model="selectedFiles" value="{{ $file->id }}">
+                                </div>
+                                <img src="{{ asset('backlogs/' . $file->route) }}" alt="Backlog Image">
+                                @endforeach
                                 @endif
                                 <div class="flex flex-row">
                                     <span wire:click="addInput"
@@ -1022,39 +1023,39 @@
                                     </span>
                                 </div>
                                 @foreach ($files as $index => $file)
-                                    <div class="flex flex-row">
-                                        <span wire:click="removeInput({{ $index }})"
-                                            class="my-auto cursor-pointer text-red-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-trash mr-2" width="24"
-                                                height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                <path d="M4 7l16 0"></path>
-                                                <path d="M10 11l0 6"></path>
-                                                <path d="M14 11l0 6"></path>
-                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                            </svg>
-                                        </span>
-                                        <input wire:model="files.{{ $index }}" required type="file"
-                                            name="files" class="inputs mb-2" multiple>
-                                    </div>
+                                <div class="flex flex-row">
+                                    <span wire:click="removeInput({{ $index }})"
+                                        class="my-auto cursor-pointer text-red-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="icon icon-tabler icon-tabler-trash mr-2" width="24"
+                                            height="24" viewBox="0 0 24 24" stroke-width="2"
+                                            stroke="currentColor" fill="none" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M4 7l16 0"></path>
+                                            <path d="M10 11l0 6"></path>
+                                            <path d="M14 11l0 6"></path>
+                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                        </svg>
+                                    </span>
+                                    <input wire:model="files.{{ $index }}" required type="file"
+                                        name="files" class="inputs mb-2" multiple>
+                                </div>
                                 @endforeach
                                 <textarea wire:model='scopes' required type="text" rows="6" placeholder="Escriba los alcances."
                                     name="scopes" id="scopes" class="textarea"></textarea>
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('scopes')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                         @error('file')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1070,9 +1071,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('start_date')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1086,9 +1087,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('closing_date')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1104,9 +1105,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('passwords')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1116,31 +1117,31 @@
                 </div>
                 <div class="modalFooter">
                     @if ($showUpdate)
-                        <button class="btnSave" wire:click="update({{ $projectEdit->id }})">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                <path d="M14 4l0 4l-6 0l0 -4" />
-                            </svg>
-                            Guardar
-                        </button>
+                    <button class="btnSave" wire:click="update({{ $projectEdit->id }})">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M14 4l0 4l-6 0l0 -4" />
+                        </svg>
+                        Guardar
+                    </button>
                     @else
-                        <button class="btnSave" wire:click="create">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                <path d="M14 4l0 4l-6 0l0 -4" />
-                            </svg>
-                            Guardar
-                        </button>
+                    <button class="btnSave" wire:click="create">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M14 4l0 4l-6 0l0 -4" />
+                        </svg>
+                        Guardar
+                    </button>
                     @endif
                 </div>
             </div>
@@ -1160,7 +1161,7 @@
                     <h3
                         class="text-secundaryColor title-font border-secundaryColor w-full border-l-4 py-2 pl-4 text-xl font-medium">
                         Editar prioridad @if ($showPriority)
-                            "{{ $projectPriority->name }}"@endif
+                        "{{ $projectPriority->name }}"@endif
                     </h3>
                     <svg wire:click="modalPriority()" class="my-2 h-6 w-6 cursor-pointer text-black hover:stroke-2"
                         xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
@@ -1188,9 +1189,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('severity')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1210,9 +1211,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('impact')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1234,9 +1235,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('satisfaction')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1256,9 +1257,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('temporality')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1278,9 +1279,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('magnitude')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1300,9 +1301,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('strategy')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1325,9 +1326,9 @@
                                 <div>
                                     <span class="text-xs italic text-red-600">
                                         @error('stage')
-                                            <span class="pl-2 text-xs italic text-red-600">
-                                                {{ $message }}
-                                            </span>
+                                        <span class="pl-2 text-xs italic text-red-600">
+                                            {{ $message }}
+                                        </span>
                                         @enderror
                                     </span>
                                 </div>
@@ -1337,31 +1338,31 @@
                 </div>
                 <div class="modalFooter">
                     @if ($showPriority)
-                        <button class="btnSave" wire:click="updatePriority({{ $projectPriority->id }})">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                <path d="M14 4l0 4l-6 0l0 -4" />
-                            </svg>
-                            Guardar
-                        </button>
+                    <button class="btnSave" wire:click="updatePriority({{ $projectPriority->id }})">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M14 4l0 4l-6 0l0 -4" />
+                        </svg>
+                        Guardar
+                    </button>
                     @else
-                        <button class="btnSave" wire:click="modalPriority">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-                                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                <path d="M14 4l0 4l-6 0l0 -4" />
-                            </svg>
-                            Guardar
-                        </button>
+                    <button class="btnSave" wire:click="modalPriority">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M14 4l0 4l-6 0l0 -4" />
+                        </svg>
+                        Guardar
+                    </button>
                     @endif
                 </div>
             </div>
@@ -1382,72 +1383,72 @@
     </div>
     {{-- END LOADING PAGE --}}
     @push('js')
-        <script>
-            // DROPDOWN
-            function toggleDropdown(activityId) {
-                var panel = document.getElementById('dropdown-panel-' + activityId);
-                if (panel.style.display === 'none') {
-                    // Oculta todos los paneles de dropdown
-                    var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
-                    allPanels.forEach(function(panel) {
-                        panel.style.display = 'none';
-                    });
-
-                    panel.style.display = 'block';
-                } else {
+    <script>
+        // DROPDOWN
+        function toggleDropdown(activityId) {
+            var panel = document.getElementById('dropdown-panel-' + activityId);
+            if (panel.style.display === 'none') {
+                // Oculta todos los paneles de dropdown
+                var allPanels = document.querySelectorAll('[id^="dropdown-panel-"]');
+                allPanels.forEach(function(panel) {
                     panel.style.display = 'none';
-                }
-            }
-            // INPUTS FILES RESET
-            window.addEventListener('file-reset', () => {
-                document.querySelectorAll('.files').value = null;
-            });
-            // AVISOS
-            window.addEventListener('swal:modal', event => {
-                toastr[event.detail.type](event.detail.text, event.detail.title);
-            });
-            // MODALS
-            Livewire.on('deleteItem', deletebyId => {
-                Swal.fire({
-                    title: '¿Seguro que deseas eliminar este elemento?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#202a33',
-                    cancelButtonColor: '#ef4444',
-                    confirmButtonText: 'Eliminar',
-                    cancelButtonText: 'Cancelar',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.livewire.emit('destroy', deletebyId);
-                        // Swal.fire(
-                        //   '¡Eliminado!',
-                        //   'Tu elemento ha sido eliminado.',
-                        //   'Exito'
-                        // )
-                    }
-                })
-            });
+                });
 
-            Livewire.on('restartItem', restartbyId => {
-                Swal.fire({
-                    title: '¿Deseas restaurar este elemento?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#202a33',
-                    cancelButtonColor: '#ef4444',
-                    confirmButtonText: 'Restaurar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.livewire.emit('restore', restartbyId);
-                        // Swal.fire(
-                        //   '¡Eliminado!',
-                        //   'Tu elemento ha sido eliminado.',
-                        //   'Exito'
-                        // )
-                    }
-                })
-            });
-        </script>
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+        // INPUTS FILES RESET
+        window.addEventListener('file-reset', () => {
+            document.querySelectorAll('.files').value = null;
+        });
+        // AVISOS
+        window.addEventListener('swal:modal', event => {
+            toastr[event.detail.type](event.detail.text, event.detail.title);
+        });
+        // MODALS
+        Livewire.on('deleteItem', deletebyId => {
+            Swal.fire({
+                title: '¿Seguro que deseas eliminar este elemento?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#202a33',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.livewire.emit('destroy', deletebyId);
+                    // Swal.fire(
+                    //   '¡Eliminado!',
+                    //   'Tu elemento ha sido eliminado.',
+                    //   'Exito'
+                    // )
+                }
+            })
+        });
+
+        Livewire.on('restartItem', restartbyId => {
+            Swal.fire({
+                title: '¿Deseas restaurar este elemento?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#202a33',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Restaurar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.livewire.emit('restore', restartbyId);
+                    // Swal.fire(
+                    //   '¡Eliminado!',
+                    //   'Tu elemento ha sido eliminado.',
+                    //   'Exito'
+                    // )
+                }
+            })
+        });
+    </script>
     @endpush
 </div>
