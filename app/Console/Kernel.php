@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
     {
         // Ejecutar el comando todos los días a las 8:00 AM
         $schedule->command('command:activitiesRecurrent')->daily();
-        // $schedule->command('command:activitiesRecurrent')->dailyAt('05:00');
+        $schedule->command('command:reportsToActivities')->everyMinute();
 
         // Otras opciones:
         // ->everyMinute(); // Cada minuto
@@ -51,5 +51,6 @@ class Kernel extends ConsoleKernel
 
     protected $commands = [
         \App\Console\Commands\ActivitiesRecurrent::class,
+        \App\Console\Commands\ReportsToActivities::class,
     ];
 }
