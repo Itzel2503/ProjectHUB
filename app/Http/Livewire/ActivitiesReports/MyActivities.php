@@ -702,7 +702,11 @@ class MyActivities extends Component
                 if ($nuevaFecha == '') {
                     $task->expected_date = null;
                 } else {
-                    $task->expected_date = Carbon::parse($nuevaFecha)->format('Y-m-d');
+                    $dateParts = explode(' ', $nuevaFecha);
+                    $day = $dateParts[0];
+                    $month = $this->spanishMonthToNumber($dateParts[1]);
+                    $year = $dateParts[2];
+                    $task->expected_date = Carbon::createFromDate($year, $month, $day)->format('Y-m-d');
                 }
                 $task->save();
 
@@ -1129,6 +1133,27 @@ class MyActivities extends Component
         $this->emitUp('refreshChart', $categories, $series, $totalEffortPoints);
     }
     // KANVAN
+    private function spanishMonthToNumber($monthAbbr)
+    {
+        $months = [
+            'ene' => 1,
+            'feb' => 2,
+            'mar' => 3,
+            'abr' => 4,
+            'may' => 5,
+            'jun' => 6,
+            'jul' => 7,
+            'ago' => 8,
+            'sep' => 9,
+            'oct' => 10,
+            'nov' => 11,
+            'dic' => 12,
+        ];
+        
+        $monthAbbr = strtolower(rtrim($monthAbbr, '.'));
+        return $months[$monthAbbr] ?? 1;
+    }
+
     protected function agruparYOrdenarPorFechaYProyecto($tareas)
     {
         // Agrupar tareas por fecha
@@ -1214,8 +1239,6 @@ class MyActivities extends Component
         $this->actualizarTareas(); // Actualizar la lista de tareas
     }
 
-    // Método para actualizar las tareas
-    // Método para actualizar las tareas
     public function actualizarTareas()
     {
         // Obtener la fecha actual
