@@ -488,10 +488,10 @@
                     <path d="M15 6l-6 6l6 6" />
                 </svg>
             </button>
-            <div id="kanvan-my-activities" class="h-[500px] overflow-x-scroll w-full">
+            <div id="kanvan-my-activities" class="overflow-x-scroll w-full min-h-[50dvh] max-h-[80dvh]">
                 <div class="flex">
                     {{-- Sin fecha --}}
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-neutral-300 p-2 mx-2 w-full rounded-xl mb-2">
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-neutral-300 p-2 mx-2 w-full rounded-xl mb-2 min-h-[50dvh]">
                         <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
                             <picture>Sin fecha</p>
                                 <br>
