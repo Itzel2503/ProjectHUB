@@ -68,7 +68,6 @@ class TableActivitiesClient extends Component
         }
         // Filtro de consulta
         $user = Auth::user();
-        $user_id = $user->id;
         // DELEGATE
         $this->allUsers = User::where('type_user', '!=', 3)->orderBy('name', 'asc')->get();
         // ACTIVITIES
@@ -76,13 +75,9 @@ class TableActivitiesClient extends Component
                 $activities = Activity::where(function ($query) {
                     $query
                         ->where('title', 'like', '%' . $this->search . '%');
-                        // Si no se seleccionan estados, excluir "Resuelto"
-                        if (empty($this->selectedStates)) {
-                            $query->where('activities.state', '!=', 'Resuelto');
-                        } else {
-                            // Incluir todos los estados seleccionados
-                            $query->whereIn('state', $this->selectedStates);
-                        }
+                    })
+                    ->when($this->selectedStates, function ($query) {
+                        $query->where('activities.state', $this->selectedStates);
                     })
                     ->when($this->filterPriotiry, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredPriority);
@@ -110,8 +105,8 @@ class TableActivitiesClient extends Component
                     ->when($this->selectedDelegate, function ($query) {
                         $query->where('delegate_id', $this->selectedDelegate);
                     })
-                    ->when(!empty($this->selectedStates), function ($query) {
-                        $query->whereIn('state', $this->selectedStates);
+                    ->when($this->selectedStates, function ($query) {
+                        $query->where('activities.state', $this->selectedStates);
                     })
                     ->when($this->filterState, function ($query) {
                         $query->orderByRaw($this->priorityCase . ' ' . $this->filteredStateArrow);

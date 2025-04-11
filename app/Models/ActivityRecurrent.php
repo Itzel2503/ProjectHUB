@@ -9,4 +9,11 @@ class ActivityRecurrent extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'activity_repeat',
+        'frequency',
+        'day_created',
+        'last_date',
+        'end_date'
+    ];
 }

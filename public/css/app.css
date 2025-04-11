@@ -807,6 +807,10 @@ select {
   visibility: collapse;
 }
 
+.static {
+  position: static;
+}
+
 .fixed {
   position: fixed;
 }
@@ -1311,6 +1315,10 @@ select {
   width: 50%;
 }
 
+.w-2\/5 {
+  width: 40%;
+}
+
 .w-2\/6 {
   width: 33.333333%;
 }
@@ -1341,10 +1349,6 @@ select {
 
 .w-32 {
   width: 8rem;
-}
-
-.w-36 {
-  width: 9rem;
 }
 
 .w-4 {
@@ -1405,6 +1409,10 @@ select {
 
 .max-w-6xl {
   max-width: 72rem;
+}
+
+.max-w-full {
+  max-width: 100%;
 }
 
 .max-w-lg {
@@ -1976,6 +1984,10 @@ select {
   padding: 1rem;
 }
 
+.p-6 {
+  padding: 1.5rem;
+}
+
 .px-0 {
   padding-left: 0px;
   padding-right: 0px;
@@ -2345,6 +2357,12 @@ select {
 
 .opacity-80 {
   opacity: 0.8;
+}
+
+.shadow {
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 .shadow-lg {
@@ -3253,6 +3271,11 @@ select {
     margin-right: 0.75rem;
   }
 
+  .md\:mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .md\:mb-0 {
     margin-bottom: 0px;
   }
@@ -3293,12 +3316,28 @@ select {
     width: 20%;
   }
 
+  .md\:w-1\/6 {
+    width: 16.666667%;
+  }
+
+  .md\:w-2\/4 {
+    width: 50%;
+  }
+
   .md\:w-2\/5 {
     width: 40%;
   }
 
+  .md\:w-2\/6 {
+    width: 33.333333%;
+  }
+
   .md\:w-3\/4 {
     width: 75%;
+  }
+
+  .md\:w-36 {
+    width: 9rem;
   }
 
   .md\:w-4\/5 {

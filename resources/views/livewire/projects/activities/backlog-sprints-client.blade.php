@@ -29,9 +29,17 @@
                         <span class="inline-block font-semibold">Estatus:</span>
                         <span>{{ $firstSprint->state }}</span>
                     </div>
+                    {{-- FECHAS --}}
+                    <div class="md:hidden mx-2 w-auto">
+                        <span class="inline-block font-semibold">Fecha de inicio:</span>
+                        {{ \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
+                        <span class="inline-block font-semibold">Fecha de cierre:</span>
+                        <span class="">
+                            {{ \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                        </span>
+                    </div>
                     {{-- NOMBRE --}}
-                    <div class="mb-2 inline-flex h-12 w-2/6 bg-transparent px-2 md:mx-3 md:px-0">
-
+                    <div class="mb-2 inline-flex h-12 w-full md:w-2/6 bg-transparent px-2 md:mx-3 md:px-0">
                         <select wire:model="selectSprint" wire:change="selectSprint($event.target.value)"
                             class="inputs">
                             @foreach ($sprints as $sprint)
@@ -40,7 +48,7 @@
                         </select>
                     </div>
                     {{-- FECHAS --}}
-                    <div class="mx-2 w-auto">
+                    <div class="mx-2 w-auto hidden md:block">
                         <span class="inline-block font-semibold">Fecha de inicio:</span>
                         {{ \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
                         <span class="inline-block font-semibold">Fecha de cierre:</span>
@@ -49,12 +57,17 @@
                         </span>
                     </div>
                 </div>
-                <div class="mb-2 h-12 w-1/6 bg-transparent md:inline-flex">
-                    <button wire:click="showBacklog()" class="btnNuevo">
+                <div class="md:hidden">
+                    <button wire:click="showBacklog()" class="btnSave">
                         Backlog
                     </button>
                 </div>
             @endif
+            <div class="hidden md:block mb-2 h-12 md:w-1/6 bg-transparent md:inline-flex">
+                <button wire:click="showBacklog()" class="btnNuevo">
+                    Backlog
+                </button>
+            </div>
         </div>
     </div>
     {{-- MODAL SHOW BACKLOG --}}
@@ -64,7 +77,7 @@
                 class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
             </div>
             <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
-                <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-3/4" style="max-height: 90%;">
+                <div class="mx-auto flex flex-col overflow-y-auto rounded-lg w-full md:w-3/4" style="max-height: 90%;">
                     <div
                         class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                         <h3

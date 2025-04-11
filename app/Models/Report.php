@@ -35,4 +35,9 @@ class Report extends Model
     {
         return $this->hasMany(ChatReportsActivities::class);
     }
+
+    public function files()
+    {
+        return $this->hasMany(ReportFiles::class);
+    }
 }

@@ -91,7 +91,7 @@ class ActivitiesReports extends Component
                     'user_id' => Auth::id(),
                     'view' => 'livewire/activities-reports/activities-reports',
                     'action' => 'Mode Kanban',
-                    'message' => 'Modo kanva agregado',
+                    'message' => 'Modo kanban agregado',
                     'details' => 'Vista ' . $this->activeTab . ': ' . $value,
                 ]);
             }
@@ -103,7 +103,7 @@ class ActivitiesReports extends Component
 
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'success',
-                'title' => 'Modo kanva actualizado.',
+                'title' => 'Modo kanban actualizado.',
             ]);
         } catch (\Exception $e) {
             // Guardar el error en la base de datos
