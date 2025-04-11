@@ -100,6 +100,7 @@ class Show extends Component
             $this->recording->look = true;
             $this->recording->save();
         }
+
         // Verificar si el archivo existe en la base de datos
         if ($this->recording && $this->recording->content) {
             // Verificar si el archivo existe en la carpeta
@@ -118,6 +119,26 @@ class Show extends Component
             }
         } else {
             $this->recording->contentExists = false;
+        }
+
+        if ($this->recording && $this->recording->files) {
+            $basePath = $this->type == 'report' ? 'reportes' : 'activities';
+            
+            foreach ($this->recording->files as $file) {
+                // Verificar existencia del archivo físico
+                $filePath = public_path($basePath . '/' . $file->route);
+                $file->exists = file_exists($filePath);
+                
+                // Asignar URL pública
+                $file->public_url = asset($basePath . '/' . $file->route);
+                
+                // Determinar tipo de archivo si no está definido
+                $fileExtension = strtolower(pathinfo($file->route, PATHINFO_EXTENSION));
+                $file->fileExtension = $fileExtension;
+                
+                // Asignar contentExists basado en la existencia del archivo
+                $file->contentExists = $file->exists;
+            }
         }
 
         // Verificar si el archivo existe en la base de datos

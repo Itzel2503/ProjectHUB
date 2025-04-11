@@ -550,7 +550,7 @@ class Projects extends Component
                 // Accede al objeto TemporaryUploadedFile dentro del array
                 $file = $fileArray[0];
                 $fileExtension = $file->extension();
-                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
                 if (in_array($fileExtension, $extensionesImagen)) {
                     $maxSize = 5 * 1024 * 1024; // 5 MB
                     // Verificar el tamaño del archivo

@@ -18,137 +18,148 @@
                     </div>
                 @endif
             @else
-                <div class="flex w-full flex-wrap md:inline-flex md:w-4/5 md:flex-nowrap">
-                    {{-- NOMBRE --}}
-                    <div class="mb-2 inline-flex h-12 w-2/6 bg-transparent px-2 md:mx-3 md:px-0">
-                        @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
-                            <div wire:poll.5s>
-                                <span class="m-auto mr-5">
-                                    <span class="inline-block font-semibold">Avance</span>
-                                    <span
-                                        class="{{ $percentageResolved == '100' ? 'text-lime-700' : ($percentageResolved >= 50 ? 'text-yellow-500' : 'text-red-600') }}">
-                                        {{ $percentageResolved }}%
+                <div class="flex flex-col md:flex-row w-full flex-wrap md:inline-flex md:w-4/5 md:flex-nowrap">
+                    <div class="flex w-full justify-between">
+                        <div class="mb-2 inline-flex h-12 w-full  bg-transparent px-2 md:mx-3 md:px-0">
+                            @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
+                                <div wire:poll.5s>
+                                    {{-- AVANCE ESTATUS --}}
+                                    <span class="m-auto mr-5">
+                                        <span class="inline-block font-semibold">Avance</span>
+                                        <span
+                                            class="{{ $percentageResolved == '100' ? 'text-lime-700' : ($percentageResolved >= 50 ? 'text-yellow-500' : 'text-red-600') }}">
+                                            {{ $percentageResolved }}%
+                                        </span>
                                     </span>
-                                </span>
-                            </div>
-                        @endif
-                        <select wire:model="selectSprint" wire:change="selectSprint($event.target.value)"
-                            class="inputs">
-                            @foreach ($sprints as $sprint)
-                                <option value="{{ $sprint->id }}">{{ $sprint->number }} - {{ $sprint->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
-                        {{-- ESTADO --}}
-                        <div class="mb-2 inline-flex h-12 w-36 bg-transparent px-2 md:mx-3 md:px-0">
-                            <select wire:change='updateStateSprint({{ $idSprint }}, $event.target.value)'
-                                name="state" id="state" class="inputs">
-                                <option selected value={{ $firstSprint->state }}>{{ $firstSprint->state }}</option>
-                                @foreach ($filteredState as $action)
-                                    <option value="{{ $action }}">{{ $action }}</option>
+                                </div>
+                            @endif
+                            <select wire:model="selectSprint" wire:change="selectSprint($event.target.value)"
+                                class="inputs">
+                                @foreach ($sprints as $sprint)
+                                    <option value="{{ $sprint->id }}">{{ $sprint->number }} - {{ $sprint->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                    @endif
-                    {{-- FECHAS --}}
-                    <div class="mx-2 w-auto">
-                        <span class="inline-block font-semibold">Fecha de inicio:</span>
-                        {{ \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
-                        <span class="inline-block font-semibold">Fecha de cierre:</span>
-                        <span class="">
-                            {{ \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
-                        </span>
+                        @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
+                            {{-- ESTADO --}}
+                            <div class="mb-2 inline-flex h-12 w-48 md:w-36 bg-transparent px-2 md:mx-3 md:px-0">
+                                <select wire:change='updateStateSprint({{ $idSprint }}, $event.target.value)'
+                                    name="state" id="state" class="inputs">
+                                    <option selected value={{ $firstSprint->state }}>{{ $firstSprint->state }}</option>
+                                    @foreach ($filteredState as $action)
+                                        <option value="{{ $action }}">{{ $action }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                     </div>
-                    @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
-                        <div class="h-12 w-auto bg-transparent md:inline-flex">
-                            <div class="flex justify-center">
-                                <div id="dropdown-container" class="relative">
-                                    <!-- Button -->
-                                    <button id="toggle-button" type="button" class="flex items-center px-5 py-2.5">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-dots-vertical" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        </svg>
-                                    </button>
-                                    <!-- Panel -->
-                                    <div id="dropdown-panel"
-                                        class="hidden absolute right-10 top-3 z-10 mt-2 w-32 rounded-md bg-gray-200">
-                                        <!-- Botón Nuevo -->
-                                        <div wire:click="newSprint()"
-                                            class="flex cursor-pointer px-4 py-2 text-sm text-black">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-plus mr-2" width="24"
-                                                height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M12 5l0 14" />
-                                                <path d="M5 12l14 0" />
-                                            </svg>
-                                            Nuevo
-                                        </div>
-                                        <!-- Botón Editar -->
-                                        <div wire:click="editSprint({{ $idSprint }})"
-                                            class="@if ($firstSprint->state == 'Cerrado') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-black">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-edit mr-2" width="24"
-                                                height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                                                <path
-                                                    d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                                                <path d="M16 5l3 3" />
-                                            </svg>
-                                            Editar
-                                        </div>
-                                        <!-- Botón Eliminar -->
-                                        <div wire:click="$emit('deleteSprint',{{ $idSprint }})"
-                                            class="@if ($firstSprint->state == 'Cerrado' || $firstSprint->state == 'Curso') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-red-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-trash mr-2" width="24"
-                                                height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M4 7l16 0" />
-                                                <path d="M10 11l0 6" />
-                                                <path d="M14 11l0 6" />
-                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                            </svg>
-                                            Eliminar
-                                        </div>
-                                        <!-- Botón Abrir sprint -->
-                                        <div wire:click="$emit('openSprint')"
-                                            class="@if ($firstSprint->state != 'Cerrado') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-black">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="icon icon-tabler icons-tabler-outline icon-tabler-lock-open mr-2">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path
-                                                    d="M5 11m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
-                                                <path d="M12 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                                <path d="M8 11v-5a4 4 0 0 1 8 0" />
-                                            </svg>
-                                            Reabrir
+                    <div class="flex w-full justify-between">
+                        <div class="flex">
+                            {{-- FECHAS --}}
+                            <div class="mx-2 w-auto">
+                                <span class="inline-block font-semibold">Fecha de inicio:</span>
+                                {{ \Carbon\Carbon::parse($startDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}<br>
+                                <span class="inline-block font-semibold">Fecha de cierre:</span>
+                                <span class="">
+                                    {{ \Carbon\Carbon::parse($endDate)->locale('es')->isoFormat('D[-]MMMM[-]YYYY') }}
+                                </span>
+                            </div>
+                            @if (Auth::user()->type_user == 1 || Auth::user()->area_id == 1)
+                                <div class="h-12 w-auto bg-transparent md:inline-flex">
+                                    <div class="flex justify-center">
+                                        <div id="dropdown-container" class="relative">
+                                            <!-- Button -->
+                                            <button id="toggle-button" type="button" class="flex items-center px-5 py-2.5">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon icon-tabler icon-tabler-dots-vertical" width="24"
+                                                    height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                    <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                    <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                </svg>
+                                            </button>
+                                            <!-- Panel -->
+                                            <div id="dropdown-panel"
+                                                class="hidden absolute right-10 top-3 z-10 mt-2 w-32 rounded-md bg-gray-200">
+                                                <!-- Botón Nuevo -->
+                                                <div wire:click="newSprint()"
+                                                    class="flex cursor-pointer px-4 py-2 text-sm text-black">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="icon icon-tabler icon-tabler-plus mr-2" width="24"
+                                                        height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                                        stroke="currentColor" fill="none" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M12 5l0 14" />
+                                                        <path d="M5 12l14 0" />
+                                                    </svg>
+                                                    Nuevo
+                                                </div>
+                                                <!-- Botón Editar -->
+                                                <div wire:click="editSprint({{ $idSprint }})"
+                                                    class="@if ($firstSprint->state == 'Cerrado') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-black">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="icon icon-tabler icon-tabler-edit mr-2" width="24"
+                                                        height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                                        stroke="currentColor" fill="none" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                                        <path
+                                                            d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                                        <path d="M16 5l3 3" />
+                                                    </svg>
+                                                    Editar
+                                                </div>
+                                                <!-- Botón Eliminar -->
+                                                <div wire:click="$emit('deleteSprint',{{ $idSprint }})"
+                                                    class="@if ($firstSprint->state == 'Cerrado' || $firstSprint->state == 'Curso') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-red-600">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="icon icon-tabler icon-tabler-trash mr-2" width="24"
+                                                        height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                                        stroke="currentColor" fill="none" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path d="M4 7l16 0" />
+                                                        <path d="M10 11l0 6" />
+                                                        <path d="M14 11l0 6" />
+                                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                                    </svg>
+                                                    Eliminar
+                                                </div>
+                                                <!-- Botón Abrir sprint -->
+                                                <div wire:click="$emit('openSprint')"
+                                                    class="@if ($firstSprint->state != 'Cerrado') hidden @endif flex cursor-pointer px-4 py-2 text-sm text-black">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="icon icon-tabler icons-tabler-outline icon-tabler-lock-open mr-2">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                        <path
+                                                            d="M5 11m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+                                                        <path d="M12 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                        <path d="M8 11v-5a4 4 0 0 1 8 0" />
+                                                    </svg>
+                                                    Reabrir
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
-                    @endif
+                        <div class="md:hidden">
+                            <button wire:click="showBacklog()" class="btnSave">
+                                Backlog
+                            </button>
+                        </div>
+                    </div>
                 </div>
             @endif
-            <div class="mb-2 h-12 w-1/6 bg-transparent md:inline-flex">
+            <div class="hidden md:block mb-2 h-12 md:w-1/6 bg-transparent md:inline-flex">
                 <button wire:click="showBacklog()" class="btnNuevo">
                     Backlog
                 </button>
@@ -162,7 +173,7 @@
                 class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
             </div>
             <div class="text:md smd:px-0 fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center px-2">
-                <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-3/4" style="max-height: 90%;">
+                <div class="mx-auto flex flex-col overflow-y-auto rounded-lg w-full md:w-3/4" style="max-height: 90%;">
                     <div
                         class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                         <h3

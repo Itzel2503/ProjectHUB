@@ -1,5 +1,5 @@
-<div>
-    <div class="modalBody">
+<div class="overflow-y-auto">
+    <div class="flex flex-col sm:flex-row px-6 py-2 bg-white ">
         {{-- ACTIVITY --}}
         <div class="md-3/4 mb-5 flex w-full flex-col border-gray-400 px-5 md:mb-0 lg:w-1/2 lg:border-r-2">
             <div
@@ -53,21 +53,6 @@
                     <div>
                         <span class="text-xs italic text-red-600">
                             @error('title')
-                            <span class="pl-2 text-xs italic text-red-600">
-                                {{ $message }}
-                            </span>
-                            @enderror
-                        </span>
-                    </div>
-                </div>
-                <div class="mb-6 flex w-full flex-col px-3">
-                    <h5 class="inline-flex font-semibold" for="file">
-                        Seleccionar una imagen
-                    </h5>
-                    <input wire:model='file' required type="file" name="file" id="file" class="inputs">
-                    <div>
-                        <span class="text-xs italic text-red-600">
-                            @error('file')
                             <span class="pl-2 text-xs italic text-red-600">
                                 {{ $message }}
                             </span>
@@ -160,7 +145,7 @@
                 </div>
             </div>
             <div class="-mx-3 mb-6">
-                <div class="flex w-full flex-col px-3">
+                <div class="mb-6 flex w-full flex-col px-3">
                     <h5 class="inline-flex font-semibold" for="priority">
                         Prioridad
                     </h5>
@@ -190,6 +175,62 @@
                     <div>
                         <span class="text-xs italic text-red-600">
                             @error('priority')
+                            <span class="pl-2 text-xs italic text-red-600">
+                                {{ $message }}
+                            </span>
+                            @enderror
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="-mx-3 mb-6 flex flex-row">
+                <div class="mb-6 flex w-full flex-col px-3">
+                    <h5 class="inline-flex font-semibold" for="file">
+                        Archivos
+                    </h5>
+                    @if ($chooseEndDate)
+                    <p class="text-red-600">No se pueden agregar archivos si es una tarea recurrente</p>
+                    @else
+                    <div class="flex flex-row">
+                        <span wire:click="addInput"
+                            class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-plus mr-2" width="24"
+                                height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M12 5l0 14" />
+                                <path d="M5 12l14 0" />
+                            </svg>
+                            Agregar archivo
+                        </span>
+                    </div>
+                    @endif
+                    @foreach ($files as $index => $file)
+                    <div class="flex flex-row">
+                        <span wire:click="removeInput({{ $index }})"
+                            class="my-auto cursor-pointer text-red-600">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-trash mr-2" width="24"
+                                height="24" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M4 7l16 0"></path>
+                                <path d="M10 11l0 6"></path>
+                                <path d="M14 11l0 6"></path>
+                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                            </svg>
+                        </span>
+                        <input wire:model="files.{{ $index }}" type="file"
+                            name="files" class="inputs mb-2" multiple>
+                    </div>
+                    @endforeach
+                    <div>
+                        <span class="text-xs italic text-red-600">
+                            @error('file')
                             <span class="pl-2 text-xs italic text-red-600">
                                 {{ $message }}
                             </span>
@@ -302,6 +343,8 @@
             Guardar
         </button>
     </div>
+    
+    
     {{-- LOADING PAGE --}}
     <div class="absolute left-0 top-0 z-50 h-screen w-full" wire:loading
         wire:target="selectPriority, changePoints, create">

@@ -4,11 +4,13 @@ namespace App\Http\Livewire\Modals\ReportsActivities;
 
 use App\Models\Activity;
 use App\Models\ActivityRecurrent;
+use App\Models\ActivityFiles;
 use App\Models\Backlog;
 use App\Models\ErrorLog;
 use App\Models\Log;
 use App\Models\Project;
 use App\Models\Report;
+use App\Models\ReportFiles;
 use App\Models\Sprint;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +32,7 @@ class Edit extends Component
     // DINAMICOS
     public $evidenceEdit, $changePoints = false, $chooseEndDate = false;
     public $selectedIcon = null;
+    public $showExistingContent = true; // Agrega esta propiedad para controlar el estado
     // MENSJES
     public $repeatMessage = '', $moveActivityMessage = '', $endDateMessage = '', $expectedDateMessage = '';
     // ACTIVIDADES RECURRENTES
@@ -38,7 +41,8 @@ class Edit extends Component
     // ACTIVIDADES
     public $sprints;
     // INPUTS
-    public $title, $file, $description, $expected_date, $repeat, $end_date, $moveActivity, $priority, $points, $point_know, $point_many, $point_effort;
+    public $filesNew = [], $selectedFiles = [];
+    public $title, $description, $expected_date, $repeat, $end_date, $moveActivity, $priority, $points, $point_know, $point_many, $point_effort;
 
     public function mount()
     {
@@ -114,6 +118,46 @@ class Edit extends Component
 
     public function render()
     {
+        // Verificar si el archivo existe en la base de datos
+        if ($this->recording && $this->recording->content) {
+            // Verificar si el archivo existe en la carpeta
+            if ($this->type == 'report') {
+                $filePath = public_path('reportes/' . $this->recording->content);
+            } else {
+                $filePath = public_path('activities/' . $this->recording->content);
+            }
+            
+            $fileExtension = pathinfo($this->recording->content, PATHINFO_EXTENSION);
+            if (file_exists($filePath)) {
+                $this->recording->contentExists = true;
+                $this->recording->fileExtension = $fileExtension;
+            } else {
+                $this->recording->contentExists = false;
+            }
+        } else {
+            $this->recording->contentExists = false;
+        }
+
+        if ($this->recording && $this->recording->files) {
+            $basePath = $this->type == 'report' ? 'reportes' : 'activities';
+            
+            foreach ($this->recording->files as $file) {
+                // Verificar existencia del archivo físico
+                $filePath = public_path($basePath . '/' . $file->route);
+                $file->exists = file_exists($filePath);
+                
+                // Asignar URL pública
+                $file->public_url = asset($basePath . '/' . $file->route);
+                
+                // Determinar tipo de archivo si no está definido
+                $fileExtension = strtolower(pathinfo($file->route, PATHINFO_EXTENSION));
+                $file->fileExtension = $fileExtension;
+                
+                // Asignar contentExists basado en la existencia del archivo
+                $file->contentExists = $file->exists;
+            }
+        }
+
         return view('livewire.modals.reports-activities.edit');
     }
 
@@ -263,6 +307,19 @@ class Edit extends Component
         }
     }
 
+    public function addInput()
+    {
+        $this->filesNew[] = null;
+        $this->showExistingContent = true; // Mantener visible el contenido existente
+    }
+
+    public function removeInput($index)
+    {
+        unset($this->filesNew[$index]);
+        $this->filesNew = array_values($this->filesNew);
+        $this->showExistingContent = true;
+    }
+
     public function update($id, $project_id)
     {
         if ($this->type == 'activity') {
@@ -310,87 +367,6 @@ class Edit extends Component
         // REPORTE
         if ($report) {
             try {
-                if ($this->file) {
-                    $extension = $this->file->extension();
-                    $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-                    $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
-
-                    if (in_array($extension, $extensionesImagen)) {
-                        $maxSize = 5 * 1024 * 1024; // 5 MB
-                        // Verificar el tamaño del archivo
-                        if ($this->file->getSize() > $maxSize) {
-                            $this->dispatchBrowserEvent('swal:modal', [
-                                'type' => 'error',
-                                'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.'
-                            ]);
-                            return;
-                        }
-                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                        $fileName = $this->file->getClientOriginalName();
-                        $fileName = str_replace(' ', '_', $fileName);
-                        $fullNewFilePath = $filePath . '/' . $fileName;
-                        // Procesar la imagen
-                        $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
-                        // Redimensionar la imagen si es necesario
-                        $image->resize(800, null, function ($constraint) {
-                            $constraint->aspectRatio();
-                        });
-                        // Guardar la imagen temporalmente
-                        $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
-                        $image->save(storage_path('app/' . $tempPath));
-                        // Eliminar imagen anterior
-                        if (Storage::disk('reports')->exists($report->content)) {
-                            Storage::disk('reports')->delete($report->content);
-                        }
-                        // Guardar la imagen redimensionada en el almacenamiento local
-                        Storage::disk('reports')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
-                        // // Eliminar la imagen temporal
-                        Storage::disk('local')->delete($tempPath);
-
-                        $report->image = true;
-                        $report->video = false;
-                        $report->file = false;
-                    } elseif (in_array($extension, $extensionesVideo)) {
-                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                        $fileName = $this->file->getClientOriginalName();
-                        $fileName = str_replace(' ', '_', $fileName);
-                        $fullNewFilePath = $filePath . '/' . $fileName;
-                        // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-                        if ($report->content && Storage::disk('reports')->exists($report->content)) {
-                            $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
-                            if ($existingFilePath == $filePath) {
-                                Storage::disk('reports')->delete($report->content);
-                            }
-                        }
-                        // Guardar el archivo en el disco 'reports'
-                        $this->file->storeAs($filePath, $fileName, 'reports');
-
-                        $report->image = false;
-                        $report->video = true;
-                        $report->file = false;
-                    } else {
-                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $project->customer->name . '/' . $project->name;
-                        $fileName = $this->file->getClientOriginalName();
-                        $fileName = str_replace(' ', '_', $fileName);
-                        $fullNewFilePath = $filePath . '/' . $fileName;
-                        // Verificar y eliminar el archivo anterior si existe y coincide con la nueva ruta
-                        if ($report->content && Storage::disk('reports')->exists($report->content)) {
-                            $existingFilePath = pathinfo($report->content, PATHINFO_DIRNAME);
-                            if ($existingFilePath == $filePath) {
-                                Storage::disk('reports')->delete($report->content);
-                            }
-                        }
-                        // Guardar el archivo en el disco 'reports'
-                        $this->file->storeAs($filePath, $fileName, 'reports');
-
-                        $report->image = false;
-                        $report->video = false;
-                        $report->file = true;
-                    }
-
-                    $report->content = $fullNewFilePath;
-                }
-
                 $report->icon = ($this->selectedIcon == "🚫" || $this->selectedIcon == null) ? '' : $this->selectedIcon;
                 $report->title = $this->title ?? $report->title;
                 $report->description = $this->description ?? $report->description;
@@ -464,6 +440,117 @@ class Edit extends Component
                 }
                 $report->save();
 
+                $reportFiles = ReportFiles::where('report_id', $report->id)->get();
+                // Eliminar los archivos seleccionados
+                if (!empty($this->selectedFiles) || !empty(array_filter($this->selectedFiles))) {
+                    foreach ($this->selectedFiles as $fileId) {
+                        // Buscar el archivo en la colección de archivos
+                        $fileToDelete = $reportFiles->where('id', $fileId)->first();
+                        // Verificar si se encontró el archivo
+                        if ($fileToDelete) {
+                            // Eliminar el archivo físico si existe en el disco
+                            if (Storage::disk('reports')->exists($fileToDelete->route)) {
+                                Storage::disk('reports')->delete($fileToDelete->route);
+                            }
+                            // Eliminar el archivo de la base de datos
+                            $fileToDelete->delete();
+
+                            $this->dispatchBrowserEvent('swal:modal', [
+                                'type' => 'success',
+                                'title' => 'Archivo eliminado.',
+                            ]);
+                        }
+                    }
+                    // Recargar el registro con relaciones frescas
+                    $this->recording = $report->fresh()->load('files');
+                            
+                    // Resetear variables temporales
+                    $this->reset(['filesNew', 'selectedFiles']);
+                    
+                    // Notificar éxito
+                    $this->dispatchBrowserEvent('notify', [
+                        'type' => 'success',
+                        'message' => 'Archivos eliminados correctamente'
+                    ]);
+                }
+
+                if (!empty($this->filesNew) || !empty(array_filter($this->filesNew))) {
+                    foreach ($this->filesNew as $index => $file) {
+                        // $file = $fileArray[0];
+                        if ($file instanceof \Livewire\TemporaryUploadedFile) {
+                            $fileExtension = $file->extension();
+                            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                            $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+
+                            // Sanitizar nombres de archivo y directorios
+                            $fileName = 'Reporte_' . $projectName . '_' . $dateString . '.' . $fileExtension;
+                            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName;
+                            $fullNewFilePath = $filePath . '/' . $fileName;
+                            
+                            if (in_array($fileExtension, $extensionesImagen)) {
+                                $maxSize = 5 * 1024 * 1024; // 5 MB
+                                // Verificar el tamaño del archivo
+                                if ($file->getSize() > $maxSize) {
+                                    $this->dispatchBrowserEvent('swal:modal', [
+                                        'type' => 'error',
+                                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
+                                    ]);
+                                    return;
+                                }
+                                // Procesar la imagen
+                                $image = \Intervention\Image\Facades\Image::make($file->getRealPath());
+                                // Redimensionar la imagen si es necesario
+                                $image->resize(800, null, function ($constraint) {
+                                    $constraint->aspectRatio();
+                                });
+                                // Guardar la imagen temporalmente
+                                $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                                $image->save(storage_path('app/' . $tempPath));
+                                // Guardar la imagen redimensionada en el almacenamiento local
+                                // Guardar directamente sin usar archivo temporal
+                                Storage::disk('reports')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                                // Eliminar la imagen temporal
+                                Storage::disk('local')->delete($tempPath);
+
+                                $reportFile = new ReportFiles();
+                                $reportFile->report_id = $report->id;
+                                $reportFile->route = $fullNewFilePath;
+                                $reportFile->image = true;
+                                $reportFile->save();
+                            } else if (in_array($fileExtension, $extensionesVideo)) {
+                                // Guardar la imagen redimensionada en el almacenamiento local
+                                $file->storeAs('', $fullNewFilePath, 'reports');
+
+                                $reportFile = new ReportFiles();
+                                $reportFile->report_id = $report->id;
+                                $reportFile->route = $fullNewFilePath;
+                                $reportFile->video = true;
+                                $reportFile->save();
+                            } else {
+                                // Guardar la imagen redimensionada en el almacenamiento local
+                                $file->storeAs('', $fullNewFilePath, 'reports');
+                                
+                                $reportFile = new ReportFiles();
+                                $reportFile->report_id = $report->id;
+                                $reportFile->route = $fullNewFilePath;
+                                $reportFile->file = true;
+                                $reportFile->save();
+                            }
+                        }
+                    }
+                    // Recargar el registro con relaciones frescas
+                    $this->recording = $report->fresh()->load('files');
+                            
+                    // Resetear variables temporales
+                    $this->reset(['filesNew', 'selectedFiles']);
+                    
+                    // Notificar éxito
+                    $this->dispatchBrowserEvent('notify', [
+                        'type' => 'success',
+                        'message' => 'Archivos guardados correctamente'
+                    ]);
+                }
+
                 Log::create([
                     'user_id' => Auth::id(),
                     'report_id' => $report->id,
@@ -474,6 +561,8 @@ class Edit extends Component
                 ]);
 
                 $this->dispatchBrowserEvent('file-reset');
+                $this->filesNew = [];
+                $this->render();
 
                 $this->dispatchBrowserEvent('swal:modal', [
                     'type' => 'success',
@@ -501,49 +590,6 @@ class Edit extends Component
         // ACTIVIDAD
         if ($activity) {
             try {
-                if ($this->file) {
-                    $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-                    if (in_array($this->file->extension(), $extensionesImagen)) {
-                        $maxSize = 5 * 1024 * 1024; // 5 MB
-                        // Verificar el tamaño del archivo
-                        if ($this->file->getSize() > $maxSize) {
-                            $this->dispatchBrowserEvent('swal:modal', [
-                                'type' => 'error',
-                                'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
-                            ]);
-                            return;
-                        }
-                        $fileExtension = $this->file->extension();
-                        $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName;
-                        $fileName = 'Actividad_' . $projectName . '_' . $dateString . '.' . $fileExtension;
-                        $fullNewFilePath = $filePath . '/' . $fileName;
-                        // Procesar la imagen
-                        $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
-                        // Redimensionar la imagen si es necesario
-                        $image->resize(800, null, function ($constraint) {
-                            $constraint->aspectRatio();
-                        });
-                        // Guardar la imagen temporalmente
-                        $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
-                        $image->save(storage_path('app/' . $tempPath));
-                        // Eliminar imagen anterior
-                        if (Storage::disk('activities')->exists($activity->content)) {
-                            Storage::disk('activities')->delete($activity->content);
-                        }
-                        // Guardar la imagen redimensionada en el almacenamiento local
-                        Storage::disk('activities')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
-                        // // Eliminar la imagen temporal
-                        Storage::disk('local')->delete($tempPath);
-                        $activity->content = $fullNewFilePath;
-                    } else {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'error',
-                            'title' => 'No es una imagen.',
-                        ]);
-                        return;
-                    }
-                }
-
                 if ($this->moveActivity) {
                     $sprint = Sprint::find($this->moveActivity);
 
@@ -739,14 +785,124 @@ class Edit extends Component
                                 'message' => 'Actividad creada',
                                 'details' => 'Delegado: ' . $activity->delegate_id,
                             ]);
-                            // No se repite (opción "Once")
-                            $activity->save();
 
                             // Emitir un evento de navegador
                             $this->dispatchBrowserEvent('swal:modal', [
                                 'type' => 'success',
-                                'title' => 'Actividad creada',
+                                'title' => 'Actividad actualizada',
                             ]);
+                    }
+
+                    if (!empty($this->selectedFiles) || !empty(array_filter($this->selectedFiles))) {
+                        $activityFiles = ActivityFiles::where('activity_id', $activity->id)->get();
+                        // Eliminar los archivos seleccionados
+                        foreach ($this->selectedFiles as $fileId) {
+                            // Buscar el archivo en la colección de archivos
+                            $fileToDelete = $activityFiles->where('id', $fileId)->first();
+                            // Verificar si se encontró el archivo
+                            if ($fileToDelete) {
+                                // Eliminar el archivo físico si existe en el disco
+                                if (Storage::disk('activities')->exists($fileToDelete->route)) {
+                                    Storage::disk('activities')->delete($fileToDelete->route);
+                                }
+                                // Eliminar el archivo de la base de datos
+                                $fileToDelete->delete();
+                                
+                                $this->dispatchBrowserEvent('swal:modal', [
+                                    'type' => 'success',
+                                    'title' => 'Archivo eliminado.',
+                                ]);
+                            }
+                        }
+                        // Recargar el registro con relaciones frescas
+                        $this->recording = $activity->fresh()->load('files');
+                                
+                        // Resetear variables temporales
+                        $this->reset(['filesNew', 'selectedFiles']);
+                        
+                        // Notificar éxito
+                        $this->dispatchBrowserEvent('notify', [
+                            'type' => 'success',
+                            'message' => 'Archivos eliminados correctamente'
+                        ]);
+                    }
+
+                    if (!empty($this->filesNew) || !empty(array_filter($this->filesNew))) {
+                        foreach ($this->filesNew as $index => $file) {
+                            // $file = $fileArray[0];
+                            if ($file instanceof \Livewire\TemporaryUploadedFile) {
+                                $fileExtension = $file->extension();
+                                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                                $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+
+                                // Sanitizar nombres de archivo y directorios
+                                $fileName = 'Actividad_' . $projectName . '_' . $dateString . '.' . $fileExtension;
+                                $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName;
+                                $fullNewFilePath = $filePath . '/' . $fileName;
+                                
+                                if (in_array($fileExtension, $extensionesImagen)) {
+                                    $maxSize = 5 * 1024 * 1024; // 5 MB
+                                    // Verificar el tamaño del archivo
+                                    if ($file->getSize() > $maxSize) {
+                                        $this->dispatchBrowserEvent('swal:modal', [
+                                            'type' => 'error',
+                                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
+                                        ]);
+                                        return;
+                                    }
+                                    // Procesar la imagen
+                                    $image = \Intervention\Image\Facades\Image::make($file->getRealPath());
+                                    // Redimensionar la imagen si es necesario
+                                    $image->resize(800, null, function ($constraint) {
+                                        $constraint->aspectRatio();
+                                    });
+                                    // Guardar la imagen temporalmente
+                                    $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                                    $image->save(storage_path('app/' . $tempPath));
+                                    // Guardar la imagen redimensionada en el almacenamiento local
+                                    // Guardar directamente sin usar archivo temporal
+                                    Storage::disk('activities')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                                    // Eliminar la imagen temporal
+                                    Storage::disk('local')->delete($tempPath);
+
+                                    $activityFile = new ActivityFiles();
+                                    $activityFile->activity_id = $activity->id;
+                                    $activityFile->route = $fullNewFilePath;
+                                    $activityFile->image = true;
+                                    $activityFile->save();
+                                } else if (in_array($fileExtension, $extensionesVideo)) {
+                                    // Guardar la imagen redimensionada en el almacenamiento local
+                                    $file->storeAs('', $fullNewFilePath, 'activities');
+
+                                    $activityFile = new ActivityFiles();
+                                    $activityFile->activity_id = $activity->id;
+                                    $activityFile->route = $fullNewFilePath;
+                                    $activityFile->video = true;
+                                    $activityFile->save();
+                                } else {
+                                    // Guardar la imagen redimensionada en el almacenamiento local
+                                    $file->storeAs('', $fullNewFilePath, 'activities');
+                                    
+                                    $activityFile = new ActivityFiles();
+                                    $activityFile->activity_id = $activity->id;
+                                    $activityFile->route = $fullNewFilePath;
+                                    $activityFile->file = true;
+                                    $activityFile->save();
+                                }
+                            }
+                        }
+
+                        // Recargar el registro con relaciones frescas
+                        $this->recording = $activity->fresh()->load('files');
+                        
+                        // Resetear variables temporales
+                        $this->reset(['filesNew', 'selectedFiles']);
+                        
+                        // Notificar éxito
+                        $this->dispatchBrowserEvent('notify', [
+                            'type' => 'success',
+                            'message' => 'Archivos guardados correctamente'
+                        ]);
                     }
                 } else {
                     $ActivityRepeat = Activity::where('activity_repeat', $activity->activity_repeat)->get();
@@ -1099,13 +1255,6 @@ class Edit extends Component
                         Activity::insert($batch);
                     }
                 }
-
-                // Guardar información de recurrencia
-                $activityRecurrent = ActivityRecurrent::where('activity_repeat', $task->activity_repeat)->first();
-                $activityRecurrent->frequency = $this->repeat;
-                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
-                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
-                $activityRecurrent->save();
             } else {
                 // Preparar datos para inserción masiva
                 $events = [];
@@ -1142,15 +1291,24 @@ class Edit extends Component
                 foreach (array_chunk($events, 500) as $batch) {
                     Activity::insert($batch);
                 }
+            }
+            // Versión mejorada para guardar recurrencia
+            $recurrentData = [
+                'activity_repeat' => $task->activity_repeat ?? bin2hex(random_bytes(8)),
+                'frequency' => $this->repeat,
+                'last_date' => $tempExpectedDate->format('Y-m-d H:i:s'),
+                'end_date' => $this->end_date ? Carbon::parse($this->end_date) : null
+            ];
 
-                // Guardar información de recurrencia
-                $activityRecurrent = new ActivityRecurrent();
-                $activityRecurrent->activity_repeat = $activityRepeat;
-                $activityRecurrent->frequency = $this->repeat;
-                $activityRecurrent->day_created = $startDate;
-                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
-                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
-                $activityRecurrent->save();
+            if ($this->repeat_updated) {
+                $recurrentData['day_created'] = now();
+                ActivityRecurrent::updateOrCreate(
+                    ['activity_repeat' => $task->activity_repeat],
+                    $recurrentData
+                );
+            } else {
+                $recurrentData['day_created'] = $startDate;
+                ActivityRecurrent::create($recurrentData);
             }
         } catch (\Exception $e) {
             // Registrar en el log de errores
@@ -1280,13 +1438,6 @@ class Edit extends Component
                         Activity::insert($batch);
                     }
                 }
-
-                // Guardar información de recurrencia
-                $activityRecurrent = ActivityRecurrent::where('activity_repeat', $task->activity_repeat)->first();
-                $activityRecurrent->frequency = $this->repeat;
-                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
-                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
-                $activityRecurrent->save();
             } else {
                 // Preparar datos para inserción masiva
                 $events = [];
@@ -1323,15 +1474,24 @@ class Edit extends Component
                 foreach (array_chunk($events, 500) as $batch) {
                     Activity::insert($batch);
                 }
+            }
+            // Versión mejorada para guardar recurrencia
+            $recurrentData = [
+                'activity_repeat' => $task->activity_repeat ?? bin2hex(random_bytes(8)),
+                'frequency' => $this->repeat,
+                'last_date' => $tempExpectedDate->format('Y-m-d H:i:s'),
+                'end_date' => $this->end_date ? Carbon::parse($this->end_date) : null
+            ];
 
-                // Guardar información de recurrencia
-                $activityRecurrent = new ActivityRecurrent();
-                $activityRecurrent->activity_repeat = $activityRepeat;
-                $activityRecurrent->frequency = $this->repeat;
-                $activityRecurrent->day_created = $startDate;
-                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
-                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
-                $activityRecurrent->save();
+            if ($this->repeat_updated) {
+                $recurrentData['day_created'] = now();
+                ActivityRecurrent::updateOrCreate(
+                    ['activity_repeat' => $task->activity_repeat],
+                    $recurrentData
+                );
+            } else {
+                $recurrentData['day_created'] = $startDate;
+                ActivityRecurrent::create($recurrentData);
             }
         } catch (\Exception $e) {
             // Registrar en el log de errores
@@ -1463,13 +1623,6 @@ class Edit extends Component
                         Activity::insert($batch);
                     }
                 }
-
-                // Guardar información de recurrencia
-                $activityRecurrent = ActivityRecurrent::where('activity_repeat', $task->activity_repeat)->first();
-                $activityRecurrent->frequency = $this->repeat;
-                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
-                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
-                $activityRecurrent->save();
             } else {
                 // Preparar datos para inserción masiva
                 $events = [];
@@ -1507,14 +1660,25 @@ class Edit extends Component
                 foreach (array_chunk($events, 500) as $batch) {
                     Activity::insert($batch);
                 }
+            }
 
-                $activityRecurrent = new ActivityRecurrent();
-                $activityRecurrent->activity_repeat = $activityRepeat;
-                $activityRecurrent->frequency = $this->repeat;
-                $activityRecurrent->day_created = $startDate;
-                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
-                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
-                $activityRecurrent->save();
+            // Versión mejorada para guardar recurrencia
+            $recurrentData = [
+                'activity_repeat' => $task->activity_repeat ?? bin2hex(random_bytes(8)),
+                'frequency' => $this->repeat,
+                'last_date' => $tempExpectedDate->format('Y-m-d H:i:s'),
+                'end_date' => $this->end_date ? Carbon::parse($this->end_date) : null
+            ];
+
+            if ($this->repeat_updated) {
+                $recurrentData['day_created'] = now();
+                ActivityRecurrent::updateOrCreate(
+                    ['activity_repeat' => $task->activity_repeat],
+                    $recurrentData
+                );
+            } else {
+                $recurrentData['day_created'] = $startDate;
+                ActivityRecurrent::create($recurrentData);
             }
         } catch (\Exception $e) {
             // Registrar en el log de errores
@@ -1645,13 +1809,6 @@ class Edit extends Component
                         Activity::insert($batch);
                     }
                 }
-
-                // Guardar información de recurrencia
-                $activityRecurrent = ActivityRecurrent::where('activity_repeat', $task->activity_repeat)->first();
-                $activityRecurrent->frequency = $this->repeat;
-                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
-                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
-                $activityRecurrent->save();
             } else {
                 // Preparar datos para inserción masiva
                 $events = [];
@@ -1688,15 +1845,24 @@ class Edit extends Component
                 foreach (array_chunk($events, 500) as $batch) {
                     Activity::insert($batch);
                 }
+            }
+            // Versión mejorada para guardar recurrencia
+            $recurrentData = [
+                'activity_repeat' => $task->activity_repeat ?? bin2hex(random_bytes(8)),
+                'frequency' => $this->repeat,
+                'last_date' => $tempExpectedDate->format('Y-m-d H:i:s'),
+                'end_date' => $this->end_date ? Carbon::parse($this->end_date) : null
+            ];
 
-                // Guardar información de recurrencia
-                $activityRecurrent = new ActivityRecurrent();
-                $activityRecurrent->activity_repeat = $activityRepeat;
-                $activityRecurrent->frequency = $this->repeat;
-                $activityRecurrent->day_created = $startDate;
-                $activityRecurrent->last_date = $tempExpectedDate->format('Y-m-d H:i:s'); // Última fecha generada
-                $activityRecurrent->end_date = $this->end_date ? Carbon::parse($this->end_date) : null;
-                $activityRecurrent->save();
+            if ($this->repeat_updated) {
+                $recurrentData['day_created'] = now();
+                ActivityRecurrent::updateOrCreate(
+                    ['activity_repeat' => $task->activity_repeat],
+                    $recurrentData
+                );
+            } else {
+                $recurrentData['day_created'] = $startDate;
+                ActivityRecurrent::create($recurrentData);
             }
         } catch (\Exception $e) {
             // Registrar en el log de errores

@@ -55,4 +55,9 @@ class Activity extends Model
     {
         return $this->hasMany(ChatReportsActivities::class);
     }
+
+    public function files()
+    {
+        return $this->hasMany(ActivityFiles::class);
+    }
 }
