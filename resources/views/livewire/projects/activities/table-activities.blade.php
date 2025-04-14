@@ -640,7 +640,7 @@
     {{-- END MODAL SHOW --}}
     {{-- MODAL EDIT / CREATE ACTIVITY --}}
     @if ($createEdit)
-        <div class="left-0 top-20 z-50 block max-h-full overflow-y-auto">
+        <div class="left-0 top-20 z-50 max-h-full overflow-y-auto">
             <div
                 class="fixed left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
             </div>

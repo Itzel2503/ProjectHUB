@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Modals\ReportsActivities;
 
 use App\Models\Activity;
+use App\Models\ActivityFiles;
 use App\Models\ActivityRecurrent;
 use App\Models\ErrorLog;
 use App\Models\Log;
@@ -31,7 +32,8 @@ class Create extends Component
     public $selectedIcon = null;
     public $repeatMessage = '', $endDateMessage = '', $expectedDateMessage = '';
     // INPUTS
-    public $title, $file, $description, $delegate, $expected_date, $priority, $repeat, $end_date, $points, $point_know, $point_many, $point_effort;
+    public $files = [];
+    public $title, $description, $delegate, $expected_date, $priority, $repeat, $end_date, $points, $point_know, $point_many, $point_effort;
 
     public function render()
     {
@@ -108,6 +110,17 @@ class Create extends Component
         $this->priority = $this->priority === $value ? null : $value;
     }
 
+    public function addInput()
+    {
+        $this->files[] = null;
+    }
+
+    public function removeInput($index)
+    {
+        unset($this->files[$index]);
+        $this->files = array_values($this->files); // Reindexar el array
+    }
+
     public function changePoints()
     {
         // Alternar el estado de $changePoints
@@ -136,7 +149,7 @@ class Create extends Component
                 'delegate.required' => 'El delegado es obligatorio.',
             ];
             
-            if ($this->repeat !== null && $this->repeat !== 'Once') {
+            if ($this->repeat !== null) {
                 $rules['expected_date'] = 'required';
                 $messages['expected_date'] = 'La fecha de entrega es obligatoria.';
             }
@@ -154,50 +167,7 @@ class Create extends Component
             }
 
             $activity = new Activity();
-            if ($this->file) {
-                $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-                if (in_array($this->file->extension(), $extensionesImagen)) {
-                    $maxSize = 5 * 1024 * 1024; // 5 MB
-                    // Verificar el tamaño del archivo
-                    if ($this->file->getSize() > $maxSize) {
-                        $this->dispatchBrowserEvent('swal:modal', [
-                            'type' => 'error',
-                            'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
-                        ]);
-                        return;
-                    }
-                    $projectName = Str::slug($this->project->name, '_');
-                    $customerName = Str::slug($this->project->customer->name, '_');
-                    $now = Carbon::now();
-                    $dateString = $now->format("Y-m-d H_i_s");
-                    $fileExtension = $this->file->extension();
-                    // Sanitizar nombres de archivo y directorios
-                    $fileName = 'Actividad_' . $projectName . '_' . $dateString . '.' . $fileExtension;
-                    $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName;
-                    $fullNewFilePath = $filePath . '/' . $fileName;
-                    // Procesar la imagen
-                    $image = \Intervention\Image\Facades\Image::make($this->file->getRealPath());
-                    // Redimensionar la imagen si es necesario
-                    $image->resize(800, null, function ($constraint) {
-                        $constraint->aspectRatio();
-                    });
-                    // Guardar la imagen temporalmente
-                    $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
-                    $image->save(storage_path('app/' . $tempPath));
-                    // Guardar la imagen redimensionada en el almacenamiento local
-                    Storage::disk('activities')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
-                    // // Eliminar la imagen temporal
-                    Storage::disk('local')->delete($tempPath);
-                    $activity->content = $fullNewFilePath;
-                } else {
-                    $this->dispatchBrowserEvent('swal:modal', [
-                        'type' => 'error',
-                        'title' => 'El archivo no es una imagen.',
-                    ]);
-                    return;
-                }
-            }
-
+            
             $activity->sprint_id = $this->sprint;
             $activity->delegate_id = $this->delegate;
             $activity->user_id = Auth::id();
@@ -436,6 +406,75 @@ class Create extends Component
                     // No se repite (opción "Once")
                     $activity->save();
 
+                    if (!empty($this->files) || !empty(array_filter($this->files))) {
+                        // Tu código aquí si $this->files no está vacío y al menos un elemento no es null
+                        foreach ($this->files as $index => $fileArray) {
+                            $file = $fileArray[0];
+                            $fileExtension = $file->extension();
+                            $extensionesImagen = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                            $extensionesVideo = ['mp4', 'mov', 'wmv', 'avi', 'avchd', 'flv', 'mkv', 'webm'];
+        
+                            $projectName = Str::slug($this->project->name, '_');
+                            $customerName = Str::slug($this->project->customer->name, '_');
+                            $now = Carbon::now();
+                            $dateString = $now->format("Y-m-d H_i_s");
+                            // Sanitizar nombres de archivo y directorios
+                            $fileName = 'Actividad_' . $projectName . '_' . $dateString . '.' . $fileExtension;
+                            $filePath = now()->format('Y') . '/' . now()->format('F') . '/' . $customerName . '/' . $projectName;
+                            $fullNewFilePath = $filePath . '/' . $fileName;
+                            
+                            if (in_array($fileExtension, $extensionesImagen)) {
+                                $maxSize = 5 * 1024 * 1024; // 5 MB
+                                // Verificar el tamaño del archivo
+                                if ($file->getSize() > $maxSize) {
+                                    $this->dispatchBrowserEvent('swal:modal', [
+                                        'type' => 'error',
+                                        'title' => 'El archivo supera el tamaño permitido, Debe ser máximo de 5Mb.',
+                                    ]);
+                                    return;
+                                }
+                                // Procesar la imagen
+                                $image = \Intervention\Image\Facades\Image::make($file->getRealPath());
+                                // Redimensionar la imagen si es necesario
+                                $image->resize(800, null, function ($constraint) {
+                                    $constraint->aspectRatio();
+                                });
+                                // Guardar la imagen temporalmente
+                                $tempPath = $fileName; // Carpeta temporal dentro del almacenamiento
+                                $image->save(storage_path('app/' . $tempPath));
+                                // Guardar la imagen redimensionada en el almacenamiento local
+                                // Guardar directamente sin usar archivo temporal
+                                Storage::disk('activities')->put($fullNewFilePath, Storage::disk('local')->get($tempPath));
+                                // Eliminar la imagen temporal
+                                Storage::disk('local')->delete($tempPath);
+        
+                                $activityFile = new ActivityFiles();
+                                $activityFile->activity_id = $activity->id;
+                                $activityFile->route = $fullNewFilePath;
+                                $activityFile->image = true;
+                                $activityFile->save();
+                            } else if (in_array($fileExtension, $extensionesVideo)) {
+                                // Guardar la imagen redimensionada en el almacenamiento local
+                                $file->storeAs('', $fullNewFilePath, 'activities');
+        
+                                $activityFile = new ActivityFiles();
+                                $activityFile->activity_id = $activity->id;
+                                $activityFile->route = $fullNewFilePath;
+                                $activityFile->video = true;
+                                $activityFile->save();
+                            } else {
+                                // Guardar la imagen redimensionada en el almacenamiento local
+                                $file->storeAs('', $fullNewFilePath, 'activities');
+                                
+                                $activityFile = new ActivityFiles();
+                                $activityFile->activity_id = $activity->id;
+                                $activityFile->route = $fullNewFilePath;
+                                $activityFile->file = true;
+                                $activityFile->save();
+                            }
+                        }
+                    }
+
                     // Emitir un evento de navegador
                     $this->dispatchBrowserEvent('swal:modal', [
                         'type' => 'success',
@@ -494,6 +533,7 @@ class Create extends Component
         $this->repeat = '';
         $this->end_date = '';
         $this->priority = '';
+        $this->files = [];
         $this->points = '';
         $this->point_know = '';
         $this->point_many = '';

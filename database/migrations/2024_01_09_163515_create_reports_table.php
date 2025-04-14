@@ -38,9 +38,9 @@ class CreateReportsTable extends Migration
             $table->json('questions_points')->nullable();
 
             $table->boolean('look')->default(false);
-            $table->boolean('image');
-            $table->boolean('video');
-            $table->boolean('file');
+            $table->boolean('image')->default(false);
+            $table->boolean('video')->default(false);
+            $table->boolean('file')->default(false);
             $table->string('count')->nullable();
             $table->boolean('repeat')->default(false);
             $table->boolean('updated_expected_date')->default(true);

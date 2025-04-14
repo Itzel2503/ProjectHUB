@@ -25,19 +25,20 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
-    <!-- jquery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <!-- fullcalendar -->
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
-
-    <!-- alpine -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- Toastr -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         .hidden-info {
@@ -102,9 +103,9 @@
     </style>
 </head>
 
-<body>
+<body class="h-screen">
     {{-- MENUS --}}
-    <div class="text-white bg-coma-gradient flex items-center justify-center  py-2">
+    <div class="text-white bg-coma-gradient flex items-center justify-center z-10 absolute py-2 w-full">
         <div id="mainMenu" class="flex flex-row">
             <a href="{{ route('projects.reports.index', ['project' => $project->id]) }}"
                 class="mx-3 flex w-auto items-center justify-center text-xl hover:opacity-70">
@@ -133,17 +134,6 @@
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" />
                     <path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
-                </svg>
-            </button>
-            <button id="textButton" class="mx-3 flex items-center justify-center text-xl hover:opacity-70">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-file-description h-10 w-10">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                    <path d="M9 17h6" />
-                    <path d="M9 13h6" />
                 </svg>
             </button>
         </div>
@@ -203,37 +193,42 @@
         </div>
     </div>
     {{-- VIEW REPORT --}}
-    <div id="viewReport" class="w-full" style="display: block;">
-        <div class="flex h-full w-full px-4 pb-4 pt-10">
+    <div id="viewReport" class="w-full h-screen overflow-y-auto top-0 absolute" style="display: block;">
+        <div class="flex flex-col md:flex-row h-full w-full px-4 pb-4 pt-20">
             {{-- ARCHIVO --}}
-            <div class="mr-3 w-2/4">
+            <div class="mr-3 w-full md:w-2/4 mb-6">
                 <div id="viewPhoto" style="display: none;">
-                    <h3 class="text-text2 inline-flex text-lg font-bold">Imagen capturada</h3>
+                    <h3 class="text-text2 inline-flex text-lg font-bold mb-6">Imagen capturada</h3>
                     <div id="renderedCanvas" class="h-auto w-full"></div>
                 </div>
                 <div id="viewVideo" style="display: none;">
-                    <h3 class="text-text2 inline-flex text-lg font-bold">Video capturado</h3>
+                    <h3 class="text-text2 inline-flex text-lg font-bold mb-6">Video capturado</h3>
+                    <div class="mb-2 w-full text-center">
+                        <p class="font-medium text-secondary">Para guardar el video, <strong>debe descargarlo y subirlo</strong> en la sección "Archivos".</p>
+                        <p class="font-medium text-secondary mt-1"><strong>Nota: </strong> Los videos no subidos <strong>no se guardarán</strong> automáticamente.</p>
+                    </div>
                     <video id="recording" width="300" height="200" loop autoplay class="h-2/5 w-full"></video>
-                    {{-- hidden --}}
-                    <div hidden class="items-center justify-center">
-                        <a id="downloadVideo" class="btnSecondary" style="color: white;">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                                <path d="M7 11l5 5l5 -5" />
-                                <path d="M12 4l0 12" />
-                            </svg>
-                            &nbsp;Descargar
-                        </a>
+                    <div class="items-center justify-center mt-5 w-full flex">
+                        <div class="w-2/5">
+                            <a id="downloadVideo" class="btnSave" style="color: white;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                    <path d="M7 11l5 5l5 -5" />
+                                    <path d="M12 4l0 12" />
+                                </svg>
+                                &nbsp;Descargar
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
             {{-- FORMULARIO --}}
-            <div class="w-2/4 border-gray-400 pl-3 lg:border-l-2">
+            <div class="w-full md:w-2/4">
                 <form id="formReport" action="{{ route('projects.reports.store', ['project' => $project->id]) }}"
-                    method="POST" enctype="multipart/form-data">
+                    method="POST" enctype="multipart/form-data" class="border-gray-400 pl-3 lg:border-l-2">
                     @csrf
                     {{-- hidden --}}
                     <input hidden type="text" id="user_id" name="user_id" value="{{ $user->id }}">
@@ -363,12 +358,29 @@
                         </div>
                     @endif
                     <div class="-mx-3 mb-6 flex flex-row">
-                        <div id="viewText" class="mb-6 flex w-full flex-col px-3">
+                        <div class="flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
-                                Selecciona un archivo
+                                Archivos
                             </h5>
-                            <input type="file" name="file" id="file" class="inputs">
+                            <div class="flex flex-row">
+                                <span id="addFile"
+                                    class="align-items-center hover:text-secondary flex w-full cursor-pointer flex-row justify-center py-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="icon icon-tabler icon-tabler-plus mr-2" width="24"
+                                        height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" fill="none" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M12 5l0 14" />
+                                        <path d="M5 12l14 0" />
+                                    </svg>
+                                    Agregar archivo
+                                </span>
+                            </div>
+                            <div id="filesContainer"></div>
                         </div>
+                    </div>
+                    <div class="-mx-3 mb-6 flex flex-row">
                         <div class="flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="name">
                                 Título del reporte <p class="text-red-600">*</p>
@@ -397,7 +409,7 @@
                         </div>
                     </div>
                     <div class="-mx-3 mb-6 flex flex-row">
-                        <div id="viewText" class="mb-6 flex w-full flex-col px-3">
+                        <div class="mb-6 flex w-full flex-col px-3">
                             <h5 class="inline-flex font-semibold" for="code">
                                 Prioridad <p class="text-red-600">*</p>
                             </h5>
@@ -469,16 +481,7 @@
                     </div>
                     <div class="flex items-center justify-center">
                         <div class="mb-6 h-12 w-1/6 bg-transparent md:inline-flex">
-                            <button type="submit" class="btnNuevo" id="buttonSave" style="display: flex">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-                                    <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                    <path d="M14 4l0 4l-6 0l0 -4" />
-                                </svg>
-                                Guardar
-                            </button>
-                            <button type="submit" class="btnNuevo" id="buttonSaveVideo" style="display: none">
+                            <button type="submit" class="btnSave" id="buttonSave" style="display: flex">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy mr-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
@@ -494,18 +497,20 @@
         </div>
     </div>
     {{-- PREVISUALIZACION --}}
-    <div id="artboard" class="w-full" style="display: none;">
-        <h2 class="text-text2 left-10 top-10 px-2 py-4 text-3xl font-semibold">Previsualización</h2>
-        <div class="flex w-full items-center justify-center">
-            <p id="log" class="text-xl font-semibold text-red-600"></p>
-            <p id="time" class="mx-3 text-xl font-semibold text-red-600"></p>
+    <div id="artboard" class="w-full h-screen overflow-y-auto top-0 absolute" style="display: none;">
+        <div class="h-full w-full px-4 pb-4 pt-20">
+            <h2 class="text-text2 left-10 top-10 px-2 py-4 text-3xl font-semibold">Previsualización</h2>
+            <div class="flex w-full items-center justify-center">
+                <p id="log" class="text-xl font-semibold text-red-600"></p>
+                <p id="time" class="mx-3 text-xl font-semibold text-red-600"></p>
+            </div>
+            {{-- IMAGEN --}}
+            <div id="capturedImageContainer" class="flex items-center justify-center" style="display: none;"></div>
+            <div id="renderCombinedImage"></div>
+            {{-- VIDEO --}}
+            <video id="preview" width="100%" height="auto" autoplay muted class="mt-2"
+                style="display: none;"></video>
         </div>
-        {{-- IMAGEN --}}
-        <div id="capturedImageContainer" class="flex items-center justify-center" style="display: none;"></div>
-        <div id="renderCombinedImage"></div>
-        {{-- VIDEO --}}
-        <video id="preview" width="100%" height="auto" autoplay muted class="mt-2"
-            style="display: none;"></video>
     </div>
     {{-- MODAL EDIT / CREATE SPRINT --}}
     <div id="modalPoints" class="left-0 top-20 z-50 hidden max-h-full overflow-y-auto">
@@ -513,7 +518,7 @@
             class="fixed left-0 top-0 z-30 flex h-screen w-full items-center justify-center bg-gray-500 bg-cover bg-no-repeat opacity-80">
         </div>
         <div class="text:md fixed left-0 top-0 z-40 flex h-screen w-full items-center justify-center">
-            <div class="mx-auto flex flex-col overflow-y-auto rounded-lg md:w-2/5" style="max-height: 90%;">
+            <div class="mx-5 md:mx-auto flex flex-col overflow-y-auto rounded-lg w-full md:w-2/5" style="max-height: 90%;">
                 <div
                     class="flex flex-row justify-between rounded-tl-lg rounded-tr-lg bg-gray-100 px-6 py-4 text-white">
                     <h3
@@ -655,7 +660,6 @@
         // MENU BUTTONS
         let screenButton = document.getElementById('screenButton');
         let videoButton = document.getElementById("videoButton");
-        let textButton = document.getElementById('textButton');
         let returnButtonImage = document.getElementById('returnButtonImage');
         // SCREEN
         let refreshCanvaButton = document.getElementById('refreshCanva'); // button with the id "refreshCanva"
@@ -680,23 +684,24 @@
         let inputPointKnow = document.getElementById("inputPointKnow");
         let inputPointMany = document.getElementById("inputPointMany");
         let inputPointEffort = document.getElementById("inputPointEffort");
-        let file = document.getElementById("file");
         let title = document.getElementById('title');
         let delegate = document.getElementById('delegate');
         let delegateSelect = document.getElementById('delegate');
         let expectedDate = document.getElementById('expected_date');
+        // FILES
+        let addFileBtn = document.getElementById('addFile');
+        let filesContainer = document.getElementById('filesContainer');
+        let filesCount = 1;
         // FORM
         let formReport = document.getElementById('formReport');
         let viewPhoto = document.getElementById('viewPhoto');
         let viewVideo = document.getElementById('viewVideo');
-        let viewText = document.getElementById('viewText');
         // BUTTONS FORM
         const icons = document.querySelectorAll('.icon-event');
         let checkboxesIcon = document.querySelectorAll('.icon-checkbox');
         let checkboxes = document.querySelectorAll('.priority-checkbox');
         let downloadVideo = document.getElementById('downloadVideo');
         let buttonSave = document.getElementById('buttonSave');
-        let buttonSaveVideo = document.getElementById('buttonSaveVideo');
         let buttonPoints = document.getElementById('buttonPoints');
         // MODAL
         let modalPoints = document.getElementById('modalPoints');
@@ -821,22 +826,6 @@
             });
         }
         // ------------------------------ FORMULARIO ------------------------------
-        // FECHA DE ENTREGA
-        if (expectedDate) {
-            expectedDate.addEventListener('change', function() {
-                const selectedDate = this.value;
-                const today = new Date().toISOString().split('T')[0];
-                
-                // Comparar fechas (formato YYYY-MM-DD permite comparación directa)
-                if (selectedDate < today) {
-                    // Si la fecha es anterior a hoy, establecer la fecha actual
-                    this.value = today;
-                    
-                    // Opcional: Mostrar mensaje al usuario
-                    toastr['error']("La fecha no puede ser anterior al dia actual.");
-                }
-            });
-        }
         // CHECKBOX DE ICONOS
         checkboxesIcon.forEach(function(checkbox, index) {
             checkbox.addEventListener('change', function() {
@@ -859,6 +848,63 @@
                 }
             });
         });
+        // ARCHIVOS
+        function renumberFiles() { // Función para reenumerar todos los inputs
+            const allFileGroups = filesContainer.querySelectorAll('.file-input-group');
+            allFileGroups.forEach((group, index) => {
+                group.querySelector('input').name = `files[${index + 1}]`;
+            });
+            filesCount = allFileGroups.length + 1; // Actualizar contador
+        }
+        // Función para agregar un nuevo campo de archivo
+        addFileBtn.addEventListener('click', function() {
+            const newFileGroup = document.createElement('div');
+            newFileGroup.className = 'file-input-group flex flex-row mb-2';
+            newFileGroup.innerHTML = `
+                <span class="removeFile my-auto cursor-pointer text-red-600">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="icon icon-tabler icon-tabler-trash mr-2" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M4 7l16 0"></path>
+                        <path d="M10 11l0 6"></path>
+                        <path d="M14 11l0 6"></path>
+                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                    </svg>
+                </span>
+                <input required type="file" name="files[${filesCount}]" class="inputs">
+            `;
+            filesContainer.appendChild(newFileGroup);
+            filesCount++;
+        });
+        
+        // Delegación de eventos para eliminar campos de archivo
+        filesContainer.addEventListener('click', function(e) {
+            if (e.target.closest('.removeFile')) {
+                const fileGroup = e.target.closest('.file-input-group');
+                fileGroup.remove();
+                renumberFiles(); // Reenumerar después de eliminar
+            }
+        });
+        // FECHA DE ENTREGA
+        if (expectedDate) {
+            expectedDate.addEventListener('change', function() {
+                const selectedDate = this.value;
+                const today = new Date().toISOString().split('T')[0];
+                
+                // Comparar fechas (formato YYYY-MM-DD permite comparación directa)
+                if (selectedDate < today) {
+                    // Si la fecha es anterior a hoy, establecer la fecha actual
+                    this.value = today;
+                    
+                    // Opcional: Mostrar mensaje al usuario
+                    toastr['error']("La fecha no puede ser anterior al dia actual.");
+                }
+            });
+        }
         // REVISION DE CHECKBOX
         checkboxes.forEach(function(checkbox) {
             checkbox.addEventListener('change', function() {
@@ -943,24 +989,6 @@
                 }
             }
         });
-        // Evento 'click' para el botón "Guardar con video"
-        buttonSaveVideo.addEventListener('click', function(e) {
-            if (!validateForm()) {
-                e.preventDefault(); // Detener el envío del formulario si la validación falla
-            } else {
-                loadingPage.classList.remove('hidden');
-                e.preventDefault(); // Detener el envío del formulario para manejar manualmente
-                // Verificar si el botón de descarga tiene una URL y descárgalo
-                if (downloadVideo.href) {
-                    setTimeout(function() {
-                        downloadVideo.click();
-                        formReport.submit(); // Enviar el formulario después de descargar el video
-                    }, 1000);
-                } else {
-                    formReport.submit(); // Enviar el formulario si no hay video para descargar
-                }
-            }
-        });
         // ------------------------------ GRABACION DE VIDEO ------------------------------
         let isManuallyStopped = false; // Variable de control
         // variables "globales VIDEO"
@@ -1036,9 +1064,6 @@
                     // FORM
                     viewPhoto.style.display = 'none';
                     viewVideo.style.display = 'block';
-                    viewText.style.display = 'none';
-                    buttonSave.style.display = 'none';
-                    buttonSaveVideo.style.display = 'flex';
                 } else {
                     // Posiblemente reiniciar isManuallyStopped para futuras grabaciones
                     isManuallyStopped = false;
@@ -1069,9 +1094,6 @@
             preview.style.display = 'block';
             // SCRENN
             reiniciarCaptura();
-            // INPUT
-            inputPhoto.value = '';
-            file.value = null;
 
             navigator.mediaDevices.getDisplayMedia({
                 video: {
@@ -1114,7 +1136,6 @@
             videoMenu.style.display = 'none';
             // FORM
             viewVideo.style.display = 'none';
-            viewText.style.display = 'block';
         });
         // ------------------------------ CAPTURA DE IMAGEN ------------------------------
         // Function to handle drawing on the overlay canvas
@@ -1142,9 +1163,6 @@
             log("");
             preview.style.display = 'none';
             downloadVideo.href = '';
-            // INPUT
-            inputVideo.value = '';
-            file.value = null;
 
             navigator.mediaDevices.getDisplayMedia({
                 video: true,
@@ -1242,9 +1260,6 @@
                             // FORM
                             viewPhoto.style.display = 'block';
                             viewVideo.style.display = 'none';
-                            viewText.style.display = 'none';
-                            buttonSave.style.display = 'flex';
-                            buttonSaveVideo.style.display = 'none';
 
                             const combinedCanvas = document.createElement('canvas');
                             combinedCanvas.width = imageBitmap.width;
@@ -1296,23 +1311,6 @@
             screenMenu.style.display = 'none';
             // FORM
             viewPhoto.style.display = 'none';
-            viewText.style.display = 'block';
-            buttonSave.style.display = 'flex';
-            buttonSaveVideo.style.display = 'none';
-        });
-        // ------------------------------ FORMULARIO NORMAL ------------------------------
-        textButton.addEventListener('click', function() {
-            reiniciarCaptura();
-            downloadVideo.href = '';
-            // INPUT
-            inputPhoto.value = '';
-            inputVideo.value = '';
-            // FORM
-            viewVideo.style.display = 'none';
-            viewPhoto.style.display = 'none';
-            viewText.style.display = 'block';
-            buttonSave.style.display = 'flex';
-            buttonSaveVideo.style.display = 'none';
         });
     </script>
 </body>
