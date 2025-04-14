@@ -491,7 +491,7 @@
             <div id="kanvan-my-activities" class="overflow-x-scroll w-full min-h-[50dvh] max-h-[80dvh]">
                 <div class="flex">
                     {{-- Sin fecha --}}
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-neutral-300 p-2 mx-2 w-full rounded-xl mb-2 min-h-[50dvh]">
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#E3E7E8] border-[#C3CDCF] border-2 p-2 mx-2 w-full rounded-xl mb-2 min-h-[50dvh]">
                         <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
                             <picture>Sin fecha</p>
                                 <br>
@@ -851,7 +851,7 @@
                         @endif
                     </div>
                     {{-- atrasadas --}}
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-red-200 p-2 mx-2 w-full rounded-xl mb-2">
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#E9CBCB] border-[#DAA8A8] border-2 p-2 mx-2 w-full rounded-xl mb-2">
                         <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
                             <p>Atrasados</p>
                             <br>
@@ -1211,7 +1211,7 @@
                         @endif
                     </div>
                     {{-- Fecha actual --}}
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-orange-200 p-2 mx-2 w-full rounded-xl mb-2">
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#DAF1F5] border-[#BBDAE0] border-2 p-2 mx-2 w-full rounded-xl mb-2">
                         <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
                             <p>{{ $fechaActual }}</p>
                             <p class="my-auto font-semibold text-gray-400 text-xs">Hoy</p>
@@ -1577,7 +1577,7 @@
                     </div>
                     {{-- Fechas futuras --}}
                     @foreach ($fechasFuturas as $fecha)
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-sky-200 p-2 mx-2 w-full rounded-xl mb-2">
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#F8F8F8] border-[#DBDBDB] border-2 p-2 mx-2 w-full rounded-xl mb-2">
                         <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
                             <p>{{ $fecha['fecha'] }}</p>
                             <p class="my-auto font-semibold text-gray-400 text-xs">{{ $fecha['dia_semana'] }}
@@ -1965,7 +1965,7 @@
                     @endforeach
                     {{-- Tareas de más de un mes agrupadas por fecha --}}
                     @foreach ($tareasAgrupadasPorFecha as $fecha => $tasks)
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-neutral-300 p-2 mx-2 w-full rounded-xl mb-2">
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#E3E7E8] border-[#C3CDCF] border-2 p-2 mx-2 w-full rounded-xl mb-2">
                         <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
                             <p>{{ $fecha }}</p> <!-- Fecha -->
                             <br>
