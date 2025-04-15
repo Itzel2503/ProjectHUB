@@ -497,9 +497,8 @@
                 <div class="flex">
                     {{-- Sin fecha --}}
                     <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#E3E7E8] border-[#C3CDCF] border-2 p-2 mx-2 w-full rounded-xl mb-2 min-h-[50dvh] relative">
-                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10">
-                            <picture>Sin fecha</p>
-                                <br>
+                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky  top-[10px] z-10 h-[48px] border-2 border-[#E5E5E5] shadow-md">
+                            <p class="font-bold capitalize">Sin fecha</p>
                         </div>
                         @if ($seeProjects)
                         @foreach ($tareasSinFecha as $key => $project)
@@ -857,9 +856,8 @@
                     </div>
                     {{-- atrasadas --}}
                     <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#E9CBCB] border-[#DAA8A8] border-2 p-2 mx-2 w-full rounded-xl mb-2 relative">
-                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10">
-                            <p>Atrasados</p>
-                            <br>
+                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10 h-[48px] border-2 border-[#E5E5E5] shadow-md">
+                            <p class="font-bold capitalize">Atrasados</p>
                         </div>
                         @if ($seeProjects)
                         @foreach ($tareasAtrasadas as $key => $project)
@@ -1217,9 +1215,9 @@
                     </div>
                     {{-- Fecha actual --}}
                     <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#DAF1F5] border-[#BBDAE0] border-2 p-2 mx-2 w-full rounded-xl mb-2 relative">
-                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10">
-                            <p>{{ $fechaActual }}</p>
-                            <p class="my-auto font-semibold text-gray-400 text-xs">Hoy</p>
+                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10 h-[48px] border-2 border-[#E5E5E5] shadow-md">
+                            <p class="font-bold capitalize">{{ $fechaActual }}</p>
+                            <p class="my-auto font-semibold text-[#929292] text-xs capitalize">Hoy</p>
                         </div>
                         @if ($seeProjects)
                         @foreach ($tareasActuales as $key => $project)
@@ -1583,9 +1581,9 @@
                     {{-- Fechas futuras --}}
                     @foreach ($fechasFuturas as $fecha)
                     <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#F8F8F8] border-[#DBDBDB] border-2 p-2 mx-2 w-full rounded-xl mb-2 relative">
-                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10">
-                            <p>{{ $fecha['fecha'] }}</p>
-                            <p class="my-auto font-semibold text-gray-400 text-xs">{{ $fecha['dia_semana'] }}
+                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10 h-[48px] border-2 border-[#E5E5E5] shadow-md">
+                            <p class="font-bold capitalize">{{ $fecha['fecha'] }}</p>
+                            <p class="my-auto font-semibold text-[#929292] text-xs capitalize">{{ $fecha['dia_semana'] }}
                             </p>
                             <!-- Día de la semana -->
                         </div>
@@ -1971,9 +1969,8 @@
                     {{-- Tareas de más de un mes agrupadas por fecha --}}
                     @foreach ($tareasAgrupadasPorFecha as $fecha => $tasks)
                     <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#E3E7E8] border-[#C3CDCF] border-2 p-2 mx-2 w-full rounded-xl mb-2 relative">
-                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10">
-                            <p>{{ $fecha }}</p> <!-- Fecha -->
-                            <br>
+                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10 h-[48px] border-2 border-[#E5E5E5] shadow-md">
+                            <p class="font-bold capitalize">{{ $fecha }}</p> <!-- Fecha -->
                         </div>
                         @if ($seeProjects)
                         @foreach ($tasks as $key => $project)
