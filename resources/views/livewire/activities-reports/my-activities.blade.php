@@ -191,51 +191,87 @@
                                     <p class="pl-3 my-auto text-left text-xs font-semibold text-gray-400">
                                         {{ $task->project_name }}
                                     </p>
-                                    <div class="principal text-gray-400">
-                                        @if ($task->project_activity)
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                            height="24" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-book">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                            <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                            <path d="M3 6l0 13" />
-                                            <path d="M12 6l0 13" />
-                                            <path d="M21 6l0 13" />
-                                        </svg>
-                                        <div class="relative">
+
+                                    <div class="flex">
+
+                                        @if ($task->messages_count >= 1)
+                                            {{-- usuario --}}
+                                            @if ($task->user_chat != Auth::id() && $task->receiver_chat == Auth::id())
+                                            <div class="">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M8 9h8" />
+                                                    <path d="M8 13h6" />
+                                                    <path
+                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                </svg>
+                                            </div>
+                                            @elseif(Auth::user()->type_user == 1 && $task->client == true)
+                                            <div class="">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M8 9h8" />
+                                                    <path d="M8 13h6" />
+                                                    <path
+                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                </svg>
+                                            </div>
+                                            @endif 
+                                        @endif
+                                    
+
+                                        <div class="principal text-gray-400 relative">
+
+                                            @if ($task->project_activity)
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                                <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                                <path d="M3 6l0 13" />
+                                                <path d="M12 6l0 13" />
+                                                <path d="M21 6l0 13" />
+                                            </svg>
                                             <div
-                                                class="hidden-info absolute -top-3 left-4 z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
+                                                class="hidden-info absolute top-0 left-[27px] z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
                                                 <p>Actividad</p>
                                             </div>
-                                        </div>
-                                        @else
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-bug" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
-                                            <path
-                                                d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
-                                            <path d="M3 13l4 0" />
-                                            <path d="M17 13l4 0" />
-                                            <path d="M12 20l0 -6" />
-                                            <path d="M4 19l3.35 -2" />
-                                            <path d="M20 19l-3.35 -2" />
-                                            <path d="M4 7l3.75 2.4" />
-                                            <path d="M20 7l-3.75 2.4" />
-                                        </svg>
-                                        <div class="relative">
+                                            @else
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-bug" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
+                                                <path
+                                                    d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
+                                                <path d="M3 13l4 0" />
+                                                <path d="M17 13l4 0" />
+                                                <path d="M12 20l0 -6" />
+                                                <path d="M4 19l3.35 -2" />
+                                                <path d="M20 19l-3.35 -2" />
+                                                <path d="M4 7l3.75 2.4" />
+                                                <path d="M20 7l-3.75 2.4" />
+                                            </svg>
                                             <div
-                                                class="hidden-info absolute -top-3 left-4 z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
+                                                class="hidden-info absolute top-0 left-[27px] z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
                                                 <p>Reporte</p>
                                             </div>
+                                            @endif
+
                                         </div>
-                                        @endif
                                     </div>
                                 </div>
                                 <div class="flex flex-row">
@@ -256,38 +292,7 @@
                                         {{ $task->icon }} {{ $task->title }}
                                     </p>
                                 </div>
-                                @if ($task->messages_count >= 1)
-                                {{-- usuario --}}
-                                @if ($task->user_chat != Auth::id() && $task->receiver_chat == Auth::id())
-                                <div class="absolute right-0 top-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M8 9h8" />
-                                        <path d="M8 13h6" />
-                                        <path
-                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                    </svg>
-                                </div>
-                                @elseif(Auth::user()->type_user == 1 && $task->client == true)
-                                <div class="absolute right-0 top-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M8 9h8" />
-                                        <path d="M8 13h6" />
-                                        <path
-                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                    </svg>
-                                </div>
-                                @endif
-                                @endif
+                                
                             </div>
                         </td>
                         <td class="px-2 py-1">
