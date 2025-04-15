@@ -2339,9 +2339,11 @@
                     </div>
                     @endforeach
                     <!-- Botón para mostrar mas meses -->
-                    <div class="mx-5">
-                        <button wire:click="cargarMasMeses"
-                            class="principal right-0 top-0 transform -translate-x-1/2 text-white p-2 rounded-full shadow-lg z-10 hover:bg-secundaryColor bg-blue-500">
+                     <div class="w-full relative">
+                        <button 
+                        class="principal text-white p-2 rounded-full shadow-lg z-10 hover:bg-secundaryColor bg-blue-500 h-[40px] w-[40px] sticky top-[10px] right-[10px]" 
+                        wire:click="cargarMasMeses"
+                        >
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round"
@@ -2356,7 +2358,7 @@
                             </svg>
                             <div class="relative">
                                 <div
-                                    class="hidden-info absolute top-0 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
+                                    class="hidden-info absolute top-0 right-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
                                     <p>Mostrar mas meses</p>
                                 </div>
                             </div>
