@@ -191,51 +191,87 @@
                                     <p class="pl-3 my-auto text-left text-xs font-semibold text-gray-400">
                                         {{ $task->project_name }}
                                     </p>
-                                    <div class="principal text-gray-400">
-                                        @if ($task->project_activity)
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                            height="24" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-book">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                            <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                                            <path d="M3 6l0 13" />
-                                            <path d="M12 6l0 13" />
-                                            <path d="M21 6l0 13" />
-                                        </svg>
-                                        <div class="relative">
+
+                                    <div class="flex">
+
+                                        @if ($task->messages_count >= 1)
+                                            {{-- usuario --}}
+                                            @if ($task->user_chat != Auth::id() && $task->receiver_chat == Auth::id())
+                                            <div class="">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M8 9h8" />
+                                                    <path d="M8 13h6" />
+                                                    <path
+                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                </svg>
+                                            </div>
+                                            @elseif(Auth::user()->type_user == 1 && $task->client == true)
+                                            <div class="">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M8 9h8" />
+                                                    <path d="M8 13h6" />
+                                                    <path
+                                                        d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                                                </svg>
+                                            </div>
+                                            @endif 
+                                        @endif
+                                    
+
+                                        <div class="principal text-gray-400 relative">
+
+                                            @if ($task->project_activity)
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                                <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                                                <path d="M3 6l0 13" />
+                                                <path d="M12 6l0 13" />
+                                                <path d="M21 6l0 13" />
+                                            </svg>
                                             <div
-                                                class="hidden-info absolute -top-3 left-4 z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
+                                                class="hidden-info absolute top-0 left-[27px] z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
                                                 <p>Actividad</p>
                                             </div>
-                                        </div>
-                                        @else
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-bug" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="1.5"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
-                                            <path
-                                                d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
-                                            <path d="M3 13l4 0" />
-                                            <path d="M17 13l4 0" />
-                                            <path d="M12 20l0 -6" />
-                                            <path d="M4 19l3.35 -2" />
-                                            <path d="M20 19l-3.35 -2" />
-                                            <path d="M4 7l3.75 2.4" />
-                                            <path d="M20 7l-3.75 2.4" />
-                                        </svg>
-                                        <div class="relative">
+                                            @else
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-bug" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
+                                                <path
+                                                    d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
+                                                <path d="M3 13l4 0" />
+                                                <path d="M17 13l4 0" />
+                                                <path d="M12 20l0 -6" />
+                                                <path d="M4 19l3.35 -2" />
+                                                <path d="M20 19l-3.35 -2" />
+                                                <path d="M4 7l3.75 2.4" />
+                                                <path d="M20 7l-3.75 2.4" />
+                                            </svg>
                                             <div
-                                                class="hidden-info absolute -top-3 left-4 z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
+                                                class="hidden-info absolute top-0 left-[27px] z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
                                                 <p>Reporte</p>
                                             </div>
+                                            @endif
+
                                         </div>
-                                        @endif
                                     </div>
                                 </div>
                                 <div class="flex flex-row">
@@ -256,38 +292,7 @@
                                         {{ $task->icon }} {{ $task->title }}
                                     </p>
                                 </div>
-                                @if ($task->messages_count >= 1)
-                                {{-- usuario --}}
-                                @if ($task->user_chat != Auth::id() && $task->receiver_chat == Auth::id())
-                                <div class="absolute right-0 top-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M8 9h8" />
-                                        <path d="M8 13h6" />
-                                        <path
-                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                    </svg>
-                                </div>
-                                @elseif(Auth::user()->type_user == 1 && $task->client == true)
-                                <div class="absolute right-0 top-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-message text-red-600">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M8 9h8" />
-                                        <path d="M8 13h6" />
-                                        <path
-                                            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                                    </svg>
-                                </div>
-                                @endif
-                                @endif
+                                
                             </div>
                         </td>
                         <td class="px-2 py-1">
@@ -491,10 +496,9 @@
             <div id="kanvan-my-activities" class="overflow-x-scroll w-full min-h-[50dvh] max-h-[80dvh]">
                 <div class="flex">
                     {{-- Sin fecha --}}
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-neutral-300 p-2 mx-2 w-full rounded-xl mb-2 min-h-[50dvh]">
-                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
-                            <picture>Sin fecha</p>
-                                <br>
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#E3E7E8] border-[#C3CDCF] border-2 p-2 mx-2 w-full rounded-xl mb-2 min-h-[50dvh] relative">
+                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky  top-[10px] z-10 h-[48px] border-2 border-[#E5E5E5] shadow-md">
+                            <p class="font-bold capitalize">Sin fecha</p>
                         </div>
                         @if ($seeProjects)
                         @foreach ($tareasSinFecha as $key => $project)
@@ -851,10 +855,9 @@
                         @endif
                     </div>
                     {{-- atrasadas --}}
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-red-200 p-2 mx-2 w-full rounded-xl mb-2">
-                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
-                            <p>Atrasados</p>
-                            <br>
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#E9CBCB] border-[#DAA8A8] border-2 p-2 mx-2 w-full rounded-xl mb-2 relative">
+                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10 h-[48px] border-2 border-[#E5E5E5] shadow-md">
+                            <p class="font-bold capitalize">Atrasados</p>
                         </div>
                         @if ($seeProjects)
                         @foreach ($tareasAtrasadas as $key => $project)
@@ -1211,10 +1214,10 @@
                         @endif
                     </div>
                     {{-- Fecha actual --}}
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-orange-200 p-2 mx-2 w-full rounded-xl mb-2">
-                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
-                            <p>{{ $fechaActual }}</p>
-                            <p class="my-auto font-semibold text-gray-400 text-xs">Hoy</p>
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#DAF1F5] border-[#BBDAE0] border-2 p-2 mx-2 w-full rounded-xl mb-2 relative">
+                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10 h-[48px] border-2 border-[#E5E5E5] shadow-md">
+                            <p class="font-bold capitalize">{{ $fechaActual }}</p>
+                            <p class="my-auto font-semibold text-[#929292] text-xs capitalize">Hoy</p>
                         </div>
                         @if ($seeProjects)
                         @foreach ($tareasActuales as $key => $project)
@@ -1577,10 +1580,10 @@
                     </div>
                     {{-- Fechas futuras --}}
                     @foreach ($fechasFuturas as $fecha)
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-sky-200 p-2 mx-2 w-full rounded-xl mb-2">
-                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
-                            <p>{{ $fecha['fecha'] }}</p>
-                            <p class="my-auto font-semibold text-gray-400 text-xs">{{ $fecha['dia_semana'] }}
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#F8F8F8] border-[#DBDBDB] border-2 p-2 mx-2 w-full rounded-xl mb-2 relative">
+                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10 h-[48px] border-2 border-[#E5E5E5] shadow-md">
+                            <p class="font-bold capitalize">{{ $fecha['fecha'] }}</p>
+                            <p class="my-auto font-semibold text-[#929292] text-xs capitalize">{{ $fecha['dia_semana'] }}
                             </p>
                             <!-- Día de la semana -->
                         </div>
@@ -1965,10 +1968,9 @@
                     @endforeach
                     {{-- Tareas de más de un mes agrupadas por fecha --}}
                     @foreach ($tareasAgrupadasPorFecha as $fecha => $tasks)
-                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-neutral-300 p-2 mx-2 w-full rounded-xl mb-2">
-                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48">
-                            <p>{{ $fecha }}</p> <!-- Fecha -->
-                            <br>
+                    <div class="@if (Auth::user()->type_user === 1 || Auth::user()->area_id === 4) task-container @endif bg-[#E3E7E8] border-[#C3CDCF] border-2 p-2 mx-2 w-full rounded-xl mb-2 relative">
+                        <div class="title-container bg-white m-auto text-center rounded-md p-1 w-48 sticky top-[10px] z-10 h-[48px] border-2 border-[#E5E5E5] shadow-md">
+                            <p class="font-bold capitalize">{{ $fecha }}</p> <!-- Fecha -->
                         </div>
                         @if ($seeProjects)
                         @foreach ($tasks as $key => $project)
@@ -2334,9 +2336,11 @@
                     </div>
                     @endforeach
                     <!-- Botón para mostrar mas meses -->
-                    <div class="mx-5">
-                        <button wire:click="cargarMasMeses"
-                            class="principal right-0 top-0 transform -translate-x-1/2 text-white p-2 rounded-full shadow-lg z-10 hover:bg-secundaryColor bg-blue-500">
+                     <div class="w-full relative">
+                        <button 
+                        class="principal text-white p-2 rounded-full shadow-lg z-10 hover:bg-secundaryColor bg-blue-500 h-[40px] w-[40px] sticky top-[10px] right-[10px]" 
+                        wire:click="cargarMasMeses"
+                        >
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round"
@@ -2351,7 +2355,7 @@
                             </svg>
                             <div class="relative">
                                 <div
-                                    class="hidden-info absolute top-0 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
+                                    class="hidden-info absolute top-0 right-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs text-black">
                                     <p>Mostrar mas meses</p>
                                 </div>
                             </div>
