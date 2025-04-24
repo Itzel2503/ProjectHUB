@@ -48,7 +48,7 @@
                     <h5 class="inline-flex font-semibold" for="title">
                         Titulo<p class="text-red-600">*</p>
                     </h5>
-                    <input wire:model='title' required type="text" placeholder="Título" name="title" id="title"
+                    <input wire:model.defer='title' required type="text" placeholder="Título" name="title" id="title"
                         class="inputs">
                     <div>
                         <span class="text-xs italic text-red-600">
@@ -66,7 +66,7 @@
                     <h5 class="inline-flex font-semibold" for="description">
                         Descripción
                     </h5>
-                    <textarea wire:model='description' type="text" rows="6"
+                    <textarea wire:model.defer='description' type="text" rows="6"
                         placeholder="Describa la observación y especifique el objetivo a cumplir." name="description" id="description"
                         class="textarea"></textarea>
                     <div>
