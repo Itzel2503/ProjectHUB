@@ -259,7 +259,7 @@
                                     <h5 class="inline-flex font-semibold" for="name">
                                         Nombre<p class="text-red-600">*</p>
                                     </h5>
-                                    <input wire:model='name' required type="text" placeholder="Nombre" name="name"
+                                    <input wire:model.defer='name' required type="text" placeholder="Nombre" name="name"
                                         id="name" class="inputs">
                                     <div>
                                         <span class="text-xs italic text-red-600">
@@ -275,7 +275,7 @@
                                     <h5 class="inline-flex font-semibold" for="brand">
                                         Marca<p class="text-red-600">*</p>
                                     </h5>
-                                    <input wire:model='brand' required type="text" placeholder="Marca" name="brand"
+                                    <input wire:model.defer='brand' required type="text" placeholder="Marca" name="brand"
                                         id="brand" class="inputs">
                                     <div>
                                         <span class="text-xs italic text-red-600">
@@ -293,7 +293,7 @@
                                     <h5 class="inline-flex font-semibold" for="model">
                                         Modelo<p class="text-red-600">*</p>
                                     </h5>
-                                    <input wire:model='model' required type="text" name="model"
+                                    <input wire:model.defer='model' required type="text" name="model"
                                         placeholder="Modelo" id="model" class="inputs">
                                     <div>
                                         <span class="text-xs italic text-red-600">
@@ -309,7 +309,7 @@
                                     <h5 class="inline-flex font-semibold" for="serial_number">
                                         Número de serie<p class="text-red-600">*</p>
                                     </h5>
-                                    <input wire:model='serial_number' required type="text" name="serial_number"
+                                    <input wire:model.defer='serial_number' required type="text" name="serial_number"
                                         placeholder="Número de serie" id="serial_number" class="inputs">
                                     <div>
                                         <span class="text-xs italic text-red-600">
@@ -328,7 +328,7 @@
                                         Estatus<p class="text-red-600">*</p>
                                     </h5>
                                     @if ($showUpdate)
-                                        <select wire:model='status' required name="status" id="status"
+                                        <select wire:model.defer='status' required name="status" id="status"
                                             class="inputs">
                                             <option value="Uso"
                                                 {{ $this->productEdit && $this->productEdit->status == 'Uso' ? 'selected' : '' }}>
@@ -344,7 +344,7 @@
                                                 Uso externo</option>
                                         </select>
                                     @else
-                                        <select wire:model='status' required name="status" id="status"
+                                        <select wire:model.defer='status' required name="status" id="status"
                                             class="inputs">
                                             <option selected>Selecciona...</option>
                                             <option value="Uso">Uso</option>
@@ -368,7 +368,7 @@
                                         Departamento<p class="text-red-600">*</p>
                                     </h5>
                                     @if ($showUpdate)
-                                        <select wire:model='department' name="department" id="department"
+                                        <select wire:model.defer='department' name="department" id="department"
                                             class="inputs">
                                             @foreach ($areas as $area)
                                                 <option value="{{ $area->id }}"
@@ -378,7 +378,7 @@
                                             @endforeach
                                         </select>
                                     @else
-                                        <select wire:model='department' required name="department" id="department"
+                                        <select wire:model.defer='department' required name="department" id="department"
                                             class="inputs">
                                             <option selected>Selecciona...</option>
                                             @foreach ($areas as $area)
@@ -403,7 +403,7 @@
                                         Responsable<p class="text-red-600">*</p>
                                     </h5>
                                     @if ($showUpdate)
-                                        <select wire:model='manager' name="manager" id="manager" class="inputs">
+                                        <select wire:model.defer='manager' name="manager" id="manager" class="inputs">
                                             @foreach ($allUsers as $user)
                                                 <option value="{{ $user->id }}"
                                                     {{ $this->productEdit && $this->productEdit->manager_id == $user->id ? 'selected' : '' }}>
@@ -412,7 +412,7 @@
                                             @endforeach
                                         </select>
                                     @else
-                                        <select wire:model='manager' required name="manager" id="manager"
+                                        <select wire:model.defer='manager' required name="manager" id="manager"
                                             class="inputs">
                                             <option selected>Selecciona...</option>
                                             @foreach ($allUsers as $user)
@@ -434,7 +434,7 @@
                                     <h5 class="inline-flex font-semibold" for="purchase_date">
                                         Fecha de compra
                                     </h5>
-                                    <input wire:model='purchase_date' type="date" name="purchase_date"
+                                    <input wire:model.defer='purchase_date' type="date" name="purchase_date"
                                         id="purchase_date" class="inputs">
                                 </div>
                             </div>
@@ -443,7 +443,7 @@
                                     <h5 class="inline-flex font-semibold" for="observations">
                                         Observaciones
                                     </h5>
-                                    <textarea wire:model='observations' type="text" rows="6" placeholder="Escribe las observaciones."
+                                    <textarea wire:model.defer='observations' type="text" rows="6" placeholder="Escribe las observaciones."
                                         name="observations" id="observations" class="textarea"></textarea>
                                 </div>
                             </div>
@@ -484,7 +484,7 @@
                                                     <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                                                 </svg>
                                             </span>
-                                            <input wire:model="files.{{ $index }}" required type="file"
+                                            <input wire:model.defer="files.{{ $index }}" required type="file"
                                                 name="files" class="inputs mb-2" multiple>
                                         </div>
                                     @endforeach
@@ -496,7 +496,7 @@
                                                 <input type="checkbox" id="backlogFile{{ $file->id }}"
                                                     class="delete-checkbox border-gray-300 bg-transparent"
                                                     style="height: 24px; width: 24px; accent-color: #2e4c5f;"
-                                                    wire:model="selectedFiles" value="{{ $file->id }}">
+                                                    wire:model.defer="selectedFiles" value="{{ $file->id }}">
                                             </div>
                                             <img src="{{ asset('inventory/' . $file->route) }}" alt="Backlog Image">
                                         @endforeach

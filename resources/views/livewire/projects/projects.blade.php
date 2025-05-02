@@ -591,7 +591,7 @@
                                 <h5 class="inline-flex font-semibold" for="code">
                                     Código <p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='code' required type="number" placeholder="Código" name="code"
+                                <input wire:model.defer='code' required type="number" placeholder="Código" name="code"
                                     id="code" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -607,7 +607,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Nombre<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='name' required type="text" placeholder="Nombre" name="name"
+                                <input wire:model.defer='name' required type="text" placeholder="Nombre" name="name"
                                     id="name" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -628,13 +628,13 @@
                                     @endif
                                 </h5>
                                 @if ($showUpdate)
-                                <select wire:model='type' required name="type" id="type" class="inputs">
+                                <select wire:model.defer='type' required name="type" id="type" class="inputs">
                                     @foreach ($allType as $type)
                                     <option value='{{ $type }}'>{{ $type }}</option>
                                     @endforeach
                                 </select>
                                 @else
-                                <select wire:model='type' required name="type" id="type" class="inputs">
+                                <select wire:model.defer='type' required name="type" id="type" class="inputs">
                                     <option value="0">Selecciona...</option>
                                     @foreach ($allType as $type)
                                     <option value='{{ $type }}'>{{ $type }}</option>
@@ -669,10 +669,10 @@
                                             <path d="M5 12l14 0" />
                                         </svg>
                                     </span>
-                                    <input wire:model='customerInput' type="hidden" id="customerInput">
+                                    <input wire:model.defer='customerInput' type="hidden" id="customerInput">
                                 </div>
                                 @if ($customertype)
-                                <input wire:model='nameClient' required type="text"
+                                <input wire:model.defer='nameClient' required type="text"
                                     placeholder="Nuevo cliente" name="nameClient" id="nameClient"
                                     class="inputs">
                                 @else
@@ -711,7 +711,7 @@
                                     Líder<p class="text-red-600">*</p>
                                 </h5>
                                 @if ($showUpdate)
-                                <select wire:model='leader' required name="leader" id="leader"
+                                <select wire:model.defer='leader' required name="leader" id="leader"
                                     class="inputs">
                                     @if ($leader == 0)
                                     <option value="0">Usuario eliminado</option>
@@ -724,7 +724,7 @@
                                     @endforeach
                                 </select>
                                 @else
-                                <select wire:model='leader' required name="leader" id="leader"
+                                <select wire:model.defer='leader' required name="leader" id="leader"
                                     class="inputs">
                                     <option value="0">Selecciona...</option>
                                     @foreach ($allUsers as $user)
@@ -749,7 +749,7 @@
                                     Product Owner<p class="text-red-600">*</p>
                                 </h5>
                                 @if ($showUpdate)
-                                <select wire:model='product_owner' required name="product_owner"
+                                <select wire:model.defer='product_owner' required name="product_owner"
                                     id="product_owner" class="inputs">
                                     @if ($product_owner == 0)
                                     <option value="0">Usuario eliminado</option>
@@ -762,7 +762,7 @@
                                     @endforeach
                                 </select>
                                 @else
-                                <select wire:model='product_owner' required name="product_owner"
+                                <select wire:model.defer='product_owner' required name="product_owner"
                                     id="product_owner" class="inputs">
                                     <option value="0">Selecciona...</option>
                                     @foreach ($allUsers as $user)
@@ -795,7 +795,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Gravedad<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointKnow" id="pointKnow" class="inputs" wire:model='severity'>
+                                <select name="pointKnow" id="pointKnow" class="inputs" wire:model.defer='severity'>
                                     <option selected>Selecciona...</option>
                                     <option value="0">Cero - No afecta de ninguna manera</option>
                                     <option value="6">Bajo - Se le queda mal al cliente</option>
@@ -819,7 +819,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Impacto<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='impact'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='impact'>
                                     <option selected>Selecciona...</option>
                                     <option value="0">Cero - No tiene beneficio</option>
                                     <option value="10">Medio - Representa beneficio sin impacto</option>
@@ -843,7 +843,7 @@
                                     Satisfacción<p class="text-red-600">*</p>
                                 </h5>
                                 <select name="pointMany" id="pointMany" class="inputs"
-                                    wire:model='satisfaction'>
+                                    wire:model.defer='satisfaction'>
                                     <option selected>Selecciona...</option>
                                     <option value="0">Cero - No afecta en ninguna manera</option>
                                     <option value="6">Bajo - Entregamos más de los esperado</option>
@@ -868,7 +868,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Temporalidad<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='temporality'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='temporality'>
                                     <option selected>Selecciona...</option>
                                     <option value="0">Cero - Indefinido</option>
                                     <option value="4">2 o más veces el tiempo que se requiere</option>
@@ -891,7 +891,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Magnitud<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='magnitude'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='magnitude'>
                                     <option selected>Selecciona...</option>
                                     <option value="0">Cero - 1 persona</option>
                                     <option value="2">Bajo - Departamento</option>
@@ -914,7 +914,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Estrategia<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='strategy'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='strategy'>
                                     <option selected>Selecciona...</option>
                                     <option value="0">Cero - No se alinea en ninguna manera</option>
                                     <option value="6">Medio - Es lo que hacemos</option>
@@ -937,7 +937,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Etapa<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='stage'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='stage'>
                                     <option selected>Selecciona...</option>
                                     <option value="0">Iniciativa - Idea que se empieza a desarrollar que no
                                         tiene
@@ -975,7 +975,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Objetivo general<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='general_objective' required type="text"
+                                <input wire:model.defer='general_objective' required type="text"
                                     placeholder="Objetivo general" name="general_objective" id="general_objective"
                                     class="inputs">
                                 <div>
@@ -1002,7 +1002,7 @@
                                     <input type="checkbox" id="backlogFile{{ $file->id }}"
                                         class="delete-checkbox border-gray-300 bg-transparent"
                                         style="height: 24px; width: 24px; accent-color: #2e4c5f;"
-                                        wire:model="selectedFiles" value="{{ $file->id }}">
+                                        wire:model.defer="selectedFiles" value="{{ $file->id }}">
                                 </div>
                                 <img src="{{ asset('backlogs/' . $file->route) }}" alt="Backlog Image">
                                 @endforeach
@@ -1039,11 +1039,11 @@
                                             <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                                         </svg>
                                     </span>
-                                    <input wire:model="files.{{ $index }}" required type="file"
+                                    <input wire:model.defer="files.{{ $index }}" required type="file"
                                         name="files" class="inputs mb-2" multiple>
                                 </div>
                                 @endforeach
-                                <textarea wire:model='scopes' required type="text" rows="6" placeholder="Escriba los alcances."
+                                <textarea wire:model.defer='scopes' required type="text" rows="6" placeholder="Escriba los alcances."
                                     name="scopes" id="scopes" class="textarea"></textarea>
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -1066,7 +1066,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Fecha de inicio<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='start_date' required type="date" placeholder="Nombre"
+                                <input wire:model.defer='start_date' required type="date" placeholder="Nombre"
                                     name="start_date" id="start_date" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -1082,7 +1082,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Fecha de cierre<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='closing_date' required type="date" placeholder="Nombre"
+                                <input wire:model.defer='closing_date' required type="date" placeholder="Nombre"
                                     name="closing_date" id="closing_date" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -1100,7 +1100,7 @@
                                 <h5 class="inline-flex font-semibold" for="code">
                                     Claves de acceso
                                 </h5>
-                                <textarea wire:model='passwords' required type="text" rows="6" placeholder="Accesos de sistema."
+                                <textarea wire:model.defer='passwords' required type="text" rows="6" placeholder="Accesos de sistema."
                                     name="passwords" id="passwords" class="textarea"></textarea>
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -1179,7 +1179,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Gravedad<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="severity" id="severity" class="inputs" wire:model='severity'>
+                                <select name="severity" id="severity" class="inputs" wire:model.defer='severity'>
                                     <option value="0">Cero - No afecta de ninguna manera</option>
                                     <option value="6">Bajo - Se le queda mal al cliente</option>
                                     <option value="18">Alto - Daña la posibilidad de trabajar con el cliente
@@ -1202,7 +1202,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Impacto<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='impact'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='impact'>
                                     <option value="0">Cero - No tiene beneficio</option>
                                     <option value="10">Medio - Representa beneficio sin impacto</option>
                                     <option value="15">Alto - Representa beneficio con impacto</option>
@@ -1224,7 +1224,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Satisfacción<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='satisfaction'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='satisfaction'>
                                     <option value="0">Cero - No afecta en ninguna manera</option>
                                     <option value="6">Bajo - Entregamos más de los esperado</option>
                                     <option value="12">Medio - Mantenemos relación</option>
@@ -1248,7 +1248,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Temporalidad<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='temporality'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='temporality'>
                                     <option value="0">Cero - Indefinido</option>
                                     <option value="4">2 o más veces el tiempo que se requiere</option>
                                     <option value="12">Tiempo exacto para hacerlo</option>
@@ -1270,7 +1270,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Magnitud<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='magnitude'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='magnitude'>
                                     <option value="0">Cero - 1 persona</option>
                                     <option value="2">Bajo - Departamento</option>
                                     <option value="6">Alto - Gente externa</option>
@@ -1292,7 +1292,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Estrategia<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='strategy'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='strategy'>
                                     <option value="0">Cero - No se alinea en ninguna manera</option>
                                     <option value="6">Medio - Es lo que hacemos</option>
                                     <option value="9">Alto - Nos ayuda a avanzar</option>
@@ -1314,7 +1314,7 @@
                                 <h5 class="inline-flex font-semibold" for="name">
                                     Etapa<p class="text-red-600">*</p>
                                 </h5>
-                                <select name="pointMany" id="pointMany" class="inputs" wire:model='stage'>
+                                <select name="pointMany" id="pointMany" class="inputs" wire:model.defer='stage'>
                                     <option value="0">Iniciativa - Idea que se empieza a desarrollar que no tiene
                                         el cliente</option>
                                     <option value="1">Actualización - Cambios que no pide el cliente, que Kircof

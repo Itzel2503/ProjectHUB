@@ -27,14 +27,14 @@
                         ] as $icon => $tooltip)
                         <label class="principal">
                             <input type="radio" name="icon" value="{{ $icon }}" class="icon-checkbox"
-                                wire:model="selectedIcon">
+                                wire:model.defer="selectedIcon">
                             <span class="icon-event {{ $selectedIcon === $icon ? 'selected' : '' }}"
                                 wire:click="selectIcon('{{ $icon }}')">
                                 {{ $icon }}
                             </span>
                             <div class="relative">
                                 <div
-                                    class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                    class="hidden-info absolute top-16 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
                                     <p>{{ $tooltip }}</p>
                                 </div>
                             </div>
@@ -85,7 +85,7 @@
                     <h5 class="inline-flex font-semibold" for="delegate">
                         Delegar<p class="text-red-600">*</p>
                     </h5>
-                    <select wire:model='delegate' required name="delegate" id="delegate" class="inputs">
+                    <select wire:model.defer='delegate' required name="delegate" id="delegate" class="inputs">
                         <option selected>Selecciona...</option>
                         @foreach ($allUsers as $user)
                         <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -224,7 +224,7 @@
                                 <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                             </svg>
                         </span>
-                        <input wire:model="files.{{ $index }}" type="file"
+                        <input wire:model.defer="files.{{ $index }}" type="file"
                             name="files" class="inputs mb-2" multiple>
                     </div>
                     @endforeach
@@ -273,7 +273,7 @@
                     <h5 class="inline-flex font-semibold" for="name">
                         Puntos <p class="text-red-600">*</p>
                     </h5>
-                    <input wire:model='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
+                    <input wire:model.defer='points' required type="number" placeholder="1, 2, 3, 5, 8, 13"
                         name="points" id="points" class="inputs">
                 </div>
             </div>
@@ -283,7 +283,7 @@
                         <h5 class="inline-flex font-semibold" for="name">
                             ¿Cuánto se conoce de la tarea?<p class="text-red-600">*</p>
                         </h5>
-                        <select wire:model='point_know' required name="point_know" id="point_know" class="inputs">
+                        <select wire:model.defer='point_know' required name="point_know" id="point_know" class="inputs">
                             <option selected>Selecciona...</option>
                             <option value="1">Todo</option>
                             <option value="2">Casi todo</option>
@@ -299,7 +299,7 @@
                         <h5 class="inline-flex font-semibold" for="name">
                             ¿De cuántos depende?<p class="text-red-600">*</p>
                         </h5>
-                        <select wire:model='point_many' required name="point_many" id="point_many" class="inputs">
+                        <select wire:model.defer='point_many' required name="point_many" id="point_many" class="inputs">
                             <option selected>Selecciona...</option>
                             <option value="1">Solo uno</option>
                             <option value="2">Un par</option>
@@ -315,7 +315,7 @@
                         <h5 class="inline-flex font-semibold" for="name">
                             ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
                         </h5>
-                        <select wire:model='point_effort' required name="point_effort" id="point_effort"
+                        <select wire:model.defer='point_effort' required name="point_effort" id="point_effort"
                             class="inputs">
                             <option selected>Selecciona...</option>
                             <option value="1">Menos de 2 horas</option>

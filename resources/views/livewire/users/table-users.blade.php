@@ -214,7 +214,7 @@
                                 <h5 class="inline-flex font-semibold" for="file">
                                     Foto de perfil
                                 </h5>
-                                <input wire:model='file' required type="file" placeholder="Título" name="file"
+                                <input wire:model.defer='file' required type="file" placeholder="Título" name="file"
                                     id="file" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -230,7 +230,7 @@
                                 <h5 class="inline-flex font-semibold" for="lastname">
                                     Nombre completo<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='name' required type="text" placeholder="Nombre completo"
+                                <input wire:model.defer='name' required type="text" placeholder="Nombre completo"
                                     name="name" id="name" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -250,7 +250,7 @@
                                         <p class="text-red-600">*</p>
                                     @endif
                                 </h5>
-                                <input wire:model='date_birthday' required type="date" name="date_birthday"
+                                <input wire:model.defer='date_birthday' required type="date" name="date_birthday"
                                     id="date_birthday" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -266,7 +266,7 @@
                                 <h5 class="inline-flex font-semibold" for="phone">
                                     Fecha de ingreso<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='entry_date' required type="date" name="entry_date"
+                                <input wire:model.defer='entry_date' required type="date" name="entry_date"
                                     id="entry_date" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -384,7 +384,7 @@
                                             class="absolute right-0 top-4 z-10 w-full rounded-md bg-gray-100">
                                             @foreach ($projects as $project)
                                                 <label class="block px-4 py-2">
-                                                    <input type="checkbox" wire:model="selectedProjects"
+                                                    <input type="checkbox" wire:model.defer="selectedProjects"
                                                         value="{{ $project->id }}" class="mr-2">
                                                     {{ $project->name }}
                                                 </label>
@@ -408,7 +408,7 @@
                                 <h5 class="inline-flex font-semibold" for="email">
                                     Correo electrónico<p class="text-red-600">*</p>
                                 </h5>
-                                <input wire:model='email' required type="email" placeholder="Correo electrónico"
+                                <input wire:model.defer='email' required type="email" placeholder="Correo electrónico"
                                     name="email" id="email" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -426,7 +426,7 @@
                                         <p class="text-red-600">*</p>
                                     @endif
                                 </h5>
-                                <input wire:model='password' required type="text" placeholder="Nueva contraseña"
+                                <input wire:model.defer='password' required type="text" placeholder="Nueva contraseña"
                                     name="password" id="password" class="inputs">
                                 <div>
                                     <span class="text-xs italic text-red-600">
@@ -444,7 +444,7 @@
                                 <h5 class="inline-flex font-semibold" for="effort_points">
                                     Story Points (Mes)@if (!$showUpdate)<p class="text-red-600">*</p>@endif
                                 </h5>
-                                <input wire:model='effort_points' required type="number" placeholder="0-100"
+                                <input wire:model.defer='effort_points' required type="number" placeholder="0-100"
                                     name="effort_points" id="effort_points" class="inputs">
                                 <div>
                                     <span class="text-red-600 text-xs italic">

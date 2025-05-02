@@ -16,12 +16,12 @@
                         </div>
                         <div class="text-left mb-5">
                             <h5 class="mb-1 mx-auto w-full text-text1 font-semibold">Nueva contraseña:</h5>
-                            <input wire:model='password' type="password" name="password" id="password"
+                            <input wire:model.defer='password' type="password" name="password" id="password"
                                 class="inputs bg-white">
                         </div>
                         <div class="text-left mb-5">
                             <h5 class="mb-1 mx-auto w-full text-text1 font-semibold">Confirmar contraseña:</h5>
-                            <input wire:model='confirmPassword' type="password" name="confirmPassword"
+                            <input wire:model.defer='confirmPassword' type="password" name="confirmPassword"
                                 id="confirmPassword" class="inputs bg-white">
                         </div>
                         <div class="flex justify-center items-center">

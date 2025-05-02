@@ -42,7 +42,7 @@
                                 </span>
                                 <div class="relative">
                                     <div
-                                        class="hidden-info absolute -top-12 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
+                                        class="hidden-info absolute top-16 left-0 z-10 w-auto bg-gray-100 p-2 text-left text-xs">
                                         <p>{{ $tooltip }}</p>
                                     </div>
                                 </div>
@@ -91,7 +91,7 @@
                         <h5 class="inline-flex font-semibold" for="description">
                             Descripción<p class="text-red-600">*</p>
                         </h5>
-                        <textarea wire:model='description' type="text" rows="6"
+                        <textarea wire:model.defer='description' type="text" rows="6"
                             placeholder="Describa la nueva observación y especifique el objetivo a cumplir." name="description" id="description"
                             class="textarea"></textarea>
                         <div>
@@ -115,7 +115,7 @@
                             </h5>
                             <div class="flex justify-center gap-20">
                                 <div class="flex flex-col items-center">
-                                    <input type="checkbox" wire:model="evidenceEdit" class="priority-checkbox"
+                                    <input type="checkbox" wire:model.defer="evidenceEdit" class="priority-checkbox"
                                         style="height: 24px; width: 24px;" />
                                 </div>
                             </div>
@@ -143,7 +143,7 @@
                             <h5 class="inline-flex font-semibold" for="delegate">
                                 Mover a sprint
                             </h5>
-                            <select wire:change.defer="moveActivity($event.target.value)" wire:model="moveActivity"
+                            <select wire:change.defer="moveActivity($event.target.value)" wire:model.defer="moveActivity"
                                 class="inputs">
                                 @foreach ($sprints as $sprint)
                                     <option value="{{ is_object($sprint) ? $sprint->id : $sprint['id'] }}">
@@ -232,19 +232,19 @@
                     </h5>
                     <div class="flex justify-center gap-20">
                         <div class="flex flex-col items-center">
-                            <input type="radio" name="priority" wire:model="priority" value="Alto"
+                            <input type="radio" name="priority" wire:model.defer="priority" value="Alto"
                                 class="priority-checkbox border-red-600 bg-red-600"
                                 style="height: 24px; width: 24px; accent-color: #dd4231;" />
                             <label class="mt-2">Alto</label>
                         </div>
                         <div class="flex flex-col items-center">
-                            <input type="radio" name="priority" wire:model="priority" value="Medio"
+                            <input type="radio" name="priority" wire:model.defer="priority" value="Medio"
                                 class="priority-checkbox border-yellow-400 bg-yellow-400"
                                 style="height: 24px; width: 24px; accent-color: #f6c03e;" />
                             <label class="mt-2">Medio</label>
                         </div>
                         <div class="flex flex-col items-center">
-                            <input type="radio" name="priority" wire:model="priority" value="Bajo"
+                            <input type="radio" name="priority" wire:model.defer="priority" value="Bajo"
                                 class="priority-checkbox border-secondary bg-secondary"
                                 style="height: 24px; width: 24px; accent-color: #0062cc;" />
                             <label class="mt-2">Bajo</label>
@@ -288,7 +288,7 @@
                         <h5 class="inline-flex font-semibold" for="name">
                             Puntos <p class="text-red-600">*</p>
                         </h5>
-                        <input @if (Auth::user()->type_user == 1 || (isset($recording->user) && Auth::user()->id == $recording->user->id)) @else disabled @endif wire:model='points' required
+                        <input @if (Auth::user()->type_user == 1 || (isset($recording->user) && Auth::user()->id == $recording->user->id)) @else disabled @endif wire:model.defer='points' required
                             type="number" placeholder="1, 2, 3, 5, 8, 13" name="points" id="points"
                             class="inputs">
                     </div>
@@ -299,7 +299,7 @@
                             <h5 class="inline-flex font-semibold" for="name">
                                 ¿Cuánto se conoce de la tarea?<p class="text-red-600">*</p>
                             </h5>
-                            <select @if (Auth::user()->type_user == 1 || (isset($recording->user) && Auth::user()->id == $recording->user->id)) @else disabled @endif wire:model='point_know'
+                            <select @if (Auth::user()->type_user == 1 || (isset($recording->user) && Auth::user()->id == $recording->user->id)) @else disabled @endif wire:model.defer='point_know'
                                 required name="point_know" id="point_know" class="inputs">
                                 <option selected>Selecciona...</option>
                                 <option value="1">Todo</option>
@@ -316,7 +316,7 @@
                             <h5 class="inline-flex font-semibold" for="name">
                                 ¿De cuántos depende?<p class="text-red-600">*</p>
                             </h5>
-                            <select @if (Auth::user()->type_user == 1 || (isset($recording->user) && Auth::user()->id == $recording->user->id)) @else disabled @endif wire:model='point_many'
+                            <select @if (Auth::user()->type_user == 1 || (isset($recording->user) && Auth::user()->id == $recording->user->id)) @else disabled @endif wire:model.defer='point_many'
                                 required name="point_many" id="point_many" class="inputs">
                                 <option selected>Selecciona...</option>
                                 <option value="1">Solo uno</option>
@@ -333,7 +333,7 @@
                             <h5 class="inline-flex font-semibold" for="name">
                                 ¿Cuánto esfuerzo representa?<p class="text-red-600">*</p>
                             </h5>
-                            <select @if (Auth::user()->type_user == 1 || (isset($recording->user) && Auth::user()->id == $recording->user->id)) @else disabled @endif wire:model='point_effort'
+                            <select @if (Auth::user()->type_user == 1 || (isset($recording->user) && Auth::user()->id == $recording->user->id)) @else disabled @endif wire:model.defer='point_effort'
                                 required name="point_effort" id="point_effort" class="inputs">
                                 <option selected>Selecciona...</option>
                                 <option value="1">Menos de 2 horas</option>
@@ -389,7 +389,7 @@
                                         <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                                     </svg>
                                 </span>
-                                <input wire:model="filesNew.{{ $index }}" required type="file" name="filesNew[]"
+                                <input wire:model.defer="filesNew.{{ $index }}" required type="file" name="filesNew[]"
                                     class="inputs mb-2">
                             </div>
                         @endforeach
@@ -401,7 +401,7 @@
                                         <input type="checkbox" id="backlogFile"
                                             class="delete-checkbox border-gray-300 bg-transparent"
                                             style="height: 24px; width: 24px; accent-color: #2e4c5f;"
-                                            wire:model="selectedFiles" value="">
+                                            wire:model.defer="selectedFiles" value="">
                                     </div>
                                     @if ($type == 'report')
                                         @if ($recording->image == true)
@@ -478,7 +478,7 @@
                                                     <input type="checkbox" id="backlogFile{{ $file->id }}"
                                                         class="delete-checkbox border-gray-300 bg-transparent"
                                                         style="height: 24px; width: 24px; accent-color: #2e4c5f;"
-                                                        wire:model="selectedFiles" value="{{ $file->id }}">
+                                                        wire:model.defer="selectedFiles" value="{{ $file->id }}">
                                                 </div>
                                                 @if ($file->image)
                                                     <div class="image-preview">
@@ -571,7 +571,7 @@
                                                     <input type="checkbox" id="backlogFile{{ $file->id }}"
                                                         class="delete-checkbox border-gray-300 bg-transparent"
                                                         style="height: 24px; width: 24px; accent-color: #2e4c5f;"
-                                                        wire:model="selectedFiles" value="{{ $file->id }}">
+                                                        wire:model.defer="selectedFiles" value="{{ $file->id }}">
                                                 </div>
                                                 <div class="flex items-center text-red-600">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"

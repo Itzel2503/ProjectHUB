@@ -40,7 +40,7 @@
                     </div>
                     {{-- NOMBRE --}}
                     <div class="mb-2 inline-flex h-12 w-full md:w-2/6 bg-transparent px-2 md:mx-3 md:px-0">
-                        <select wire:model="selectSprint" wire:change="selectSprint($event.target.value)"
+                        <select wire:model.defer="selectSprint" wire:change="selectSprint($event.target.value)"
                             class="inputs">
                             @foreach ($sprints as $sprint)
                                 <option value="{{ $sprint->id }}">{{ $sprint->number }} - {{ $sprint->name }}</option>

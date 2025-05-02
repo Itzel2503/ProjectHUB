@@ -33,7 +33,7 @@
                                     </span>
                                 </div>
                             @endif
-                            <select wire:model="selectSprint" wire:change="selectSprint($event.target.value)"
+                            <select wire:model.defer="selectSprint" wire:change="selectSprint($event.target.value)"
                                 class="inputs">
                                 @foreach ($sprints as $sprint)
                                     <option value="{{ $sprint->id }}">{{ $sprint->number }} - {{ $sprint->name }}</option>
@@ -306,7 +306,7 @@
                                     <h5 class="inline-flex font-semibold" for="name_sprint">
                                         Nombre<p class="text-red-600">*</p>
                                     </h5>
-                                    <input wire:model='name_sprint' required type="text" placeholder="Nombre"
+                                    <input wire:model.defer='name_sprint' required type="text" placeholder="Nombre"
                                         name="name_sprint" id="name_sprint" class="inputs">
                                     <div>
                                         <span class="text-xs italic text-red-600">
@@ -324,7 +324,7 @@
                                     <h5 class="inline-flex font-semibold" for="start_date">
                                         Fecha de inicio<p class="text-red-600">*</p>
                                     </h5>
-                                    <input wire:model='start_date' required type="date" name="start_date"
+                                    <input wire:model.defer='start_date' required type="date" name="start_date"
                                         id="start_date" class="inputs">
                                     <div>
                                         <span class="text-xs italic text-red-600">
@@ -340,7 +340,7 @@
                                     <h5 class="inline-flex font-semibold" for="end_date">
                                         Fecha de cierre<p class="text-red-600">*</p>
                                     </h5>
-                                    <input wire:model='end_date' required type="date" name="end_date"
+                                    <input wire:model.defer='end_date' required type="date" name="end_date"
                                         id="end_date" class="inputs">
                                     <div>
                                         <span class="text-xs italic text-red-600">
